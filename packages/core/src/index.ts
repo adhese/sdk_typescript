@@ -1,0 +1,1 @@
+export { createAdhese } from './main';

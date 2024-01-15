@@ -1,0 +1,12 @@
+{
+  "name": "@adhese/sdk-eslint-config",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "devDependencies": {
+    "@antfu/eslint-config": "^2.6.2"
+  }
+}

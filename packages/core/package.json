@@ -1,0 +1,28 @@
+{
+  "name": "@adhese/sdk-core",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Adhese SDK Core",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "dist"
+  ],
+  "scripts": {
+    "test": "vitest --run --coverage",
+    "test:watch": "vitest --watch",
+    "build": "npm run clean & npx npm-run-all build:*",
+    "build:module": "tsc --project tsconfig.esm.json && tsc --project tsconfig.cjs.json",
+    "build:lib": "vite build",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "clean": "rm -rf dist & rm -rf lib",
+    "typecheck": "tsc --noEmit"
+  }
+}

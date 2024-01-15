@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "target": "ES5",
+    "rootDir": "./src",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "declaration": false,
+    "outDir": "./dist/cjs",
+    "skipLibCheck": true
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "**/*.test.ts",
+    "test/**",
+    "**/node_modules"
+  ]
+}

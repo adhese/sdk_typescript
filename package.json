@@ -1,0 +1,43 @@
+{
+  "name": "adhese-sdk",
+  "type": "module",
+  "private": true,
+  "homepage": "https://github.com/adhese/sdk_typescript#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adhese/sdk_typescript.git"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "bugs": {
+    "url": "https://github.com/adhese/sdk_typescript/issues"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "scripts": {
+    "test": "turbo test",
+    "test:watch": "turbo test:watch",
+    "lint": "eslint . --ignore-pattern packages && turbo lint",
+    "lint:fix": "eslint . --ignore-pattern packages --fix && turbo lint:fix",
+    "build": "turbo build",
+    "preinstall": "npx only-allow npm",
+    "typecheck": "turbo typecheck",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@adhese/sdk-eslint-config": "workspace:*",
+    "@types/node": "^20.11.0",
+    "@vitest/coverage-v8": "^1.1.3",
+    "eslint": "^8.56.0",
+    "husky": "^8.0.0",
+    "jsdom": "^23.2.0",
+    "lint-staged": "^15.2.0",
+    "turbo": "^1.11.3",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.11",
+    "vitest": "^1.1.3"
+  }
+}
