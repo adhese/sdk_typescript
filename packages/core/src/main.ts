@@ -1,4 +1,5 @@
 import type { Merge } from '@utils';
+import { logger } from './logger/logger';
 
 export type AdheseOptions = {
   /**
@@ -32,6 +33,12 @@ export type AdheseOptions = {
    * @default 'POST'
    */
   requestType?: 'GET' | 'POST';
+  /**
+   * Enable debug logging.
+   *
+   * @default false
+   */
+  debug?: boolean;
 };
 
 export type AdheseInstance = Merge<AdheseOptions, {
@@ -47,7 +54,23 @@ export function createAdhese({
   poolHost = `https://pool-${account}.adhese.com`,
   pageLocation = location,
   requestType = 'POST',
+  debug = false,
 }: AdheseOptions): Readonly<AdheseInstance> {
+  if (debug) {
+    logger.level = 'debug';
+    logger.debug('Debug logging enabled');
+  }
+
+  logger.debug('Created Adhese SDK instance', {
+    options: {
+      account,
+      host,
+      poolHost,
+      pageLocation: pageLocation.toString(),
+      requestType,
+    },
+  });
+
   return {
     account,
     host,

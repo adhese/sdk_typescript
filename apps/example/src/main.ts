@@ -1,10 +1,8 @@
-import { createAdhese } from '@adhese/sdk';
+import { createAdhese } from 'core';
 
 (function (): void {
-  const adhese = createAdhese({
+  createAdhese({
     account: 'demo',
+    debug: true,
   });
-
-  // eslint-disable-next-line no-console
-  console.log(adhese);
 })();

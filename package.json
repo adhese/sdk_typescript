@@ -30,6 +30,9 @@
     "typecheck": "turbo typecheck",
     "prepare": "husky install"
   },
+  "dependencies": {
+    "pino": "^8.17.2"
+  },
   "devDependencies": {
     "@types/node": "^20.11.0",
     "@vitest/coverage-v8": "^1.1.3",
