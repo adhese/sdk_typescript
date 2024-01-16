@@ -2,6 +2,7 @@
   "extends": "./tsconfig.json",
   "include": [
     "packages/**/*",
+    "apps/**/*",
     "eslint.config.js",
     "**/vite.config.ts",
     "lint-staged.config.js"

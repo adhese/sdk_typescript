@@ -4,6 +4,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   build: {
     outDir: 'lib',
+    emptyOutDir: true,
     lib: {
       entry: `${path.resolve()}/src/index.ts`,
       name: 'Adhese',

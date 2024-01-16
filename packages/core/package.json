@@ -3,12 +3,9 @@
   "type": "module",
   "version": "1.0.0",
   "description": "Adhese SDK Core",
-  "exports": {
-    ".": {
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js"
-    }
-  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "LICENSE",
     "README.md",
@@ -17,12 +14,13 @@
   "scripts": {
     "test": "vitest --run --coverage",
     "test:watch": "vitest --watch",
-    "build": "npm run clean & npx npm-run-all build:*",
-    "build:module": "tsc --project tsconfig.esm.json && tsc --project tsconfig.cjs.json",
+    "build": "npx npm-run-all build:*",
+    "dev": "tsup ./src/index.ts --format cjs,esm --dts --watch",
+    "build:module": "tsup ./src/index.ts --format cjs,esm --dts",
     "build:lib": "vite build",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "clean": "rm -rf dist & rm -rf lib",
+    "clean": "rm -rf dist & rm -rf lib & rm -rf coverage",
     "typecheck": "tsc --noEmit"
   }
 }

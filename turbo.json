@@ -7,14 +7,28 @@
     },
     "test:watch": {
       "cache": false,
-      "persistent": false
+      "persistent": true
     },
-    "lint": {},
-    "lint:fix": {},
-    "typecheck": {},
+    "lint": {
+      "dependsOn": ["^build"]
+    },
+    "lint:fix": {
+      "dependsOn": ["^build"]
+    },
+    "typecheck": {
+      "dependsOn": ["^build"]
+    },
     "build": {
       "outputs": ["dist/**", "lib/**"],
-      "dependsOn": ["lint", "test", "typecheck", "^build"]
+      "dependsOn": ["^build", "lint", "test", "typecheck"]
+    },
+    "dev": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true
+    },
+    "clean": {
+      "cache": false
     }
   }
 }
