@@ -9,21 +9,14 @@
       "cache": false,
       "persistent": true
     },
-    "lint": {
-      "dependsOn": ["^build"]
-    },
-    "lint:fix": {
-      "dependsOn": ["^build"]
-    },
-    "typecheck": {
-      "dependsOn": ["^build"]
-    },
+    "lint": {},
+    "lint:fix": {},
+    "typecheck": {},
     "build": {
       "outputs": ["dist/**", "lib/**"],
       "dependsOn": ["^build", "lint", "test", "typecheck"]
     },
     "dev": {
-      "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
     },

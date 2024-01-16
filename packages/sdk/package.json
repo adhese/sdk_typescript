@@ -1,0 +1,22 @@
+{
+  "name": "@adhese/sdk",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Adhese SDK",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@adhese/sdk-core": "*"
+  }
+}

@@ -1,11 +1,9 @@
 {
   "name": "@adhese/sdk-core",
   "type": "module",
-  "version": "1.0.0",
+  "private": true,
   "description": "Adhese SDK Core",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./src/index.ts",
   "files": [
     "LICENSE",
     "README.md",
@@ -14,13 +12,10 @@
   "scripts": {
     "test": "vitest --run --coverage",
     "test:watch": "vitest --watch",
-    "build": "npx npm-run-all build:*",
-    "dev": "tsup ./src/index.ts --format cjs,esm --dts --watch",
-    "build:module": "tsup ./src/index.ts --format cjs,esm --dts",
-    "build:lib": "vite build",
+    "build": "vite build",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "clean": "rm -rf dist & rm -rf lib & rm -rf coverage",
+    "clean": "rm -rf lib & rm -rf coverage",
     "typecheck": "tsc --noEmit"
   }
 }
