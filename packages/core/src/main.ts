@@ -11,14 +11,14 @@ export type AdheseOptions = {
    *
    * @default 'https://ads-{{account}}.adhese.com'
    */
-  adUrl?: string;
+  host?: string;
   /**
    * The url that is used to connect to the Adhese pool server. Pass a custom URL if you want to use your own domain for
    * the connection.
    *
    * @default 'https://pool-{{account}}.adhese.com'
    */
-  poolUrl?: string;
+  poolHost?: string;
   /**
    * The page location. This is used to determine the current page URL and to determine the current page's domain.
    *
@@ -45,15 +45,15 @@ export type AdheseInstance = Merge<AdheseOptions, {
  */
 export function createAdhese({
   account,
-  adUrl = `https://ads-${account}.adhese.com`,
-  poolUrl = `https://pool-${account}.adhese.com`,
+  host = `https://ads-${account}.adhese.com`,
+  poolHost = `https://pool-${account}.adhese.com`,
   pageLocation = location,
   requestType = 'POST',
 }: AdheseOptions): Readonly<AdheseInstance> {
   return {
     account,
-    adUrl,
-    poolUrl,
+    host,
+    poolHost,
     requestType,
     pageLocation: new URL(pageLocation.toString()),
   };

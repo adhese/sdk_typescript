@@ -5,10 +5,6 @@
       "outputs": ["coverage/**"],
       "dependsOn": []
     },
-    "test:watch": {
-      "cache": false,
-      "persistent": true
-    },
     "lint": {},
     "lint:fix": {},
     "typecheck": {},
