@@ -1,5 +1,5 @@
 {
-  "name": "@adhese/sdk-eslint-config",
+  "name": "sdk-eslint-config",
   "type": "module",
   "private": true,
   "main": "index.js",

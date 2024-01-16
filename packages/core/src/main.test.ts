@@ -1,9 +1,9 @@
 import { expect, it } from 'vitest';
-import { createAdhese, defaultAdheseOptions } from './main';
+import { createAdhese } from './main';
 
 it('should create an adhese instance', () => {
   const adhese = createAdhese({
-    account: 'test',
+    account: 'demo',
   });
 
   expect(adhese).not.toBeUndefined();
@@ -11,25 +11,29 @@ it('should create an adhese instance', () => {
 
 it('should create an adhese instance with default options', () => {
   const adhese = createAdhese({
-    account: 'test',
+    account: 'demo',
   });
 
   expect(adhese).toMatchObject({
-    ...defaultAdheseOptions,
-    account: 'test',
+    account: 'demo',
+    adUrl: `https://ads-${adhese.account}.adhese.com`,
+    poolUrl: `https://pool-${adhese.account}.adhese.com`,
+    pageLocation: new URL(location.toString()),
   });
 });
 
 it('should create an adhese instance with custom options', () => {
   const adhese = createAdhese({
-    account: 'test',
-    hostUrl: 'https://example.com',
+    account: 'demo',
+    adUrl: 'https://ads.example.com',
+    poolUrl: 'https://pool.example.com',
     pageLocation: new URL('https://example.com'),
   });
 
   expect(adhese).toMatchObject({
-    account: 'test',
-    hostUrl: 'https://example.com',
+    account: 'demo',
+    adUrl: 'https://ads.example.com',
+    poolUrl: 'https://pool.example.com',
     pageLocation: new URL('https://example.com'),
   });
 });

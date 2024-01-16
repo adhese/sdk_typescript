@@ -7,6 +7,8 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
+    "LICENSE",
+    "README.md",
     "dist"
   ],
   "scripts": {
@@ -15,8 +17,5 @@
     "lint:fix": "eslint --fix .",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@adhese/sdk-core": "*"
   }
 }

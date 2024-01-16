@@ -2,8 +2,13 @@
   "compilerOptions": {
     "target": "ESNext",
     "lib": ["ESNext", "DOM"],
+    "baseUrl": ".",
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "paths": {
+      "@core": ["packages/core/src/index.ts"],
+      "@utils": ["packages/utils/src/index.ts"]
+    },
     "resolveJsonModule": true,
     "types": [
       "vite/client", "vitest"

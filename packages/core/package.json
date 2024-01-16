@@ -1,5 +1,5 @@
 {
-  "name": "@adhese/sdk-core",
+  "name": "core",
   "type": "module",
   "private": true,
   "description": "Adhese SDK Core",
@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "test": "vitest --run --coverage",
-    "test:watch": "vitest --watch",
+    "test:watch": "vitest",
     "build": "vite build",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",

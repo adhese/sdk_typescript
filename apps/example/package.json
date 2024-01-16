@@ -1,5 +1,5 @@
 {
-  "name": "@adhese/sdk-app-example",
+  "name": "app-example",
   "type": "module",
   "private": true,
   "scripts": {

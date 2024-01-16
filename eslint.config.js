@@ -1,3 +1,3 @@
-import { createConfig } from '@adhese/sdk-eslint-config';
+import { createConfig } from 'sdk-eslint-config';
 
 export default createConfig('./');
