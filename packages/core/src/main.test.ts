@@ -14,12 +14,11 @@ it('should create an adhese instance with default options', () => {
     account: 'demo',
   });
 
-  expect(adhese).toMatchObject({
-    account: 'demo',
-    adUrl: `https://ads-${adhese.account}.adhese.com`,
-    poolUrl: `https://pool-${adhese.account}.adhese.com`,
-    pageLocation: new URL(location.toString()),
-  });
+  expect(adhese.account).toBe('demo');
+  expect(adhese.adUrl).toBe('https://ads-demo.adhese.com');
+  expect(adhese.poolUrl).toBe('https://pool-demo.adhese.com');
+  expect(adhese.pageLocation).toMatchObject(new URL(location.toString()));
+  expect(adhese.requestType).toBe('POST');
 });
 
 it('should create an adhese instance with custom options', () => {
@@ -28,12 +27,12 @@ it('should create an adhese instance with custom options', () => {
     adUrl: 'https://ads.example.com',
     poolUrl: 'https://pool.example.com',
     pageLocation: new URL('https://example.com'),
+    requestType: 'GET',
   });
 
-  expect(adhese).toMatchObject({
-    account: 'demo',
-    adUrl: 'https://ads.example.com',
-    poolUrl: 'https://pool.example.com',
-    pageLocation: new URL('https://example.com'),
-  });
+  expect(adhese.account).toBe('demo');
+  expect(adhese.adUrl).toBe('https://ads.example.com');
+  expect(adhese.poolUrl).toBe('https://pool.example.com');
+  expect(adhese.pageLocation).toMatchObject(new URL('https://example.com'));
+  expect(adhese.requestType).toBe('GET');
 });

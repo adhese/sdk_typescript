@@ -25,6 +25,13 @@ export type AdheseOptions = {
    * @default location
    */
   pageLocation?: Location | URL;
+  /**
+   * The request type to use for the Adhese API requests. This can be either `GET` or `POST`. `POST` is the default and
+   * offers the most options. `GET` is more limited as it needs pass its data as search parameters but can be used in environments where `POST` requests are not allowed.
+   *
+   * @default 'POST'
+   */
+  requestType?: 'GET' | 'POST';
 };
 
 export type AdheseInstance = Merge<AdheseOptions, {
@@ -36,19 +43,18 @@ export type AdheseInstance = Merge<AdheseOptions, {
  *
  * @param options The options to use for the Adhese instance. See {@link AdheseOptions} for more information.
  */
-export function createAdhese(options: AdheseOptions): Readonly<AdheseInstance> {
-  const mergedOptions = {
-    adUrl: `https://ads-${options.account}.adhese.com`,
-    poolUrl: `https://pool-${options.account}.adhese.com`,
-    pageLocation: location,
-    ...options,
-  } satisfies Required<AdheseOptions>;
-
-  // eslint-disable-next-line no-console
-  console.log('Adhese SDK initialized with options:', mergedOptions);
-
+export function createAdhese({
+  account,
+  adUrl = `https://ads-${account}.adhese.com`,
+  poolUrl = `https://pool-${account}.adhese.com`,
+  pageLocation = location,
+  requestType = 'POST',
+}: AdheseOptions): Readonly<AdheseInstance> {
   return {
-    ...mergedOptions,
-    pageLocation: new URL(mergedOptions.pageLocation.toString()),
+    account,
+    adUrl,
+    poolUrl,
+    requestType,
+    pageLocation: new URL(pageLocation.toString()),
   };
 }

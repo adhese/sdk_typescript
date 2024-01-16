@@ -16,6 +16,10 @@
       "outputs": ["dist/**", "lib/**"],
       "dependsOn": ["^build", "lint", "test", "typecheck"]
     },
+    "@adhese/sdk#build": {
+      "outputs": ["dist/**", "lib/**"],
+      "dependsOn": ["^build", "lint", "test", "typecheck", "core#build"]
+    },
     "dev": {
       "cache": false,
       "persistent": true
