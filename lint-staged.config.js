@@ -1,11 +1,16 @@
-export default { '**/*.{ts,js,json,cjs,mjs,cts,mts,yaml}': (fileNames) => {
-  const conditions = ['packages', 'apps'];
-  const workspaceFiles = fileNames
-    .filter(fileName => conditions.some(condition => fileName.includes(condition)));
+export default {
+  '**/*.{ts,js,json,cjs,mjs,cts,mts,yaml}': (fileNames) => {
+    const workspaces = ['packages', 'apps'];
+    const workspaceFiles = fileNames
+      .filter(fileName => workspaces.some(workspace => fileName.includes(workspace)));
+    const nonWorkspaceFiles = fileNames
+      .filter(fileName => !workspaces.some(workspace => fileName.includes(workspace)));
 
-  return [
-      `turbo lint:fix -- ${workspaceFiles.join(' ')}`,
-      `eslint ${fileNames.join(' ')} --ignore-pattern packages apps --fix`,
-  ];
-},
+    return [
+      workspaceFiles.length > 0 && `turbo lint:fix -- ${workspaceFiles.join(' ')}`,
+      nonWorkspaceFiles.length > 0 && `eslint ${nonWorkspaceFiles.join(' ')} --ignore-pattern ${workspaces.join(' ')} --fix`,
+      'npm run test',
+      'npm run typecheck',
+    ].filter(Boolean);
+  },
 };
