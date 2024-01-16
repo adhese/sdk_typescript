@@ -1,4 +1,4 @@
-import { createAdhese } from '@adhese/sdk-core';
+import { createAdhese } from '@adhese/sdk';
 
 (function (): void {
   const adhese = createAdhese({
