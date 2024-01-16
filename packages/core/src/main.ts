@@ -40,8 +40,6 @@ export type AdheseInstance = Merge<AdheseOptions, {
 
 /**
  * Creates an Adhese instance. This instance is your main entry point to the Adhese API.
- *
- * @param options The options to use for the Adhese instance. See {@link AdheseOptions} for more information.
  */
 export function createAdhese({
   account,
