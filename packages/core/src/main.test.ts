@@ -14,6 +14,7 @@ vi.mock('./logger/logger', async (importOriginal) => {
     } satisfies Partial<typeof logger>,
   });
 });
+
 describe('createAdhese', () => {
   let debugLoggerSpy: MockInstance<[msg: string, ...args: Array<any>], void>;
   let warnLoggerSpy: MockInstance<[msg: string, ...args: Array<any>], void>;
@@ -25,6 +26,7 @@ describe('createAdhese', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    document.body.innerHTML = '';
   });
 
   it('should create an adhese instance', () => {
@@ -43,7 +45,6 @@ describe('createAdhese', () => {
     expect(adhese.account).toBe('demo');
     expect(adhese.host).toBe('https://ads-demo.adhese.com');
     expect(adhese.poolHost).toBe('https://pool-demo.adhese.com');
-    expect(adhese.pageLocation).toMatchObject(new URL(location.toString()));
     expect(adhese.requestType).toBe('POST');
   });
 
@@ -59,7 +60,6 @@ describe('createAdhese', () => {
     expect(adhese.account).toBe('demo');
     expect(adhese.host).toBe('https://ads.example.com');
     expect(adhese.poolHost).toBe('https://pool.example.com');
-    expect(adhese.pageLocation).toMatchObject(new URL('https://example.com'));
     expect(adhese.requestType).toBe('GET');
   });
 
@@ -92,5 +92,45 @@ describe('createAdhese', () => {
     });
 
     expect(warnLoggerSpy).toHaveBeenCalledWith('Invalid host or poolHost');
+  });
+
+  it('should create an adhese instance with initial slots', () => {
+    const element = document.createElement('div');
+    element.id = 'billboard';
+    element.classList.add('adunit');
+    element.dataset.format = 'billboard';
+
+    document.body.appendChild(element);
+
+    const adhese = createAdhese({
+      account: 'demo',
+      initialSlots: [
+        {
+          format: 'billboard',
+          containingElementId: 'billboard',
+          slot: 'billboard',
+        },
+      ],
+    });
+
+    expect(adhese.getSlots().length).toBe(1);
+  });
+
+  it('should be able to get the current page location', () => {
+    const adhese = createAdhese({
+      account: 'demo',
+    });
+
+    expect(adhese.getPageLocation()).toBe(location.toString());
+  });
+
+  it('should be able to set the current page location', () => {
+    const adhese = createAdhese({
+      account: 'demo',
+    });
+
+    adhese.setPageLocation('https://example.com');
+
+    expect(adhese.getPageLocation()).toBe('https://example.com');
   });
 });

@@ -1,5 +1,6 @@
 import { type Merge, type UrlString, isUrlString } from '@utils';
-import { logger } from './logger/logger';
+import { logger } from '@core';
+import { type Slot, type SlotOptions, createSlot } from './slot/slot';
 
 export type AdheseOptions = {
   /**
@@ -39,10 +40,13 @@ export type AdheseOptions = {
    * @default false
    */
   debug?: boolean;
+  initialSlots?: ReadonlyArray<Omit<SlotOptions, 'location'>>;
 };
 
-export type AdheseInstance = Merge<AdheseOptions, {
-  pageLocation: URL;
+export type AdheseInstance = Merge<Omit<AdheseOptions, 'pageLocation'>, {
+  getPageLocation(): UrlString;
+  setPageLocation(location: Location | URL | UrlString): void;
+  getSlots(): ReadonlyArray<SlotOptions>;
 }>;
 
 /**
@@ -55,6 +59,7 @@ export function createAdhese({
   pageLocation = location,
   requestType = 'POST',
   debug = false,
+  initialSlots = [],
 }: AdheseOptions): Readonly<AdheseInstance> {
   if (debug) {
     logger.setMinLogLevelThreshold('debug');
@@ -74,11 +79,26 @@ export function createAdhese({
   if (!isUrlString(host) || !isUrlString(poolHost))
     logger.warn('Invalid host or poolHost');
 
+  let currentLocation = pageLocation.toString() as UrlString;
+
+  const slots = new Set<Slot>(initialSlots.map(slot => createSlot({
+    ...slot,
+    location: pageLocation.toString() as UrlString,
+  })));
+
   return {
     account,
     host,
     poolHost,
     requestType,
-    pageLocation: new URL(pageLocation.toString()),
+    getPageLocation(): UrlString {
+      return currentLocation;
+    },
+    setPageLocation(location: Location | URL | UrlString): void {
+      currentLocation = location.toString() as UrlString;
+    },
+    getSlots(): ReadonlyArray<SlotOptions> {
+      return Array.from(slots);
+    },
   };
 }
