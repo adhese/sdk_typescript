@@ -5,6 +5,7 @@ import { createSlot, logger } from '@core';
 vi.mock('../logger/logger', () => ({
   logger: {
     error: vi.fn(),
+    debug: vi.fn(),
   },
 }));
 
@@ -30,21 +31,30 @@ describe('slot', () => {
     });
 
     expect(slot).toEqual({
-      location: location.toString(),
+      location: location.toString() as UrlString,
       format: 'leaderboard',
       containingElementId: 'leaderboard',
-      element,
-    });
+      render: expect.any(Function) as () => HTMLElement | null,
+      getRenderedElement: expect.any(Function) as () => HTMLElement | null,
+    } satisfies typeof slot);
+
+    expect(slot.getRenderedElement()).toBeNull();
+
+    slot.render();
+
+    expect(slot.getRenderedElement()).toBe(element);
   });
 
   it('should log an error when no element is found', () => {
     const spy = vi.spyOn(logger, 'error');
 
-    createSlot({
+    const slot = createSlot({
       location: location.toString() as UrlString,
       format: 'leaderboard',
       containingElementId: 'leaderboard',
     });
+
+    slot.render();
 
     expect(spy).toHaveBeenCalled();
   });

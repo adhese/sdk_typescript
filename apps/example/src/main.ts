@@ -4,5 +4,9 @@ import { createAdhese } from 'core';
   createAdhese({
     account: 'demo',
     debug: true,
+    initialSlots: [{
+      format: 'billboard',
+      containingElementId: 'billboard',
+    }],
   });
 })();

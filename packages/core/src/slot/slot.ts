@@ -22,9 +22,13 @@ export type SlotOptions = {
 
 export type Slot = SlotOptions & {
   /**
-   * The element that contains the slot. Used to render the ad in.
+   * Renders the slot in the containing element.
    */
-  element: HTMLElement | null;
+  render(): HTMLElement | null;
+  /**
+   * Returns the rendered element.
+   */
+  getRenderedElement(): HTMLElement | null;
 };
 
 export function createSlot({
@@ -32,15 +36,36 @@ export function createSlot({
   format,
   containingElementId,
 }: SlotOptions): Readonly<Slot> {
-  const element = document.querySelector<HTMLElement>(`.adunit[data-format="${format}"]#${containingElementId}`);
-
-  if (!element)
-    logger.error(`Could not create slot for format ${format} and ${containingElementId}. Are you sure you have an element with class "adunit" and data-format="${format}" and id="${containingElementId}"?`);
+  let renderedElement: HTMLElement | null = null;
 
   return {
-    element,
     location,
     format,
     containingElementId,
+    render(): HTMLElement | null {
+      renderedElement = document.querySelector<HTMLElement>(`.adunit[data-format="${format}"]#${containingElementId}`);
+
+      if (!renderedElement)
+        logger.error(`Could not create slot for format ${format} and ${containingElementId}. Are you sure you have an element with class "adunit" and data-format="${format}" and id="${containingElementId}"?`);
+
+      // TODO workout how to render the slot
+      if (!renderedElement)
+        return null;
+
+      renderedElement.innerHTML = 'Slot rendered';
+
+      logger.debug('Slot rendered', {
+        renderedElement,
+        location,
+        format,
+        containingElementId,
+        selector: `.adunit[data-format="${format}"]#${containingElementId}`,
+      });
+
+      return renderedElement;
+    },
+    getRenderedElement(): HTMLElement | null {
+      return renderedElement;
+    },
   };
 }

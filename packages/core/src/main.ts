@@ -72,6 +72,7 @@ export function createAdhese({
       poolHost,
       pageLocation: pageLocation.toString(),
       requestType,
+      initialSlots,
     },
   });
 
@@ -84,6 +85,9 @@ export function createAdhese({
     ...slot,
     location: pageLocation.toString() as UrlString,
   })));
+
+  for (const slot of slots)
+    slot.render();
 
   return {
     account,

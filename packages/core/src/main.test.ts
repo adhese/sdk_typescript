@@ -78,6 +78,7 @@ describe('createAdhese', () => {
         poolHost: 'https://pool-demo.adhese.com',
         pageLocation: location.toString(),
         requestType: 'POST',
+        initialSlots: [],
       },
     });
   });

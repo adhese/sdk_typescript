@@ -93,7 +93,7 @@ describe('createLogger', () => {
       '%ctest %cINFO',
       'color: red; font-weight: bold;',
       'font-weight: bold;',
-      'test: foo',
+      'foo',
     );
   });
 
