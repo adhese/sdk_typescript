@@ -1,7 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { UrlString } from '@utils';
-import { logger } from '../logger/logger';
-import { createSlot } from './slot';
+import { createSlot, logger } from '@core';
 
 vi.mock('../logger/logger', () => ({
   logger: {

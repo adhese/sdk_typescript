@@ -1,6 +1,5 @@
 import { type Merge, type UrlString, isUrlString } from '@utils';
-import { logger } from '@core';
-import { type Slot, type SlotOptions, createSlot } from './slot/slot';
+import { type Slot, type SlotOptions, createSlot, logger } from '@core';
 
 export type AdheseOptions = {
   /**
