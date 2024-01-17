@@ -6,13 +6,16 @@ vi.mock('./logger/logger', () =>
   ({
     logger: {
       debug: vi.fn(),
+      warn: vi.fn(),
     },
   }));
 describe('createAdhese', () => {
-  let loggerSpy: MockInstance<[msg: string, ...args: Array<any>], void>;
+  let debugLoggerSpy: MockInstance<[msg: string, ...args: Array<any>], void>;
+  let warnLoggerSpy: MockInstance<[msg: string, ...args: Array<any>], void>;
 
   beforeEach(() => {
-    loggerSpy = vi.spyOn(logger, 'debug');
+    debugLoggerSpy = vi.spyOn(logger, 'debug');
+    warnLoggerSpy = vi.spyOn(logger, 'warn');
   });
 
   afterEach(() => {
@@ -62,8 +65,8 @@ describe('createAdhese', () => {
     });
 
     expect(logger.level).toBe('debug');
-    expect(loggerSpy).toHaveBeenCalledWith('Debug logging enabled');
-    expect(loggerSpy).toHaveBeenCalledWith('Created Adhese SDK instance', {
+    expect(debugLoggerSpy).toHaveBeenCalledWith('Debug logging enabled');
+    expect(debugLoggerSpy).toHaveBeenCalledWith('Created Adhese SDK instance', {
       options: {
         account: 'demo',
         host: 'https://ads-demo.adhese.com',
@@ -72,5 +75,17 @@ describe('createAdhese', () => {
         requestType: 'POST',
       },
     });
+  });
+
+  it('should create a warning when host or poolHost are invalid', () => {
+    createAdhese({
+      account: 'demo',
+      // @ts-expect-error Testing invalid host
+      host: 'invalid',
+      // @ts-expect-error Testing invalid host
+      poolHost: 'invalid',
+    });
+
+    expect(warnLoggerSpy).toHaveBeenCalledWith('Invalid host or poolHost');
   });
 });

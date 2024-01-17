@@ -1,4 +1,4 @@
-import type { Merge } from '@utils';
+import { type Merge, type UrlString, isUrlString } from '@utils';
 import { logger } from './logger/logger';
 
 export type AdheseOptions = {
@@ -12,20 +12,20 @@ export type AdheseOptions = {
    *
    * @default 'https://ads-{{account}}.adhese.com'
    */
-  host?: string;
+  host?: UrlString;
   /**
    * The url that is used to connect to the Adhese pool server. Pass a custom URL if you want to use your own domain for
    * the connection.
    *
    * @default 'https://pool-{{account}}.adhese.com'
    */
-  poolHost?: string;
+  poolHost?: UrlString;
   /**
    * The page location. This is used to determine the current page URL and to determine the current page's domain.
    *
    * @default location
    */
-  pageLocation?: Location | URL;
+  pageLocation?: Location | URL | UrlString;
   /**
    * The request type to use for the Adhese API requests. This can be either `GET` or `POST`. `POST` is the default and
    * offers the most options. `GET` is more limited as it needs pass its data as search parameters but can be used in environments where `POST` requests are not allowed.
@@ -70,6 +70,9 @@ export function createAdhese({
       requestType,
     },
   });
+
+  if (!isUrlString(host) || !isUrlString(poolHost))
+    logger.warn('Invalid host or poolHost');
 
   return {
     account,

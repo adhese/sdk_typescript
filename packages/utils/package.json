@@ -4,6 +4,8 @@
   "private": true,
   "main": "./src/index.ts",
   "scripts": {
+    "dev": "vitest",
+    "test": "vitest --run --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "typecheck": "tsc --noEmit"

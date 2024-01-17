@@ -12,6 +12,12 @@ export default defineConfig({
       fileName: format => `adhese.${format}.js`,
     },
   },
+  resolve: {
+    alias: {
+      // eslint-disable-next-line ts/naming-convention
+      '@utils': `${path.resolve()}/../utils/src`,
+    },
+  },
   test: {
     environment: 'jsdom',
     coverage: {
