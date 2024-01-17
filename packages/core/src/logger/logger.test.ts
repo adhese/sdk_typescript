@@ -6,7 +6,7 @@ describe('logger', () => {
     expect(logger).toBeDefined();
   });
 
-  it('should have a name of Adhese SDK', () => {
-    expect(logger.bindings().name).toBe('Adhese SDK');
+  it('should have a scope of Adhese SDK', () => {
+    expect(logger.scope).toBe('Adhese SDK');
   });
 });

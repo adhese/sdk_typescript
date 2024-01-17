@@ -11,6 +11,8 @@ export default defineConfig({
       '@utils': `${path.resolve()}/../../packages/utils/src`,
       // eslint-disable-next-line ts/naming-convention
       '@core': `${path.resolve()}/../../packages/core/src`,
+      // eslint-disable-next-line ts/naming-convention
+      '@logger': `${path.resolve()}/../../packages/logger/src`,
     },
   },
 });

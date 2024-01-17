@@ -7,6 +7,7 @@
     "moduleResolution": "bundler",
     "paths": {
       "@core": ["packages/core/src/index.ts"],
+      "@logger": ["packages/logger/src/index.ts"],
       "@utils": ["packages/utils/src/index.ts"]
     },
     "resolveJsonModule": true,
@@ -14,6 +15,7 @@
       "vite/client", "vitest"
     ],
     "strict": true,
+    "noImplicitAny": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,

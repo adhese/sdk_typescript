@@ -57,7 +57,7 @@ export function createAdhese({
   debug = false,
 }: AdheseOptions): Readonly<AdheseInstance> {
   if (debug) {
-    logger.level = 'debug';
+    logger.setMinLogLevelThreshold('debug');
     logger.debug('Debug logging enabled');
   }
 

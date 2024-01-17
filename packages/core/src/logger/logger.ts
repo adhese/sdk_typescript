@@ -1,5 +1,5 @@
-import pino from 'pino';
+import { createLogger } from '@logger';
 
-export const logger = pino().child({
-  name: 'Adhese SDK',
+export const logger = createLogger({
+  scope: 'Adhese SDK',
 });

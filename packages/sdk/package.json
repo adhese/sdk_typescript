@@ -17,8 +17,5 @@
     "lint:fix": "eslint --fix .",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "pino": "^8.17.2"
   }
 }

@@ -16,6 +16,8 @@ export default defineConfig({
     alias: {
       // eslint-disable-next-line ts/naming-convention
       '@utils': `${path.resolve()}/../utils/src`,
+      // eslint-disable-next-line ts/naming-convention
+      '@logger': `${path.resolve()}/../logger/src`,
     },
   },
   test: {

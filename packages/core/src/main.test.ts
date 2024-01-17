@@ -2,13 +2,18 @@ import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } fr
 import { createAdhese } from './main';
 import { logger } from './logger/logger';
 
-vi.mock('./logger/logger', () =>
-  ({
+vi.mock('./logger/logger', async (importOriginal) => {
+  const module: { logger: typeof logger } = await importOriginal();
+
+  return ({
     logger: {
       debug: vi.fn(),
       warn: vi.fn(),
-    },
-  }));
+      setMinLogLevelThreshold: vi.fn((level) => { module.logger.setMinLogLevelThreshold(level); }),
+      getMinLogLevelThreshold: vi.fn(() => module.logger.getMinLogLevelThreshold()),
+    } satisfies Partial<typeof logger>,
+  });
+});
 describe('createAdhese', () => {
   let debugLoggerSpy: MockInstance<[msg: string, ...args: Array<any>], void>;
   let warnLoggerSpy: MockInstance<[msg: string, ...args: Array<any>], void>;
@@ -64,7 +69,7 @@ describe('createAdhese', () => {
       debug: true,
     });
 
-    expect(logger.level).toBe('debug');
+    expect(logger.getMinLogLevelThreshold()).toBe('debug');
     expect(debugLoggerSpy).toHaveBeenCalledWith('Debug logging enabled');
     expect(debugLoggerSpy).toHaveBeenCalledWith('Created Adhese SDK instance', {
       options: {
