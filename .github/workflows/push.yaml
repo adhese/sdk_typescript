@@ -1,6 +1,6 @@
 name: On push
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   build:
