@@ -21,11 +21,11 @@ export type AdheseOptions = {
    */
   poolHost?: UrlString;
   /**
-   * The page location. This is used to determine the current page URL and to determine the current page's domain.
+   * The page location. This is used to determine the current page location identifier.
    *
-   * @default location
+   * @default location.pathname
    */
-  pageLocation?: Location | URL | UrlString;
+  pageLocation?: string;
   /**
    * The request type to use for the Adhese API requests. This can be either `GET` or `POST`. `POST` is the default and
    * offers the most options. `GET` is more limited as it needs pass its data as search parameters but can be used in environments where `POST` requests are not allowed.
@@ -43,8 +43,8 @@ export type AdheseOptions = {
 };
 
 export type AdheseInstance = Merge<Omit<AdheseOptions, 'pageLocation'>, {
-  getPageLocation(): UrlString;
-  setPageLocation(location: Location | URL | UrlString): void;
+  getPageLocation(): string;
+  setPageLocation(location: string): void;
   getSlots(): ReadonlyArray<SlotOptions>;
 }>;
 
@@ -55,7 +55,7 @@ export function createAdhese({
   account,
   host = `https://ads-${account}.adhese.com`,
   poolHost = `https://pool-${account}.adhese.com`,
-  pageLocation = location,
+  pageLocation = location.pathname,
   requestType = 'POST',
   debug = false,
   initialSlots = [],
@@ -79,11 +79,11 @@ export function createAdhese({
   if (!isUrlString(host) || !isUrlString(poolHost))
     logger.warn('Invalid host or poolHost');
 
-  let currentLocation = pageLocation.toString() as UrlString;
+  let currentLocation = pageLocation;
 
   const slots = new Set<Slot>(initialSlots.map(slot => createSlot({
     ...slot,
-    location: pageLocation.toString() as UrlString,
+    location: currentLocation,
   })));
 
   for (const slot of slots)
@@ -94,11 +94,11 @@ export function createAdhese({
     host,
     poolHost,
     requestType,
-    getPageLocation(): UrlString {
+    getPageLocation(): string {
       return currentLocation;
     },
-    setPageLocation(location: Location | URL | UrlString): void {
-      currentLocation = location.toString() as UrlString;
+    setPageLocation(location: string): void {
+      currentLocation = location;
     },
     getSlots(): ReadonlyArray<SlotOptions> {
       return Array.from(slots);

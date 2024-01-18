@@ -53,7 +53,7 @@ describe('createAdhese', () => {
       account: 'demo',
       host: 'https://ads.example.com',
       poolHost: 'https://pool.example.com',
-      pageLocation: new URL('https://example.com'),
+      pageLocation: '/foo',
       requestType: 'GET',
     });
 
@@ -76,7 +76,7 @@ describe('createAdhese', () => {
         account: 'demo',
         host: 'https://ads-demo.adhese.com',
         poolHost: 'https://pool-demo.adhese.com',
-        pageLocation: location.toString(),
+        pageLocation: location.pathname,
         requestType: 'POST',
         initialSlots: [],
       },
@@ -122,7 +122,7 @@ describe('createAdhese', () => {
       account: 'demo',
     });
 
-    expect(adhese.getPageLocation()).toBe(location.toString());
+    expect(adhese.getPageLocation()).toBe(location.pathname);
   });
 
   it('should be able to set the current page location', () => {

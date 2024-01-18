@@ -1,11 +1,10 @@
-import type { UrlString } from '@utils';
 import { logger } from '@core';
 
 export type SlotOptions = {
   /**
    * The location of the slot. This is the location that is used to determine the current page URL.
    */
-  location: UrlString;
+  location: string;
   /**
    * The format code of the slot. Used to find the correct element on the page to render the ad in.
    */

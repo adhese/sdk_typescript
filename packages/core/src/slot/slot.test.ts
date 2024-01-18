@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { UrlString } from '@utils';
 import { createSlot, logger } from '@core';
 
 vi.mock('../logger/logger', () => ({
@@ -25,13 +24,13 @@ describe('slot', () => {
     document.body.appendChild(element);
 
     const slot = createSlot({
-      location: location.toString() as UrlString,
+      location: location.pathname,
       format: 'leaderboard',
       containingElementId: 'leaderboard',
     });
 
     expect(slot).toEqual({
-      location: location.toString() as UrlString,
+      location: location.pathname,
       format: 'leaderboard',
       containingElementId: 'leaderboard',
       render: expect.any(Function) as () => HTMLElement | null,
@@ -49,7 +48,7 @@ describe('slot', () => {
     const spy = vi.spyOn(logger, 'error');
 
     const slot = createSlot({
-      location: location.toString() as UrlString,
+      location: location.pathname,
       format: 'leaderboard',
       containingElementId: 'leaderboard',
     });
