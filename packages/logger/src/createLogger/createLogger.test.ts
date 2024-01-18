@@ -7,7 +7,9 @@ describe('createLogger', () => {
   });
 
   it('should initialize a logger', () => {
-    const logger = createLogger();
+    const logger = createLogger({
+      scope: 'test',
+    });
 
     expect(logger).toBeDefined();
   });
@@ -22,6 +24,7 @@ describe('createLogger', () => {
 
   it('should initialize a logger with custom levels', () => {
     const logger = createLogger({
+      scope: 'test',
       logLevels: ['foo', 'bar', 'baz'],
     });
 
@@ -38,6 +41,7 @@ describe('createLogger', () => {
 
   it('should initialize a logger with a custom minimum log level threshold', () => {
     const logger = createLogger({
+      scope: 'test',
       minLogLevelThreshold: 'warn',
     });
 
@@ -45,7 +49,9 @@ describe('createLogger', () => {
   });
 
   it('should initialize a logger and change the minimum log level threshold', () => {
-    const logger = createLogger();
+    const logger = createLogger({
+      scope: 'test',
+    });
 
     logger.setMinLogLevelThreshold('warn');
 
@@ -53,7 +59,9 @@ describe('createLogger', () => {
   });
 
   it('should initialize a logger and reset the minimum log level threshold', () => {
-    const logger = createLogger();
+    const logger = createLogger({
+      scope: 'test',
+    });
 
     logger.setMinLogLevelThreshold('warn');
 
@@ -67,7 +75,7 @@ describe('createLogger', () => {
   it('should initialize a logger below the minimum log level threshold', () => {
     const consoleDebugSpy = vi.spyOn(console, 'debug');
 
-    const logger = createLogger();
+    const logger = createLogger({ scope: 'test' });
 
     logger.debug('foo');
 
@@ -75,29 +83,44 @@ describe('createLogger', () => {
   });
 
   it('should initialize a logger above the minimum log level threshold', () => {
-    const consoleInfoSpy = vi.spyOn(console, 'info');
+    const consoleInfoSpy = vi.spyOn(console, 'log');
 
-    const logger = createLogger();
+    const logger = createLogger({
+      scope: 'test',
+    });
 
     logger.info('foo');
 
-    expect(consoleInfoSpy).toHaveBeenCalledWith('foo');
+    expect(consoleInfoSpy).toHaveBeenCalledWith(
+      '%ctest %cINFO',
+      'color: red; font-weight: bold;',
+      'font-weight: bold;',
+      'foo',
+    );
   });
 
   it('should use `console.log` if the log level does not exist on the console', () => {
     const consoleLogSpy = vi.spyOn(console, 'log');
 
     const logger = createLogger({
+      scope: 'test',
       logLevels: ['foo'],
     });
 
     logger.foo('bar');
 
-    expect(consoleLogSpy).toHaveBeenCalledWith('FOO: bar');
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      '%ctest %cFOO',
+      'color: red; font-weight: bold;',
+      'font-weight: bold;',
+      'bar',
+    );
   });
 
   it('should initialize a logger and get the logs', () => {
-    const logger = createLogger();
+    const logger = createLogger({
+      scope: 'test',
+    });
 
     logger.info('foo');
 
@@ -106,7 +129,9 @@ describe('createLogger', () => {
   });
 
   it('should initialize a logger and reset the logs', () => {
-    const logger = createLogger();
+    const logger = createLogger({
+      scope: 'test',
+    });
 
     logger.info('foo');
 

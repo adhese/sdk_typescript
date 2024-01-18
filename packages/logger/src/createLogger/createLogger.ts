@@ -5,7 +5,7 @@ export type Log<T extends string> = {
   /**
    * The scope of the logger that created this log entry
    */
-  scope?: string;
+  scope: string;
   /**
    * The log level of this log entry
    */
@@ -31,7 +31,7 @@ export type Logger<T extends string> = {
   /**
    * The scope of the logger
    */
-  readonly scope?: string;
+  readonly scope: string;
   /**
    * Set the minimum log level threshold
    */
@@ -58,7 +58,7 @@ export type LoggerOptions<T extends string, U extends T = T> = {
   /**
    * The scope of the logger
    */
-  scope?: string;
+  scope: string;
   /**
    * The log levels of the logger in order of priority
    *
@@ -82,7 +82,7 @@ export function createLogger<T extends string = typeof defaultLogLevels[number],
   scope,
   logLevels = defaultLogLevels as unknown as ReadonlyArray<T>,
   minLogLevelThreshold = logLevels[2] as U,
-}: LoggerOptions<T, U> = {}): Logger<T> {
+}: LoggerOptions<T, U>): Logger<T> {
   const logs = new Set<Log<T>>();
   let currentMinLogLevelThreshold: T = minLogLevelThreshold;
 
@@ -97,13 +97,24 @@ export function createLogger<T extends string = typeof defaultLogLevels[number],
       });
 
       if (index >= logLevels.indexOf(currentMinLogLevelThreshold)) {
-        if ((defaultLogLevels as ReadonlyArray<string>).includes(level)) {
+        if ((['warn', 'error', 'trace'] as ReadonlyArray<string>).includes(level)) {
           // eslint-disable-next-line no-console
-          console[level as typeof defaultLogLevels[number]](...[`${scope ? `${scope} :` : ''}${message}`, attributes].filter(Boolean));
+          console[level as typeof defaultLogLevels[number]](...[
+            `%c${scope}`,
+            'color: red; font-weight: bold;',
+            message,
+            attributes,
+          ].filter(Boolean));
         }
         else {
           // eslint-disable-next-line no-console
-          console.log(...[`${scope ? `${scope} ` : ''}${level.toUpperCase()}: ${message}`, attributes].filter(Boolean));
+          console.log(...[
+            `%c${scope} %c${level.toUpperCase()}`,
+            'color: red; font-weight: bold;',
+            'font-weight: bold;',
+            message,
+            attributes,
+          ].filter(Boolean));
         }
       }
     };
