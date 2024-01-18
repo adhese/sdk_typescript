@@ -3,25 +3,35 @@
   "pipeline": {
     "test": {
       "outputs": ["coverage/**"],
-      "dependsOn": []
+      "dependsOn": [],
+      "outputMode": "new-only"
     },
-    "lint": {},
-    "lint:fix": {},
-    "typecheck": {},
+    "lint": {
+      "outputMode": "errors-only"
+    },
+    "lint:fix": {
+      "outputMode": "errors-only"
+    },
+    "typecheck": {
+      "outputMode": "errors-only"
+    },
     "build": {
       "outputs": ["dist/**", "lib/**"],
-      "dependsOn": ["^build", "lint", "test", "typecheck"]
+      "dependsOn": ["^build", "lint", "test", "typecheck"],
+      "outputMode": "new-only"
     },
     "@adhese/sdk#build": {
       "outputs": ["dist/**", "lib/**"],
-      "dependsOn": ["^build", "lint", "test", "typecheck", "core#build"]
+      "dependsOn": ["^build", "lint", "test", "typecheck", "core#build"],
+      "outputMode": "new-only"
     },
     "dev": {
       "cache": false,
       "persistent": true
     },
     "clean": {
-      "cache": false
+      "cache": false,
+      "outputMode": "errors-only"
     }
   }
 }
