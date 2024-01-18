@@ -35,6 +35,7 @@ describe('slot', () => {
       containingElementId: 'leaderboard',
       render: expect.any(Function) as () => HTMLElement | null,
       getRenderedElement: expect.any(Function) as () => HTMLElement | null,
+      dispose: expect.any(Function) as () => void,
     } satisfies typeof slot);
 
     expect(slot.getRenderedElement()).toBeNull();
@@ -56,5 +57,49 @@ describe('slot', () => {
     slot.render();
 
     expect(spy).toHaveBeenCalled();
+  });
+
+  it('should do nothing when disposing a slot that has not been rendered', () => {
+    const element = document.createElement('div');
+
+    element.classList.add('adunit');
+    element.dataset.format = 'leaderboard';
+    element.id = 'leaderboard';
+
+    document.body.appendChild(element);
+
+    const slot = createSlot({
+      location: location.pathname,
+      format: 'leaderboard',
+      containingElementId: 'leaderboard',
+    });
+
+    slot.dispose();
+
+    expect(slot.getRenderedElement()).toBeNull();
+  });
+
+  it('should dispose a slot', () => {
+    const element = document.createElement('div');
+
+    element.classList.add('adunit');
+    element.dataset.format = 'leaderboard';
+    element.id = 'leaderboard';
+
+    document.body.appendChild(element);
+
+    const slot = createSlot({
+      location: location.pathname,
+      format: 'leaderboard',
+      containingElementId: 'leaderboard',
+    });
+
+    slot.render();
+
+    expect(slot.getRenderedElement()).toBe(element);
+
+    slot.dispose();
+
+    expect(slot.getRenderedElement()).toBeNull();
   });
 });

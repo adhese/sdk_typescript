@@ -130,8 +130,28 @@ describe('createAdhese', () => {
       account: 'demo',
     });
 
-    adhese.setPageLocation('https://example.com');
+    adhese.setPageLocation('/foo');
 
-    expect(adhese.getPageLocation()).toBe('https://example.com');
+    expect(adhese.getPageLocation()).toBe('/foo');
+  });
+
+  it('should be able to add a slot', () => {
+    const adhese = createAdhese({
+      account: 'demo',
+    });
+
+    const element = document.createElement('div');
+    element.id = 'billboard';
+    element.classList.add('adunit');
+    element.dataset.format = 'billboard';
+
+    document.body.appendChild(element);
+
+    adhese.addSlot({
+      format: 'billboard',
+      containingElementId: 'billboard',
+    });
+
+    expect(adhese.getSlots().length).toBe(1);
   });
 });

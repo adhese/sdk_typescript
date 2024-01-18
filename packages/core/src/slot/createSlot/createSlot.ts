@@ -28,8 +28,15 @@ export type Slot = SlotOptions & {
    * Returns the rendered element.
    */
   getRenderedElement(): HTMLElement | null;
+  /**
+   * Disposes the slot and removes it from the DOM and cleans up any event listeners and other side effects.
+   */
+  dispose(): void;
 };
 
+/**
+ * Create a new slot instance.
+ */
 export function createSlot({
   location,
   format,
@@ -65,6 +72,21 @@ export function createSlot({
     },
     getRenderedElement(): HTMLElement | null {
       return renderedElement;
+    },
+    dispose(): void {
+      if (!renderedElement)
+        return;
+
+      renderedElement.innerHTML = '';
+      renderedElement = null;
+
+      logger.debug('Slot disposed', {
+        renderedElement,
+        location,
+        format,
+        containingElementId,
+        selector: `.adunit[data-format="${format}"]#${containingElementId}`,
+      });
     },
   };
 }

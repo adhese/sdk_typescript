@@ -1,5 +1,7 @@
 import { type Merge, type UrlString, isUrlString } from '@utils';
-import { type Slot, type SlotOptions, createSlot, logger } from '@core';
+import { type Slot, type SlotOptions, logger } from '@core';
+
+import { type SlotManager, createSlotManager } from './slot/slotManager/slotManager';
 
 export type AdheseOptions = {
   /**
@@ -43,9 +45,19 @@ export type AdheseOptions = {
 };
 
 export type AdheseInstance = Merge<Omit<AdheseOptions, 'pageLocation'>, {
+  /**
+   * Returns the current page location.
+   */
   getPageLocation(): string;
+  /**
+   * Sets the current page location.
+   */
   setPageLocation(location: string): void;
-  getSlots(): ReadonlyArray<SlotOptions>;
+}> & Merge<SlotManager, {
+  /**
+   * Adds a new slot to the Adhese instance and renders it.
+   */
+  addSlot(slot: Omit<SlotOptions, 'location'>): Readonly<Slot>;
 }>;
 
 /**
@@ -81,13 +93,13 @@ export function createAdhese({
 
   let currentLocation = pageLocation;
 
-  const slots = new Set<Slot>(initialSlots.map(slot => createSlot({
-    ...slot,
+  const {
+    addSlot,
+    ...slotManager
+  } = createSlotManager({
     location: currentLocation,
-  })));
-
-  for (const slot of slots)
-    slot.render();
+    initialSlots,
+  });
 
   return {
     account,
@@ -100,8 +112,12 @@ export function createAdhese({
     setPageLocation(location: string): void {
       currentLocation = location;
     },
-    getSlots(): ReadonlyArray<SlotOptions> {
-      return Array.from(slots);
+    addSlot(slot: Omit<SlotOptions, 'location'>): Readonly<Slot> {
+      return addSlot({
+        ...slot,
+        location: currentLocation,
+      });
     },
+    ...slotManager,
   };
 }
