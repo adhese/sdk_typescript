@@ -1,7 +1,7 @@
 import { type Merge, type UrlString, isUrlString } from '@utils';
 import { type Slot, type SlotOptions, logger } from '@core';
 
-import { type SlotManager, createSlotManager } from './slot/slotManager/slotManager';
+import { type SlotManager, type SlotManagerOptions, createSlotManager } from './slot/slotManager/slotManager';
 
 export type AdheseOptions = {
   /**
@@ -41,8 +41,7 @@ export type AdheseOptions = {
    * @default false
    */
   debug?: boolean;
-  initialSlots?: ReadonlyArray<Omit<SlotOptions, 'location'>>;
-};
+} & Pick<SlotManagerOptions, 'initialSlots'>;
 
 export type AdheseInstance = Merge<Omit<AdheseOptions, 'pageLocation'>, {
   /**
@@ -109,14 +108,14 @@ export function createAdhese({
     getPageLocation(): string {
       return currentLocation;
     },
-    setPageLocation(location: string): void {
+    setPageLocation(location): void {
       currentLocation = location;
     },
-    addSlot(slot: Omit<SlotOptions, 'location'>): Readonly<Slot> {
+    addSlot(slot): Readonly<Slot> {
       return addSlot({
         ...slot,
         location: currentLocation,
-      });
+      } as SlotOptions);
     },
     ...slotManager,
   };

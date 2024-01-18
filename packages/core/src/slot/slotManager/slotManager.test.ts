@@ -12,6 +12,7 @@ describe('slotManager', () => {
     expect(slotManager).toEqual({
       addSlot: expect.any(Function) as (slot: SlotOptions) => Readonly<Slot>,
       getSlots: expect.any(Function) as () => ReadonlyArray<Slot>,
+      findDomSlots: expect.any(Function) as () => ReadonlyArray<Slot>,
     } satisfies typeof slotManager);
   });
 
@@ -37,5 +38,19 @@ describe('slotManager', () => {
       location: location.pathname,
     });
     expect(slotManager.getSlots().length).toBe(1);
+  });
+
+  it('should be able to find all slots in the DOM', () => {
+    document.body.innerHTML = `
+      <div class="adunit" data-format="leaderboard" id="leaderboard"></div>
+      <div class="adunit" data-format="billboard" id="billboard"></div>
+    `;
+    const slotManager = createSlotManager({
+      location: location.pathname,
+      initialSlots: [],
+    });
+    const slots = slotManager.findDomSlots();
+    expect(slots.length).toBe(2);
+    expect(slotManager.getSlots().length).toBe(2);
   });
 });

@@ -10,14 +10,22 @@ export type SlotOptions = {
    */
   format: string;
   /**
-   * The id of the element that contains the slot. Used to find the correct element on the page to render the ad in.
-   */
-  containingElementId: string;
-  /**
    * If we have multiple slots with the same format, we can use this to differentiate between them.
    */
   slot?: string;
-};
+} & ({
+  /**
+   * The id of the element that contains the slot. Used to find the correct element on the page to render the ad in.
+   */
+  containingElementId: string;
+  containingElement?: never;
+} | {
+  /**
+   * The element that contains the slot. Used to find the correct element on the page to render the ad in.
+   */
+  containingElement: HTMLElement;
+  containingElementId?: never;
+});
 
 export type Slot = SlotOptions & {
   /**
@@ -37,19 +45,23 @@ export type Slot = SlotOptions & {
 /**
  * Create a new slot instance.
  */
-export function createSlot({
-  location,
-  format,
-  containingElementId,
-}: SlotOptions): Readonly<Slot> {
-  let renderedElement: HTMLElement | null = null;
+export function createSlot(options: SlotOptions): Readonly<Slot> {
+  const {
+    location,
+    format,
+    containingElementId,
+    containingElement,
+  } = options;
+
+  let renderedElement: HTMLElement | null = containingElement ?? null;
 
   return {
     location,
     format,
     containingElementId,
+    containingElement,
     render(): HTMLElement | null {
-      renderedElement = document.querySelector<HTMLElement>(`.adunit[data-format="${format}"]#${containingElementId}`);
+      renderedElement = containingElement ?? document.querySelector<HTMLElement>(`.adunit[data-format="${format}"]#${containingElementId}`);
 
       if (!renderedElement)
         logger.error(`Could not create slot for format ${format} and ${containingElementId}. Are you sure you have an element with class "adunit" and data-format="${format}" and id="${containingElementId}"?`);
@@ -88,5 +100,5 @@ export function createSlot({
         selector: `.adunit[data-format="${format}"]#${containingElementId}`,
       });
     },
-  };
+  } as Readonly<Slot>;
 }

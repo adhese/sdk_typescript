@@ -1,4 +1,6 @@
 import { type Slot, type SlotOptions, createSlot, logger } from '@core';
+import type { Merge } from '@utils';
+import { findDomSlots } from '../findDomSlots/findDomSlots';
 
 export type SlotManager = {
   /**
@@ -9,7 +11,9 @@ export type SlotManager = {
    * Adds a new slot to the Adhese instance and renders it.
    */
   addSlot(slot: SlotOptions): Readonly<Slot>;
+  findDomSlots(): ReadonlyArray<Slot>;
 };
+
 export type SlotManagerOptions = {
   /**
    * The location of the slot. This is the location that is used to determine the current page URL.
@@ -18,7 +22,9 @@ export type SlotManagerOptions = {
   /**
    * List of initial slots to add to the slot manager.
    */
-  initialSlots?: ReadonlyArray<Omit<SlotOptions, 'location'>>;
+  initialSlots?: ReadonlyArray<Merge<Omit<SlotOptions, 'location' | 'containingElement'>, {
+    containingElementId: string;
+  }>>;
 };
 
 export function createSlotManager({
@@ -53,6 +59,17 @@ export function createSlotManager({
       });
 
       return slot;
+    },
+    findDomSlots(): ReadonlyArray<Slot> {
+      const domSlots = findDomSlots(
+        Array.from(slots),
+        location,
+      );
+
+      for (const slot of domSlots)
+        slots.add(slot);
+
+      return domSlots;
     },
   };
 }
