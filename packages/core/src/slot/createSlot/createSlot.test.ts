@@ -26,23 +26,21 @@ describe('slot', () => {
     const slot = createSlot({
       location: location.pathname,
       format: 'leaderboard',
-      containingElementId: 'leaderboard',
+      containingElement: 'leaderboard',
     });
 
     expect(slot).toEqual({
       location: location.pathname,
       format: 'leaderboard',
-      containingElementId: 'leaderboard',
       render: expect.any(Function) as () => HTMLElement | null,
-      getRenderedElement: expect.any(Function) as () => HTMLElement | null,
-      dispose: expect.any(Function) as () => void,
+      getElement: expect.any(Function) as () => HTMLElement | null,
     } satisfies typeof slot);
 
-    expect(slot.getRenderedElement()).toBeNull();
+    expect(slot.getElement()).toBeNull();
 
     slot.render();
 
-    expect(slot.getRenderedElement()).toBe(element);
+    expect(slot.getElement()).toBe(element);
   });
 
   it('should log an error when no element is found', () => {
@@ -51,55 +49,11 @@ describe('slot', () => {
     const slot = createSlot({
       location: location.pathname,
       format: 'leaderboard',
-      containingElementId: 'leaderboard',
+      containingElement: 'leaderboard',
     });
 
     slot.render();
 
     expect(spy).toHaveBeenCalled();
-  });
-
-  it('should do nothing when disposing a slot that has not been rendered', () => {
-    const element = document.createElement('div');
-
-    element.classList.add('adunit');
-    element.dataset.format = 'leaderboard';
-    element.id = 'leaderboard';
-
-    document.body.appendChild(element);
-
-    const slot = createSlot({
-      location: location.pathname,
-      format: 'leaderboard',
-      containingElementId: 'leaderboard',
-    });
-
-    slot.dispose();
-
-    expect(slot.getRenderedElement()).toBeNull();
-  });
-
-  it('should dispose a slot', () => {
-    const element = document.createElement('div');
-
-    element.classList.add('adunit');
-    element.dataset.format = 'leaderboard';
-    element.id = 'leaderboard';
-
-    document.body.appendChild(element);
-
-    const slot = createSlot({
-      location: location.pathname,
-      format: 'leaderboard',
-      containingElementId: 'leaderboard',
-    });
-
-    slot.render();
-
-    expect(slot.getRenderedElement()).toBe(element);
-
-    slot.dispose();
-
-    expect(slot.getRenderedElement()).toBeNull();
   });
 });

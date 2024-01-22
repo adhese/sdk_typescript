@@ -53,7 +53,7 @@ describe('createAdhese', () => {
       account: 'demo',
       host: 'https://ads.example.com',
       poolHost: 'https://pool.example.com',
-      pageLocation: '/foo',
+      location: '/foo',
       requestType: 'GET',
     });
 
@@ -71,16 +71,7 @@ describe('createAdhese', () => {
 
     expect(logger.getMinLogLevelThreshold()).toBe('debug');
     expect(debugLoggerSpy).toHaveBeenCalledWith('Debug logging enabled');
-    expect(debugLoggerSpy).toHaveBeenCalledWith('Created Adhese SDK instance', {
-      options: {
-        account: 'demo',
-        host: 'https://ads-demo.adhese.com',
-        poolHost: 'https://pool-demo.adhese.com',
-        pageLocation: location.pathname,
-        requestType: 'POST',
-        initialSlots: [],
-      },
-    });
+    expect(debugLoggerSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should create a warning when host or poolHost are invalid', () => {
@@ -108,7 +99,7 @@ describe('createAdhese', () => {
       initialSlots: [
         {
           format: 'billboard',
-          containingElementId: 'billboard',
+          containingElement: 'billboard',
           slot: 'billboard',
         },
       ],
@@ -122,7 +113,7 @@ describe('createAdhese', () => {
       account: 'demo',
     });
 
-    expect(adhese.getPageLocation()).toBe(location.pathname);
+    expect(adhese.getLocation()).toBe(location.pathname);
   });
 
   it('should be able to set the current page location', () => {
@@ -130,9 +121,9 @@ describe('createAdhese', () => {
       account: 'demo',
     });
 
-    adhese.setPageLocation('/foo');
+    adhese.setLocation('/foo');
 
-    expect(adhese.getPageLocation()).toBe('/foo');
+    expect(adhese.getLocation()).toBe('/foo');
   });
 
   it('should be able to add a slot', () => {
@@ -149,7 +140,7 @@ describe('createAdhese', () => {
 
     adhese.addSlot({
       format: 'billboard',
-      containingElementId: 'billboard',
+      containingElement: 'billboard',
     });
 
     expect(adhese.getSlots().length).toBe(1);

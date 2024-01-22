@@ -11,7 +11,7 @@ export function findDomSlots(
 ): ReadonlyArray<Slot> {
   return Array.from(document.querySelectorAll<HTMLElement>('.adunit'))
     .filter((element) => {
-      const isAlreadyActive = activeSlots.some(slot => slot.getRenderedElement() === element);
+      const isAlreadyActive = activeSlots.some(slot => slot.getElement() === element);
       const hasFormat = Boolean(element.dataset.format);
 
       return !isAlreadyActive && hasFormat;

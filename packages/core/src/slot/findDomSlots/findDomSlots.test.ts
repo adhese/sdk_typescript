@@ -20,7 +20,7 @@ describe('findDomSlots', () => {
     const activeSlots = [
       createSlot({
         format: 'leaderboard',
-        containingElementId: 'leaderboard',
+        containingElement: 'leaderboard',
         location: location.pathname,
       }),
     ];

@@ -21,7 +21,7 @@ describe('slotManager', () => {
       location: location.pathname,
       initialSlots: [{
         format: 'leaderboard',
-        containingElementId: 'leaderboard',
+        containingElement: 'leaderboard',
       }],
     });
     expect(slotManager.getSlots().length).toBe(1);
@@ -34,7 +34,7 @@ describe('slotManager', () => {
     });
     slotManager.addSlot({
       format: 'leaderboard',
-      containingElementId: 'leaderboard',
+      containingElement: 'leaderboard',
       location: location.pathname,
     });
     expect(slotManager.getSlots().length).toBe(1);

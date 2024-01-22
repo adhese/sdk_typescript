@@ -6,11 +6,13 @@ import { createAdhese, logger } from 'core';
     debug: true,
     initialSlots: [{
       format: 'billboard',
-      containingElementId: 'billboard',
+      containingElement: 'billboard',
     }],
   });
 
   adhese.findDomSlots();
 
   logger.info('slots', adhese.getSlots());
+
+  window.adhese = adhese;
 })();

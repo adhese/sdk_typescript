@@ -3,8 +3,7 @@
   "pipeline": {
     "test": {
       "outputs": ["coverage/**"],
-      "dependsOn": [],
-      "outputMode": "new-only"
+      "dependsOn": []
     },
     "lint": {
       "outputMode": "errors-only"

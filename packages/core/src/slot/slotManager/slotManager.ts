@@ -11,7 +11,12 @@ export type SlotManager = {
    * Adds a new slot to the Adhese instance and renders it.
    */
   addSlot(slot: SlotOptions): Readonly<Slot>;
-  findDomSlots(): ReadonlyArray<Slot>;
+  /**
+   * Finds all slots in the DOM and adds them to the Adhese instance.
+   */
+  findDomSlots(
+    newLocation?: string,
+  ): ReadonlyArray<Slot>;
 };
 
 export type SlotManagerOptions = {
@@ -23,7 +28,7 @@ export type SlotManagerOptions = {
    * List of initial slots to add to the slot manager.
    */
   initialSlots?: ReadonlyArray<Merge<Omit<SlotOptions, 'location' | 'containingElement'>, {
-    containingElementId: string;
+    containingElement: string;
   }>>;
 };
 
@@ -60,10 +65,12 @@ export function createSlotManager({
 
       return slot;
     },
-    findDomSlots(): ReadonlyArray<Slot> {
+    findDomSlots(
+      newLocation: string = location,
+    ): ReadonlyArray<Slot> {
       const domSlots = findDomSlots(
         Array.from(slots),
-        location,
+        newLocation,
       );
 
       for (const slot of domSlots)
