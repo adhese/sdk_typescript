@@ -25,9 +25,6 @@ describe('findDomSlots', () => {
       }),
     ];
 
-    for (const slot of activeSlots)
-      slot.render();
-
     const slots = findDomSlots(activeSlots);
 
     expect(slots.length).toBe(1);

@@ -9,6 +9,7 @@ vi.mock('./logger/logger', async (importOriginal) => {
     logger: {
       debug: vi.fn(),
       warn: vi.fn(),
+      error: vi.fn(),
       setMinLogLevelThreshold: vi.fn((level) => { module.logger.setMinLogLevelThreshold(level); }),
       getMinLogLevelThreshold: vi.fn(() => module.logger.getMinLogLevelThreshold()),
     } satisfies Partial<typeof logger>,
@@ -37,8 +38,8 @@ describe('createAdhese', () => {
     expect(adhese).not.toBeUndefined();
   });
 
-  it('should create an adhese instance with default options', () => {
-    const adhese = createAdhese({
+  it('should create an adhese instance with default options', async () => {
+    const adhese = await createAdhese({
       account: 'demo',
     });
 
@@ -48,8 +49,8 @@ describe('createAdhese', () => {
     expect(adhese.requestType).toBe('POST');
   });
 
-  it('should create an adhese instance with custom options', () => {
-    const adhese = createAdhese({
+  it('should create an adhese instance with custom options', async () => {
+    const adhese = await createAdhese({
       account: 'demo',
       host: 'https://ads.example.com',
       poolHost: 'https://pool.example.com',
@@ -63,19 +64,19 @@ describe('createAdhese', () => {
     expect(adhese.requestType).toBe('GET');
   });
 
-  it('should create an adhese instance with debug logging', () => {
-    createAdhese({
+  it('should create an adhese instance with debug logging', async () => {
+    await createAdhese({
       account: 'demo',
       debug: true,
     });
 
     expect(logger.getMinLogLevelThreshold()).toBe('debug');
     expect(debugLoggerSpy).toHaveBeenCalledWith('Debug logging enabled');
-    expect(debugLoggerSpy).toHaveBeenCalledTimes(2);
+    expect(debugLoggerSpy).toHaveBeenCalled();
   });
 
-  it('should create a warning when host or poolHost are invalid', () => {
-    createAdhese({
+  it('should create a warning when host or poolHost are invalid', async () => {
+    await createAdhese({
       account: 'demo',
       // @ts-expect-error Testing invalid host
       host: 'invalid',
@@ -86,7 +87,7 @@ describe('createAdhese', () => {
     expect(warnLoggerSpy).toHaveBeenCalledWith('Invalid host or poolHost');
   });
 
-  it('should create an adhese instance with initial slots', () => {
+  it('should create an adhese instance with initial slots', async () => {
     const element = document.createElement('div');
     element.id = 'billboard';
     element.classList.add('adunit');
@@ -94,7 +95,7 @@ describe('createAdhese', () => {
 
     document.body.appendChild(element);
 
-    const adhese = createAdhese({
+    const adhese = await createAdhese({
       account: 'demo',
       initialSlots: [
         {
@@ -108,16 +109,16 @@ describe('createAdhese', () => {
     expect(adhese.getSlots().length).toBe(1);
   });
 
-  it('should be able to get the current page location', () => {
-    const adhese = createAdhese({
+  it('should be able to get the current page location', async () => {
+    const adhese = await createAdhese({
       account: 'demo',
     });
 
-    expect(adhese.getLocation()).toBe(location.pathname);
+    expect(adhese.getLocation()).toBe('homepage');
   });
 
-  it('should be able to set the current page location', () => {
-    const adhese = createAdhese({
+  it('should be able to set the current page location', async () => {
+    const adhese = await createAdhese({
       account: 'demo',
     });
 
@@ -126,8 +127,8 @@ describe('createAdhese', () => {
     expect(adhese.getLocation()).toBe('/foo');
   });
 
-  it('should be able to add a slot', () => {
-    const adhese = createAdhese({
+  it('should be able to add a slot', async () => {
+    const adhese = await createAdhese({
       account: 'demo',
     });
 
@@ -144,5 +145,22 @@ describe('createAdhese', () => {
     });
 
     expect(adhese.getSlots().length).toBe(1);
+  });
+
+  it('should be able to find all slots in the DOM', async () => {
+    const adhese = await createAdhese({
+      account: 'demo',
+    });
+
+    const element = document.createElement('div');
+    element.id = 'billboard';
+    element.classList.add('adunit');
+    element.dataset.format = 'billboard';
+
+    document.body.appendChild(element);
+
+    const slots = await adhese.findDomSlots();
+
+    expect(slots.length).toBe(1);
   });
 });

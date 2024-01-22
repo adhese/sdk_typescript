@@ -10,20 +10,12 @@ export function findDomSlots(
   location: string = window.location.pathname,
 ): ReadonlyArray<Slot> {
   return Array.from(document.querySelectorAll<HTMLElement>('.adunit'))
-    .filter((element) => {
-      const isAlreadyActive = activeSlots.some(slot => slot.getElement() === element);
-      const hasFormat = Boolean(element.dataset.format);
-
-      return !isAlreadyActive && hasFormat;
-    }).map((element) => {
-      const slot = createSlot({
-        format: element.dataset.format as string,
-        location,
-        containingElement: element,
-        slot: element.dataset.slot,
-      });
-      slot.render();
-
-      return slot;
-    });
+    .filter(element => Boolean(element.dataset.format))
+    .map(element => createSlot({
+      format: element.dataset.format as string,
+      location,
+      containingElement: element,
+      slot: element.dataset.slot,
+    }))
+    .filter(slot => !activeSlots.some(activeSlot => activeSlot.getSlotName() === slot.getSlotName()));
 }

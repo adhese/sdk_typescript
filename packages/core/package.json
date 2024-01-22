@@ -10,7 +10,7 @@
     "dist"
   ],
   "scripts": {
-    "dev": "vitest --silent",
+    "dev": "vitest",
     "test": "vitest --run --coverage --silent",
     "build": "vite build",
     "lint": "eslint .",

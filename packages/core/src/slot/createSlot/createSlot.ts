@@ -1,4 +1,5 @@
 import { logger } from '@core';
+import { waitForDomLoad } from '@utils';
 
 export type SlotOptions = {
   /**
@@ -23,11 +24,15 @@ export type Slot = SlotOptions & {
   /**
    * Renders the slot in the containing element.
    */
-  render(): HTMLElement | null;
+  render(content: string): Promise< HTMLElement | null>;
   /**
    * Returns the rendered element.
    */
   getElement(): HTMLElement | null;
+  /**
+   * Returns the name of the slot.
+   */
+  getSlotName(): string;
 };
 
 /**
@@ -46,18 +51,20 @@ export function createSlot(options: SlotOptions): Readonly<Slot> {
   return {
     location,
     format,
-    render(): HTMLElement | null {
-      const selector = `.adunit[data-format="${format}"]${typeof containingElement === 'string' ? `#${containingElement}` : ''}${slot ? `[data-slot="${slot}"]` : ''}`;
-      element = element ?? document.querySelector<HTMLElement>(selector);
+    slot,
+    async render(content): Promise<HTMLElement | null> {
+      await waitForDomLoad();
 
-      if (!element)
-        logger.error(`Could not create slot for format ${format}. Are you sure you have an element with class "adunit" and data-format="${format}"?`);
+      if (!element && typeof containingElement === 'string')
+        element = element ?? document.querySelector<HTMLElement>(`.adunit[data-format="${format}"]#${containingElement}${slot ? `[data-slot="${slot}"]` : ''}`);
 
-      // TODO workout how to render the slot
-      if (!element)
-        return null;
+      if (!element) {
+        const error = `Could not create slot for format ${format}.?`;
+        logger.error(error, options);
+        throw new Error(error);
+      }
 
-      element.innerHTML = 'Slot rendered';
+      element.innerHTML = content;
 
       logger.debug('Slot rendered', {
         renderedElement: element,
@@ -70,6 +77,9 @@ export function createSlot(options: SlotOptions): Readonly<Slot> {
     },
     getElement(): HTMLElement | null {
       return element;
+    },
+    getSlotName(): string {
+      return `${location}${slot ? `${slot}` : ''}-${format}`;
     },
   };
 }

@@ -2,6 +2,7 @@ import { type Merge, type UrlString, isUrlString } from '@utils';
 import { type Slot, type SlotOptions, logger } from '@core';
 
 import { type SlotManager, type SlotManagerOptions, createSlotManager } from './slot/slotManager/slotManager';
+import { requestAds } from './requestAds/requestAds';
 
 export type AdheseOptions = {
   /**
@@ -29,7 +30,7 @@ export type AdheseOptions = {
    */
   location?: string;
   /**
-   * The request type to use for the Adhese API requests. This can be either `GET` or `POST`. `POST` is the default and
+   * The requestAds type to use for the Adhese API requests. This can be either `GET` or `POST`. `POST` is the default and
    * offers the most options. `GET` is more limited as it needs pass its data as search parameters but can be used in environments where `POST` requests are not allowed.
    *
    * @default 'POST'
@@ -60,17 +61,17 @@ export type Adhese = Merge<Omit<AdheseOptions, 'location'>, {
   /**
    * Finds all slots in the DOM and adds them to the Adhese instance.
    */
-  findDomSlots(): ReadonlyArray<Slot>;
+  findDomSlots(): Promise<ReadonlyArray<Slot>>;
 }>;
 
 /**
  * Creates an Adhese instance. This instance is your main entry point to the Adhese API.
  */
-export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
+export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adhese>> {
   const mergedOptions = {
     host: `https://ads-${options.account}.adhese.com`,
     poolHost: `https://pool-${options.account}.adhese.com`,
-    location: window.location.pathname,
+    location: 'homepage',
     requestType: 'POST',
     debug: false,
     initialSlots: [],
@@ -95,6 +96,15 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
     initialSlots: mergedOptions.initialSlots,
   });
 
+  if (slotManager.getSlots().length > 0) {
+    const ads = await requestAds({
+      host: mergedOptions.host,
+      slots: slotManager.getSlots(),
+    });
+
+    await Promise.allSettled(ads.map(ad => slotManager.getSlot(ad.slotName)?.render(ad.tag)));
+  }
+
   return {
     ...mergedOptions,
     ...slotManager,
@@ -110,8 +120,17 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
         location,
       } as SlotOptions);
     },
-    findDomSlots(): ReadonlyArray<Slot> {
-      return slotManager.findDomSlots(location);
+    async findDomSlots(): Promise<ReadonlyArray<Slot>> {
+      const domSlots = slotManager.findDomSlots(location);
+
+      const ads = await requestAds({
+        host: mergedOptions.host,
+        slots: domSlots,
+      });
+
+      await Promise.allSettled(ads.map(ad => slotManager.getSlot(ad.slotName)?.render(ad.tag)));
+
+      return domSlots;
     },
   };
 }
