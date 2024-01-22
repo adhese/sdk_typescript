@@ -14,6 +14,7 @@ vi.mock('./logger/logger', async (importOriginal) => {
     } satisfies Partial<typeof logger>,
   });
 });
+
 describe('createAdhese', () => {
   let debugLoggerSpy: MockInstance<[msg: string, ...args: Array<any>], void>;
   let warnLoggerSpy: MockInstance<[msg: string, ...args: Array<any>], void>;
@@ -25,6 +26,7 @@ describe('createAdhese', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    document.body.innerHTML = '';
   });
 
   it('should create an adhese instance', () => {
@@ -43,7 +45,6 @@ describe('createAdhese', () => {
     expect(adhese.account).toBe('demo');
     expect(adhese.host).toBe('https://ads-demo.adhese.com');
     expect(adhese.poolHost).toBe('https://pool-demo.adhese.com');
-    expect(adhese.pageLocation).toMatchObject(new URL(location.toString()));
     expect(adhese.requestType).toBe('POST');
   });
 
@@ -52,14 +53,13 @@ describe('createAdhese', () => {
       account: 'demo',
       host: 'https://ads.example.com',
       poolHost: 'https://pool.example.com',
-      pageLocation: new URL('https://example.com'),
+      location: '/foo',
       requestType: 'GET',
     });
 
     expect(adhese.account).toBe('demo');
     expect(adhese.host).toBe('https://ads.example.com');
     expect(adhese.poolHost).toBe('https://pool.example.com');
-    expect(adhese.pageLocation).toMatchObject(new URL('https://example.com'));
     expect(adhese.requestType).toBe('GET');
   });
 
@@ -71,15 +71,7 @@ describe('createAdhese', () => {
 
     expect(logger.getMinLogLevelThreshold()).toBe('debug');
     expect(debugLoggerSpy).toHaveBeenCalledWith('Debug logging enabled');
-    expect(debugLoggerSpy).toHaveBeenCalledWith('Created Adhese SDK instance', {
-      options: {
-        account: 'demo',
-        host: 'https://ads-demo.adhese.com',
-        poolHost: 'https://pool-demo.adhese.com',
-        pageLocation: location.toString(),
-        requestType: 'POST',
-      },
-    });
+    expect(debugLoggerSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should create a warning when host or poolHost are invalid', () => {
@@ -92,5 +84,65 @@ describe('createAdhese', () => {
     });
 
     expect(warnLoggerSpy).toHaveBeenCalledWith('Invalid host or poolHost');
+  });
+
+  it('should create an adhese instance with initial slots', () => {
+    const element = document.createElement('div');
+    element.id = 'billboard';
+    element.classList.add('adunit');
+    element.dataset.format = 'billboard';
+
+    document.body.appendChild(element);
+
+    const adhese = createAdhese({
+      account: 'demo',
+      initialSlots: [
+        {
+          format: 'billboard',
+          containingElement: 'billboard',
+          slot: 'billboard',
+        },
+      ],
+    });
+
+    expect(adhese.getSlots().length).toBe(1);
+  });
+
+  it('should be able to get the current page location', () => {
+    const adhese = createAdhese({
+      account: 'demo',
+    });
+
+    expect(adhese.getLocation()).toBe(location.pathname);
+  });
+
+  it('should be able to set the current page location', () => {
+    const adhese = createAdhese({
+      account: 'demo',
+    });
+
+    adhese.setLocation('/foo');
+
+    expect(adhese.getLocation()).toBe('/foo');
+  });
+
+  it('should be able to add a slot', () => {
+    const adhese = createAdhese({
+      account: 'demo',
+    });
+
+    const element = document.createElement('div');
+    element.id = 'billboard';
+    element.classList.add('adunit');
+    element.dataset.format = 'billboard';
+
+    document.body.appendChild(element);
+
+    adhese.addSlot({
+      format: 'billboard',
+      containingElement: 'billboard',
+    });
+
+    expect(adhese.getSlots().length).toBe(1);
   });
 });

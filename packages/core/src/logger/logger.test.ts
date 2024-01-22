@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { logger } from './logger';
+import { logger } from '@core';
 
 describe('logger', () => {
   it('should be defined', () => {

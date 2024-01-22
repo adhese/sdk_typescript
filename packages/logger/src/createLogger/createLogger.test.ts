@@ -85,9 +85,7 @@ describe('createLogger', () => {
   it('should initialize a logger above the minimum log level threshold', () => {
     const consoleInfoSpy = vi.spyOn(console, 'log');
 
-    const logger = createLogger({
-      scope: 'test',
-    });
+    const logger = createLogger({ scope: 'test' });
 
     logger.info('foo');
 

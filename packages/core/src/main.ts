@@ -1,5 +1,7 @@
 import { type Merge, type UrlString, isUrlString } from '@utils';
-import { logger } from './logger/logger';
+import { type Slot, type SlotOptions, logger } from '@core';
+
+import { type SlotManager, type SlotManagerOptions, createSlotManager } from './slot/slotManager/slotManager';
 
 export type AdheseOptions = {
   /**
@@ -21,11 +23,11 @@ export type AdheseOptions = {
    */
   poolHost?: UrlString;
   /**
-   * The page location. This is used to determine the current page URL and to determine the current page's domain.
+   * The page location. This is used to determine the current page location identifier.
    *
-   * @default location
+   * @default location.pathname
    */
-  pageLocation?: Location | URL | UrlString;
+  location?: string;
   /**
    * The request type to use for the Adhese API requests. This can be either `GET` or `POST`. `POST` is the default and
    * offers the most options. `GET` is more limited as it needs pass its data as search parameters but can be used in environments where `POST` requests are not allowed.
@@ -39,46 +41,77 @@ export type AdheseOptions = {
    * @default false
    */
   debug?: boolean;
-};
+} & Pick<SlotManagerOptions, 'initialSlots'>;
 
-export type AdheseInstance = Merge<AdheseOptions, {
-  pageLocation: URL;
+export type Adhese = Merge<Omit<AdheseOptions, 'location'>, {
+  /**
+   * Returns the current page location.
+   */
+  getLocation(): string;
+  /**
+   * Sets the current page location.
+   */
+  setLocation(location: string): void;
+}> & Merge<SlotManager, {
+  /**
+   * Adds a new slot to the Adhese instance and renders it.
+   */
+  addSlot(slot: Omit<SlotOptions, 'location'>): Readonly<Slot>;
+  /**
+   * Finds all slots in the DOM and adds them to the Adhese instance.
+   */
+  findDomSlots(): ReadonlyArray<Slot>;
 }>;
 
 /**
  * Creates an Adhese instance. This instance is your main entry point to the Adhese API.
  */
-export function createAdhese({
-  account,
-  host = `https://ads-${account}.adhese.com`,
-  poolHost = `https://pool-${account}.adhese.com`,
-  pageLocation = location,
-  requestType = 'POST',
-  debug = false,
-}: AdheseOptions): Readonly<AdheseInstance> {
-  if (debug) {
+export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
+  const mergedOptions = {
+    host: `https://ads-${options.account}.adhese.com`,
+    poolHost: `https://pool-${options.account}.adhese.com`,
+    location: window.location.pathname,
+    requestType: 'POST',
+    debug: false,
+    initialSlots: [],
+    ...options,
+  } satisfies AdheseOptions;
+  if (mergedOptions.debug) {
     logger.setMinLogLevelThreshold('debug');
     logger.debug('Debug logging enabled');
   }
 
   logger.debug('Created Adhese SDK instance', {
-    options: {
-      account,
-      host,
-      poolHost,
-      pageLocation: pageLocation.toString(),
-      requestType,
-    },
+    options,
   });
 
-  if (!isUrlString(host) || !isUrlString(poolHost))
+  if (!isUrlString(mergedOptions.host) || !isUrlString(mergedOptions.poolHost))
     logger.warn('Invalid host or poolHost');
 
+  let { location } = mergedOptions;
+
+  const slotManager = createSlotManager({
+    location,
+    initialSlots: mergedOptions.initialSlots,
+  });
+
   return {
-    account,
-    host,
-    poolHost,
-    requestType,
-    pageLocation: new URL(pageLocation.toString()),
+    ...mergedOptions,
+    ...slotManager,
+    getLocation(): string {
+      return location;
+    },
+    setLocation(newLocation): void {
+      location = newLocation;
+    },
+    addSlot(slot): Readonly<Slot> {
+      return slotManager.addSlot({
+        ...slot,
+        location,
+      } as SlotOptions);
+    },
+    findDomSlots(): ReadonlyArray<Slot> {
+      return slotManager.findDomSlots(location);
+    },
   };
 }

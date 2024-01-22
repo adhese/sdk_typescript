@@ -18,6 +18,8 @@ export default defineConfig({
       '@utils': `${path.resolve()}/../utils/src`,
       // eslint-disable-next-line ts/naming-convention
       '@logger': `${path.resolve()}/../logger/src`,
+      // eslint-disable-next-line ts/naming-convention
+      '@core': `${path.resolve()}/src`,
     },
   },
   test: {

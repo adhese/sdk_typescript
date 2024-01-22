@@ -1,8 +1,18 @@
-import { createAdhese } from 'core';
+import { createAdhese, logger } from 'core';
 
 (function (): void {
-  createAdhese({
+  const adhese = createAdhese({
     account: 'demo',
     debug: true,
+    initialSlots: [{
+      format: 'billboard',
+      containingElement: 'billboard',
+    }],
   });
+
+  adhese.findDomSlots();
+
+  logger.info('slots', adhese.getSlots());
+
+  window.adhese = adhese;
 })();
