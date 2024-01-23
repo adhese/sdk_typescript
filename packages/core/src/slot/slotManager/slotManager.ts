@@ -16,7 +16,7 @@ export type SlotManager = {
    */
   findDomSlots(
     newLocation?: string,
-  ): ReadonlyArray<Slot>;
+  ): Promise<ReadonlyArray<Slot>>;
   /**
    * Returns the slot with the given name.
    */
@@ -65,10 +65,10 @@ export function createSlotManager({
 
       return slot;
     },
-    findDomSlots(
+    async findDomSlots(
       newLocation: string = location,
-    ): ReadonlyArray<Slot> {
-      const domSlots = findDomSlots(
+    ): Promise<ReadonlyArray<Slot>> {
+      const domSlots = await findDomSlots(
         Array.from(slots).map(([, slot]) => slot),
         newLocation,
       );

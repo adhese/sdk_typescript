@@ -42,6 +42,12 @@ export type AdheseOptions = {
    * @default false
    */
   debug?: boolean;
+  /**
+   * Find all slots in the DOM and add them to the Adhese instance during initialization.
+   *
+   * @default false
+   */
+  findDomSlotsOnLoad?: boolean;
 } & Pick<SlotManagerOptions, 'initialSlots'>;
 
 export type Adhese = Merge<Omit<AdheseOptions, 'location'>, {
@@ -75,6 +81,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     requestType: 'POST',
     debug: false,
     initialSlots: [],
+    findDomSlotsOnLoad: false,
     ...options,
   } satisfies AdheseOptions;
   if (mergedOptions.debug) {
@@ -95,6 +102,8 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     location,
     initialSlots: mergedOptions.initialSlots,
   });
+  if (mergedOptions.findDomSlotsOnLoad)
+    await slotManager.findDomSlots();
 
   if (slotManager.getSlots().length > 0) {
     const ads = await requestAds({
@@ -121,7 +130,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
       } as SlotOptions);
     },
     async findDomSlots(): Promise<ReadonlyArray<Slot>> {
-      const domSlots = slotManager.findDomSlots(location);
+      const domSlots = await slotManager.findDomSlots(location);
 
       const ads = await requestAds({
         host: mergedOptions.host,

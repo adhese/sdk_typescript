@@ -1,7 +1,7 @@
-import { createAdhese, logger } from 'core';
+import { createAdhese } from 'core';
 
 async function app(): Promise<void> {
-  const adhese = await createAdhese({
+  window.adhese = await createAdhese({
     account: 'demo',
     debug: true,
     initialSlots: [{
@@ -9,13 +9,8 @@ async function app(): Promise<void> {
       containingElement: 'skyscraper',
     }],
     location: '_sdk_example_',
+    findDomSlotsOnLoad: true,
   });
-
-  await adhese.findDomSlots();
-
-  logger.info('slots', adhese.getSlots());
-
-  window.adhese = adhese;
 }
 
 app().catch((error) => {

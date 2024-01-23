@@ -17,5 +17,8 @@
     "lint:fix": "eslint --fix .",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
   }
 }

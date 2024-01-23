@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { UrlString } from '@utils';
 import { createSlot } from '@core';
-import { requestAd, requestAds } from './requestAds';
+import { type AdResponse, requestAd, requestAds } from './requestAds';
 
 describe('requestAds', () => {
   afterEach(() => {
@@ -15,8 +15,12 @@ describe('requestAds', () => {
       json(): Promise<unknown> {
         return new Promise((resolve) => {
           resolve([{
+            adType: 'foo',
+            // eslint-disable-next-line ts/naming-convention
+            slotID: 'bar',
+            slotName: 'baz',
             tag: '<a>foo</a>',
-          }]);
+          }] satisfies ReadonlyArray<AdResponse>);
         });
       },
     })));
@@ -74,8 +78,12 @@ describe('requestAd', () => {
       json(): Promise<unknown> {
         return new Promise((resolve) => {
           resolve([{
+            adType: 'foo',
+            // eslint-disable-next-line ts/naming-convention
+            slotID: 'bar',
+            slotName: 'baz',
             tag: '<a>foo</a>',
-          }]);
+          }] satisfies ReadonlyArray<AdResponse>);
         });
       },
     })));
