@@ -1,18 +1,18 @@
-import { createAdhese, logger } from 'core';
+import { createAdhese } from 'core';
 
-(function (): void {
-  const adhese = createAdhese({
+async function app(): Promise<void> {
+  window.adhese = await createAdhese({
     account: 'demo',
     debug: true,
     initialSlots: [{
-      format: 'billboard',
-      containingElement: 'billboard',
+      format: 'skyscraper',
+      containingElement: 'skyscraper',
     }],
+    location: '_sdk_example_',
+    findDomSlotsOnLoad: true,
   });
+}
 
-  adhese.findDomSlots();
-
-  logger.info('slots', adhese.getSlots());
-
-  window.adhese = adhese;
-})();
+app().catch((error) => {
+  console.error(error);
+});

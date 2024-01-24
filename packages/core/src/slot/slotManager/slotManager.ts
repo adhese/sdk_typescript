@@ -1,12 +1,12 @@
-import { type Slot, type SlotOptions, createSlot, logger } from '@core';
 import type { Merge } from '@utils';
+import { type Slot, type SlotOptions, createSlot, logger } from '@core';
 import { findDomSlots } from '../findDomSlots/findDomSlots';
 
 export type SlotManager = {
   /**
    * Returns all slots that are currently registered and rendered.
    */
-  getSlots(): ReadonlyArray<SlotOptions>;
+  getSlots(): ReadonlyArray<Slot>;
   /**
    * Adds a new slot to the Adhese instance and renders it.
    */
@@ -16,7 +16,11 @@ export type SlotManager = {
    */
   findDomSlots(
     newLocation?: string,
-  ): ReadonlyArray<Slot>;
+  ): Promise<ReadonlyArray<Slot>>;
+  /**
+   * Returns the slot with the given name.
+   */
+  getSlot(name: string): Slot | undefined;
 };
 
 export type SlotManagerOptions = {
@@ -36,17 +40,14 @@ export function createSlotManager({
   location,
   initialSlots = [],
 }: SlotManagerOptions): Readonly<SlotManager> {
-  const slots = new Set<Slot>(initialSlots.map(slot => createSlot({
+  const slots = new Map<string, Slot>(initialSlots.map(slot => createSlot({
     ...slot,
     location,
-  })));
-
-  for (const slot of slots)
-    slot.render();
+  })).map(slot => [slot.getSlotName(), slot]));
 
   return {
-    getSlots(): ReadonlyArray<SlotOptions> {
-      const slotList = Array.from(slots);
+    getSlots(): ReadonlyArray<Slot> {
+      const slotList = Array.from(slots).map(([, slot]) => slot);
       logger.debug('Getting slots', {
         slots: slotList,
       });
@@ -55,8 +56,7 @@ export function createSlotManager({
     addSlot(options: SlotOptions): Readonly<Slot> {
       const slot = createSlot(options);
 
-      slots.add(slot);
-      slot.render();
+      slots.set(slot.getSlotName(), slot);
 
       logger.debug('Slot added', {
         slot,
@@ -65,18 +65,21 @@ export function createSlotManager({
 
       return slot;
     },
-    findDomSlots(
+    async findDomSlots(
       newLocation: string = location,
-    ): ReadonlyArray<Slot> {
-      const domSlots = findDomSlots(
-        Array.from(slots),
+    ): Promise<ReadonlyArray<Slot>> {
+      const domSlots = await findDomSlots(
+        Array.from(slots).map(([, slot]) => slot),
         newLocation,
       );
 
       for (const slot of domSlots)
-        slots.add(slot);
+        slots.set(slot.getSlotName(), slot);
 
       return domSlots;
+    },
+    getSlot(name: string): Slot | undefined {
+      return slots.get(name);
     },
   };
 }
