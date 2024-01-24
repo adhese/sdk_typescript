@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { UrlString } from '@utils';
 import { createSlot } from '@core';
-import { type AdResponse, requestAd, requestAds } from './requestAds';
+import { requestAd, requestAds } from './requestAds';
+import { type AdResponse, adSchema, dateLike, numberLike, urlLike } from './requestAds.schema';
 
 describe('requestAds', () => {
   afterEach(() => {
@@ -97,5 +98,80 @@ describe('requestAd', () => {
     });
 
     expect(ad).toBeDefined();
+  });
+});
+
+describe('schema', () => {
+  it('should be able to validate a valid response', () => {
+    const response = {
+      adType: 'foo',
+      // eslint-disable-next-line ts/naming-convention
+      slotID: 'bar',
+      slotName: 'baz',
+      tag: '<a>foo</a>',
+    } satisfies AdResponse;
+
+    const result = adSchema.parse(response);
+
+    expect(result).toBeDefined();
+  });
+
+  it('should be able to reject an invalid response', () => {
+    const response = {
+      adType: 'foo',
+      // eslint-disable-next-line ts/naming-convention
+      slotID: 'bar',
+      slotName: 'baz',
+      tag: '<a>foo</a>',
+      // @ts-expect-error Testing invalid response
+      invalid: 'invalid',
+    } satisfies AdResponse;
+
+    try {
+      adSchema.parse(response);
+    }
+    catch (error) {
+      expect(error).toBeInstanceOf(Error);
+    }
+  });
+
+  it('should be able to handle a recursively nested response', () => {
+    const response = {
+
+      adType: 'foo',
+      // eslint-disable-next-line ts/naming-convention
+      slotID: 'bar',
+      slotName: 'baz',
+      tag: '<a>foo</a>',
+      additionalCreatives: [{
+        adType: 'foo',
+        // eslint-disable-next-line ts/naming-convention
+        slotID: 'bar',
+        slotName: 'baz',
+        tag: '<a>foo</a>',
+      }],
+    } satisfies AdResponse;
+
+    const result = adSchema.parse(response);
+
+    expect(result).toBeDefined();
+  });
+
+  it('should be able to validate a number like string', () => {
+    expect(numberLike.parse('123')).toBe(123);
+    expect(numberLike.parse('')).toBeUndefined();
+  });
+
+  it('should be able to validate and transform a url string', () => {
+    expect(urlLike.parse('https://foo.com')).toBeInstanceOf(URL);
+    expect(urlLike.parse('')).toBeUndefined();
+  });
+
+  it('should be able to validate and transform a date string', () => {
+    expect(dateLike.parse('2021-01-01')).toBeInstanceOf(Date);
+    expect(dateLike.parse(Date.now())).toBeInstanceOf(Date);
+
+    expect(dateLike.parse('')).toBeUndefined();
+    expect(dateLike.parse('foo')).toBeUndefined();
   });
 });

@@ -109,6 +109,22 @@ describe('createAdhese', () => {
     expect(adhese.getSlots().length).toBe(1);
   });
 
+  it('should create an adhese instance with findDomSlotsOnLoad', async () => {
+    const element = document.createElement('div');
+    element.id = 'billboard';
+    element.classList.add('adunit');
+    element.dataset.format = 'billboard';
+
+    document.body.appendChild(element);
+
+    const adhese = await createAdhese({
+      account: 'demo',
+      findDomSlotsOnLoad: true,
+    });
+
+    expect(adhese.getSlots().length).toBe(1);
+  });
+
   it('should be able to get the current page location', async () => {
     const adhese = await createAdhese({
       account: 'demo',

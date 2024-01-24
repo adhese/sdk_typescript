@@ -1,8 +1,7 @@
 import { type Merge, type UrlString, isUrlString } from '@utils';
-import { type Slot, type SlotOptions, logger } from '@core';
+import { type Slot, type SlotOptions, logger, requestAds } from '@core';
 
 import { type SlotManager, type SlotManagerOptions, createSlotManager } from './slot/slotManager/slotManager';
-import { requestAds } from './requestAds/requestAds';
 
 export type AdheseOptions = {
   /**
