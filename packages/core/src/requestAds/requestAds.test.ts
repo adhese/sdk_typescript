@@ -10,7 +10,7 @@ describe('requestAds', () => {
     vi.restoreAllMocks();
   });
 
-  it('should be able to requestAds an ad', async () => {
+  it('should be able to request multiple ads', async () => {
     vi.stubGlobal('fetch', vi.fn(() => ({
       ok: true,
       json(): Promise<unknown> {
@@ -20,6 +20,12 @@ describe('requestAds', () => {
             // eslint-disable-next-line ts/naming-convention
             slotID: 'bar',
             slotName: 'baz',
+            tag: '<a>foo</a>',
+          }, {
+            adType: 'foo2',
+            // eslint-disable-next-line ts/naming-convention
+            slotID: 'bar2',
+            slotName: 'baz2',
             tag: '<a>foo</a>',
           }] satisfies ReadonlyArray<AdResponse>);
         });
@@ -35,11 +41,60 @@ describe('requestAds', () => {
             location: 'bar',
             slot: 'baz',
           }),
+          createSlot({
+            format: 'foo2',
+            location: 'bar2',
+            slot: 'baz2',
+          }),
         ],
       },
     );
 
-    expect(ads.length).toBe(1);
+    expect(ads.length).toBe(2);
+  });
+
+  it('should be able to request ads with the GET method', async () => {
+    vi.stubGlobal('fetch', vi.fn(() => ({
+      ok: true,
+      json(): Promise<unknown> {
+        return new Promise((resolve) => {
+          resolve([{
+            adType: 'foo',
+            // eslint-disable-next-line ts/naming-convention
+            slotID: 'bar',
+            slotName: 'baz',
+            tag: '<a>foo</a>',
+          }, {
+            adType: 'foo2',
+            // eslint-disable-next-line ts/naming-convention
+            slotID: 'bar2',
+            slotName: 'baz2',
+            tag: '<a>foo</a>',
+          }] satisfies ReadonlyArray<AdResponse>);
+        });
+      },
+    })));
+
+    const ads = await requestAds(
+      {
+        host: 'https:foo.bar' as UrlString,
+        slots: [
+          createSlot({
+            format: 'foo',
+            location: 'bar',
+            slot: 'baz',
+          }),
+          createSlot({
+            format: 'foo2',
+            location: 'bar2',
+            slot: 'baz2',
+          }),
+        ],
+        method: 'GET',
+      },
+    );
+
+    expect(ads.length).toBe(2);
   });
 
   it('should throw an error when requestAds fails', async () => {

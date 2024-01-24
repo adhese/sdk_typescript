@@ -11,39 +11,25 @@ export type AdRequestOptions = {
    * Host that you want to fetch the ads from
    */
   host: UrlString;
+  /**
+   * Request method to use for the requestAds
+   *
+   * @default 'POST'
+   */
+  method?: 'GET' | 'POST' | 'get' | 'post';
 };
 
 /**
  * Request multiple ads at once from the API
  */
 export async function requestAds({
-  host,
+  method = 'POST',
   ...options
 }: AdRequestOptions): Promise<ReadonlyArray<Ad>> {
-  const payload = {
-    ...options,
-    slots: options.slots.map(slot => ({
-      slotname: slot.getSlotName(),
-    })),
-  } satisfies {
-    slots: ReadonlyArray<{
-      slotname: string;
-    }>;
-  };
-
   try {
-    logger.debug('Requesting ad', payload);
-
-    const endpoint = `${new URL(host).href}json`;
-
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      body: JSON.stringify(payload),
-      headers: {
-        // eslint-disable-next-line ts/naming-convention
-        'Content-Type': 'application/json',
-      },
-    });
+    const response = method?.toUpperCase() === 'POST'
+      ? await requestWithPost(options)
+      : await requestWithGet(options);
 
     logger.debug('Received response', response);
 
@@ -77,4 +63,39 @@ export async function requestAd({
   });
 
   return ad;
+}
+
+function requestWithPost({
+  host,
+  ...options
+}: Omit<AdRequestOptions, 'method'>): Promise<Response> {
+  const payload = {
+    ...options,
+    slots: options.slots.map(slot => ({
+      slotname: slot.getSlotName(),
+    })),
+  } satisfies {
+    slots: ReadonlyArray<{
+      slotname: string;
+    }>;
+  };
+
+  return fetch(`${new URL(host).href}json`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+    headers: {
+      // eslint-disable-next-line ts/naming-convention
+      'Content-Type': 'application/json',
+    },
+  });
+}
+
+async function requestWithGet(options: Omit<AdRequestOptions, 'method'>): Promise<Response> {
+  return fetch(new URL(`${options.host}/json/sl${options.slots.map(slot => slot.getSlotName()).join('/sl')}`), {
+    method: 'GET',
+    headers: {
+      // eslint-disable-next-line ts/naming-convention
+      'Content-Type': 'application/json',
+    },
+  });
 }

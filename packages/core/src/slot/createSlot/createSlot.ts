@@ -1,4 +1,4 @@
-import { logger } from '@core';
+import { type Ad, logger } from '@core';
 import { waitForDomLoad } from '@utils';
 
 export type SlotOptions = {
@@ -24,7 +24,7 @@ export type Slot = SlotOptions & {
   /**
    * Renders the slot in the containing element.
    */
-  render(content: string): Promise< HTMLElement | null>;
+  render(ad: Ad): Promise< HTMLElement | null>;
   /**
    * Returns the rendered element.
    */
@@ -33,6 +33,10 @@ export type Slot = SlotOptions & {
    * Returns the name of the slot.
    */
   getSlotName(): string;
+  /**
+   * Returns the ad that is currently rendered in the slot.
+   */
+  getAd(): Ad | null;
 };
 
 /**
@@ -48,11 +52,13 @@ export function createSlot(options: SlotOptions): Readonly<Slot> {
 
   let element: HTMLElement | null = typeof containingElement === 'string' || !containingElement ? null : containingElement;
 
+  let ad: Ad | null = null;
+
   return {
     location,
     format,
     slot,
-    async render(content): Promise<HTMLElement | null> {
+    async render(adToRender): Promise<HTMLElement | null> {
       await waitForDomLoad();
 
       if (!element && typeof containingElement === 'string')
@@ -64,7 +70,8 @@ export function createSlot(options: SlotOptions): Readonly<Slot> {
         throw new Error(error);
       }
 
-      element.innerHTML = content;
+      element.innerHTML = adToRender.tag;
+      ad = adToRender;
 
       logger.debug('Slot rendered', {
         renderedElement: element,
@@ -80,6 +87,9 @@ export function createSlot(options: SlotOptions): Readonly<Slot> {
     },
     getSlotName(): string {
       return `${location}${slot ? `${slot}` : ''}-${format}`;
+    },
+    getAd(): Ad | null {
+      return ad;
     },
   };
 }

@@ -108,9 +108,10 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     const ads = await requestAds({
       host: mergedOptions.host,
       slots: slotManager.getSlots(),
+      method: mergedOptions.requestType,
     });
 
-    await Promise.allSettled(ads.map(ad => slotManager.getSlot(ad.slotName)?.render(ad.tag)));
+    await Promise.allSettled(ads.map(ad => slotManager.getSlot(ad.slotName)?.render(ad)));
   }
 
   return {
@@ -134,9 +135,10 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
       const ads = await requestAds({
         host: mergedOptions.host,
         slots: domSlots,
+        method: mergedOptions.requestType,
       });
 
-      await Promise.allSettled(ads.map(ad => slotManager.getSlot(ad.slotName)?.render(ad.tag)));
+      await Promise.allSettled(ads.map(ad => slotManager.getSlot(ad.slotName)?.render(ad)));
 
       return domSlots;
     },

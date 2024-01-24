@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { createSlot } from '@core';
+import { type Ad, createSlot } from '@core';
 
 vi.mock('../logger/logger', () => ({
   logger: {
@@ -35,10 +35,17 @@ describe('slot', () => {
       render: expect.any(Function) as () => Promise<HTMLElement | null>,
       getElement: expect.any(Function) as () => HTMLElement | null,
       getSlotName: expect.any(Function) as () => string,
+      getAd: expect.any(Function) as () => Ad | null,
     } satisfies typeof slot);
 
     expect(slot.getElement()).toBeNull();
-    await slot.render('<div>foo</div>');
+    await slot.render({
+      tag: '<div>foo</div>',
+      // eslint-disable-next-line ts/naming-convention
+      slotID: 'bar',
+      slotName: 'baz',
+      adType: 'foo',
+    });
     expect(slot.getElement()).toBe(element);
   });
 
@@ -66,11 +73,19 @@ describe('slot', () => {
       render: expect.any(Function) as () => Promise<HTMLElement | null>,
       getElement: expect.any(Function) as () => HTMLElement | null,
       getSlotName: expect.any(Function) as () => string,
+      getAd: expect.any(Function) as () => Ad | null,
     } satisfies typeof slot);
 
     expect(slot.getElement()).toBeNull();
-    await slot.render('<div>foo</div>');
+    await slot.render({
+      tag: '<div>foo</div>',
+      // eslint-disable-next-line ts/naming-convention
+      slotID: 'bar',
+      slotName: 'baz',
+      adType: 'foo',
+    });
     expect(slot.getElement()).toBe(element);
+    expect(slot.getAd()).toBeDefined();
   });
 
   it('should log an error when no element is found', async () => {
@@ -81,7 +96,13 @@ describe('slot', () => {
     });
 
     try {
-      await slot.render('<div>foo</div>');
+      await slot.render({
+        tag: '<div>foo</div>',
+        // eslint-disable-next-line ts/naming-convention
+        slotID: 'bar',
+        slotName: 'baz',
+        adType: 'foo',
+      });
     }
     catch (error) {
       expect(error).toBeInstanceOf(Error);
@@ -123,7 +144,13 @@ describe('slot', () => {
       containingElement: 'leaderboard',
     });
 
-    await slot.render('<div>foo</div>');
+    await slot.render({
+      tag: '<div>foo</div>',
+      // eslint-disable-next-line ts/naming-convention
+      slotID: 'bar',
+      slotName: 'baz',
+      adType: 'foo',
+    });
 
     expect(slot.getElement()).toBe(element);
   });
