@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "skipLibCheck": true
+  },
+  "include": [".vitepress/**/*", "/**/*"],
+  "exclude": [
+    "node_modules"
+  ]
+}

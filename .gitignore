@@ -13,6 +13,7 @@ lib
 coverage
 *.local
 .turbo
+cache
 
 # Editor directories and files
 .vscode/*

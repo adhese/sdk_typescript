@@ -1,0 +1,17 @@
+{
+  "name": "docs",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vitepress dev --port 8080",
+    "build": "vitepress build",
+    "preview": "vitepress preview",
+    "lint": "eslint . --ignore-pattern **/*.md/**/*",
+    "lint:fix": "eslint --fix . --ignore-pattern **/*.md/**/*",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "vitepress": "^1.0.0-rc.40",
+    "vue": "^3.4.15"
+  }
+}

@@ -5,6 +5,8 @@
     "apps/**/*",
     "eslint.config.js",
     "**/vite.config.ts",
-    "lint-staged.config.js"
+    "lint-staged.config.js",
+    "**/.vitepress/**/*",
+    "**/*.md"
   ]
 }

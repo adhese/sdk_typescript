@@ -8,7 +8,7 @@ export default {
 
     return [
       workspaceFiles.length > 0 && `turbo lint:fix -- ${workspaceFiles.join(' ')}`,
-      nonWorkspaceFiles.length > 0 && `eslint ${nonWorkspaceFiles.join(' ')} --ignore-pattern ${workspaces.join(' ')} --fix`,
+      nonWorkspaceFiles.length > 0 && `eslint ${nonWorkspaceFiles.join(' ')} ${workspaces.map(workspace => `--ignore-pattern ${workspace}`).join(' ')}  --fix`,
       'npm run test',
       'npm run typecheck',
     ].filter(Boolean);
