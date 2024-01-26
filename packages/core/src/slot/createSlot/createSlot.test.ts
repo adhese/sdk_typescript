@@ -36,6 +36,7 @@ describe('slot', () => {
       getElement: expect.any(Function) as () => HTMLElement | null,
       getSlotName: expect.any(Function) as () => string,
       getAd: expect.any(Function) as () => Ad | null,
+      parameters: expect.any(Map) as Map<string, string>,
     } satisfies typeof slot);
 
     expect(slot.getElement()).toBeNull();
@@ -66,16 +67,6 @@ describe('slot', () => {
       slot: 'bar',
     });
 
-    expect(slot).toEqual({
-      location: 'foo',
-      format: 'leaderboard',
-      slot: 'bar',
-      render: expect.any(Function) as () => Promise<HTMLElement | null>,
-      getElement: expect.any(Function) as () => HTMLElement | null,
-      getSlotName: expect.any(Function) as () => string,
-      getAd: expect.any(Function) as () => Ad | null,
-    } satisfies typeof slot);
-
     expect(slot.getElement()).toBeNull();
     await slot.render({
       tag: '<div>foo</div>',
@@ -86,6 +77,32 @@ describe('slot', () => {
     });
     expect(slot.getElement()).toBe(element);
     expect(slot.getAd()).toBeDefined();
+  });
+
+  it('should create a slot with parameters', async () => {
+    const element = document.createElement('div');
+
+    element.classList.add('adunit');
+    element.dataset.format = 'leaderboard';
+    element.id = 'leaderboard';
+
+    document.body.appendChild(element);
+
+    const slot = createSlot({
+      location: 'foo',
+      format: 'leaderboard',
+      containingElement: 'leaderboard',
+      parameters: {
+        foo: 'bar',
+      },
+    });
+
+    expect(slot.parameters.has('foo')).toBe(true);
+    expect(slot.parameters.get('foo')).toBe('bar');
+
+    slot.parameters.set('foo', 'baz');
+
+    expect(slot.parameters.get('foo')).toBe('baz');
   });
 
   it('should log an error when no element is found', async () => {

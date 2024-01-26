@@ -7,9 +7,19 @@ async function app(): Promise<void> {
     initialSlots: [{
       format: 'skyscraper',
       containingElement: 'skyscraper',
+      parameters: {
+        dt: 'desktop',
+        ab: [
+          'foo',
+          'bar',
+        ],
+      },
     }],
     location: '_sdk_example_',
     findDomSlotsOnLoad: true,
+    parameters: {
+      aa: 'foo',
+    },
   });
 }
 
