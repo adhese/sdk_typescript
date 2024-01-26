@@ -20,5 +20,5 @@ export async function findDomSlots(
       containingElement: element,
       slot: element.dataset.slot,
     }))
-    .filter(slot => !activeSlots.some(activeSlot => activeSlot.getSlotName() === slot.getSlotName()));
+    .filter(slot => !activeSlots.some(activeSlot => activeSlot.getName() === slot.getName()));
 }

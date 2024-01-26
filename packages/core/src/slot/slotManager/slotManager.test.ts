@@ -10,10 +10,10 @@ describe('slotManager', () => {
     });
 
     expect(slotManager).toEqual({
-      addSlot: expect.any(Function) as (slot: SlotOptions) => Readonly<Slot>,
-      getSlots: expect.any(Function) as () => ReadonlyArray<Slot>,
+      add: expect.any(Function) as (slot: SlotOptions) => Readonly<Slot>,
+      getAll: expect.any(Function) as () => ReadonlyArray<Slot>,
       findDomSlots: expect.any(Function) as () => Promise<ReadonlyArray<Slot>>,
-      getSlot: expect.any(Function) as (name: string) => Slot | undefined,
+      get: expect.any(Function) as (name: string) => Slot | undefined,
     } satisfies typeof slotManager);
   });
 
@@ -25,7 +25,7 @@ describe('slotManager', () => {
         containingElement: 'leaderboard',
       }],
     });
-    expect(slotManager.getSlots().length).toBe(1);
+    expect(slotManager.getAll().length).toBe(1);
   });
 
   it('should be able to add a slot', () => {
@@ -33,12 +33,12 @@ describe('slotManager', () => {
       location: location.pathname,
       initialSlots: [],
     });
-    slotManager.addSlot({
+    slotManager.add({
       format: 'leaderboard',
       containingElement: 'leaderboard',
       location: location.pathname,
     });
-    expect(slotManager.getSlots().length).toBe(1);
+    expect(slotManager.getAll().length).toBe(1);
   });
 
   it('should be able to find all slots in the DOM', async () => {
@@ -52,7 +52,7 @@ describe('slotManager', () => {
     });
     const slots = await slotManager.findDomSlots();
     expect(slots.length).toBe(2);
-    expect(slotManager.getSlots().length).toBe(2);
+    expect(slotManager.getAll().length).toBe(2);
   });
 
   it('should be able to get a slot by name', () => {
@@ -63,7 +63,7 @@ describe('slotManager', () => {
         containingElement: 'leaderboard',
       }],
     });
-    const slot = slotManager.getSlot('foo-leaderboard');
+    const slot = slotManager.get('foo-leaderboard');
     expect(slot).toBeDefined();
   });
 });

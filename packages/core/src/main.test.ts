@@ -114,7 +114,7 @@ describe('createAdhese', () => {
       ],
     });
 
-    expect(adhese.getSlots().length).toBe(1);
+    expect(adhese.getAll().length).toBe(1);
   });
 
   it('should create an adhese instance with findDomSlotsOnLoad', async () => {
@@ -130,7 +130,7 @@ describe('createAdhese', () => {
       findDomSlotsOnLoad: true,
     });
 
-    expect(adhese.getSlots().length).toBe(1);
+    expect(adhese.getAll().length).toBe(1);
   });
 
   it('should be able to get the current page location', async () => {
@@ -168,7 +168,7 @@ describe('createAdhese', () => {
       containingElement: 'billboard',
     });
 
-    expect(adhese.getSlots().length).toBe(1);
+    expect(adhese.getAll().length).toBe(1);
   });
 
   it('should be able to find all slots in the DOM', async () => {

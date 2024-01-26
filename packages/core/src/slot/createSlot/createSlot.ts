@@ -41,7 +41,7 @@ export type Slot = Merge<SlotOptions, {
   /**
    * Returns the name of the slot.
    */
-  getSlotName(): string;
+  getName(): string;
   /**
    * Returns the ad that is currently rendered in the slot.
    */
@@ -98,7 +98,7 @@ export function createSlot(options: SlotOptions): Readonly<Slot> {
     getElement(): HTMLElement | null {
       return element;
     },
-    getSlotName(): string {
+    getName(): string {
       return `${location}${slot ? `${slot}` : ''}-${format}`;
     },
     getAd(): Ad | null {

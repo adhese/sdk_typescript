@@ -76,7 +76,7 @@ function requestWithPost({
   const payload = {
     ...options,
     slots: options.slots.map(slot => ({
-      slotname: slot.getSlotName(),
+      slotname: slot.getName(),
       parameters: parseParameters(slot.parameters),
     })),
     parameters: options.parameters && parseParameters(options.parameters),
@@ -99,7 +99,7 @@ function requestWithPost({
 }
 
 async function requestWithGet(options: Omit<AdRequestOptions, 'method'>): Promise<Response> {
-  return fetch(new URL(`${options.host}/json/sl${options.slots.map(slot => slot.getSlotName()).join('/sl')}`), {
+  return fetch(new URL(`${options.host}/json/sl${options.slots.map(slot => slot.getName()).join('/sl')}`), {
     method: 'GET',
     headers: {
       // eslint-disable-next-line ts/naming-convention

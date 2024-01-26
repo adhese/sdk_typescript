@@ -125,15 +125,15 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
   if (mergedOptions.findDomSlotsOnLoad)
     await slotManager.findDomSlots();
 
-  if (slotManager.getSlots().length > 0) {
+  if (slotManager.getAll().length > 0) {
     const ads = await requestAds({
       host: mergedOptions.host,
-      slots: slotManager.getSlots(),
+      slots: slotManager.getAll(),
       method: mergedOptions.requestType,
       parameters,
     });
 
-    await Promise.allSettled(ads.map(ad => slotManager.getSlot(ad.slotName)?.render(ad)));
+    await Promise.allSettled(ads.map(ad => slotManager.get(ad.slotName)?.render(ad)));
   }
 
   return {
@@ -147,7 +147,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
       location = newLocation;
     },
     addSlot(slot): Readonly<Slot> {
-      return slotManager.addSlot({
+      return slotManager.add({
         ...slot,
         location,
       } as SlotOptions);
@@ -162,7 +162,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
         parameters,
       });
 
-      await Promise.allSettled(ads.map(ad => slotManager.getSlot(ad.slotName)?.render(ad)));
+      await Promise.allSettled(ads.map(ad => slotManager.get(ad.slotName)?.render(ad)));
 
       return domSlots;
     },

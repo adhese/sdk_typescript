@@ -6,11 +6,11 @@ export type SlotManager = {
   /**
    * Returns all slots that are currently registered and rendered.
    */
-  getSlots(): ReadonlyArray<Slot>;
+  getAll(): ReadonlyArray<Slot>;
   /**
    * Adds a new slot to the Adhese instance and renders it.
    */
-  addSlot(slot: SlotOptions): Readonly<Slot>;
+  add(slot: SlotOptions): Readonly<Slot>;
   /**
    * Finds all slots in the DOM and adds them to the Adhese instance.
    */
@@ -20,7 +20,7 @@ export type SlotManager = {
   /**
    * Returns the slot with the given name.
    */
-  getSlot(name: string): Slot | undefined;
+  get(name: string): Slot | undefined;
 };
 
 export type SlotManagerOptions = {
@@ -43,20 +43,20 @@ export function createSlotManager({
   const slots = new Map<string, Slot>(initialSlots.map(slot => createSlot({
     ...slot,
     location,
-  })).map(slot => [slot.getSlotName(), slot]));
+  })).map(slot => [slot.getName(), slot]));
 
   return {
-    getSlots(): ReadonlyArray<Slot> {
+    getAll(): ReadonlyArray<Slot> {
       const slotList = Array.from(slots).map(([, slot]) => slot);
       logger.debug('Getting slots', {
         slots: slotList,
       });
       return slotList;
     },
-    addSlot(options: SlotOptions): Readonly<Slot> {
+    add(options: SlotOptions): Readonly<Slot> {
       const slot = createSlot(options);
 
-      slots.set(slot.getSlotName(), slot);
+      slots.set(slot.getName(), slot);
 
       logger.debug('Slot added', {
         slot,
@@ -74,11 +74,11 @@ export function createSlotManager({
       );
 
       for (const slot of domSlots)
-        slots.set(slot.getSlotName(), slot);
+        slots.set(slot.getName(), slot);
 
       return domSlots;
     },
-    getSlot(name: string): Slot | undefined {
+    get(name: string): Slot | undefined {
       return slots.get(name);
     },
   };

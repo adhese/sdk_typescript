@@ -34,7 +34,7 @@ describe('slot', () => {
       format: 'leaderboard',
       render: expect.any(Function) as () => Promise<HTMLElement | null>,
       getElement: expect.any(Function) as () => HTMLElement | null,
-      getSlotName: expect.any(Function) as () => string,
+      getName: expect.any(Function) as () => string,
       getAd: expect.any(Function) as () => Ad | null,
       parameters: expect.any(Map) as Map<string, string>,
     } satisfies typeof slot);
@@ -176,12 +176,12 @@ describe('slot', () => {
     expect(createSlot({
       location: 'foo',
       format: 'bar',
-    }).getSlotName()).toBe('foo-bar');
+    }).getName()).toBe('foo-bar');
 
     expect(createSlot({
       location: 'foo',
       format: 'bar',
       slot: 'baz',
-    }).getSlotName()).toBe('foobaz-bar');
+    }).getName()).toBe('foobaz-bar');
   });
 });
