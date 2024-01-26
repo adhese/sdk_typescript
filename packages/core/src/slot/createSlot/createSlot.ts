@@ -1,5 +1,6 @@
 import { type Ad, logger } from '@core';
 import { type Merge, waitForDomLoad } from '@utils';
+import { addTrackingPixel } from '../../impressionTracking/impressionTracking';
 
 export type SlotOptions = {
   /**
@@ -81,6 +82,9 @@ export function createSlot(options: SlotOptions): Readonly<Slot> {
 
       element.innerHTML = adToRender.tag;
       ad = adToRender;
+
+      if (adToRender.impressionCounter)
+        addTrackingPixel(adToRender.impressionCounter);
 
       logger.debug('Slot rendered', {
         renderedElement: element,
