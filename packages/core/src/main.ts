@@ -47,9 +47,17 @@ export type AdheseOptions = {
    * @default false
    */
   findDomSlotsOnLoad?: boolean;
+  /**
+   * Base parameters that are used for all ads.
+   */
+  parameters?: Record<string, ReadonlyArray<string> | string>;
 } & Pick<SlotManagerOptions, 'initialSlots'>;
 
-export type Adhese = Merge<Omit<AdheseOptions, 'location'>, {
+export type Adhese = Omit<AdheseOptions, 'location' | 'parameters'> & Merge<SlotManager, {
+  /**
+   * The parameters that are used for all ads.
+   */
+  parameters: Map<string, ReadonlyArray<string> | string>;
   /**
    * Returns the current page location.
    */
@@ -58,7 +66,6 @@ export type Adhese = Merge<Omit<AdheseOptions, 'location'>, {
    * Sets the current page location.
    */
   setLocation(location: string): void;
-}> & Merge<SlotManager, {
   /**
    * Adds a new slot to the Adhese instance and renders it.
    */
@@ -81,6 +88,7 @@ export type Adhese = Merge<Omit<AdheseOptions, 'location'>, {
  * @param options.debug Enable debug logging.
  * @param options.initialSlots The initial slots to add to the Adhese instance.
  * @param options.findDomSlotsOnLoad Find all slots in the DOM and add them to the Adhese instance during initialization.
+ * @param options.parameters Base parameters that are used for all ads.
  *
  * @return Promise<Adhese> The Adhese instance.
  */
@@ -108,6 +116,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     logger.warn('Invalid host or poolHost');
 
   let { location } = mergedOptions;
+  const parameters = new Map(Object.entries(options.parameters ?? {}));
 
   const slotManager = createSlotManager({
     location,
@@ -121,6 +130,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
       host: mergedOptions.host,
       slots: slotManager.getSlots(),
       method: mergedOptions.requestType,
+      parameters,
     });
 
     await Promise.allSettled(ads.map(ad => slotManager.getSlot(ad.slotName)?.render(ad)));
@@ -129,6 +139,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
   return {
     ...mergedOptions,
     ...slotManager,
+    parameters,
     getLocation(): string {
       return location;
     },
@@ -148,6 +159,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
         host: mergedOptions.host,
         slots: domSlots,
         method: mergedOptions.requestType,
+        parameters,
       });
 
       await Promise.allSettled(ads.map(ad => slotManager.getSlot(ad.slotName)?.render(ad)));

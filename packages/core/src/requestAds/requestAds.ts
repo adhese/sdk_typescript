@@ -17,6 +17,10 @@ export type AdRequestOptions = {
    * @default 'POST'
    */
   method?: 'GET' | 'POST' | 'get' | 'post';
+  /**
+   * The parameters that are used for all ads.
+   */
+  parameters?: Map<string, ReadonlyArray<string> | string>;
 };
 
 /**
@@ -73,11 +77,15 @@ function requestWithPost({
     ...options,
     slots: options.slots.map(slot => ({
       slotname: slot.getSlotName(),
+      parameters: parseParameters(slot.parameters),
     })),
+    parameters: options.parameters && parseParameters(options.parameters),
   } satisfies {
     slots: ReadonlyArray<{
       slotname: string;
+      parameters?: Record<string, ReadonlyArray<string> | string>;
     }>;
+    parameters?: Record<string, ReadonlyArray<string> | string>;
   };
 
   return fetch(`${new URL(host).href}json`, {
@@ -98,4 +106,14 @@ async function requestWithGet(options: Omit<AdRequestOptions, 'method'>): Promis
       'Content-Type': 'application/json',
     },
   });
+}
+
+export function parseParameters<T extends string | ReadonlyArray<string>>(parameters: Map<string, T>): Record<string, T> {
+  return Object.fromEntries(Array.from(parameters.entries()).filter(([key]) => {
+    if (key.length === 2)
+      return true;
+
+    logger.warn(`Invalid parameter key: ${key}. Key should be exactly 2 characters long. Key will be ignored.`);
+    return false;
+  }));
 }

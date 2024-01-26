@@ -1,5 +1,5 @@
 import { type Ad, logger } from '@core';
-import { waitForDomLoad } from '@utils';
+import { type Merge, waitForDomLoad } from '@utils';
 
 export type SlotOptions = {
   /**
@@ -18,9 +18,17 @@ export type SlotOptions = {
    * The element that contains the slot. Used to find the correct element on the page to render the ad in.
    */
   containingElement?: string | HTMLElement;
+  /**
+   * The parameters that are used to render the ad.
+   */
+  parameters?: Record<string, ReadonlyArray<string> | string>;
 };
 
-export type Slot = SlotOptions & {
+export type Slot = Merge<SlotOptions, {
+  /**
+   * The parameters that are used to render the ad.
+   */
+  parameters: Map<string, ReadonlyArray<string> | string>;
   /**
    * Renders the slot in the containing element.
    */
@@ -37,7 +45,7 @@ export type Slot = SlotOptions & {
    * Returns the ad that is currently rendered in the slot.
    */
   getAd(): Ad | null;
-};
+}>;
 
 /**
  * Create a new slot instance.
@@ -51,13 +59,14 @@ export function createSlot(options: SlotOptions): Readonly<Slot> {
   } = options;
 
   let element: HTMLElement | null = typeof containingElement === 'string' || !containingElement ? null : containingElement;
-
   let ad: Ad | null = null;
+  const parameters = new Map(Object.entries(options.parameters ?? {}));
 
   return {
     location,
     format,
     slot,
+    parameters,
     async render(adToRender): Promise<HTMLElement | null> {
       await waitForDomLoad();
 

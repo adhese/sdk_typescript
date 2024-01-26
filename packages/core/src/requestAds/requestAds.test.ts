@@ -1,7 +1,7 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { UrlString } from '@utils';
-import { createSlot } from '@core';
-import { requestAd, requestAds } from './requestAds';
+import { createSlot, logger } from '@core';
+import { parseParameters, requestAd, requestAds } from './requestAds';
 import { type AdResponse, adSchema, dateLike, numberLike, urlLike } from './requestAds.schema';
 
 describe('requestAds', () => {
@@ -228,5 +228,49 @@ describe('schema', () => {
 
     expect(dateLike.parse('')).toBeUndefined();
     expect(dateLike.parse('foo')).toBeUndefined();
+  });
+});
+
+describe('parseParameters', () => {
+  let warnLoggerSpy: MockInstance<[msg: string, ...args: Array<any>], void>;
+
+  beforeEach(() => {
+    warnLoggerSpy = vi.spyOn(logger, 'warn');
+  });
+
+  vi.mock('./logger/logger', () => ({
+    logger: {
+      debug: vi.fn(),
+      warn: vi.fn(),
+    } satisfies Partial<typeof logger>,
+  }));
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should be able to parse parameters', () => {
+    const parsedParameters = parseParameters(new Map<string, string | ReadonlyArray<string>>([
+      ['fo', ['bar']],
+      ['ba', 'qux'],
+    ]));
+
+    expect(parsedParameters).toEqual({
+      fo: ['bar'],
+      ba: 'qux',
+    });
+  });
+
+  it('should be able to parse and filter parameters with invalid keys', () => {
+    const parsedParameters = parseParameters(new Map<string, string | ReadonlyArray<string>>([
+      ['fo', ['bar']],
+      ['bar', 'qux'],
+    ]));
+
+    expect(warnLoggerSpy).toHaveBeenCalledWith('Invalid parameter key: bar. Key should be exactly 2 characters long. Key will be ignored.');
+
+    expect(parsedParameters).toEqual({
+      fo: ['bar'],
+    });
   });
 });

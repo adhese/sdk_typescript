@@ -56,12 +56,20 @@ describe('createAdhese', () => {
       poolHost: 'https://pool.example.com',
       location: '/foo',
       requestType: 'GET',
+      parameters: {
+        aa: 'foo',
+        bb: [
+          'bar',
+          'baz',
+        ],
+      },
     });
 
     expect(adhese.account).toBe('demo');
     expect(adhese.host).toBe('https://ads.example.com');
     expect(adhese.poolHost).toBe('https://pool.example.com');
     expect(adhese.requestType).toBe('GET');
+    expect(adhese.parameters.size).toBe(2);
   });
 
   it('should create an adhese instance with debug logging', async () => {
