@@ -1,6 +1,7 @@
 import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createAdhese } from './main';
 import { logger } from './logger/logger';
+import type { AdResponse } from './requestAds/requestAds.schema';
 
 vi.mock('./logger/logger', async (importOriginal) => {
   const module: { logger: typeof logger } = await importOriginal();
@@ -17,6 +18,26 @@ vi.mock('./logger/logger', async (importOriginal) => {
 });
 
 describe('createAdhese', () => {
+  vi.stubGlobal('fetch', vi.fn(() => ({
+    ok: true,
+    json(): Promise<unknown> {
+      return new Promise((resolve) => {
+        resolve([{
+          adType: 'foo',
+          // eslint-disable-next-line ts/naming-convention
+          slotID: 'bar',
+          slotName: 'baz',
+          tag: '<a>foo</a>',
+        }, {
+          adType: 'foo2',
+          // eslint-disable-next-line ts/naming-convention
+          slotID: 'bar2',
+          slotName: 'baz2',
+          tag: '<a>foo</a>',
+        }] satisfies ReadonlyArray<AdResponse>);
+      });
+    },
+  })));
   let debugLoggerSpy: MockInstance<[msg: string, ...args: Array<any>], void>;
   let warnLoggerSpy: MockInstance<[msg: string, ...args: Array<any>], void>;
 
@@ -27,6 +48,7 @@ describe('createAdhese', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
     document.body.innerHTML = '';
   });
 

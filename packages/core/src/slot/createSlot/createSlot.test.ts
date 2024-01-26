@@ -167,6 +167,7 @@ describe('slot', () => {
       slotID: 'bar',
       slotName: 'baz',
       adType: 'foo',
+      impressionCounter: new URL('https://foo.bar'),
     });
 
     expect(slot.getElement()).toBe(element);
