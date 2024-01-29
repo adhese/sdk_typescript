@@ -11,30 +11,9 @@ describe('requestAds', () => {
   });
 
   it('should be able to request multiple ads', async () => {
-    vi.stubGlobal('fetch', vi.fn(() => ({
-      ok: true,
-      json(): Promise<unknown> {
-        return new Promise((resolve) => {
-          resolve([{
-            adType: 'foo',
-            // eslint-disable-next-line ts/naming-convention
-            slotID: 'bar',
-            slotName: 'baz',
-            tag: '<a>foo</a>',
-          }, {
-            adType: 'foo2',
-            // eslint-disable-next-line ts/naming-convention
-            slotID: 'bar2',
-            slotName: 'baz2',
-            tag: '<a>foo</a>',
-          }] satisfies ReadonlyArray<AdResponse>);
-        });
-      },
-    })));
-
     const ads = await requestAds(
       {
-        host: 'https:foo.bar' as UrlString,
+        host: 'https://ads-test.adhese.com' as UrlString,
         slots: [
           createSlot({
             format: 'foo',
@@ -54,30 +33,9 @@ describe('requestAds', () => {
   });
 
   it('should be able to request ads with the GET method', async () => {
-    vi.stubGlobal('fetch', vi.fn(() => ({
-      ok: true,
-      json(): Promise<unknown> {
-        return new Promise((resolve) => {
-          resolve([{
-            adType: 'foo',
-            // eslint-disable-next-line ts/naming-convention
-            slotID: 'bar',
-            slotName: 'baz',
-            tag: '<a>foo</a>',
-          }, {
-            adType: 'foo2',
-            // eslint-disable-next-line ts/naming-convention
-            slotID: 'bar2',
-            slotName: 'baz2',
-            tag: '<a>foo</a>',
-          }] satisfies ReadonlyArray<AdResponse>);
-        });
-      },
-    })));
-
     const ads = await requestAds(
       {
-        host: 'https:foo.bar' as UrlString,
+        host: 'https://ads-test.adhese.com' as UrlString,
         slots: [
           createSlot({
             format: 'foo',
@@ -98,14 +56,10 @@ describe('requestAds', () => {
   });
 
   it('should throw an error when requestAds fails', async () => {
-    vi.stubGlobal('fetch', vi.fn(() => ({
-      ok: false,
-    })));
-
     try {
       await requestAds(
         {
-          host: 'https:foo.bar' as UrlString,
+          host: 'https://ads-fail.adhese.com' as UrlString,
           slots: [
             createSlot({
               format: 'foo',
@@ -129,23 +83,8 @@ describe('requestAd', () => {
   });
 
   it('should be able to fetch a single ad', async () => {
-    vi.stubGlobal('fetch', vi.fn(() => ({
-      ok: true,
-      json(): Promise<unknown> {
-        return new Promise((resolve) => {
-          resolve([{
-            adType: 'foo',
-            // eslint-disable-next-line ts/naming-convention
-            slotID: 'bar',
-            slotName: 'baz',
-            tag: '<a>foo</a>',
-          }] satisfies ReadonlyArray<AdResponse>);
-        });
-      },
-    })));
-
     const ad = await requestAd({
-      host: 'https://foo.com',
+      host: 'https://ads-test.adhese.com',
       slot: createSlot({
         location: 'foo',
         format: 'bar',

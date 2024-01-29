@@ -14,12 +14,12 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      // eslint-disable-next-line ts/naming-convention
+      /* eslint-disable ts/naming-convention */
       '@utils': `${path.resolve()}/../utils/src`,
-      // eslint-disable-next-line ts/naming-convention
-      '@logger': `${path.resolve()}/../logger/src`,
-      // eslint-disable-next-line ts/naming-convention
       '@core': `${path.resolve()}/src`,
+      '@logger': `${path.resolve()}/../logger/src`,
+      '@server-mocks': `${path.resolve()}/../server-mocks/src`,
+      /* eslint-enable ts/naming-convention */
     },
   },
   test: {
@@ -28,5 +28,6 @@ export default defineConfig({
       provider: 'v8',
       include: ['src/**/*.ts'],
     },
+    setupFiles: './vitest.setup.ts',
   },
 });
