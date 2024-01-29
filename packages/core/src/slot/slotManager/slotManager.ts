@@ -1,6 +1,6 @@
 import type { Merge } from '@utils';
 import { type Slot, type SlotOptions, createSlot, logger } from '@core';
-import { findDomSlots } from '../findDomSlots/findDomSlots';
+import { findDomSlots as extFindDomSlots } from '../findDomSlots/findDomSlots';
 
 export type SlotManager = {
   /**
@@ -45,41 +45,49 @@ export function createSlotManager({
     location,
   })).map(slot => [slot.getName(), slot]));
 
-  return {
-    getAll(): ReadonlyArray<Slot> {
-      const slotList = Array.from(slots).map(([, slot]) => slot);
-      logger.debug('Getting slots', {
-        slots: slotList,
-      });
-      return slotList;
-    },
-    add(options: SlotOptions): Readonly<Slot> {
-      const slot = createSlot(options);
+  function getAll(): ReadonlyArray<Slot> {
+    const slotList = Array.from(slots).map(([, slot]) => slot);
+    logger.debug('Getting slots', {
+      slots: slotList,
+    });
+    return slotList;
+  }
 
+  function add(options: SlotOptions): Readonly<Slot> {
+    const slot = createSlot(options);
+
+    slots.set(slot.getName(), slot);
+
+    logger.debug('Slot added', {
+      slot,
+      slots: Array.from(slots),
+    });
+
+    return slot;
+  }
+
+  async function findDomSlots(
+    newLocation: string = location,
+  ): Promise<ReadonlyArray<Slot>> {
+    const domSlots = await extFindDomSlots(
+      Array.from(slots).map(([, slot]) => slot),
+      newLocation,
+    );
+
+    for (const slot of domSlots)
       slots.set(slot.getName(), slot);
 
-      logger.debug('Slot added', {
-        slot,
-        slots: Array.from(slots),
-      });
+    return domSlots;
+  }
 
-      return slot;
-    },
-    async findDomSlots(
-      newLocation: string = location,
-    ): Promise<ReadonlyArray<Slot>> {
-      const domSlots = await findDomSlots(
-        Array.from(slots).map(([, slot]) => slot),
-        newLocation,
-      );
+  function get(name: string): Slot | undefined {
+    return slots.get(name);
+  }
 
-      for (const slot of domSlots)
-        slots.set(slot.getName(), slot);
-
-      return domSlots;
-    },
-    get(name: string): Slot | undefined {
-      return slots.get(name);
-    },
+  return {
+    getAll,
+    add,
+    findDomSlots,
+    get,
   };
 }

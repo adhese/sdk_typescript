@@ -32,7 +32,7 @@ describe('slot', () => {
     expect(slot).toEqual({
       location: 'foo',
       format: 'leaderboard',
-      render: expect.any(Function) as () => Promise<HTMLElement | null>,
+      render: expect.any(Function) as () => Promise<HTMLElement>,
       getElement: expect.any(Function) as () => HTMLElement | null,
       getName: expect.any(Function) as () => string,
       getAd: expect.any(Function) as () => Ad | null,

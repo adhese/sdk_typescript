@@ -33,7 +33,7 @@ export type Slot = Merge<SlotOptions, {
   /**
    * Renders the slot in the containing element.
    */
-  render(ad: Ad): Promise< HTMLElement | null>;
+  render(ad: Ad): Promise<HTMLElement>;
   /**
    * Returns the rendered element.
    */
@@ -58,51 +58,58 @@ export function createSlot(options: SlotOptions): Readonly<Slot> {
     containingElement,
     slot,
   } = options;
+  const parameters = new Map(Object.entries(options.parameters ?? {}));
 
   let element: HTMLElement | null = typeof containingElement === 'string' || !containingElement ? null : containingElement;
+  function getElement(): HTMLElement | null {
+    return element;
+  }
+
   let ad: Ad | null = null;
-  const parameters = new Map(Object.entries(options.parameters ?? {}));
+  function getAd(): Ad | null {
+    return ad;
+  }
+
+  async function render(adToRender: Ad): Promise<HTMLElement> {
+    await waitForDomLoad();
+
+    if (!element && typeof containingElement === 'string')
+      element = document.querySelector<HTMLElement>(`.adunit[data-format="${format}"]#${containingElement}${slot ? `[data-slot="${slot}"]` : ''}`);
+
+    if (!element) {
+      const error = `Could not create slot for format ${format}.?`;
+      logger.error(error, options);
+      throw new Error(error);
+    }
+
+    element.innerHTML = adToRender.tag;
+    ad = adToRender;
+
+    if (adToRender.impressionCounter)
+      addTrackingPixel(adToRender.impressionCounter);
+
+    logger.debug('Slot rendered', {
+      renderedElement: element,
+      location,
+      format,
+      containingElement,
+    });
+
+    return element;
+  }
+
+  function getName(): string {
+    return `${location}${slot ? `${slot}` : ''}-${format}`;
+  }
 
   return {
     location,
     format,
     slot,
     parameters,
-    async render(adToRender): Promise<HTMLElement | null> {
-      await waitForDomLoad();
-
-      if (!element && typeof containingElement === 'string')
-        element = element ?? document.querySelector<HTMLElement>(`.adunit[data-format="${format}"]#${containingElement}${slot ? `[data-slot="${slot}"]` : ''}`);
-
-      if (!element) {
-        const error = `Could not create slot for format ${format}.?`;
-        logger.error(error, options);
-        throw new Error(error);
-      }
-
-      element.innerHTML = adToRender.tag;
-      ad = adToRender;
-
-      if (adToRender.impressionCounter)
-        addTrackingPixel(adToRender.impressionCounter);
-
-      logger.debug('Slot rendered', {
-        renderedElement: element,
-        location,
-        format,
-        containingElement,
-      });
-
-      return element;
-    },
-    getElement(): HTMLElement | null {
-      return element;
-    },
-    getName(): string {
-      return `${location}${slot ? `${slot}` : ''}-${format}`;
-    },
-    getAd(): Ad | null {
-      return ad;
-    },
+    render,
+    getElement,
+    getName,
+    getAd,
   };
 }

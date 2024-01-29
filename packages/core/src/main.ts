@@ -116,12 +116,51 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     logger.warn('Invalid host or poolHost');
 
   let { location } = mergedOptions;
+  function getLocation(): string {
+    return location;
+  }
+  function setLocation(newLocation: string): void {
+    location = newLocation;
+  }
+
   const parameters = new Map(Object.entries(options.parameters ?? {}));
 
   const slotManager = createSlotManager({
     location,
     initialSlots: mergedOptions.initialSlots,
   });
+  async function addSlot(slotOptions: Omit<SlotOptions, 'location'>): Promise<Readonly<Slot>> {
+    const slot = slotManager.add({
+      ...slotOptions,
+      location,
+    } as SlotOptions);
+
+    const ad = await requestAd({
+      slot,
+      host: mergedOptions.host,
+      parameters,
+    });
+
+    await slot.render(ad);
+
+    return slot;
+  }
+
+  async function findDomSlots(): Promise<ReadonlyArray<Slot>> {
+    const domSlots = await slotManager.findDomSlots(location);
+
+    const ads = await requestAds({
+      host: mergedOptions.host,
+      slots: domSlots,
+      method: mergedOptions.requestType,
+      parameters,
+    });
+
+    await Promise.allSettled(ads.map(ad => slotManager.get(ad.slotName)?.render(ad)));
+
+    return domSlots;
+  }
+
   if (mergedOptions.findDomSlotsOnLoad)
     await slotManager.findDomSlots();
 
@@ -140,40 +179,9 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     ...mergedOptions,
     ...slotManager,
     parameters,
-    getLocation(): string {
-      return location;
-    },
-    setLocation(newLocation): void {
-      location = newLocation;
-    },
-    async addSlot(slotOptions): Promise<Readonly<Slot>> {
-      const slot = slotManager.add({
-        ...slotOptions,
-        location,
-      } as SlotOptions);
-
-      const ad = await requestAd({
-        slot,
-        host: mergedOptions.host,
-      });
-
-      await slot.render(ad);
-
-      return slot;
-    },
-    async findDomSlots(): Promise<ReadonlyArray<Slot>> {
-      const domSlots = await slotManager.findDomSlots(location);
-
-      const ads = await requestAds({
-        host: mergedOptions.host,
-        slots: domSlots,
-        method: mergedOptions.requestType,
-        parameters,
-      });
-
-      await Promise.allSettled(ads.map(ad => slotManager.get(ad.slotName)?.render(ad)));
-
-      return domSlots;
-    },
+    getLocation,
+    setLocation,
+    addSlot,
+    findDomSlots,
   };
 }
