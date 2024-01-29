@@ -103,7 +103,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     findDomSlotsOnLoad: false,
     ...options,
   } satisfies AdheseOptions;
-  if (mergedOptions.debug) {
+  if (mergedOptions.debug || window.location.search.includes('adhese_debug=true')) {
     logger.setMinLogLevelThreshold('debug');
     logger.debug('Debug logging enabled');
   }
