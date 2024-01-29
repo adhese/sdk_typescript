@@ -1,5 +1,5 @@
 import { type Merge, type UrlString, isUrlString } from '@utils';
-import { type Slot, type SlotOptions, logger, requestAds } from '@core';
+import { type Slot, type SlotOptions, logger, requestAd, requestAds } from '@core';
 
 import { type SlotManager, type SlotManagerOptions, createSlotManager } from './slot/slotManager/slotManager';
 
@@ -69,7 +69,7 @@ export type Adhese = Omit<AdheseOptions, 'location' | 'parameters'> & Merge<Slot
   /**
    * Adds a new slot to the Adhese instance and renders it.
    */
-  addSlot(slot: Omit<SlotOptions, 'location'>): Readonly<Slot>;
+  addSlot(slot: Omit<SlotOptions, 'location'>): Promise<Readonly<Slot>>;
   /**
    * Finds all slots in the DOM and adds them to the Adhese instance.
    */
@@ -79,7 +79,7 @@ export type Adhese = Omit<AdheseOptions, 'location' | 'parameters'> & Merge<Slot
 /**
  * Creates an Adhese instance. This instance is your main entry point to the Adhese API.
  *
- * @param options The options to use for the Adhese instance.
+ * @param options
  * @param options.account The Adhese account name.
  * @param options.host The url that is used to connect to the Adhese ad server. Pass a custom URL if you want to use your own domain for the connection.
  * @param options.poolHost The url that is used to connect to the Adhese pool server. Pass a custom URL if you want to use your own domain for the connection.
@@ -146,11 +146,20 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     setLocation(newLocation): void {
       location = newLocation;
     },
-    addSlot(slot): Readonly<Slot> {
-      return slotManager.add({
-        ...slot,
+    async addSlot(slotOptions): Promise<Readonly<Slot>> {
+      const slot = slotManager.add({
+        ...slotOptions,
         location,
       } as SlotOptions);
+
+      const ad = await requestAd({
+        slot,
+        host: mergedOptions.host,
+      });
+
+      await slot.render(ad);
+
+      return slot;
     },
     async findDomSlots(): Promise<ReadonlyArray<Slot>> {
       const domSlots = await slotManager.findDomSlots(location);

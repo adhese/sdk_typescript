@@ -4,13 +4,10 @@ layout: home
 
 hero:
   name: "Adhese SDK"
-  text: "SDK for communication with Adhese ads"
-  tagline: My great project tagline
+  text: "Documentation"
+  tagline: "SDK for rendering ads from Adhese in your web application or website"
   actions:
     - theme: brand
-      text: Getting started
+      text: Get started now
       link: /getting-started
-    - theme: alt
-      text: API Examples
-      link: /api-examples
 ---

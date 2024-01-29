@@ -23,6 +23,14 @@ export type AdRequestOptions = {
   parameters?: Map<string, ReadonlyArray<string> | string>;
 };
 
+type AdPostPayload = {
+  slots: ReadonlyArray<{
+    slotname: string;
+    parameters?: Record<string, ReadonlyArray<string> | string>;
+  }>;
+  parameters?: Record<string, ReadonlyArray<string> | string>;
+};
+
 /**
  * Request multiple ads at once from the API
  */
@@ -80,13 +88,7 @@ function requestWithPost({
       parameters: parseParameters(slot.parameters),
     })),
     parameters: options.parameters && parseParameters(options.parameters),
-  } satisfies {
-    slots: ReadonlyArray<{
-      slotname: string;
-      parameters?: Record<string, ReadonlyArray<string> | string>;
-    }>;
-    parameters?: Record<string, ReadonlyArray<string> | string>;
-  };
+  } satisfies AdPostPayload;
 
   return fetch(`${new URL(host).href}json`, {
     method: 'POST',

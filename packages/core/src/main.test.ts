@@ -26,7 +26,7 @@ describe('createAdhese', () => {
           adType: 'foo',
           // eslint-disable-next-line ts/naming-convention
           slotID: 'bar',
-          slotName: 'baz',
+          slotName: 'homepage-foo',
           tag: '<a>foo</a>',
         }, {
           adType: 'foo2',
@@ -176,18 +176,19 @@ describe('createAdhese', () => {
   it('should be able to add a slot', async () => {
     const adhese = await createAdhese({
       account: 'demo',
+      location: '_sdk_example_',
     });
 
     const element = document.createElement('div');
-    element.id = 'billboard';
-    element.classList.add('adunit');
+    element.id = 'foo';
+    element.classList.add('leaderboard');
     element.dataset.format = 'billboard';
 
     document.body.appendChild(element);
 
-    adhese.addSlot({
-      format: 'billboard',
-      containingElement: 'billboard',
+    await adhese.addSlot({
+      format: 'leaderboard',
+      containingElement: 'foo',
     });
 
     expect(adhese.getAll().length).toBe(1);
