@@ -139,6 +139,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
       slot,
       host: mergedOptions.host,
       parameters,
+      account: mergedOptions.account,
     });
 
     await slot.render(ad);
@@ -153,6 +154,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
       host: mergedOptions.host,
       slots: domSlots,
       method: mergedOptions.requestType,
+      account: mergedOptions.account,
       parameters,
     });
 
@@ -169,6 +171,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
       host: mergedOptions.host,
       slots: slotManager.getAll(),
       method: mergedOptions.requestType,
+      account: mergedOptions.account,
       parameters,
     });
 

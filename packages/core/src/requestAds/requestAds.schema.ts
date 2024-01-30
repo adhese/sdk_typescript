@@ -2,7 +2,7 @@ import { type TypeOf, type ZodType, coerce, lazy, literal, object, string, union
 
 export const numberLike = union([coerce.string().regex(/^\d+$/), literal('')]).transform(value => value === '' ? undefined : Number(value));
 export const booleanLike = union([coerce.boolean(), literal('')]);
-export const urlLike = union([coerce.string().url(), literal('')]).transform((value) => {
+export const urlLike = union([coerce.string(), literal('')]).transform((value) => {
   try {
     return new URL(value);
   }
@@ -32,10 +32,10 @@ const baseAdResponseScheme = object({
   adType: string(),
   additionalCreativeTracker: urlLike.optional(),
   additionalViewableTracker: string().optional(),
-  adspaceEnd: numberLike.optional(),
+  adspaceEnd: dateLike.optional(),
   adspaceId: string().optional(),
   adspaceKey: string().optional(),
-  adspaceStart: numberLike.optional(),
+  adspaceStart: dateLike.optional(),
   advertiserId: string().optional(),
   altText: string().optional(),
   auctionable: booleanLike.optional(),
@@ -82,11 +82,11 @@ const baseAdResponseScheme = object({
   tag: string(),
   tagUrl: urlLike.optional(),
   timeStamp: dateLike.optional(),
-  trackedImpressionCounter: string().optional(),
-  tracker: string().optional(),
+  trackedImpressionCounter: urlLike.optional(),
+  tracker: urlLike.optional(),
   trackingUrl: urlLike.optional(),
   url: urlLike.optional(),
-  viewableImpressionCounter: string().optional(),
+  viewableImpressionCounter: urlLike.optional(),
   width: numberLike.optional(),
   width3rd: numberLike.optional(),
   width4th: numberLike.optional(),

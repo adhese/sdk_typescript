@@ -18,6 +18,7 @@ export const adRequestHandlers = [
       slotID: slot.slotname,
       slotName: slot.slotname,
       tag: '<a>foo</a>',
+      libId: slot.slotname,
     }))));
   }),
   http.post('https://ads-fail.adhese.com/json', async () => new HttpResponse(undefined, {
@@ -33,6 +34,7 @@ export const adRequestHandlers = [
       slotID: slotName,
       slotName,
       tag: '<a>foo</a>',
+      libId: slotName,
     }))));
   }),
 ];

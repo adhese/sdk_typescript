@@ -12,6 +12,10 @@ export type AdRequestOptions = {
    */
   host: UrlString;
   /**
+   * The Adhese account name.
+   */
+  account: string;
+  /**
    * Request method to use for the requestAds
    *
    * @default 'POST'
@@ -39,9 +43,9 @@ export async function requestAds({
   ...options
 }: AdRequestOptions): Promise<ReadonlyArray<Ad>> {
   try {
-    const response = method?.toUpperCase() === 'POST'
-      ? await requestWithPost(options)
-      : await requestWithGet(options);
+    const [response, previews] = await Promise.all([method?.toUpperCase() === 'POST'
+      ? requestWithPost(options)
+      : requestWithGet(options), requestPreviews(options.account)]);
 
     logger.debug('Received response', response);
 
@@ -51,7 +55,20 @@ export async function requestAds({
     const result = adSchema.array().parse((await response.json() as unknown));
     logger.debug('Parsed ad', result);
 
-    return result;
+    if (previews.length > 0)
+      logger.info(`Found ${previews.length} ${previews.length === 1 ? 'preview' : 'previews'}. Replacing ads in response with preview items`, previews);
+
+    return [
+      ...result.filter(ad => !previews.some(preview => preview.libId === ad.libId)),
+      ...previews.map(({ slotName, ...preview }) => {
+        const partnerAd = result.find(ad => ad.libId === preview.libId);
+
+        return ({
+          slotName: `${partnerAd?.slotName ?? slotName}`,
+          ...preview,
+        });
+      }),
+    ];
   }
   catch (error) {
     logger.error(String(error));
@@ -118,4 +135,55 @@ export function parseParameters<T extends string | ReadonlyArray<string>>(parame
     logger.warn(`Invalid parameter key: ${key}. Key should be exactly 2 characters long. Key will be ignored.`);
     return false;
   }));
+}
+
+export async function requestPreviews(account: string): Promise<ReadonlyArray<Ad>> {
+  const currentUrl = new URL(window.location.href);
+
+  const previewObjects: Array<Record<string, string>> = [];
+  let currentObject: Record<string, string> = {};
+
+  for (const [key, value] of currentUrl.searchParams.entries()) {
+    if (key in currentObject) {
+      previewObjects.push(currentObject);
+      currentObject = {};
+    }
+
+    currentObject[key] = value;
+  }
+
+  if (Object.keys(currentObject).length > 0)
+    previewObjects.push(currentObject);
+
+  const list = (await Promise.allSettled(previewObjects
+    .filter(previewObject => 'adhesePreviewCreativeId' in previewObject)
+    .map(async (previewObject) => {
+      const endpoint = new URL(`https://${account}-preview.adhese.org/creatives/preview/json/tag.do`);
+      endpoint.searchParams.set(
+        'id',
+        previewObject.adhesePreviewCreativeId,
+      );
+
+      const response = await fetch(endpoint.href, {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+        },
+      });
+
+      if (!response.ok)
+        return Promise.reject(new Error(`Failed to request preview ad with ID: ${previewObject.adhesePreviewCreativeId}`));
+
+      return await response.json() as unknown;
+    })))
+    .filter((response): response is PromiseFulfilledResult<ReadonlyArray<unknown>> => {
+      if (response.status === 'rejected') {
+        logger.error(response.reason as string);
+        return false;
+      }
+      return response.status === 'fulfilled';
+    })
+    .map(response => response.value);
+
+  return adSchema.array().parse(list.flat());
 }

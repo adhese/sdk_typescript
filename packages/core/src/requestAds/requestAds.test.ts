@@ -14,6 +14,7 @@ describe('requestAds', () => {
     const ads = await requestAds(
       {
         host: 'https://ads-test.adhese.com' as UrlString,
+        account: 'demo',
         slots: [
           createSlot({
             format: 'foo',
@@ -36,6 +37,7 @@ describe('requestAds', () => {
     const ads = await requestAds(
       {
         host: 'https://ads-test.adhese.com' as UrlString,
+        account: 'demo',
         slots: [
           createSlot({
             format: 'foo',
@@ -60,6 +62,7 @@ describe('requestAds', () => {
       await requestAds(
         {
           host: 'https://ads-fail.adhese.com' as UrlString,
+          account: 'demo',
           slots: [
             createSlot({
               format: 'foo',
@@ -85,6 +88,7 @@ describe('requestAd', () => {
   it('should be able to fetch a single ad', async () => {
     const ad = await requestAd({
       host: 'https://ads-test.adhese.com',
+      account: 'demo',
       slot: createSlot({
         location: 'foo',
         format: 'bar',
@@ -211,5 +215,38 @@ describe('parseParameters', () => {
     expect(parsedParameters).toEqual({
       fo: ['bar'],
     });
+  });
+});
+
+describe('requestPreviews', () => {
+  beforeEach(() => {
+    Object.defineProperty(window, 'location', {
+      writable: true,
+      value: new URL('https://foo.com?adhesePreviewCreativeId=foo-bar&adheseCreativeTemplateId=foo-bar&adhesePreviewCreativeId=bar&adhesePreviewCreativeId=fail'),
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+  });
+
+  it('should be able to request previews', async () => {
+    const ads = await requestAds({
+      host: 'https://ads-test.adhese.com',
+      account: 'test',
+      slots: [
+        createSlot({
+          location: 'foo',
+          format: 'bar',
+        }),
+        createSlot({
+          location: 'bar',
+          format: 'baz',
+        }),
+      ],
+    });
+
+    expect(ads.length).toBe(3);
   });
 });
