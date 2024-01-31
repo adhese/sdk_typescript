@@ -1,6 +1,8 @@
 import type { UrlString } from '@utils';
 import { type Slot, logger } from '@core';
 import { type Ad, adSchema } from './requestAds.schema';
+import { requestPreviews } from './requestAds.preview';
+import { requestWithGet, requestWithPost } from './requestAds.utils';
 
 export type AdRequestOptions = {
   /**
@@ -25,14 +27,6 @@ export type AdRequestOptions = {
    * The parameters that are used for all ads.
    */
   parameters?: Map<string, ReadonlyArray<string> | string>;
-};
-
-type AdPostPayload = {
-  slots: ReadonlyArray<{
-    slotname: string;
-    parameters?: Record<string, ReadonlyArray<string> | string>;
-  }>;
-  parameters?: Record<string, ReadonlyArray<string> | string>;
 };
 
 /**
@@ -92,98 +86,4 @@ export async function requestAd({
   });
 
   return ad;
-}
-
-function requestWithPost({
-  host,
-  ...options
-}: Omit<AdRequestOptions, 'method'>): Promise<Response> {
-  const payload = {
-    ...options,
-    slots: options.slots.map(slot => ({
-      slotname: slot.getName(),
-      parameters: parseParameters(slot.parameters),
-    })),
-    parameters: options.parameters && parseParameters(options.parameters),
-  } satisfies AdPostPayload;
-
-  return fetch(`${new URL(host).href}json`, {
-    method: 'POST',
-    body: JSON.stringify(payload),
-    headers: {
-      // eslint-disable-next-line ts/naming-convention
-      'Content-Type': 'application/json',
-    },
-  });
-}
-
-async function requestWithGet(options: Omit<AdRequestOptions, 'method'>): Promise<Response> {
-  return fetch(new URL(`${options.host}/json/sl${options.slots.map(slot => slot.getName()).join('/sl')}`), {
-    method: 'GET',
-    headers: {
-      // eslint-disable-next-line ts/naming-convention
-      'Content-Type': 'application/json',
-    },
-  });
-}
-
-export function parseParameters<T extends string | ReadonlyArray<string>>(parameters: Map<string, T>): Record<string, T> {
-  return Object.fromEntries(Array.from(parameters.entries()).filter(([key]) => {
-    if (key.length === 2)
-      return true;
-
-    logger.warn(`Invalid parameter key: ${key}. Key should be exactly 2 characters long. Key will be ignored.`);
-    return false;
-  }));
-}
-
-export async function requestPreviews(account: string): Promise<ReadonlyArray<Ad>> {
-  const currentUrl = new URL(window.location.href);
-
-  const previewObjects: Array<Record<string, string>> = [];
-  let currentObject: Record<string, string> = {};
-
-  for (const [key, value] of currentUrl.searchParams.entries()) {
-    if (key in currentObject) {
-      previewObjects.push(currentObject);
-      currentObject = {};
-    }
-
-    currentObject[key] = value;
-  }
-
-  if (Object.keys(currentObject).length > 0)
-    previewObjects.push(currentObject);
-
-  const list = (await Promise.allSettled(previewObjects
-    .filter(previewObject => 'adhesePreviewCreativeId' in previewObject)
-    .map(async (previewObject) => {
-      const endpoint = new URL(`https://${account}-preview.adhese.org/creatives/preview/json/tag.do`);
-      endpoint.searchParams.set(
-        'id',
-        previewObject.adhesePreviewCreativeId,
-      );
-
-      const response = await fetch(endpoint.href, {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-        },
-      });
-
-      if (!response.ok)
-        return Promise.reject(new Error(`Failed to request preview ad with ID: ${previewObject.adhesePreviewCreativeId}`));
-
-      return await response.json() as unknown;
-    })))
-    .filter((response): response is PromiseFulfilledResult<ReadonlyArray<unknown>> => {
-      if (response.status === 'rejected') {
-        logger.error(response.reason as string);
-        return false;
-      }
-      return response.status === 'fulfilled';
-    })
-    .map(response => response.value);
-
-  return adSchema.array().parse(list.flat());
 }
