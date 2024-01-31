@@ -52,9 +52,16 @@ export type AdheseOptions = {
    * Base parameters that are used for all ads.
    */
   parameters?: Record<string, ReadonlyArray<string> | string>;
+  /**
+   * The consent type to use for the Adhese API requests. This can be either `all` or `none`. `all` is the default and
+   * will send all consent data to the Adhese API. `none` will send no consent data to the Adhese API.
+   *
+   * @default 'none'
+   */
+  consent?: 'all' | 'none';
 } & Pick<SlotManagerOptions, 'initialSlots'>;
 
-export type Adhese = Omit<AdheseOptions, 'location' | 'parameters'> & Merge<SlotManager, {
+export type Adhese = Omit<AdheseOptions, 'location' | 'parameters' | 'consent'> & Merge<SlotManager, {
   /**
    * The parameters that are used for all ads.
    */
@@ -67,6 +74,14 @@ export type Adhese = Omit<AdheseOptions, 'location' | 'parameters'> & Merge<Slot
    * Sets the current page location.
    */
   setLocation(location: string): void;
+  /**
+   * Returns the current consent type.
+   */
+  getConsent(): 'all' | 'none';
+  /**
+   * Sets the current consent type.
+   */
+  setConsent(consent: 'all' | 'none'): void;
   /**
    * Adds a new slot to the Adhese instance and renders it.
    */
@@ -94,6 +109,7 @@ export type Adhese = Omit<AdheseOptions, 'location' | 'parameters'> & Merge<Slot
  * @param options.findDomSlotsOnLoad Find all slots in the DOM and add them to the Adhese instance during
  * initialization.
  * @param options.parameters Base parameters that are used for all ads.
+ * @param options.consent The consent type to use for the Adhese API requests. This can be either `all` or `none`.
  *
  * @return Promise<Adhese> The Adhese instance.
  */
@@ -128,7 +144,16 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     location = newLocation;
   }
 
-  const parameters = new Map(Object.entries(options.parameters ?? {}));
+  const parameters = new Map([...Object.entries(options.parameters ?? {}), ['tl', mergedOptions.consent ?? 'none']]);
+
+  let consent = mergedOptions.consent ?? 'none';
+  function getConsent(): typeof consent {
+    return consent;
+  }
+  function setConsent(newConsent: 'all' | 'none'): void {
+    parameters.set('tl', newConsent);
+    consent = newConsent;
+  }
 
   if (window.location.search.includes('adhesePreviewCreativeId')) {
     logger.warn('Adhese preview mode enabled');
@@ -216,6 +241,8 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     parameters,
     getLocation,
     setLocation,
+    getConsent,
+    setConsent,
     addSlot,
     findDomSlots,
   };

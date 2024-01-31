@@ -17,26 +17,6 @@ vi.mock('./logger/logger', async (importOriginal) => {
 });
 
 describe('createAdhese', () => {
-  // vi.stubGlobal('fetch', vi.fn(() => ({
-  //   ok: true,
-  //   json(): Promise<unknown> {
-  //     return new Promise((resolve) => {
-  //       resolve([{
-  //         adType: 'foo',
-  //         // eslint-disable-next-line ts/naming-convention
-  //         slotID: 'bar',
-  //         slotName: 'homepage-foo',
-  //         tag: '<a>foo</a>',
-  //       }, {
-  //         adType: 'foo2',
-  //         // eslint-disable-next-line ts/naming-convention
-  //         slotID: 'bar2',
-  //         slotName: 'baz2',
-  //         tag: '<a>foo</a>',
-  //       }] satisfies ReadonlyArray<AdResponse>);
-  //     });
-  //   },
-  // })));
   let debugLoggerSpy: MockInstance<[msg: string, ...args: Array<any>], void>;
   let warnLoggerSpy: MockInstance<[msg: string, ...args: Array<any>], void>;
 
@@ -77,6 +57,7 @@ describe('createAdhese', () => {
       poolHost: 'https://pool.example.com',
       location: '/foo',
       requestType: 'GET',
+      consent: 'all',
       parameters: {
         aa: 'foo',
         bb: [
@@ -89,8 +70,9 @@ describe('createAdhese', () => {
     expect(adhese.account).toBe('test');
     expect(adhese.host).toBe('https://ads.example.com');
     expect(adhese.poolHost).toBe('https://pool.example.com');
+    expect(adhese.getConsent()).toBe('all');
     expect(adhese.requestType).toBe('GET');
-    expect(adhese.parameters.size).toBe(2);
+    expect(adhese.parameters.size).toBe(3);
   });
 
   it('should create an adhese instance with debug logging', async () => {
@@ -208,5 +190,19 @@ describe('createAdhese', () => {
     const slots = await adhese.findDomSlots();
 
     expect(slots.length).toBe(1);
+  });
+
+  it('should be able to change the consent', async () => {
+    const adhese = await createAdhese({
+      account: 'test',
+    });
+
+    expect(adhese.getConsent()).toBe('none');
+    expect(adhese.parameters.get('tl')).toBe('none');
+
+    adhese.setConsent('all');
+
+    expect(adhese.getConsent()).toBe('all');
+    expect(adhese.parameters.get('tl')).toBe('all');
   });
 });
