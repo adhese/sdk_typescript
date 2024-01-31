@@ -29,8 +29,9 @@ export type AdheseOptions = {
    */
   location?: string;
   /**
-   * The requestAds type to use for the Adhese API requests. This can be either `GET` or `POST`. `POST` is the default and
-   * offers the most options. `GET` is more limited as it needs pass its data as search parameters but can be used in environments where `POST` requests are not allowed.
+   * The requestAds type to use for the Adhese API requests. This can be either `GET` or `POST`. `POST` is the default
+   * and offers the most options. `GET` is more limited as it needs pass its data as search parameters but can be used
+   * in environments where `POST` requests are not allowed.
    *
    * @default 'POST'
    */
@@ -81,13 +82,17 @@ export type Adhese = Omit<AdheseOptions, 'location' | 'parameters'> & Merge<Slot
  *
  * @param options
  * @param options.account The Adhese account name.
- * @param options.host The url that is used to connect to the Adhese ad server. Pass a custom URL if you want to use your own domain for the connection.
- * @param options.poolHost The url that is used to connect to the Adhese pool server. Pass a custom URL if you want to use your own domain for the connection.
+ * @param options.host The url that is used to connect to the Adhese ad server. Pass a custom URL if you want to use
+ * your own domain for the connection.
+ * @param options.poolHost The url that is used to connect to the Adhese pool server. Pass a custom URL if you want to
+ * use your own domain for the connection.
  * @param options.location The page location. This is used to determine the current page location identifier.
- * @param options.requestType The requestAds type to use for the Adhese API requests. This can be either `GET` or `POST`. `POST` is the default and offers the most options. `GET` is more limited as it needs pass its data as search parameters but can be used in environments where `POST` requests are not allowed.
+ * @param options.requestType The requestAds type to use for the Adhese API requests. This can be either `GET` or
+ * `POST`. `POST` is the default and offers the most options. `GET` is more limited as it needs pass its data as search parameters but can be used in environments where `POST` requests are not allowed.
  * @param options.debug Enable debug logging.
  * @param options.initialSlots The initial slots to add to the Adhese instance.
- * @param options.findDomSlotsOnLoad Find all slots in the DOM and add them to the Adhese instance during initialization.
+ * @param options.findDomSlotsOnLoad Find all slots in the DOM and add them to the Adhese instance during
+ * initialization.
  * @param options.parameters Base parameters that are used for all ads.
  *
  * @return Promise<Adhese> The Adhese instance.
@@ -124,6 +129,33 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
   }
 
   const parameters = new Map(Object.entries(options.parameters ?? {}));
+
+  if (window.location.search.includes('adhesePreviewCreativeId')) {
+    logger.warn('Adhese preview mode enabled');
+
+    const disableButton = document.createElement('button');
+    disableButton.textContent = 'Disable Adhese preview mode. Click to close';
+    disableButton.style.position = 'fixed';
+    disableButton.style.insetBlockStart = '10px';
+    disableButton.style.insetInlineEnd = '10px';
+    disableButton.style.zIndex = '9999';
+    disableButton.style.padding = '10px';
+    disableButton.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    disableButton.style.color = 'white';
+    disableButton.style.fontFamily = 'sans-serif';
+    disableButton.style.border = 'none';
+    disableButton.style.cursor = 'pointer';
+    disableButton.style.maxInlineSize = '120px';
+    disableButton.type = 'button';
+
+    disableButton.addEventListener('click', () => {
+      const currentUrl = new URL(window.location.href);
+
+      window.location.replace(`${currentUrl.origin}${currentUrl.pathname === '/' ? '' : currentUrl.pathname}`);
+    });
+
+    document.body.appendChild(disableButton);
+  }
 
   const slotManager = createSlotManager({
     location,
