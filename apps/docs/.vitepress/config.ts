@@ -12,13 +12,9 @@ export default defineConfig({
     ],
 
     sidebar: [
-      {
-        text: 'Introduction',
-        items: [
-          { text: 'Getting Started', link: '/getting-started' },
-          { text: 'Slots', link: '/slots' },
-        ],
-      },
+      { text: 'Getting Started', link: '/getting-started' },
+      { text: 'Slots', link: '/slots' },
+      { text: 'Consent', link: '/consent' },
       {
         text: 'Contributing',
         items: [
