@@ -205,4 +205,39 @@ describe('createAdhese', () => {
     expect(adhese.getConsent()).toBe('all');
     expect(adhese.parameters.get('tl')).toBe('all');
   });
+
+  it('should change the consent parameter via TCF', async () => {
+    const listeners = new Set<(data: {
+      tcString: string;
+    }, success: boolean) => void>();
+    Object.defineProperty(window, '__tcfapi', {
+      // @ts-expect-error Testing TCF
+      value: vi.fn((command: 'addEventListener' | 'removeEventListener', version: number, callback: (data: {
+        tcString: string;
+      }, success: boolean) => void): void => {
+        if (command === 'addEventListener')
+          listeners.add(callback);
+        else if (command === 'removeEventListener')
+          listeners.delete(callback);
+      }),
+    });
+
+    const adhese = await createAdhese({
+      account: 'test',
+    });
+
+    expect(adhese.parameters.get('xt')).toBeUndefined();
+    expect(adhese.parameters.get('tl')).toBe('none');
+
+    listeners.forEach((listener) => {
+      listener({
+        tcString: 'foo',
+      }, true);
+    });
+
+    expect(adhese.parameters.get('xt')).toBe('foo');
+    expect(adhese.parameters.get('tl')).toBeUndefined();
+
+    listeners.clear();
+  });
 });

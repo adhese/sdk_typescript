@@ -2,6 +2,7 @@ import { type Merge, type UrlString, isUrlString } from '@utils';
 import { type Slot, type SlotOptions, logger, requestAd, requestAds } from '@core';
 
 import { type SlotManager, type SlotManagerOptions, createSlotManager } from './slot/slotManager/slotManager';
+import { onTcfConsentChange } from './consent/tcfConsent';
 
 export type AdheseOptions = {
   /**
@@ -103,7 +104,8 @@ export type Adhese = Omit<AdheseOptions, 'location' | 'parameters' | 'consent'> 
  * use your own domain for the connection.
  * @param options.location The page location. This is used to determine the current page location identifier.
  * @param options.requestType The requestAds type to use for the Adhese API requests. This can be either `GET` or
- * `POST`. `POST` is the default and offers the most options. `GET` is more limited as it needs pass its data as search parameters but can be used in environments where `POST` requests are not allowed.
+ * `POST`. `POST` is the default and offers the most options. `GET` is more limited as it needs pass its data as search
+ * parameters but can be used in environments where `POST` requests are not allowed.
  * @param options.debug Enable debug logging.
  * @param options.initialSlots The initial slots to add to the Adhese instance.
  * @param options.findDomSlotsOnLoad Find all slots in the DOM and add them to the Adhese instance during
@@ -122,6 +124,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     debug: false,
     initialSlots: [],
     findDomSlotsOnLoad: false,
+    consent: 'none',
     ...options,
   } satisfies AdheseOptions;
   if (mergedOptions.debug || window.location.search.includes('adhese_debug=true')) {
@@ -144,7 +147,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     location = newLocation;
   }
 
-  const parameters = new Map([...Object.entries(options.parameters ?? {}), ['tl', mergedOptions.consent ?? 'none']]);
+  const parameters = new Map([...Object.entries(options.parameters ?? {}), ['tl', mergedOptions.consent]]);
 
   let consent = mergedOptions.consent ?? 'none';
   function getConsent(): typeof consent {
@@ -223,7 +226,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
   if (mergedOptions.findDomSlotsOnLoad)
     await slotManager.findDomSlots();
 
-  if (slotManager.getAll().length > 0) {
+  async function fetchAndRenderAllSlots(): Promise<void> {
     const ads = await requestAds({
       host: mergedOptions.host,
       slots: slotManager.getAll(),
@@ -234,6 +237,23 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
 
     await Promise.allSettled(ads.map(ad => slotManager.get(ad.slotName)?.render(ad)));
   }
+
+  if (slotManager.getAll().length > 0)
+    await fetchAndRenderAllSlots();
+
+  onTcfConsentChange(async (data) => {
+    if (!data.tcString)
+      return;
+
+    logger.debug('TCF v2 consent data received', {
+      data,
+    });
+
+    parameters.set('xt', data.tcString);
+    parameters.delete('tl');
+
+    await fetchAndRenderAllSlots();
+  });
 
   return {
     ...mergedOptions,
