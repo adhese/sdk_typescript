@@ -54,12 +54,12 @@ export type AdheseOptions = {
    */
   parameters?: Record<string, ReadonlyArray<string> | string>;
   /**
-   * The consent type to use for the Adhese API requests. This can be either `all` or `none`. `all` is the default and
-   * will send all consent data to the Adhese API. `none` will send no consent data to the Adhese API.
+   * The consent type to use for the Adhese API requests. This can be either `true` or `false`. `false` is the default and
+   * will send all consent data to the Adhese API. `false` will send no consent data to the Adhese API.
    *
-   * @default 'none'
+   * @default false
    */
-  consent?: 'all' | 'none';
+  consent?: boolean;
 } & Pick<SlotManagerOptions, 'initialSlots'>;
 
 export type Adhese = Omit<AdheseOptions, 'location' | 'parameters' | 'consent'> & Merge<SlotManager, {
@@ -78,11 +78,11 @@ export type Adhese = Omit<AdheseOptions, 'location' | 'parameters' | 'consent'> 
   /**
    * Returns the current consent type.
    */
-  getConsent(): 'all' | 'none';
+  getConsent(): boolean;
   /**
    * Sets the current consent type.
    */
-  setConsent(consent: 'all' | 'none'): void;
+  setConsent(consent: boolean): void;
   /**
    * Adds a new slot to the Adhese instance and renders it.
    */
@@ -124,7 +124,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     debug: false,
     initialSlots: [],
     findDomSlotsOnLoad: false,
-    consent: 'none',
+    consent: false,
     ...options,
   } satisfies AdheseOptions;
   if (mergedOptions.debug || window.location.search.includes('adhese_debug=true')) {
@@ -147,14 +147,14 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     location = newLocation;
   }
 
-  const parameters = new Map([...Object.entries(options.parameters ?? {}), ['tl', mergedOptions.consent]]);
+  const parameters = new Map([...Object.entries(options.parameters ?? {}), ['tl', mergedOptions.consent ? 'all' : 'none']]);
 
   let consent = mergedOptions.consent ?? 'none';
   function getConsent(): typeof consent {
     return consent;
   }
-  function setConsent(newConsent: 'all' | 'none'): void {
-    parameters.set('tl', newConsent);
+  function setConsent(newConsent: boolean): void {
+    parameters.set('tl', newConsent ? 'all' : 'none');
     consent = newConsent;
   }
 

@@ -57,7 +57,7 @@ describe('createAdhese', () => {
       poolHost: 'https://pool.example.com',
       location: '/foo',
       requestType: 'GET',
-      consent: 'all',
+      consent: true,
       parameters: {
         aa: 'foo',
         bb: [
@@ -70,7 +70,7 @@ describe('createAdhese', () => {
     expect(adhese.account).toBe('test');
     expect(adhese.host).toBe('https://ads.example.com');
     expect(adhese.poolHost).toBe('https://pool.example.com');
-    expect(adhese.getConsent()).toBe('all');
+    expect(adhese.getConsent()).toBe(true);
     expect(adhese.requestType).toBe('GET');
     expect(adhese.parameters.size).toBe(3);
   });
@@ -197,12 +197,12 @@ describe('createAdhese', () => {
       account: 'test',
     });
 
-    expect(adhese.getConsent()).toBe('none');
+    expect(adhese.getConsent()).toBe(false);
     expect(adhese.parameters.get('tl')).toBe('none');
 
-    adhese.setConsent('all');
+    adhese.setConsent(true);
 
-    expect(adhese.getConsent()).toBe('all');
+    expect(adhese.getConsent()).toBe(true);
     expect(adhese.parameters.get('tl')).toBe('all');
   });
 
