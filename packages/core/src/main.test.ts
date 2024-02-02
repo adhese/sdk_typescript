@@ -1,4 +1,5 @@
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { type MockInstance, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { awaitTimeout } from '@utils';
 import { createAdhese } from './main';
 import { logger } from './logger/logger';
 
@@ -17,6 +18,33 @@ vi.mock('./logger/logger', async (importOriginal) => {
 });
 
 describe('createAdhese', () => {
+  const listeners = new Map<string, Set<() => void>>();
+  let validQuery = '(max-width: 768px) and (pointer: coarse)';
+
+  beforeAll(() => {
+    Object.defineProperty(window, 'matchMedia', {
+      value: vi.fn((
+        query: string,
+      ) => ({
+        media: query,
+        onchange: null,
+        dispatchEvent: null,
+        matches: query === validQuery,
+        addEventListener: vi.fn((type: string, listener: () => void) => {
+          if (listeners.has(type))
+            listeners.get(type)?.add(listener);
+          else
+            listeners.set(type, new Set([listener]));
+        }),
+        removeEventListener: vi.fn(
+          (type: string, listener: () => void) => {
+            listeners.get(type)?.delete(listener);
+          },
+        ),
+      })),
+    });
+  });
+
   let debugLoggerSpy: MockInstance<[msg: string, ...args: Array<any>], void>;
   let warnLoggerSpy: MockInstance<[msg: string, ...args: Array<any>], void>;
 
@@ -29,6 +57,8 @@ describe('createAdhese', () => {
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
     document.body.innerHTML = '';
+    listeners.clear();
+    validQuery = '(max-width: 768px) and (pointer: coarse)';
   });
 
   it('should create an adhese instance', () => {
@@ -72,7 +102,7 @@ describe('createAdhese', () => {
     expect(adhese.poolHost).toBe('https://pool.example.com');
     expect(adhese.getConsent()).toBe(true);
     expect(adhese.requestType).toBe('GET');
-    expect(adhese.parameters.size).toBe(3);
+    expect(adhese.parameters.size).toBe(5);
   });
 
   it('should create an adhese instance with debug logging', async () => {
@@ -207,7 +237,7 @@ describe('createAdhese', () => {
   });
 
   it('should change the consent parameter via TCF', async () => {
-    const listeners = new Set<(data: {
+    const tcfListeners = new Set<(data: {
       tcString: string;
     }, success: boolean) => void>();
     Object.defineProperty(window, '__tcfapi', {
@@ -216,9 +246,9 @@ describe('createAdhese', () => {
         tcString: string;
       }, success: boolean) => void): void => {
         if (command === 'addEventListener')
-          listeners.add(callback);
+          tcfListeners.add(callback);
         else if (command === 'removeEventListener')
-          listeners.delete(callback);
+          tcfListeners.delete(callback);
       }),
     });
 
@@ -229,7 +259,7 @@ describe('createAdhese', () => {
     expect(adhese.parameters.get('xt')).toBeUndefined();
     expect(adhese.parameters.get('tl')).toBe('none');
 
-    listeners.forEach((listener) => {
+    tcfListeners.forEach((listener) => {
       listener({
         tcString: 'foo',
       }, true);
@@ -239,5 +269,24 @@ describe('createAdhese', () => {
     expect(adhese.parameters.get('tl')).toBeUndefined();
 
     listeners.clear();
+  });
+
+  it('should be able to handle device change', async () => {
+    const adhese = await createAdhese({
+      account: 'test',
+    });
+
+    expect(adhese.parameters.get('dt')).toBe('mobile');
+    expect(adhese.parameters.get('br')).toBe('mobile');
+
+    validQuery = '(min-width: 769px) and (max-width: 1024px) and (pointer: coarse)';
+
+    for (const listener of listeners.get('change') ?? [])
+      listener();
+
+    await awaitTimeout(70);
+
+    expect(adhese.parameters.get('dt')).toBe('tablet');
+    expect(adhese.parameters.get('br')).toBe('tablet');
   });
 });

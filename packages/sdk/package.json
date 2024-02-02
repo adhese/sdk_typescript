@@ -19,6 +19,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "lodash-es": "^4.17.21",
     "zod": "^3.22.4"
   }
 }

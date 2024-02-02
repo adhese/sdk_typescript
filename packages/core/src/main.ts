@@ -3,6 +3,7 @@ import { type Slot, type SlotOptions, logger, requestAd, requestAds } from '@cor
 
 import { type SlotManager, type SlotManagerOptions, createSlotManager } from './slot/slotManager/slotManager';
 import { onTcfConsentChange } from './consent/tcfConsent';
+import { createDeviceDetector } from './deviceDetector/deviceDetector';
 
 export type AdheseOptions = {
   /**
@@ -147,7 +148,22 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     location = newLocation;
   }
 
-  const parameters = new Map([...Object.entries(options.parameters ?? {}), ['tl', mergedOptions.consent ? 'all' : 'none']]);
+  const deviceDetector = createDeviceDetector({
+    onChange: onDeviceChange,
+  });
+
+  const parameters = new Map(
+    [...Object.entries(options.parameters ?? {}), ['tl', mergedOptions.consent ? 'all' : 'none'], ['dt', deviceDetector.getDevice()], ['br', deviceDetector.getDevice()],
+    ],
+  );
+
+  async function onDeviceChange(): Promise<void> {
+    const device = deviceDetector.getDevice();
+    parameters.set('dt', device);
+    parameters.set('br', device);
+
+    await fetchAndRenderAllSlots();
+  }
 
   let consent = mergedOptions.consent ?? 'none';
   function getConsent(): typeof consent {
