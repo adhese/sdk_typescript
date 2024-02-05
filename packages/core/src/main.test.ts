@@ -103,7 +103,7 @@ describe('createAdhese', () => {
     expect(adhese.poolHost).toBe('https://pool.example.com');
     expect(adhese.getConsent()).toBe(true);
     expect(adhese.requestType).toBe('GET');
-    expect(adhese.parameters.size).toBe(5);
+    expect(adhese.parameters.size).toBe(8);
   });
 
   it('should create an adhese instance with debug logging', async () => {

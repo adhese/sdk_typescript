@@ -1,9 +1,10 @@
 import { type Merge, type UrlString, isUrlString } from '@utils';
 import { type Slot, type SlotOptions, logger, requestAd, requestAds } from '@core';
 
+import { random } from 'lodash-es';
 import { type SlotManager, type SlotManagerOptions, createSlotManager } from './slot/slotManager/slotManager';
 import { onTcfConsentChange } from './consent/tcfConsent';
-import { createDeviceDetector } from './deviceDetector/deviceDetector';
+import { type DeviceDetector, createDeviceDetector } from './deviceDetector/deviceDetector';
 
 export type AdheseOptions = {
   /**
@@ -61,6 +62,18 @@ export type AdheseOptions = {
    * @default false
    */
   consent?: boolean;
+  /**
+   * Will log the `document.referrer` to the Adhese API in a BASE64 string with the `re` parameter.
+   *
+   * @default true
+   */
+  logReferrer?: boolean;
+  /**
+   * Will log the `window.location.href` to the Adhese API in a BASE64 string with the `ur` parameter.
+   *
+   * @default true
+   */
+  logUrl?: boolean;
 } & Pick<SlotManagerOptions, 'initialSlots'>;
 
 export type Adhese = Omit<AdheseOptions, 'location' | 'parameters' | 'consent'> & Merge<SlotManager, {
@@ -132,6 +145,8 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     initialSlots: [],
     findDomSlotsOnLoad: false,
     consent: false,
+    logReferrer: true,
+    logUrl: true,
     ...options,
   } satisfies AdheseOptions;
   if (mergedOptions.debug || window.location.search.includes('adhese_debug=true')) {
@@ -147,9 +162,11 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     logger.warn('Invalid host or poolHost');
 
   let { location } = mergedOptions;
+
   function getLocation(): string {
     return location;
   }
+
   function setLocation(newLocation: string): void {
     location = newLocation;
   }
@@ -158,10 +175,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     onChange: onDeviceChange,
   });
 
-  const parameters = new Map(
-    [...Object.entries(options.parameters ?? {}), ['tl', mergedOptions.consent ? 'all' : 'none'], ['dt', deviceDetector.getDevice()], ['br', deviceDetector.getDevice()],
-    ],
-  );
+  const parameters = createParameters(mergedOptions, deviceDetector);
 
   async function onDeviceChange(): Promise<void> {
     const device = deviceDetector.getDevice();
@@ -172,9 +186,11 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
   }
 
   let consent = mergedOptions.consent ?? 'none';
+
   function getConsent(): typeof consent {
     return consent;
   }
+
   function setConsent(newConsent: boolean): void {
     parameters.set('tl', newConsent ? 'all' : 'none');
     consent = newConsent;
@@ -211,6 +227,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     location,
     initialSlots: mergedOptions.initialSlots,
   });
+
   async function addSlot(slotOptions: Omit<SlotOptions, 'location'>): Promise<Readonly<Slot>> {
     const slot = slotManager.add({
       ...slotOptions,
@@ -298,4 +315,24 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     findDomSlots,
     dispose,
   };
+}
+
+function createParameters(options: AdheseOptions, deviceDetector: DeviceDetector): Map<string, string | ReadonlyArray<string>> {
+  const parameters = new Map<string, string | ReadonlyArray<string>>();
+
+  if (options.logReferrer)
+    parameters.set('re', btoa(document.referrer));
+
+  if (options.logUrl)
+    parameters.set('ur', btoa(window.location.href));
+
+  for (const [key, value] of Object.entries({
+    ...options.parameters ?? {},
+    tl: options.consent ? 'all' : 'none',
+    dt: deviceDetector.getDevice(),
+    br: deviceDetector.getDevice(),
+    rn: random(10_000).toString(),
+  }))
+    parameters.set(key, value);
+  return parameters;
 }
