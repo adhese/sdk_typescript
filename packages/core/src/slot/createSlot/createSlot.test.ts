@@ -37,6 +37,7 @@ describe('slot', () => {
       getName: expect.any(Function) as () => string,
       getAd: expect.any(Function) as () => Ad | null,
       parameters: expect.any(Map) as Map<string, string>,
+      dispose: expect.any(Function) as () => void,
     } satisfies typeof slot);
 
     expect(slot.getElement()).toBeNull();
@@ -184,5 +185,34 @@ describe('slot', () => {
       format: 'bar',
       slot: 'baz',
     }).getName()).toBe('foobaz-bar');
+  });
+
+  it('should be able to dispose a slot', async () => {
+    const element = document.createElement('div');
+
+    element.classList.add('adunit');
+    element.dataset.format = 'leaderboard';
+    element.id = 'leaderboard';
+
+    document.body.appendChild(element);
+
+    const slot = createSlot({
+      location: location.pathname,
+      format: 'leaderboard',
+      containingElement: 'leaderboard',
+    });
+
+    await slot.render({
+      tag: '<div>foo</div>',
+      // eslint-disable-next-line ts/naming-convention
+      slotID: 'bar',
+      slotName: 'baz',
+      adType: 'foo',
+      impressionCounter: new URL('https://foo.bar'),
+    });
+
+    slot.dispose();
+
+    expect(slot.getElement()).toBeNull();
   });
 });

@@ -46,6 +46,10 @@ export type Slot = Merge<SlotOptions, {
    * Returns the ad that is currently rendered in the slot.
    */
   getAd(): Ad | null;
+  /**
+   * Removes the slot from the DOM and cleans up the slot instance.
+   */
+  dispose(): void;
 }>;
 
 /**
@@ -64,6 +68,8 @@ export function createSlot(options: SlotOptions): Readonly<Slot> {
   function getElement(): HTMLElement | null {
     return element;
   }
+
+  let trackingPixelElement: HTMLImageElement | null = null;
 
   let ad: Ad | null = null;
   function getAd(): Ad | null {
@@ -86,7 +92,7 @@ export function createSlot(options: SlotOptions): Readonly<Slot> {
     ad = adToRender;
 
     if (adToRender.impressionCounter)
-      addTrackingPixel(adToRender.impressionCounter);
+      trackingPixelElement = addTrackingPixel(adToRender.impressionCounter);
 
     logger.debug('Slot rendered', {
       renderedElement: element,
@@ -102,6 +108,16 @@ export function createSlot(options: SlotOptions): Readonly<Slot> {
     return `${location}${slot ? `${slot}` : ''}-${format}`;
   }
 
+  function dispose(): void {
+    if (element)
+      element.innerHTML = '';
+
+    trackingPixelElement?.remove();
+
+    element = null;
+    ad = null;
+  }
+
   return {
     location,
     format,
@@ -111,5 +127,6 @@ export function createSlot(options: SlotOptions): Readonly<Slot> {
     getElement,
     getName,
     getAd,
+    dispose,
   };
 }

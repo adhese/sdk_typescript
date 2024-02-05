@@ -21,6 +21,10 @@ export type SlotManager = {
    * Returns the slot with the given name.
    */
   get(name: string): Slot | undefined;
+  /**
+   * Removes all slots from the Adhese instance and cleans up the slot manager.
+   */
+  dispose(): void;
 };
 
 export type SlotManagerOptions = {
@@ -84,10 +88,18 @@ export function createSlotManager({
     return slots.get(name);
   }
 
+  function dispose(): void {
+    for (const slot of slots.values())
+      slot.dispose();
+
+    slots.clear();
+  }
+
   return {
     getAll,
     add,
     findDomSlots,
     get,
+    dispose,
   };
 }

@@ -13,6 +13,7 @@ vi.mock('./logger/logger', async (importOriginal) => {
       error: vi.fn(),
       setMinLogLevelThreshold: vi.fn((level) => { module.logger.setMinLogLevelThreshold(level); }),
       getMinLogLevelThreshold: vi.fn(() => module.logger.getMinLogLevelThreshold()),
+      resetLogs: vi.fn(),
     } satisfies Partial<typeof logger>,
   });
 });
@@ -288,5 +289,15 @@ describe('createAdhese', () => {
 
     expect(adhese.parameters.get('dt')).toBe('tablet');
     expect(adhese.parameters.get('br')).toBe('tablet');
+  });
+
+  it('should dispose the instance', async () => {
+    const adhese = await createAdhese({
+      account: 'test',
+    });
+
+    adhese.dispose();
+
+    expect(adhese.getAll().length).toBe(0);
   });
 });

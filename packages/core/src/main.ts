@@ -92,6 +92,12 @@ export type Adhese = Omit<AdheseOptions, 'location' | 'parameters' | 'consent'> 
    * Finds all slots in the DOM and adds them to the Adhese instance.
    */
   findDomSlots(): Promise<ReadonlyArray<Slot>>;
+  /**
+   * Removes all slots from the Adhese instance and cleans up the Adhese instance.
+   *
+   * After calling this method, the Adhese instance is no longer usable.
+   */
+  dispose(): void;
 }>;
 
 /**
@@ -257,7 +263,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
   if (slotManager.getAll().length > 0)
     await fetchAndRenderAllSlots();
 
-  onTcfConsentChange(async (data) => {
+  const disposeOnTcfConsentChange = onTcfConsentChange(async (data) => {
     if (!data.tcString)
       return;
 
@@ -271,6 +277,15 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     await fetchAndRenderAllSlots();
   });
 
+  function dispose(): void {
+    deviceDetector.dispose();
+    slotManager.dispose();
+    deviceDetector.dispose();
+    disposeOnTcfConsentChange();
+    parameters.clear();
+    logger.resetLogs();
+  }
+
   return {
     ...mergedOptions,
     ...slotManager,
@@ -281,5 +296,6 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     setConsent,
     addSlot,
     findDomSlots,
+    dispose,
   };
 }

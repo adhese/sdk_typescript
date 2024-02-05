@@ -14,6 +14,7 @@ describe('slotManager', () => {
       getAll: expect.any(Function) as () => ReadonlyArray<Slot>,
       findDomSlots: expect.any(Function) as () => Promise<ReadonlyArray<Slot>>,
       get: expect.any(Function) as (name: string) => Slot | undefined,
+      dispose: expect.any(Function) as () => void,
     } satisfies typeof slotManager);
   });
 
@@ -65,5 +66,17 @@ describe('slotManager', () => {
     });
     const slot = slotManager.get('foo-leaderboard');
     expect(slot).toBeDefined();
+  });
+
+  it('should be able to dispose of all slots', () => {
+    const slotManager = createSlotManager({
+      location: location.pathname,
+      initialSlots: [{
+        format: 'leaderboard',
+        containingElement: 'leaderboard',
+      }],
+    });
+    slotManager.dispose();
+    expect(slotManager.getAll().length).toBe(0);
   });
 });
