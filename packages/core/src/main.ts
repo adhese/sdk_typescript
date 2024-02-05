@@ -51,7 +51,7 @@ export type AdheseOptions = {
    */
   findDomSlotsOnLoad?: boolean;
   /**
-   * Base parameters that are used for all ads.
+   * Additional parameters to send with each request. Make sure that the keys of a parameter only contain `2` characters.
    */
   parameters?: Record<string, ReadonlyArray<string> | string>;
   /**

@@ -81,3 +81,20 @@ Example HTML:
 <div id="slot-1" class="adunit" data-format="billboard"></div>
 <div id="slot-2" class="adunit" data-format="leaderboard"></div>
 ```
+
+## Options
+The `createAdhese` function accepts the following options:
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| account<sup>*</sup> | `string` | - | Your Adhese account ID |
+| host | `string` | `'https://ads-{{account}}.adhese.com'` | The Adhese API host |
+| poolHost | `string` | `'https://pool-{{account}}.adhese.com'` | The Adhese pool host |
+| location | `string` | `window.location.pathname` | The page location. This is used to determine the current page location identifier. |
+| reqeustType | `'GET'` or `'POST'` | `'POST'` | The requestAds type to use for the Adhese API requests. This can be either `GET` or `POST`. `POST` is the default and offers the most options. `GET` is more limited as it needs pass its data as search parameters but can be used in environments where `POST` requests are not allowed. |
+| debug | `boolean` | `false` | Enable debug mode |
+| findDomSlotsOnLoad | `boolean` | `false` | Automatically find slots on the page and load them |
+| parameters | `object` | `{}` | Additional parameters to send with each request. Make sure that the keys of a parameter only contain `2` characters. |
+| consent | `boolean` | `false` | User consent for tracking |
+| initialSlots | `Slot[]` | `[]` | Slots to fetch before the DOM is ready |
+| logReferrer | `boolean` | `true` | Will log the `document.referrer` to the Adhese API in a `BASE64` string with the `re` parameter. |
+| logUrl | `boolean` | `true` | Will log the `location.href` to the Adhese API in a `BASE64` string with the `ur` parameter. |'
