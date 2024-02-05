@@ -1,10 +1,9 @@
-import { type Merge, type UrlString, isUrlString } from '@utils';
+import type { Merge, UrlString } from '@utils';
 import { type Slot, type SlotOptions, logger, requestAd, requestAds } from '@core';
-
-import { random } from 'lodash-es';
 import { type SlotManager, type SlotManagerOptions, createSlotManager } from './slot/slotManager/slotManager';
 import { onTcfConsentChange } from './consent/tcfConsent';
-import { type DeviceDetector, createDeviceDetector } from './deviceDetector/deviceDetector';
+import { createDeviceDetector } from './deviceDetector/deviceDetector';
+import { createParameters, createPreviewUi, setupLogging } from './main.utils';
 
 export type AdheseOptions = {
   /**
@@ -149,17 +148,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     logUrl: true,
     ...options,
   } satisfies AdheseOptions;
-  if (mergedOptions.debug || window.location.search.includes('adhese_debug=true')) {
-    logger.setMinLogLevelThreshold('debug');
-    logger.debug('Debug logging enabled');
-  }
-
-  logger.debug('Created Adhese SDK instance', {
-    options,
-  });
-
-  if (!isUrlString(mergedOptions.host) || !isUrlString(mergedOptions.poolHost))
-    logger.warn('Invalid host or poolHost');
+  setupLogging(mergedOptions);
 
   let { location } = mergedOptions;
 
@@ -185,7 +174,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     await fetchAndRenderAllSlots();
   }
 
-  let consent = mergedOptions.consent ?? 'none';
+  let { consent } = mergedOptions;
 
   function getConsent(): typeof consent {
     return consent;
@@ -196,32 +185,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     consent = newConsent;
   }
 
-  if (window.location.search.includes('adhesePreviewCreativeId')) {
-    logger.warn('Adhese preview mode enabled');
-
-    const disableButton = document.createElement('button');
-    disableButton.textContent = 'Disable Adhese preview mode. Click to close';
-    disableButton.style.position = 'fixed';
-    disableButton.style.insetBlockStart = '10px';
-    disableButton.style.insetInlineEnd = '10px';
-    disableButton.style.zIndex = '9999';
-    disableButton.style.padding = '10px';
-    disableButton.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-    disableButton.style.color = 'white';
-    disableButton.style.fontFamily = 'sans-serif';
-    disableButton.style.border = 'none';
-    disableButton.style.cursor = 'pointer';
-    disableButton.style.maxInlineSize = '120px';
-    disableButton.type = 'button';
-
-    disableButton.addEventListener('click', () => {
-      const currentUrl = new URL(window.location.href);
-
-      window.location.replace(`${currentUrl.origin}${currentUrl.pathname === '/' ? '' : currentUrl.pathname}`);
-    });
-
-    document.body.appendChild(disableButton);
-  }
+  createPreviewUi();
 
   const slotManager = createSlotManager({
     location,
@@ -315,24 +279,4 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     findDomSlots,
     dispose,
   };
-}
-
-function createParameters(options: AdheseOptions, deviceDetector: DeviceDetector): Map<string, string | ReadonlyArray<string>> {
-  const parameters = new Map<string, string | ReadonlyArray<string>>();
-
-  if (options.logReferrer)
-    parameters.set('re', btoa(document.referrer));
-
-  if (options.logUrl)
-    parameters.set('ur', btoa(window.location.href));
-
-  for (const [key, value] of Object.entries({
-    ...options.parameters ?? {},
-    tl: options.consent ? 'all' : 'none',
-    dt: deviceDetector.getDevice(),
-    br: deviceDetector.getDevice(),
-    rn: random(10_000).toString(),
-  }))
-    parameters.set(key, value);
-  return parameters;
 }

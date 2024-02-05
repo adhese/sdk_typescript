@@ -47,11 +47,9 @@ describe('createAdhese', () => {
   });
 
   let debugLoggerSpy: MockInstance<[msg: string, ...args: Array<any>], void>;
-  let warnLoggerSpy: MockInstance<[msg: string, ...args: Array<any>], void>;
 
   beforeEach(() => {
     debugLoggerSpy = vi.spyOn(logger, 'debug');
-    warnLoggerSpy = vi.spyOn(logger, 'warn');
   });
 
   afterEach(() => {
@@ -115,18 +113,6 @@ describe('createAdhese', () => {
     expect(logger.getMinLogLevelThreshold()).toBe('debug');
     expect(debugLoggerSpy).toHaveBeenCalledWith('Debug logging enabled');
     expect(debugLoggerSpy).toHaveBeenCalled();
-  });
-
-  it('should create a warning when host or poolHost are invalid', async () => {
-    await createAdhese({
-      account: 'test',
-      // @ts-expect-error Testing invalid host
-      host: 'invalid',
-      // @ts-expect-error Testing invalid host
-      poolHost: 'invalid',
-    });
-
-    expect(warnLoggerSpy).toHaveBeenCalledWith('Invalid host or poolHost');
   });
 
   it('should create an adhese instance with initial slots', async () => {
@@ -299,5 +285,31 @@ describe('createAdhese', () => {
     adhese.dispose();
 
     expect(adhese.getAll().length).toBe(0);
+  });
+
+  it('should create a exit preview button when in preview mode', async () => {
+    const href = 'http://localhost/?adhesePreviewCreativeId=foo';
+
+    Object.defineProperty(window, 'location', {
+      value: {
+        search: '?adhesePreviewCreativeId=foo',
+        href,
+        replace: vi.fn((url: string) => {
+          window.location.href = url;
+        }),
+      },
+    });
+
+    await createAdhese({
+      account: 'test',
+    });
+
+    const button = document.querySelector('button');
+
+    expect(button).not.toBeNull();
+
+    button?.dispatchEvent(new Event('click'));
+
+    expect(window.location.href).toBe('http://localhost');
   });
 });
