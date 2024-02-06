@@ -1,5 +1,5 @@
 import type { UrlString } from '@utils';
-import { type Slot, logger } from '@core';
+import { type Adhese, type Slot, logger } from '@core';
 import { type Ad, adSchema } from './requestAds.schema';
 import { requestPreviews } from './requestAds.preview';
 import { requestWithGet, requestWithPost } from './requestAds.utils';
@@ -27,6 +27,7 @@ export type AdRequestOptions = {
    * The parameters that are used for all ads.
    */
   parameters?: Map<string, ReadonlyArray<string> | string>;
+  context: Partial<Adhese>;
 };
 
 /**
@@ -34,6 +35,7 @@ export type AdRequestOptions = {
  */
 export async function requestAds({
   method = 'POST',
+  context,
   ...options
 }: AdRequestOptions): Promise<ReadonlyArray<Ad>> {
   try {
@@ -52,7 +54,7 @@ export async function requestAds({
     if (previews.length > 0)
       logger.info(`Found ${previews.length} ${previews.length === 1 ? 'preview' : 'previews'}. Replacing ads in response with preview items`, previews);
 
-    return [
+    const mergedResult = [
       ...result.filter(ad => !previews.some(preview => preview.libId === ad.libId)),
       ...previews.map(({ slotName, ...preview }) => {
         const partnerAd = result.find(ad => ad.libId === preview.libId);
@@ -63,6 +65,17 @@ export async function requestAds({
         });
       }),
     ];
+
+    await context.events?.requestAd.dispatchAsync({
+      response: mergedResult,
+      request: {
+        ...options,
+        context,
+        method,
+      },
+    });
+
+    return mergedResult;
   }
   catch (error) {
     logger.error(String(error));

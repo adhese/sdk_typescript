@@ -1,14 +1,38 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createSlot } from '@core';
+import type { AdheseContext } from '../../main';
 import { findDomSlots } from './findDomSlots';
 
 describe('findDomSlots', () => {
+  let context: AdheseContext;
+
+  beforeEach(() => {
+    context = {
+      location: 'foo',
+      consent: false,
+      getAll: vi.fn(() => [
+        createSlot({
+          format: 'leaderboard',
+          containingElement: 'leaderboard',
+          context,
+        }),
+      ]),
+      get: vi.fn(() => undefined),
+    };
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('should find all slots in the DOM', async () => {
     document.body.innerHTML = `
       <div class="adunit" data-format="leaderboard" id="leaderboard"></div>
       <div class="adunit" data-format="billboard" id="billboard"></div>
     `;
-    const slots = await findDomSlots();
+    context.getAll = vi.fn(() => []);
+
+    const slots = await findDomSlots(context);
     expect(slots.length).toBe(2);
   });
 
@@ -17,15 +41,8 @@ describe('findDomSlots', () => {
       <div class="adunit" data-format="leaderboard" id="leaderboard"></div>
       <div class="adunit" data-format="billboard" id="billboard"></div>
     `;
-    const activeSlots = [
-      createSlot({
-        format: 'leaderboard',
-        containingElement: 'leaderboard',
-        location: location.pathname,
-      }),
-    ];
 
-    const slots = await findDomSlots(activeSlots);
+    const slots = await findDomSlots(context);
 
     expect(slots.length).toBe(1);
   });
@@ -35,7 +52,7 @@ describe('findDomSlots', () => {
       <div class="adunit" id="leaderboard"></div>
       <div class="adunit" data-format="billboard" id="billboard"></div>
     `;
-    const slots = await findDomSlots();
+    const slots = await findDomSlots(context);
     expect(slots.length).toBe(1);
   });
 });

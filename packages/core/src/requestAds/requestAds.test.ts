@@ -1,11 +1,21 @@
 import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { UrlString } from '@utils';
 import { createSlot, logger } from '@core';
+import type { AdheseContext } from '../main';
 import { requestAd, requestAds } from './requestAds';
 import { type AdResponse, adSchema, dateLike, numberLike, urlLike } from './requestAds.schema';
 import { parseParameters } from './requestAds.utils';
 
 describe('requestAds', () => {
+  let context: AdheseContext;
+
+  beforeEach(() => {
+    context = {
+      location: 'foo',
+      consent: false,
+    };
+  });
+
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
@@ -19,15 +29,16 @@ describe('requestAds', () => {
         slots: [
           createSlot({
             format: 'foo',
-            location: 'bar',
             slot: 'baz',
+            context,
           }),
           createSlot({
             format: 'foo2',
-            location: 'bar2',
             slot: 'baz2',
+            context,
           }),
         ],
+        context: {},
       },
     );
 
@@ -42,16 +53,17 @@ describe('requestAds', () => {
         slots: [
           createSlot({
             format: 'foo',
-            location: 'bar',
             slot: 'baz',
+            context,
           }),
           createSlot({
             format: 'foo2',
-            location: 'bar2',
             slot: 'baz2',
+            context,
           }),
         ],
         method: 'GET',
+        context,
       },
     );
 
@@ -67,10 +79,11 @@ describe('requestAds', () => {
           slots: [
             createSlot({
               format: 'foo',
-              location: 'bar',
               slot: 'baz',
+              context,
             }),
           ],
+          context,
         },
       );
     }
@@ -81,6 +94,15 @@ describe('requestAds', () => {
 });
 
 describe('requestAd', () => {
+  let context: AdheseContext;
+
+  beforeEach(() => {
+    context = {
+      location: 'foo',
+      consent: false,
+    };
+  });
+
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
@@ -91,9 +113,10 @@ describe('requestAd', () => {
       host: 'https://ads-test.adhese.com',
       account: 'demo',
       slot: createSlot({
-        location: 'foo',
         format: 'bar',
+        context,
       }),
+      context,
     });
 
     expect(ad).toBeDefined();
@@ -220,6 +243,15 @@ describe('parseParameters', () => {
 });
 
 describe('requestPreviews', () => {
+  let context: AdheseContext;
+
+  beforeEach(() => {
+    context = {
+      location: 'foo',
+      consent: false,
+    };
+  });
+
   beforeEach(() => {
     Object.defineProperty(window, 'location', {
       writable: true,
@@ -238,14 +270,15 @@ describe('requestPreviews', () => {
       account: 'test',
       slots: [
         createSlot({
-          location: 'foo',
           format: 'bar',
+          context,
         }),
         createSlot({
-          location: 'bar',
           format: 'baz',
+          context,
         }),
       ],
+      context,
     });
 
     expect(ads.length).toBe(3);

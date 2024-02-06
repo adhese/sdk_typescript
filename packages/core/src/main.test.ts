@@ -1,6 +1,6 @@
 import { type MockInstance, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { awaitTimeout } from '@utils';
-import { createAdhese } from './main';
+import { type AdheseContext, createAdhese } from './main';
 import { logger } from './logger/logger';
 
 vi.mock('./logger/logger', async (importOriginal) => {
@@ -19,6 +19,8 @@ vi.mock('./logger/logger', async (importOriginal) => {
 });
 
 describe('createAdhese', () => {
+  let context: AdheseContext;
+
   const listeners = new Map<string, Set<() => void>>();
   let validQuery = '(max-width: 768px) and (pointer: coarse)';
 
@@ -44,6 +46,13 @@ describe('createAdhese', () => {
         ),
       })),
     });
+  });
+
+  beforeEach(() => {
+    context = {
+      location: 'foo',
+      consent: false,
+    };
   });
 
   let debugLoggerSpy: MockInstance<[msg: string, ...args: Array<any>], void>;
@@ -130,6 +139,7 @@ describe('createAdhese', () => {
           format: 'billboard',
           containingElement: 'billboard',
           slot: 'billboard',
+          context,
         },
       ],
     });
@@ -187,6 +197,7 @@ describe('createAdhese', () => {
     await adhese.addSlot({
       format: 'foo',
       containingElement: 'foo',
+      context,
     });
 
     expect(adhese.getAll().length).toBe(1);

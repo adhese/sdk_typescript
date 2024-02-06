@@ -1,5 +1,5 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { type Ad, createSlot } from '@core';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { type Ad, type AdheseContext, createSlot } from '@core';
 
 vi.mock('../logger/logger', () => ({
   logger: {
@@ -9,6 +9,15 @@ vi.mock('../logger/logger', () => ({
 }));
 
 describe('slot', () => {
+  let context: AdheseContext;
+
+  beforeEach(() => {
+    context = {
+      location: 'foo',
+      consent: false,
+    };
+  });
+
   afterEach(() => {
     vi.restoreAllMocks();
     document.body.innerHTML = '';
@@ -24,9 +33,9 @@ describe('slot', () => {
     document.body.appendChild(element);
 
     const slot = createSlot({
-      location: 'foo',
       format: 'leaderboard',
       containingElement: 'leaderboard',
+      context,
     });
 
     expect(slot).toEqual({
@@ -62,10 +71,10 @@ describe('slot', () => {
     document.body.appendChild(element);
 
     const slot = createSlot({
-      location: 'foo',
       format: 'leaderboard',
       containingElement: 'leaderboard',
       slot: 'bar',
+      context,
     });
 
     expect(slot.getElement()).toBeNull();
@@ -90,12 +99,12 @@ describe('slot', () => {
     document.body.appendChild(element);
 
     const slot = createSlot({
-      location: 'foo',
       format: 'leaderboard',
       containingElement: 'leaderboard',
       parameters: {
         foo: 'bar',
       },
+      context,
     });
 
     expect(slot.parameters.has('foo')).toBe(true);
@@ -108,9 +117,9 @@ describe('slot', () => {
 
   it('should log an error when no element is found', async () => {
     const slot = createSlot({
-      location: location.pathname,
       format: 'leaderboard',
       containingElement: 'leaderboard',
+      context,
     });
 
     try {
@@ -138,10 +147,9 @@ describe('slot', () => {
     document.body.appendChild(element);
 
     const slot = createSlot({
-
-      location: 'foo',
       format: 'leaderboard',
       containingElement: element,
+      context,
     });
 
     expect(slot.getElement()).toBe(element);
@@ -157,9 +165,9 @@ describe('slot', () => {
     document.body.appendChild(element);
 
     const slot = createSlot({
-      location: location.pathname,
       format: 'leaderboard',
       containingElement: 'leaderboard',
+      context,
     });
 
     await slot.render({
@@ -176,14 +184,14 @@ describe('slot', () => {
 
   it('should be able generate a slot name', async () => {
     expect(createSlot({
-      location: 'foo',
       format: 'bar',
+      context,
     }).getName()).toBe('foo-bar');
 
     expect(createSlot({
-      location: 'foo',
       format: 'bar',
       slot: 'baz',
+      context,
     }).getName()).toBe('foobaz-bar');
   });
 
@@ -197,9 +205,9 @@ describe('slot', () => {
     document.body.appendChild(element);
 
     const slot = createSlot({
-      location: location.pathname,
       format: 'leaderboard',
       containingElement: 'leaderboard',
+      context,
     });
 
     await slot.render({

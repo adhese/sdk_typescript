@@ -11,7 +11,7 @@ type AdPostPayload = {
 export function requestWithPost({
   host,
   ...options
-}: Omit<AdRequestOptions, 'method'>): Promise<Response> {
+}: Omit<AdRequestOptions, 'method' | 'context'>): Promise<Response> {
   const payload = {
     ...options,
     slots: options.slots.map(slot => ({
@@ -31,7 +31,7 @@ export function requestWithPost({
   });
 }
 
-export async function requestWithGet(options: Omit<AdRequestOptions, 'method'>): Promise<Response> {
+export async function requestWithGet(options: Omit<AdRequestOptions, 'method' | 'context'>): Promise<Response> {
   return fetch(new URL(`${options.host}/json/sl${options.slots.map(slot => slot.getName()).join('/sl')}`), {
     method: 'GET',
     headers: {

@@ -1,6 +1,7 @@
 import type { Merge } from '@utils';
 import { type Slot, type SlotOptions, createSlot, logger } from '@core';
 import { findDomSlots as extFindDomSlots } from '../findDomSlots/findDomSlots';
+import type { AdheseContext } from '../../main';
 
 export type SlotManager = {
   /**
@@ -10,13 +11,11 @@ export type SlotManager = {
   /**
    * Adds a new slot to the Adhese instance and renders it.
    */
-  add(slot: SlotOptions): Readonly<Slot>;
+  add(slot: Omit<SlotOptions, 'context'>): Readonly<Slot>;
   /**
    * Finds all slots in the DOM and adds them to the Adhese instance.
    */
-  findDomSlots(
-    newLocation?: string,
-  ): Promise<ReadonlyArray<Slot>>;
+  findDomSlots(): Promise<ReadonlyArray<Slot>>;
   /**
    * Returns the slot with the given name.
    */
@@ -29,25 +28,22 @@ export type SlotManager = {
 
 export type SlotManagerOptions = {
   /**
-   * The location of the slot. This is the location that is used to determine the current page URL.
-   */
-  location: string;
-  /**
    * List of initial slots to add to the slot manager.
    */
   initialSlots?: ReadonlyArray<Merge<Omit<SlotOptions, 'location' | 'containingElement'>, {
     containingElement: string;
   }>>;
+  context: AdheseContext;
 };
 
 export function createSlotManager({
-  location,
   initialSlots = [],
+  context,
 }: SlotManagerOptions): Readonly<SlotManager> {
-  const slots = new Map<string, Slot>(initialSlots.map(slot => createSlot({
-    ...slot,
-    location,
-  })).map(slot => [slot.getName(), slot]));
+  const slots = new Map<string, Slot>();
+
+  for (const slot of initialSlots)
+    add(slot);
 
   function getAll(): ReadonlyArray<Slot> {
     const slotList = Array.from(slots).map(([, slot]) => slot);
@@ -57,8 +53,21 @@ export function createSlotManager({
     return slotList;
   }
 
-  function add(options: SlotOptions): Readonly<Slot> {
-    const slot = createSlot(options);
+  function add(options: Omit<SlotOptions, 'context'>): Readonly<Slot> {
+    const slot = createSlot({
+      ...options,
+      onDispose,
+      context,
+    });
+
+    function onDispose(): void {
+      slots.delete(slot.getName());
+      logger.debug('Slot removed', {
+        slot,
+        slots: Array.from(slots),
+      });
+      context.events?.removeSlot.dispatch(slot);
+    }
 
     slots.set(slot.getName(), slot);
 
@@ -67,15 +76,14 @@ export function createSlotManager({
       slots: Array.from(slots),
     });
 
+    context.events?.addSlot.dispatch(slot);
+
     return slot;
   }
 
-  async function findDomSlots(
-    newLocation: string = location,
-  ): Promise<ReadonlyArray<Slot>> {
+  async function findDomSlots(): Promise<ReadonlyArray<Slot>> {
     const domSlots = await extFindDomSlots(
-      Array.from(slots).map(([, slot]) => slot),
-      newLocation,
+      context,
     );
 
     for (const slot of domSlots)

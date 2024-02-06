@@ -1,12 +1,9 @@
 import { type Ad, logger } from '@core';
 import { type Merge, waitForDomLoad } from '@utils';
 import { addTrackingPixel } from '../../impressionTracking/impressionTracking';
+import type { AdheseContext } from '../../main';
 
 export type SlotOptions = {
-  /**
-   * The location of the slot. This is the location that is used to determine the current page URL.
-   */
-  location: string;
   /**
    * The format code of the slot. Used to find the correct element on the page to render the ad in.
    */
@@ -23,9 +20,15 @@ export type SlotOptions = {
    * The parameters that are used to render the ad.
    */
   parameters?: Record<string, ReadonlyArray<string> | string>;
+  context: AdheseContext;
+  onDispose?(): void;
 };
 
-export type Slot = Merge<SlotOptions, {
+export type Slot = Merge<Omit<SlotOptions, 'onDispose' | 'context'>, {
+  /**
+   * The location of the slot. This is the location that is used to determine the current page URL.
+   */
+  location: string;
   /**
    * The parameters that are used to render the ad.
    */
@@ -57,10 +60,10 @@ export type Slot = Merge<SlotOptions, {
  */
 export function createSlot(options: SlotOptions): Readonly<Slot> {
   const {
-    location,
     format,
     containingElement,
     slot,
+    context,
   } = options;
   const parameters = new Map(Object.entries(options.parameters ?? {}));
 
@@ -96,7 +99,7 @@ export function createSlot(options: SlotOptions): Readonly<Slot> {
 
     logger.debug('Slot rendered', {
       renderedElement: element,
-      location,
+      location: context.location,
       format,
       containingElement,
     });
@@ -105,7 +108,7 @@ export function createSlot(options: SlotOptions): Readonly<Slot> {
   }
 
   function getName(): string {
-    return `${location}${slot ? `${slot}` : ''}-${format}`;
+    return `${context.location}${slot ? `${slot}` : ''}-${format}`;
   }
 
   function dispose(): void {
@@ -116,10 +119,12 @@ export function createSlot(options: SlotOptions): Readonly<Slot> {
 
     element = null;
     ad = null;
+
+    options.onDispose?.();
   }
 
   return {
-    location,
+    location: context.location,
     format,
     slot,
     parameters,

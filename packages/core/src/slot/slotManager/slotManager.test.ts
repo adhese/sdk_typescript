@@ -1,12 +1,21 @@
-import { describe, expect, it } from 'vitest';
-import type { Slot, SlotOptions } from '@core';
+import { beforeEach, describe, expect, it } from 'vitest';
+import type { AdheseContext, Slot, SlotOptions } from '@core';
 import { createSlotManager } from './slotManager';
 
 describe('slotManager', () => {
+  let context: AdheseContext;
+
+  beforeEach(() => {
+    context = {
+      location: 'foo',
+      consent: false,
+    };
+  });
+
   it('should create a slot manager', () => {
     const slotManager = createSlotManager({
-      location: location.pathname,
       initialSlots: [],
+      context,
     });
 
     expect(slotManager).toEqual({
@@ -20,24 +29,24 @@ describe('slotManager', () => {
 
   it('should be able to get all slots', () => {
     const slotManager = createSlotManager({
-      location: location.pathname,
       initialSlots: [{
         format: 'leaderboard',
         containingElement: 'leaderboard',
+        context,
       }],
+      context,
     });
     expect(slotManager.getAll().length).toBe(1);
   });
 
   it('should be able to add a slot', () => {
     const slotManager = createSlotManager({
-      location: location.pathname,
       initialSlots: [],
+      context,
     });
     slotManager.add({
       format: 'leaderboard',
       containingElement: 'leaderboard',
-      location: location.pathname,
     });
     expect(slotManager.getAll().length).toBe(1);
   });
@@ -48,8 +57,8 @@ describe('slotManager', () => {
       <div class="adunit" data-format="billboard" id="billboard"></div>
     `;
     const slotManager = createSlotManager({
-      location: location.pathname,
       initialSlots: [],
+      context,
     });
     const slots = await slotManager.findDomSlots();
     expect(slots.length).toBe(2);
@@ -58,11 +67,12 @@ describe('slotManager', () => {
 
   it('should be able to get a slot by name', () => {
     const slotManager = createSlotManager({
-      location: 'foo',
       initialSlots: [{
         format: 'leaderboard',
         containingElement: 'leaderboard',
+        context,
       }],
+      context,
     });
     const slot = slotManager.get('foo-leaderboard');
     expect(slot).toBeDefined();
@@ -70,11 +80,12 @@ describe('slotManager', () => {
 
   it('should be able to dispose of all slots', () => {
     const slotManager = createSlotManager({
-      location: location.pathname,
       initialSlots: [{
         format: 'leaderboard',
         containingElement: 'leaderboard',
+        context,
       }],
+      context,
     });
     slotManager.dispose();
     expect(slotManager.getAll().length).toBe(0);

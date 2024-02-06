@@ -1,5 +1,5 @@
-import type { Merge, UrlString } from '@utils';
-import { type Slot, type SlotOptions, logger, requestAd, requestAds } from '@core';
+import { type EventManager, type Merge, type UrlString, createEventManager } from '@utils';
+import { type Ad, type AdRequestOptions, type Slot, type SlotOptions, logger, requestAd, requestAds } from '@core';
 import { type SlotManager, type SlotManagerOptions, createSlotManager } from './slot/slotManager/slotManager';
 import { onTcfConsentChange } from './consent/tcfConsent';
 import { createDeviceDetector } from './deviceDetector/deviceDetector';
@@ -75,11 +75,26 @@ export type AdheseOptions = {
   logUrl?: boolean;
 } & Pick<SlotManagerOptions, 'initialSlots'>;
 
+type AdheseEvents = {
+  locationChange: string;
+  consentChange: boolean;
+  addSlot: Slot;
+  removeSlot: Slot;
+  requestAd: {
+    request: AdRequestOptions;
+    response: ReadonlyArray<Ad>;
+  };
+};
+
 export type Adhese = Omit<AdheseOptions, 'location' | 'parameters' | 'consent'> & Merge<SlotManager, {
   /**
    * The parameters that are used for all ads.
    */
   parameters: Map<string, ReadonlyArray<string> | string>;
+  /**
+   * The event manager for the Adhese instance.
+   */
+  events: EventManager<AdheseEvents>;
   /**
    * Returns the current page location.
    */
@@ -111,6 +126,11 @@ export type Adhese = Omit<AdheseOptions, 'location' | 'parameters' | 'consent'> 
    */
   dispose(): void;
 }>;
+
+export type AdheseContext = Partial<Pick<Adhese, 'events' | 'getAll' | 'get'>> & {
+  location: string;
+  consent: boolean;
+};
 
 /**
  * Creates an Adhese instance. This instance is your main entry point to the Adhese API.
@@ -150,14 +170,31 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
   } satisfies AdheseOptions;
   setupLogging(mergedOptions);
 
-  let { location } = mergedOptions;
+  const {
+    revoke: revokeContext,
+    proxy: context,
+  } = Proxy.revocable<AdheseContext>({
+    location: mergedOptions.location,
+    consent: mergedOptions.consent,
+    getAll,
+    get,
+  }, {});
 
-  function getLocation(): string {
-    return location;
+  context.events = createEventManager<AdheseEvents>([
+    'locationChange',
+    'consentChange',
+    'addSlot',
+    'removeSlot',
+    'requestAd',
+  ]);
+
+  function getLocation(): typeof context.location {
+    return context.location;
   }
 
   function setLocation(newLocation: string): void {
-    location = newLocation;
+    context.location = newLocation;
+    context.events?.locationChange.dispatch(newLocation);
   }
 
   const deviceDetector = createDeviceDetector({
@@ -174,35 +211,41 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     await fetchAndRenderAllSlots();
   }
 
-  let { consent } = mergedOptions;
-
-  function getConsent(): typeof consent {
-    return consent;
+  function getConsent(): typeof context.consent {
+    return context.consent;
   }
 
   function setConsent(newConsent: boolean): void {
     parameters.set('tl', newConsent ? 'all' : 'none');
-    consent = newConsent;
+    context.consent = newConsent;
+
+    context.events?.consentChange.dispatch(newConsent);
   }
 
   createPreviewUi();
 
   const slotManager = createSlotManager({
-    location,
     initialSlots: mergedOptions.initialSlots,
+    context,
   });
 
-  async function addSlot(slotOptions: Omit<SlotOptions, 'location'>): Promise<Readonly<Slot>> {
-    const slot = slotManager.add({
-      ...slotOptions,
-      location,
-    } as SlotOptions);
+  function getAll(): ReadonlyArray<Slot> {
+    return slotManager.getAll();
+  }
+
+  function get(name: string): Slot | undefined {
+    return slotManager.get(name);
+  }
+
+  async function addSlot(slotOptions: SlotOptions): Promise<Readonly<Slot>> {
+    const slot = slotManager.add(slotOptions);
 
     const ad = await requestAd({
       slot,
       host: mergedOptions.host,
       parameters,
       account: mergedOptions.account,
+      context,
     });
 
     await slot.render(ad);
@@ -211,7 +254,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
   }
 
   async function findDomSlots(): Promise<ReadonlyArray<Slot>> {
-    const domSlots = await slotManager.findDomSlots(location);
+    const domSlots = await slotManager.findDomSlots();
 
     const ads = await requestAds({
       host: mergedOptions.host,
@@ -219,15 +262,13 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
       method: mergedOptions.requestType,
       account: mergedOptions.account,
       parameters,
+      context,
     });
 
     await Promise.allSettled(ads.map(ad => slotManager.get(ad.slotName)?.render(ad)));
 
     return domSlots;
   }
-
-  if (mergedOptions.findDomSlotsOnLoad)
-    await slotManager.findDomSlots();
 
   async function fetchAndRenderAllSlots(): Promise<void> {
     const ads = await requestAds({
@@ -236,13 +277,11 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
       method: mergedOptions.requestType,
       account: mergedOptions.account,
       parameters,
+      context,
     });
 
     await Promise.allSettled(ads.map(ad => slotManager.get(ad.slotName)?.render(ad)));
   }
-
-  if (slotManager.getAll().length > 0)
-    await fetchAndRenderAllSlots();
 
   const disposeOnTcfConsentChange = onTcfConsentChange(async (data) => {
     if (!data.tcString)
@@ -265,12 +304,21 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     disposeOnTcfConsentChange();
     parameters.clear();
     logger.resetLogs();
+    context.events?.dispose();
+    revokeContext();
   }
+
+  if (mergedOptions.findDomSlotsOnLoad)
+    await slotManager.findDomSlots();
+
+  if (slotManager.getAll().length > 0)
+    await fetchAndRenderAllSlots();
 
   return {
     ...mergedOptions,
     ...slotManager,
     parameters,
+    events: context.events,
     getLocation,
     setLocation,
     getConsent,
