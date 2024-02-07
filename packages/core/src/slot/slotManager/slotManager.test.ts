@@ -32,7 +32,6 @@ describe('slotManager', () => {
       initialSlots: [{
         format: 'leaderboard',
         containingElement: 'leaderboard',
-        context,
       }],
       context,
     });
@@ -70,7 +69,6 @@ describe('slotManager', () => {
       initialSlots: [{
         format: 'leaderboard',
         containingElement: 'leaderboard',
-        context,
       }],
       context,
     });
@@ -83,7 +81,6 @@ describe('slotManager', () => {
       initialSlots: [{
         format: 'leaderboard',
         containingElement: 'leaderboard',
-        context,
       }],
       context,
     });

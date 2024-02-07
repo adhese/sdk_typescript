@@ -139,7 +139,6 @@ describe('createAdhese', () => {
           format: 'billboard',
           containingElement: 'billboard',
           slot: 'billboard',
-          context,
         },
       ],
     });

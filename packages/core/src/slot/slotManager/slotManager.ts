@@ -30,7 +30,7 @@ export type SlotManagerOptions = {
   /**
    * List of initial slots to add to the slot manager.
    */
-  initialSlots?: ReadonlyArray<Merge<Omit<SlotOptions, 'location' | 'containingElement'>, {
+  initialSlots?: ReadonlyArray<Merge<Omit<SlotOptions, 'containingElement' | 'context'>, {
     containingElement: string;
   }>>;
   context: AdheseContext;
