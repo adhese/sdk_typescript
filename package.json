@@ -36,18 +36,18 @@
   },
   "devDependencies": {
     "@types/lodash-es": "^4.17.12",
-    "@types/node": "^20.11.15",
+    "@types/node": "^20.11.17",
     "@vitest/coverage-v8": "^1.2.2",
     "eslint": "^8.56.0",
     "glob": "^10.3.10",
     "husky": "^8.0.3",
     "jsdom": "^23.2.0",
-    "lint-staged": "^15.2.1",
+    "lint-staged": "^15.2.2",
     "sdk-eslint-config": "*",
-    "tsup": "^8.0.1",
-    "turbo": "^1.12.2",
+    "tsup": "^8.0.2",
+    "turbo": "^1.12.3",
     "typescript": "^5.3.3",
-    "vite": "^5.0.12",
+    "vite": "^5.1.1",
     "vitest": "^1.2.2"
   }
 }
