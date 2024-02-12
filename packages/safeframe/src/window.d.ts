@@ -1,6 +1,6 @@
-import type { ConsentData } from 'core/src/types';
-import type { SafeFrameImplementation } from 'safeframe/src/main.types';
-import type { Adhese } from './main';
+import type { ConsentData } from '@core/src/types';
+import type { SafeFrameImplementation } from './main.types';
+import type { Adhese } from '@/main';
 
 declare global {
   interface Window {

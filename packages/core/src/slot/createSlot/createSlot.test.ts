@@ -82,6 +82,7 @@ describe('slot', () => {
       slotID: 'bar',
       slotName: 'baz',
       adType: 'foo',
+      id: 'baz',
       origin: 'JERLICIA',
     });
 
@@ -111,6 +112,7 @@ describe('slot', () => {
       slotID: 'bar',
       slotName: 'baz',
       adType: 'foo',
+      id: 'baz',
       origin: 'JERLICIA',
     });
     expect(slot.getElement()).not.toBe(null);
@@ -163,6 +165,7 @@ describe('slot', () => {
         slotID: 'bar',
         slotName: 'baz',
         adType: 'foo',
+        id: 'baz',
         origin: 'JERLICIA',
       });
     }
@@ -210,6 +213,7 @@ describe('slot', () => {
       slotName: 'baz',
       adType: 'foo',
       impressionCounter: new URL('https://foo.bar'),
+      id: 'baz',
       origin: 'JERLICIA',
     });
 
@@ -251,6 +255,7 @@ describe('slot', () => {
       slotName: 'baz',
       adType: 'foo',
       impressionCounter: new URL('https://foo.bar'),
+      id: 'baz',
       origin: 'JERLICIA',
     });
 
@@ -303,6 +308,7 @@ describe('slot', () => {
       impressionCounter: new URL('https://foo.bar'),
       viewableImpressionCounter: new URL('https://foo.bar'),
       origin: 'JERLICIA',
+      id: 'baz',
     };
 
     expect(observe).toBeCalledTimes(2);
@@ -429,6 +435,7 @@ describe('slot', () => {
       slotName: 'baz',
       adType: 'foo',
       origin: 'JERLICIA',
+      id: 'baz',
     });
 
     expect(slot.getElement()).not.toBe(null);

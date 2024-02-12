@@ -19,6 +19,7 @@ export const adRequestHandlers = [
       slotName: slot.slotname,
       tag: '<a>foo</a>',
       libId: slot.slotname,
+      id: slot.slotname,
       origin: 'JERLICIA',
     }))));
   }),
@@ -36,6 +37,7 @@ export const adRequestHandlers = [
       slotName,
       tag: '<a>foo</a>',
       libId: slotName,
+      id: slotName,
       origin: 'JERLICIA',
     }))));
   }),
@@ -58,6 +60,7 @@ export const adRequestHandlers = [
       body: '<a>foo</a>',
       libId: slot.slotname,
       origin: 'DALE',
+      id: slot.slotname,
     }))));
   }),
 ];

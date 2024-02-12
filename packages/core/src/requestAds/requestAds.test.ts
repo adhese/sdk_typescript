@@ -163,6 +163,7 @@ describe('schema', () => {
       slotID: 'bar',
       slotName: 'baz',
       tag: '<a>foo</a>',
+      id: 'baz',
       origin: 'JERLICIA',
     } satisfies AdResponse;
 
@@ -178,6 +179,7 @@ describe('schema', () => {
       slotID: 'bar',
       slotName: 'baz',
       tag: '<a>foo</a>',
+      id: 'baz',
       // @ts-expect-error Testing invalid response
       invalid: 'invalid',
     } satisfies AdResponse;
@@ -197,8 +199,10 @@ describe('schema', () => {
       slotID: 'bar',
       slotName: 'baz',
       tag: '<a>foo</a>',
+      id: 'baz',
       origin: 'JERLICIA',
       additionalCreatives: [{
+        id: 'baz',
         adType: 'foo',
         // eslint-disable-next-line ts/naming-convention
         slotID: 'bar',

@@ -75,6 +75,7 @@ async function app(): Promise<void> {
       },
     ],
     location: '_sdk_example_',
+    safeFrame: true,
   });
 
   window.adhese = adhese;

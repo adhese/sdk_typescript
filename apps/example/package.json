@@ -5,10 +5,10 @@
   "private": true,
   "license": "GPL-3.0",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
+    "lint": "eslint . --ignore-pattern public",
+    "lint:fix": "eslint --fix . --ignore-pattern public",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },

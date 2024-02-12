@@ -115,7 +115,7 @@ const baseSchema = object({
     prebid: unknown().optional(),
   }).optional(),
   height: cssValueLike.optional(),
-  id: string().optional(),
+  id: string(),
   impressionCounter: urlLike.optional(),
   libId: string().optional(),
   orderId: string().optional(),
@@ -127,6 +127,7 @@ const baseSchema = object({
   poolPath: urlLike.optional(),
   preview: booleanLike.optional(),
   priority: numberLike.optional(),
+  sfSrc: urlLike.optional(),
   share: string().optional(),
   // eslint-disable-next-line ts/naming-convention
   slotID: string(),
