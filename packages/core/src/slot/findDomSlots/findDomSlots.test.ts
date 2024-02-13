@@ -1,24 +1,23 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createSlot } from '@core';
 import type { AdheseContext } from '../../main';
+import { testContext } from '../../testUtils';
 import { findDomSlots } from './findDomSlots';
 
 describe('findDomSlots', () => {
   let context: AdheseContext;
 
-  beforeEach(() => {
-    context = {
-      location: 'foo',
-      consent: false,
-      getAll: vi.fn(() => [
-        createSlot({
-          format: 'leaderboard',
-          containingElement: 'leaderboard',
-          context,
-        }),
-      ]),
-      get: vi.fn(() => undefined),
-    };
+  beforeEach(async () => {
+    context = testContext;
+
+    const mockedSlot = await createSlot({
+      format: 'leaderboard',
+      containingElement: 'leaderboard',
+      context,
+    });
+
+    // eslint-disable-next-line require-atomic-updates
+    context.getAll = vi.fn(() => [mockedSlot]);
   });
 
   afterEach(() => {

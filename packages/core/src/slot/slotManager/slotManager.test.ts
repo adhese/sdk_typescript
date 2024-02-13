@@ -1,25 +1,23 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { AdheseContext, Slot, SlotOptions } from '@core';
+import { testContext } from '../../testUtils';
 import { createSlotManager } from './slotManager';
 
 describe('slotManager', () => {
   let context: AdheseContext;
 
   beforeEach(() => {
-    context = {
-      location: 'foo',
-      consent: false,
-    };
+    context = testContext;
   });
 
-  it('should create a slot manager', () => {
-    const slotManager = createSlotManager({
+  it('should create a slot manager', async () => {
+    const slotManager = await createSlotManager({
       initialSlots: [],
       context,
     });
 
     expect(slotManager).toEqual({
-      add: expect.any(Function) as (slot: SlotOptions) => Readonly<Slot>,
+      add: expect.any(Function) as (slot: SlotOptions) => Promise<Readonly<Slot>>,
       getAll: expect.any(Function) as () => ReadonlyArray<Slot>,
       findDomSlots: expect.any(Function) as () => Promise<ReadonlyArray<Slot>>,
       get: expect.any(Function) as (name: string) => Slot | undefined,
@@ -27,8 +25,8 @@ describe('slotManager', () => {
     } satisfies typeof slotManager);
   });
 
-  it('should be able to get all slots', () => {
-    const slotManager = createSlotManager({
+  it('should be able to get all slots', async () => {
+    const slotManager = await createSlotManager({
       initialSlots: [{
         format: 'leaderboard',
         containingElement: 'leaderboard',
@@ -38,12 +36,12 @@ describe('slotManager', () => {
     expect(slotManager.getAll().length).toBe(1);
   });
 
-  it('should be able to add a slot', () => {
-    const slotManager = createSlotManager({
+  it('should be able to add a slot', async () => {
+    const slotManager = await createSlotManager({
       initialSlots: [],
       context,
     });
-    slotManager.add({
+    await slotManager.add({
       format: 'leaderboard',
       containingElement: 'leaderboard',
     });
@@ -55,7 +53,7 @@ describe('slotManager', () => {
       <div class="adunit" data-format="leaderboard" id="leaderboard"></div>
       <div class="adunit" data-format="billboard" id="billboard"></div>
     `;
-    const slotManager = createSlotManager({
+    const slotManager = await createSlotManager({
       initialSlots: [],
       context,
     });
@@ -64,8 +62,8 @@ describe('slotManager', () => {
     expect(slotManager.getAll().length).toBe(2);
   });
 
-  it('should be able to get a slot by name', () => {
-    const slotManager = createSlotManager({
+  it('should be able to get a slot by name', async () => {
+    const slotManager = await createSlotManager({
       initialSlots: [{
         format: 'leaderboard',
         containingElement: 'leaderboard',
@@ -76,8 +74,8 @@ describe('slotManager', () => {
     expect(slot).toBeDefined();
   });
 
-  it('should be able to dispose of all slots', () => {
-    const slotManager = createSlotManager({
+  it('should be able to dispose of all slots', async () => {
+    const slotManager = await createSlotManager({
       initialSlots: [{
         format: 'leaderboard',
         containingElement: 'leaderboard',

@@ -67,3 +67,20 @@ await adhese.addSlot({
   format: 'billboard',
 });
 ```
+
+## Lazy loading
+By default, the SDK will start fetching ads for the slots as soon as they are registered. If you want to optimize
+requests you can pass the `lazyLoad` option to the `addSlot` method. This will make sure that is not fetched until the
+element is in the viewport.
+
+```js
+const adhese = await createAdhese({
+  account: 'your-account-id',
+})
+
+await adhese.addSlot({
+  containingElement: 'slot-1', // ID of the element that contains the slot
+  format: 'billboard',
+  lazyLoad: true,
+});
+```

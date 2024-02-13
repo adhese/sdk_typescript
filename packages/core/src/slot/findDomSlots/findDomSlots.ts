@@ -10,13 +10,13 @@ export async function findDomSlots(
 ): Promise<ReadonlyArray<Slot>> {
   await waitForDomLoad();
 
-  return Array.from(document.querySelectorAll<HTMLElement>('.adunit'))
+  return (await Promise.all(Array.from(document.querySelectorAll<HTMLElement>('.adunit'))
     .filter(element => Boolean(element.dataset.format))
     .map(element => createSlot({
       format: element.dataset.format as string,
       containingElement: element,
       slot: element.dataset.slot,
       context,
-    }))
+    }))))
     .filter(slot => !context.getAll?.().some(activeSlot => activeSlot.getName() === slot.getName()));
 }

@@ -1,7 +1,7 @@
 import { createAdhese } from 'core';
 
 async function app(): Promise<void> {
-  window.adhese = await createAdhese({
+  const adhese = await createAdhese({
     account: 'demo',
     debug: true,
     initialSlots: [{
@@ -9,7 +9,22 @@ async function app(): Promise<void> {
       containingElement: 'skyscraper',
     }],
     location: '_sdk_example_',
-    findDomSlotsOnLoad: true,
+  });
+
+  window.adhese = adhese;
+
+  await adhese.addSlot({
+    format: 'leaderboard',
+    containingElement: 'leaderboard',
+  });
+
+  await adhese.addSlot({
+    format: 'imu',
+    containingElement: 'imu',
+    lazyLoading: true,
+    lazyLoadingOptions: {
+      rootMargin: '0px',
+    },
   });
 }
 

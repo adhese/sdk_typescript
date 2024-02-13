@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type Ad, type AdheseContext, createSlot } from '@core';
 
+import { testContext } from '../../testUtils';
+
 vi.mock('../logger/logger', () => ({
   logger: {
     error: vi.fn(),
@@ -13,8 +15,11 @@ describe('slot', () => {
 
   beforeEach(() => {
     context = {
-      location: 'foo',
-      consent: false,
+      ...testContext,
+      options: {
+        ...testContext.options,
+        eagerRendering: true,
+      },
     };
   });
 
@@ -32,7 +37,7 @@ describe('slot', () => {
 
     document.body.appendChild(element);
 
-    const slot = createSlot({
+    const slot = await createSlot({
       format: 'leaderboard',
       containingElement: 'leaderboard',
       context,
@@ -45,11 +50,12 @@ describe('slot', () => {
       getElement: expect.any(Function) as () => HTMLElement | null,
       getName: expect.any(Function) as () => string,
       getAd: expect.any(Function) as () => Ad | null,
+      setAd: expect.any(Function) as (ad: Ad) => Promise<void>,
       parameters: expect.any(Map) as Map<string, string>,
       dispose: expect.any(Function) as () => void,
+      lazyLoading: false,
     } satisfies typeof slot);
 
-    expect(slot.getElement()).toBeNull();
     await slot.render({
       tag: '<div>foo</div>',
       // eslint-disable-next-line ts/naming-convention
@@ -70,14 +76,13 @@ describe('slot', () => {
 
     document.body.appendChild(element);
 
-    const slot = createSlot({
+    const slot = await createSlot({
       format: 'leaderboard',
       containingElement: 'leaderboard',
       slot: 'bar',
       context,
     });
 
-    expect(slot.getElement()).toBeNull();
     await slot.render({
       tag: '<div>foo</div>',
       // eslint-disable-next-line ts/naming-convention
@@ -98,7 +103,7 @@ describe('slot', () => {
 
     document.body.appendChild(element);
 
-    const slot = createSlot({
+    const slot = await createSlot({
       format: 'leaderboard',
       containingElement: 'leaderboard',
       parameters: {
@@ -116,7 +121,7 @@ describe('slot', () => {
   });
 
   it('should log an error when no element is found', async () => {
-    const slot = createSlot({
+    const slot = await createSlot({
       format: 'leaderboard',
       containingElement: 'leaderboard',
       context,
@@ -136,7 +141,7 @@ describe('slot', () => {
     }
   });
 
-  it('should create a slot with an element passed instead of an element id', () => {
+  it('should create a slot with an element passed instead of an element id', async () => {
     const element = document.createElement('div');
 
     element.classList.add('adunit');
@@ -146,7 +151,7 @@ describe('slot', () => {
 
     document.body.appendChild(element);
 
-    const slot = createSlot({
+    const slot = await createSlot({
       format: 'leaderboard',
       containingElement: element,
       context,
@@ -164,7 +169,7 @@ describe('slot', () => {
 
     document.body.appendChild(element);
 
-    const slot = createSlot({
+    const slot = await createSlot({
       format: 'leaderboard',
       containingElement: 'leaderboard',
       context,
@@ -183,16 +188,16 @@ describe('slot', () => {
   });
 
   it('should be able generate a slot name', async () => {
-    expect(createSlot({
+    expect((await createSlot({
       format: 'bar',
       context,
-    }).getName()).toBe('foo-bar');
+    })).getName()).toBe('foo-bar');
 
-    expect(createSlot({
+    expect((await createSlot({
       format: 'bar',
       slot: 'baz',
       context,
-    }).getName()).toBe('foobaz-bar');
+    })).getName()).toBe('foobaz-bar');
   });
 
   it('should be able to dispose a slot', async () => {
@@ -204,7 +209,7 @@ describe('slot', () => {
 
     document.body.appendChild(element);
 
-    const slot = createSlot({
+    const slot = await createSlot({
       format: 'leaderboard',
       containingElement: 'leaderboard',
       context,
@@ -222,5 +227,56 @@ describe('slot', () => {
     slot.dispose();
 
     expect(slot.getElement()).toBeNull();
+  });
+
+  it('should be able to lazy load a slot', async () => {
+    const observe = vi.fn();
+    let intersectionCallback: IntersectionObserverCallback | null = null;
+    let intersectionObserver: IntersectionObserver | null = null;
+
+    const intersectionObserverMock = vi.fn((callback: IntersectionObserverCallback, options: IntersectionObserverInit) => {
+      intersectionCallback = vi.fn(callback);
+
+      intersectionObserver = {
+        observe,
+        unobserve: vi.fn(),
+        disconnect: vi.fn(),
+        takeRecords: vi.fn(),
+        thresholds: [0],
+        root: document,
+        rootMargin: '',
+        ...options,
+      };
+
+      return intersectionObserver;
+    });
+
+    vi.stubGlobal('IntersectionObserver', intersectionObserverMock);
+
+    const element = document.createElement('div');
+
+    element.classList.add('adunit');
+    element.dataset.format = 'leaderboard';
+    element.id = 'leaderboard';
+
+    document.body.appendChild(element);
+
+    const slot = await createSlot({
+      format: 'leaderboard',
+      containingElement: 'leaderboard',
+      context,
+      lazyLoading: true,
+    });
+
+    expect(observe).toBeCalledTimes(1);
+    expect(intersectionObserverMock).toBeCalledTimes(1);
+
+    if (intersectionCallback)
+      // @ts-expect-error - TS doesn't know that intersectionCallback is set
+      intersectionCallback([{ isIntersecting: true, intersectionRatio: 0.4 }], intersectionObserver);
+
+    expect(intersectionCallback).toBeCalledTimes(1);
+
+    expect(slot.lazyLoading).toBe(true);
   });
 });

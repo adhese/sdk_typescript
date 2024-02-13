@@ -8,7 +8,7 @@ export type AdRequestOptions = {
   /**
    * List of slots you want to fetch the ad for
    */
-  slots: ReadonlyArray<Slot>;
+  slots: ReadonlyArray<Pick<Slot, 'getName' | 'parameters'>>;
   /**
    * Host that you want to fetch the ads from
    */
@@ -91,7 +91,7 @@ export async function requestAd({
   slot,
   ...options
 }: Omit<AdRequestOptions, 'slots'> & {
-  slot: Slot;
+  slot: Pick<Slot, 'getName' | 'parameters'>;
 }): Promise<Ad> {
   const [ad] = await requestAds({
     slots: [slot],

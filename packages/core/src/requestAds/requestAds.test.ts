@@ -1,7 +1,7 @@
 import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { UrlString } from '@utils';
-import { createSlot, logger } from '@core';
-import type { AdheseContext } from '../main';
+import { type AdheseContext, createSlot, logger } from '@core';
+import { testContext } from '../testUtils';
 import { requestAd, requestAds } from './requestAds';
 import { type AdResponse, adSchema, dateLike, numberLike, urlLike } from './requestAds.schema';
 import { parseParameters } from './requestAds.utils';
@@ -10,10 +10,7 @@ describe('requestAds', () => {
   let context: AdheseContext;
 
   beforeEach(() => {
-    context = {
-      location: 'foo',
-      consent: false,
-    };
+    context = testContext;
   });
 
   afterEach(() => {
@@ -27,12 +24,12 @@ describe('requestAds', () => {
         host: 'https://ads-test.adhese.com' as UrlString,
         account: 'demo',
         slots: [
-          createSlot({
+          await createSlot({
             format: 'foo',
             slot: 'baz',
             context,
           }),
-          createSlot({
+          await createSlot({
             format: 'foo2',
             slot: 'baz2',
             context,
@@ -51,12 +48,12 @@ describe('requestAds', () => {
         host: 'https://ads-test.adhese.com' as UrlString,
         account: 'demo',
         slots: [
-          createSlot({
+          await createSlot({
             format: 'foo',
             slot: 'baz',
             context,
           }),
-          createSlot({
+          await createSlot({
             format: 'foo2',
             slot: 'baz2',
             context,
@@ -77,7 +74,7 @@ describe('requestAds', () => {
           host: 'https://ads-fail.adhese.com' as UrlString,
           account: 'demo',
           slots: [
-            createSlot({
+            await createSlot({
               format: 'foo',
               slot: 'baz',
               context,
@@ -97,10 +94,7 @@ describe('requestAd', () => {
   let context: AdheseContext;
 
   beforeEach(() => {
-    context = {
-      location: 'foo',
-      consent: false,
-    };
+    context = testContext;
   });
 
   afterEach(() => {
@@ -112,7 +106,7 @@ describe('requestAd', () => {
     const ad = await requestAd({
       host: 'https://ads-test.adhese.com',
       account: 'demo',
-      slot: createSlot({
+      slot: await createSlot({
         format: 'bar',
         context,
       }),
@@ -246,10 +240,7 @@ describe('requestPreviews', () => {
   let context: AdheseContext;
 
   beforeEach(() => {
-    context = {
-      location: 'foo',
-      consent: false,
-    };
+    context = testContext;
   });
 
   beforeEach(() => {
@@ -269,11 +260,11 @@ describe('requestPreviews', () => {
       host: 'https://ads-test.adhese.com',
       account: 'test',
       slots: [
-        createSlot({
+        await createSlot({
           format: 'bar',
           context,
         }),
-        createSlot({
+        await createSlot({
           format: 'baz',
           context,
         }),
