@@ -1,7 +1,8 @@
 import { type Ad, logger, requestAd } from '@core';
 import { type Merge, waitForDomLoad } from '@utils';
-import { addTrackingPixel } from '../../impressionTracking/impressionTracking';
+import { round } from 'lodash-es';
 import type { AdheseContext } from '../../main';
+import { addTrackingPixel } from '../../impressionTracking/impressionTracking';
 
 export type SlotOptions = {
   /**
@@ -101,7 +102,8 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
     return element;
   }
 
-  let trackingPixelElement: HTMLImageElement | null = null;
+  let impressionTrackingPixelElement: HTMLImageElement | null = null;
+  let viewabilityTrackingPixelElement: HTMLImageElement | null = null;
 
   let isInViewport = false;
 
@@ -134,13 +136,53 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
     threshold: 0,
   });
 
+  let timeoutId: number | null = null;
+  const {
+    threshold,
+    duration,
+    rootMargin,
+  } = {
+    threshold: 0.2,
+    duration: 1000,
+    rootMargin: '0px',
+    ...context.options.viewabilityTrackingOptions,
+  } satisfies Required<typeof context.options.viewabilityTrackingOptions>;
+
+  const viewabilityObserver = new IntersectionObserver(([entry]) => {
+    if (context.options.viewabilityTracking && !viewabilityTrackingPixelElement && ad) {
+      const ratio = round(entry.intersectionRatio, 1);
+
+      if (ratio >= threshold && !timeoutId) {
+        // @ts-expect-error The is misfiring to the Node type
+        timeoutId = setTimeout(() => {
+          timeoutId = null;
+
+          if (ad?.viewableImpressionCounter) {
+            viewabilityTrackingPixelElement = addTrackingPixel(ad.viewableImpressionCounter);
+
+            logger.debug(`Viewability tracking pixel fired for ${getName()}`);
+          }
+        }, duration);
+      }
+      else if (ratio < threshold && timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+      }
+    }
+  }, {
+    rootMargin,
+    threshold: Array.from({ length: 11 }, (_, i) => i * 0.1),
+  });
+
+  if (element && context.options.viewabilityTracking)
+    viewabilityObserver.observe(element);
+
   if (element)
     renderIntersectionObserver.observe(element);
 
   async function render(adToRender?: Ad): Promise<HTMLElement> {
-    if (adToRender)
-      ad = adToRender;
-    const newAd = adToRender ?? ad ?? await requestAd({
+    // eslint-disable-next-line require-atomic-updates
+    ad = adToRender ?? ad ?? await requestAd({
       slot: {
         getName,
         parameters,
@@ -159,10 +201,13 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
       throw new Error(error);
     }
 
-    element.innerHTML = newAd.tag;
+    element.innerHTML = ad.tag;
 
-    if (newAd.impressionCounter)
-      trackingPixelElement = addTrackingPixel(newAd.impressionCounter);
+    if (ad?.impressionCounter) {
+      impressionTrackingPixelElement = addTrackingPixel(ad.impressionCounter);
+
+      logger.debug(`Impression tracking pixel fired for ${getName()}`);
+    }
 
     logger.debug('Slot rendered', {
       renderedElement: element,
@@ -184,13 +229,16 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
     if (element)
       element.innerHTML = '';
 
-    trackingPixelElement?.remove();
+    impressionTrackingPixelElement?.remove();
+    viewabilityTrackingPixelElement?.remove();
 
     element = null;
     ad = null;
 
-    options.onDispose?.();
     renderIntersectionObserver.disconnect();
+    viewabilityObserver.disconnect();
+
+    options.onDispose?.();
   }
 
   return {

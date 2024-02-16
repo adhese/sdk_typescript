@@ -80,7 +80,37 @@ export type AdheseOptions = {
    * @default false
    */
   eagerRendering?: boolean;
-} & Pick<SlotManagerOptions, 'initialSlots'>;
+} & ({
+  viewabilityTracking?: true;
+  /**
+   * Options for the viewability tracking of the ads. If `true` or `undefined`, the default viewability tracking options will be used.
+   *
+   * @default true
+   */
+  viewabilityTrackingOptions?: {
+    /**
+     * Fraction of the ad that needs to be in the viewport for the ad to be considered viewable.
+     *
+     * @default 0.2
+     */
+    threshold?: number;
+    /**
+     * The duration the ad needs to be in the viewport for the ad to be considered viewable in milliseconds.
+     *
+     * @default 1000
+     */
+    duration?: number;
+    /**
+     * The margin around the viewport where the ad is considered viewable.
+     *
+     * @default '0px'
+     */
+    rootMargin?: string;
+  };
+} | {
+  viewabilityTracking?: false;
+  viewabilityTrackingOptions?: never;
+}) & Pick<SlotManagerOptions, 'initialSlots'>;
 
 type MergedOptions = Merge<AdheseOptions, Required<Pick<AdheseOptions, 'host' |
   'poolHost' |
@@ -92,7 +122,8 @@ type MergedOptions = Merge<AdheseOptions, Required<Pick<AdheseOptions, 'host' |
   'consent' |
   'logUrl' |
   'logReferrer' |
-  'eagerRendering'>>>;
+  'eagerRendering' |
+  'viewabilityTracking'>>>;
 
 type AdheseEvents = {
   locationChange: string;
@@ -187,6 +218,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     logReferrer: true,
     logUrl: true,
     eagerRendering: false,
+    viewabilityTracking: true,
     ...options,
   } satisfies MergedOptions;
   setupLogging(mergedOptions);

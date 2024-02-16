@@ -1,7 +1,7 @@
 import { random } from 'lodash-es';
 import type { DeviceDetector } from './deviceDetector/deviceDetector';
 import { logger } from './logger/logger';
-import type { AdheseOptions } from './main';
+import type { AdheseContext, AdheseOptions } from './main';
 
 export function createParameters(
   options: Pick<AdheseOptions, 'parameters' | 'consent' | 'logUrl' | 'logReferrer'>,
@@ -26,7 +26,7 @@ export function createParameters(
   return parameters;
 }
 
-export function setupLogging(mergedOptions: AdheseOptions): void {
+export function setupLogging(mergedOptions: AdheseContext['options']): void {
   if (mergedOptions.debug || window.location.search.includes('adhese_debug=true')) {
     logger.setMinLogLevelThreshold('debug');
     logger.debug('Debug logging enabled');

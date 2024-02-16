@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type Ad, type AdheseContext, createSlot } from '@core';
 
+import { awaitTimeout } from '@utils';
 import { testContext } from '../../testUtils';
 
 vi.mock('../logger/logger', () => ({
@@ -231,11 +232,11 @@ describe('slot', () => {
 
   it('should be able to lazy load a slot', async () => {
     const observe = vi.fn();
-    let intersectionCallback: IntersectionObserverCallback | null = null;
+    const intersectionCallbacks: Array<IntersectionObserverCallback> = [];
     let intersectionObserver: IntersectionObserver | null = null;
 
     const intersectionObserverMock = vi.fn((callback: IntersectionObserverCallback, options: IntersectionObserverInit) => {
-      intersectionCallback = vi.fn(callback);
+      intersectionCallbacks.push(vi.fn(callback));
 
       intersectionObserver = {
         observe,
@@ -268,15 +269,58 @@ describe('slot', () => {
       lazyLoading: true,
     });
 
-    expect(observe).toBeCalledTimes(1);
-    expect(intersectionObserverMock).toBeCalledTimes(1);
+    await slot.setAd({
+      tag: '<div>foo</div>',
+      // eslint-disable-next-line ts/naming-convention
+      slotID: 'bar',
+      slotName: 'baz',
+      adType: 'foo',
+      impressionCounter: new URL('https://foo.bar'),
+      viewableImpressionCounter: new URL('https://foo.bar'),
+    });
 
-    if (intersectionCallback)
-      // @ts-expect-error - TS doesn't know that intersectionCallback is set
-      intersectionCallback([{ isIntersecting: true, intersectionRatio: 0.4 }], intersectionObserver);
+    expect(observe).toBeCalledTimes(2);
+    expect(intersectionObserverMock).toBeCalledTimes(2);
 
-    expect(intersectionCallback).toBeCalledTimes(1);
+    if (intersectionCallbacks.length > 0 && intersectionObserver) {
+      await Promise.all(intersectionCallbacks.map(async (callback) => {
+        if (!intersectionObserver)
+          return;
+
+        callback([{
+          boundingClientRect: new DOMRect(),
+          intersectionRatio: 1,
+          intersectionRect: new DOMRect(),
+          isIntersecting: true,
+          rootBounds: new DOMRect(),
+          target: element,
+          time: 0,
+        }], intersectionObserver);
+
+        await awaitTimeout(testContext.options.viewabilityTrackingOptions?.duration ?? 1000);
+
+        expect(callback).toBeCalledTimes(1);
+      }));
+    }
 
     expect(slot.lazyLoading).toBe(true);
+  });
+
+  it('should be able to render a slot without an ad set', async () => {
+    const element = document.createElement('div');
+
+    element.classList.add('adunit');
+    element.dataset.format = 'leaderboard';
+    element.id = 'leaderboard';
+
+    document.body.appendChild(element);
+
+    const slot = await createSlot({
+      format: 'leaderboard',
+      containingElement: 'leaderboard',
+      context,
+    });
+
+    await slot.render();
   });
 });
