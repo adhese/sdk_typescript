@@ -201,9 +201,32 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
       throw new Error(error);
     }
 
-    element.innerHTML = ad.tag;
+    element.innerHTML = '';
 
-    if (ad?.impressionCounter) {
+    const iframe = document.createElement('iframe');
+    iframe.srcdoc = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>
+            body {
+              margin: 0;
+              padding: 0;
+            }
+          </style>
+        </head>
+        <body>
+          ${ad.tag}
+        </body>
+      `.replaceAll(/\s+/g, ' ').trim();
+
+    iframe.style.border = 'none';
+    iframe.style.width = ad.width ? `${ad.width}px` : '100%';
+    iframe.style.height = ad.height ? `${ad.height}px` : '100%';
+
+    element.appendChild(iframe);
+
+    if (ad?.impressionCounter && !impressionTrackingPixelElement) {
       impressionTrackingPixelElement = addTrackingPixel(ad.impressionCounter);
 
       logger.debug(`Impression tracking pixel fired for ${getName()}`);
