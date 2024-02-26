@@ -100,7 +100,7 @@ export function createConfig(
       },
     },
   }, {
-    files: ['**/*.ts'],
+    files: ['**/*.ts', '**/*.tsx'],
     rules: {
       'style/member-delimiter-style': ['error', {
         multiline: {

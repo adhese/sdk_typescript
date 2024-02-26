@@ -69,6 +69,7 @@ export async function createSlotManager({
         slots: Array.from(slots),
       });
       context.events?.removeSlot.dispatch(slot);
+      context.events?.changeSlots.dispatch(Array.from(slots.values()));
     }
 
     slots.set(slot.getName(), slot);
@@ -79,6 +80,7 @@ export async function createSlotManager({
     });
 
     context.events?.addSlot.dispatch(slot);
+    context.events?.changeSlots.dispatch(Array.from(slots.values()));
 
     return slot;
   }
@@ -88,8 +90,10 @@ export async function createSlotManager({
       context,
     );
 
-    for (const slot of domSlots)
+    for (const slot of domSlots) {
       slots.set(slot.getName(), slot);
+      context.events?.changeSlots.dispatch(Array.from(slots.values()));
+    }
 
     return domSlots;
   }
@@ -103,6 +107,7 @@ export async function createSlotManager({
       slot.dispose();
 
     slots.clear();
+    context.events?.changeSlots.dispatch(Array.from(slots.values()));
   }
 
   return {

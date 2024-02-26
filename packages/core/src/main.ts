@@ -130,6 +130,7 @@ type AdheseEvents = {
   consentChange: boolean;
   addSlot: Slot;
   removeSlot: Slot;
+  changeSlots: ReadonlyArray<Slot>;
   requestAd: {
     request: AdRequestOptions;
     response: ReadonlyArray<Ad>;
@@ -234,12 +235,23 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     options: mergedOptions,
   }, {});
 
+  let unmountDevtools: (() => void) | undefined;
+  if (mergedOptions.debug || window.location.search.includes('adhese_debug=true')) {
+    const devtools = await import('@devtools');
+
+    const wrapperElement = document.createElement('div');
+    document.body.appendChild(wrapperElement);
+
+    unmountDevtools = devtools.createAdheseDevtools(wrapperElement, context);
+  }
+
   context.events = createEventManager<AdheseEvents>([
     'locationChange',
     'consentChange',
     'addSlot',
     'removeSlot',
     'requestAd',
+    'changeSlots',
   ]);
 
   function getLocation(): typeof context.location {
@@ -353,6 +365,9 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     await fetchAndRenderAllSlots();
   });
 
+  if (slotManager.getAll().length > 0)
+    await fetchAndRenderAllSlots();
+
   function dispose(): void {
     deviceDetector.dispose();
     slotManager.dispose();
@@ -362,13 +377,11 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     logger.resetLogs();
     context.events?.dispose();
     revokeContext();
+    unmountDevtools?.();
   }
 
   if (mergedOptions.findDomSlotsOnLoad)
     await slotManager.findDomSlots();
-
-  if (slotManager.getAll().length > 0)
-    await fetchAndRenderAllSlots();
 
   return {
     ...mergedOptions,

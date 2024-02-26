@@ -17,5 +17,8 @@
     "lint:fix": "eslint --fix .",
     "clean": "rm -rf lib & rm -rf coverage",
     "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.1"
   }
 }

@@ -99,7 +99,7 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
     ? document.querySelector<HTMLElement>(`.adunit[data-format="${format}"]#${containingElement}${slot ? `[data-slot="${slot}"]` : ''}`)
     : containingElement;
   function getElement(): HTMLElement | null {
-    return element;
+    return element?.querySelector('iframe') ?? null;
   }
 
   let impressionTrackingPixelElement: HTMLImageElement | null = null;
@@ -117,6 +117,8 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
 
     if (isInViewport || context.options.eagerRendering)
       await render(ad);
+
+    await context.events?.changeSlots.dispatchAsync(Array.from(context.getAll?.() ?? []));
   }
 
   const renderIntersectionObserver = new IntersectionObserver((entries) => {
@@ -161,6 +163,8 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
             viewabilityTrackingPixelElement = addTrackingPixel(ad.viewableImpressionCounter);
 
             logger.debug(`Viewability tracking pixel fired for ${getName()}`);
+
+            context.events?.changeSlots.dispatch(Array.from(context.getAll?.() ?? []));
           }
         }, duration);
       }
@@ -240,6 +244,8 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
     });
 
     renderIntersectionObserver.disconnect();
+
+    await context.events?.changeSlots.dispatchAsync(Array.from(context.getAll?.() ?? []));
 
     return element;
   }

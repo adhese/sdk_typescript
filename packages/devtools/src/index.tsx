@@ -1,0 +1,1 @@
+export { createAdheseDevtools } from './main';
