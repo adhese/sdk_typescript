@@ -76,6 +76,14 @@ export type Slot = Merge<Omit<SlotOptions, 'onDispose' | 'context'>, {
    */
   setAd(ad: Ad): Promise<void>;
   /**
+   * Returns whether the viewability tracking pixel has been fired.
+   */
+  isViewabilityTracked(): boolean;
+  /**
+   * Returns whether the impression tracking pixel has been fired.
+   */
+  isImpressionTracked(): boolean;
+  /**
    * Removes the slot from the DOM and cleans up the slot instance.
    */
   dispose(): void;
@@ -270,6 +278,14 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
     options.onDispose?.();
   }
 
+  function isViewabilityTracked(): boolean {
+    return Boolean(viewabilityTrackingPixelElement);
+  }
+
+  function isImpressionTracked(): boolean {
+    return Boolean(impressionTrackingPixelElement);
+  }
+
   return {
     location: context.location,
     lazyLoading: options.lazyLoading ?? false,
@@ -281,6 +297,8 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
     getName,
     getAd,
     setAd,
+    isViewabilityTracked,
+    isImpressionTracked,
     dispose,
   };
 }

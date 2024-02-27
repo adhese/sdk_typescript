@@ -27,7 +27,7 @@ export function App({ adheseContext }: {
   }, []);
 
   return (
-    <>
+    <div className="adhese-devtools">
       <div className="fixed bottom-0 w-full border-t-2 border-t-accent p-4 bg-background shadow-lg overflow-auto" ref={appRef}>
         <Tabs defaultValue="slots">
           <TabsList>
@@ -48,6 +48,6 @@ export function App({ adheseContext }: {
         height: spacing,
       }}
       />
-    </>
+    </div>
   );
 }

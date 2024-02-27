@@ -65,10 +65,12 @@ export function SlotsTable({ adheseContext }: {
               <TableHead>Creative ID</TableHead>
               <TableHead>Traffic ID</TableHead>
               <TableHead>Creative type</TableHead>
+              <TableHead>Viewability tracked</TableHead>
+              <TableHead>Impression tracked</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {formattedSlots.map(({ ad, name, format, location, status }) => (
+            {formattedSlots.map(({ ad, name, format, location, status, isViewabilityTracked, isImpressionTracked }) => (
               <TableRow key={name}>
                 <TableCell className="font-medium">{name}</TableCell>
                 <TableCell>{format}</TableCell>
@@ -138,6 +140,8 @@ export function SlotsTable({ adheseContext }: {
                 </TableCell>
                 <TableCell>{ad?.id ?? '-'}</TableCell>
                 <TableCell>{ad?.ext ? <Badge variant="outline">{ad.ext}</Badge> : '-'}</TableCell>
+                <TableCell>{isViewabilityTracked() ? <Badge className="bg-green-100 text-green-900">Yes</Badge> : <Badge variant="secondary">No</Badge>}</TableCell>
+                <TableCell>{isImpressionTracked() ? <Badge className="bg-green-100 text-green-900">Yes</Badge> : <Badge variant="secondary">No</Badge>}</TableCell>
               </TableRow>
             ))}
           </TableBody>

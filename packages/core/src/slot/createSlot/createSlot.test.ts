@@ -55,6 +55,8 @@ describe('slot', () => {
       parameters: expect.any(Map) as Map<string, string>,
       dispose: expect.any(Function) as () => void,
       lazyLoading: false,
+      isViewabilityTracked: expect.any(Function) as () => boolean,
+      isImpressionTracked: expect.any(Function) as () => boolean,
     } satisfies typeof slot);
 
     await slot.render({
