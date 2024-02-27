@@ -12,7 +12,7 @@ export function App({ adheseContext }: {
 }): ReactElement {
   const [spacing, setSpacing] = useState(0);
   const appRef = useRef<HTMLDivElement | null>(null);
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     let resizeObserver: ResizeObserver | undefined;
@@ -34,7 +34,6 @@ export function App({ adheseContext }: {
 
   return (
     <div className="adhese-devtools">
-
       {isOpen
         ? (
           <>
