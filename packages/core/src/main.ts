@@ -182,6 +182,7 @@ export type AdheseContext = Partial<Pick<Adhese, 'events' | 'getAll' | 'get' | '
   location: string;
   consent: boolean;
   options: Readonly<MergedOptions>;
+  logger: typeof logger;
 };
 
 /**
@@ -233,6 +234,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     getAll,
     get,
     options: mergedOptions,
+    logger,
   }, {});
 
   let unmountDevtools: (() => void) | undefined;

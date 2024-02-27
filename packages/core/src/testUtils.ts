@@ -1,5 +1,6 @@
 import { vi } from 'vitest';
 import type { AdheseContext } from './main';
+import { logger } from './logger/logger';
 
 export const testContext: AdheseContext = {
   location: 'foo',
@@ -23,4 +24,5 @@ export const testContext: AdheseContext = {
       duration: 50,
     },
   },
+  logger,
 };
