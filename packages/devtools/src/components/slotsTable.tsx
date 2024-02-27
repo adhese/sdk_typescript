@@ -3,7 +3,7 @@ import type { AdheseContext, Slot } from '@core';
 import { cn } from '../utils';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Badge } from './badge';
-import { buttonVariants } from './button';
+import { Button, buttonVariants } from './button';
 
 const slotStatus = {
   unloaded: 'Waiting to load',
@@ -47,6 +47,7 @@ export function SlotsTable({ adheseContext }: {
       name: slot.getName(),
       ad,
       status,
+      iframe,
     });
   }), [slots]);
 
@@ -67,10 +68,20 @@ export function SlotsTable({ adheseContext }: {
               <TableHead>Creative type</TableHead>
               <TableHead>Viewability tracked</TableHead>
               <TableHead>Impression tracked</TableHead>
+              <TableHead>Element</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {formattedSlots.map(({ ad, name, format, location, status, isViewabilityTracked, isImpressionTracked }) => (
+            {formattedSlots.map(({
+              ad,
+              name,
+              format,
+              location,
+              status,
+              isViewabilityTracked,
+              isImpressionTracked,
+              iframe,
+            }) => (
               <TableRow key={name}>
                 <TableCell className="font-medium">{name}</TableCell>
                 <TableCell>{format}</TableCell>
@@ -93,7 +104,7 @@ export function SlotsTable({ adheseContext }: {
                         target="_blank"
                         referrerPolicy="no-referrer"
                         className={cn(buttonVariants({
-                          variant: 'outline',
+                          variant: 'ghost',
                           size: 'sm',
                         }))}
                       >
@@ -111,7 +122,7 @@ export function SlotsTable({ adheseContext }: {
                         target="_blank"
                         referrerPolicy="no-referrer"
                         className={cn(buttonVariants({
-                          variant: 'outline',
+                          variant: 'ghost',
                           size: 'sm',
                         }))}
                       >
@@ -129,7 +140,7 @@ export function SlotsTable({ adheseContext }: {
                         target="_blank"
                         referrerPolicy="no-referrer"
                         className={cn(buttonVariants({
-                          variant: 'outline',
+                          variant: 'ghost',
                           size: 'sm',
                         }))}
                       >
@@ -140,8 +151,26 @@ export function SlotsTable({ adheseContext }: {
                 </TableCell>
                 <TableCell>{ad?.id ?? '-'}</TableCell>
                 <TableCell>{ad?.ext ? <Badge variant="outline">{ad.ext}</Badge> : '-'}</TableCell>
-                <TableCell>{isViewabilityTracked() ? <Badge className="bg-green-100 text-green-900">Yes</Badge> : <Badge variant="secondary">No</Badge>}</TableCell>
-                <TableCell>{isImpressionTracked() ? <Badge className="bg-green-100 text-green-900">Yes</Badge> : <Badge variant="secondary">No</Badge>}</TableCell>
+                <TableCell>{isViewabilityTracked() ? <Badge className="bg-green-100 text-green-900 hover:bg-green-100">Yes</Badge> : <Badge variant="secondary">No</Badge>}</TableCell>
+                <TableCell>{isImpressionTracked() ? <Badge className="bg-green-100 text-green-900 hover:bg-green-100">Yes</Badge> : <Badge variant="secondary">No</Badge>}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="secondary"
+                    disabled={!iframe}
+                    onClick={() => {
+                      if (iframe) {
+                        iframe.scrollIntoView();
+                        iframe.style.outline = 'solid 5px red';
+
+                        setTimeout(() => {
+                          iframe.style.outline = '';
+                        }, 1000);
+                      }
+                    }}
+                  >
+                    Go to element
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
