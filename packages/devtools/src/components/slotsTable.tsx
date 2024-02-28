@@ -4,6 +4,7 @@ import { cn } from '../utils';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Badge } from './badge';
 import { Button, buttonVariants } from './button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './sheet';
 
 const slotStatus = {
   unloaded: 'Waiting to load',
@@ -48,6 +49,7 @@ export function SlotsTable({ adheseContext }: {
       ad,
       status,
       iframe,
+      parameters: Array.from(slot.parameters.entries()),
     });
   }), [slots]);
 
@@ -69,6 +71,11 @@ export function SlotsTable({ adheseContext }: {
               <TableHead>Viewability tracked</TableHead>
               <TableHead>Impression tracked</TableHead>
               <TableHead>Element</TableHead>
+              {
+                formattedSlots.some(({ parameters }) => parameters.length > 0)
+                  ? <TableHead>Parameters</TableHead>
+                  : null
+              }
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -81,6 +88,7 @@ export function SlotsTable({ adheseContext }: {
               isViewabilityTracked,
               isImpressionTracked,
               iframe,
+              parameters,
             }) => (
               <TableRow key={name}>
                 <TableCell className="font-medium">{name}</TableCell>
@@ -156,6 +164,7 @@ export function SlotsTable({ adheseContext }: {
                 <TableCell>
                   <Button
                     variant="secondary"
+                    size="sm"
                     disabled={!iframe}
                     onClick={() => {
                       if (iframe) {
@@ -170,6 +179,60 @@ export function SlotsTable({ adheseContext }: {
                   >
                     Go to element
                   </Button>
+                </TableCell>
+                <TableCell>
+                  {
+                    parameters.length > 0 && (
+                      <Sheet>
+                        <SheetTrigger className={buttonVariants({
+                          variant: 'secondary',
+                          size: 'sm',
+                        })}
+                        >
+                          Show
+                        </SheetTrigger>
+                        <SheetContent className="bg-white flex flex-col gap-4">
+                          <SheetHeader>
+                            <SheetTitle>
+                              Parameters
+                            </SheetTitle>
+                          </SheetHeader>
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead>Key</TableHead>
+                                <TableHead>Value</TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {parameters.map(([key, value]) => (
+                                <TableRow key={key}>
+                                  <TableCell>
+                                    <Badge variant="outline">{key}</Badge>
+                                  </TableCell>
+                                  <TableCell>
+                                    {
+                                    Array.isArray(value)
+                                      ? (
+                                        <ul className="flex gap-1">
+                                          {value.map((item, index) => (
+                                            <li key={index}>
+                                              <Badge variant="outline">{item}</Badge>
+                                            </li>
+                                          ))}
+                                        </ul>
+                                        )
+                                      : <Badge variant="outline">{value}</Badge>
+                                  }
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </SheetContent>
+                      </Sheet>
+                    )
+                  }
                 </TableCell>
               </TableRow>
             ))}

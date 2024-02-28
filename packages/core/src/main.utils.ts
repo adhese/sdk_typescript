@@ -6,8 +6,8 @@ import type { AdheseContext, AdheseOptions } from './main';
 export function createParameters(
   options: Pick<AdheseOptions, 'parameters' | 'consent' | 'logUrl' | 'logReferrer'>,
   deviceDetector: DeviceDetector,
-): Map<string, string | ReadonlyArray<string>> {
-  const parameters = new Map<string, string | ReadonlyArray<string>>();
+): MapWithEvents<string, string | ReadonlyArray<string>> {
+  const parameters = new MapWithEvents<string, string | ReadonlyArray<string>>();
 
   if (options.logReferrer)
     parameters.set('re', btoa(document.referrer));
@@ -23,6 +23,7 @@ export function createParameters(
     rn: random(10_000).toString(),
   }))
     parameters.set(key, value);
+
   return parameters;
 }
 
@@ -63,5 +64,53 @@ export function createPreviewUi(): void {
     });
 
     document.body.appendChild(disableButton);
+  }
+}
+
+export class MapWithEvents<T, U> extends Map<T, U> {
+  private readonly listeners = new Set<() => void>();
+
+  public addEventListener(listener: () => void): void {
+    this.listeners.add(listener);
+  }
+
+  public removeEventListener(listener: () => void): void {
+    this.listeners.delete(listener);
+  }
+
+  public set(key: T, value: U): this {
+    const set = super.set(key, value);
+
+    this.listeners.forEach((listener) => {
+      listener();
+    });
+
+    return set;
+  }
+
+  public clear(): void {
+    super.clear();
+
+    this.listeners.forEach((listener) => {
+      listener();
+    });
+  }
+
+  public delete(key: T): boolean {
+    const deleted = super.delete(key);
+
+    this.listeners.forEach((listener) => {
+      listener();
+    });
+
+    return deleted;
+  }
+
+  /**
+   * Remove all listeners and clear the map.
+   */
+  public dispose(): void {
+    this.listeners.clear();
+    super.clear();
   }
 }

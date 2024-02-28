@@ -3,7 +3,7 @@ import { type Ad, type AdRequestOptions, type Slot, type SlotOptions, logger, re
 import { type SlotManager, type SlotManagerOptions, createSlotManager } from './slot/slotManager/slotManager';
 import { onTcfConsentChange } from './consent/tcfConsent';
 import { createDeviceDetector } from './deviceDetector/deviceDetector';
-import { createParameters, createPreviewUi, setupLogging } from './main.utils';
+import { type MapWithEvents, createParameters, createPreviewUi, setupLogging } from './main.utils';
 
 export type AdheseOptions = {
   /**
@@ -135,13 +135,14 @@ type AdheseEvents = {
     request: AdRequestOptions;
     response: ReadonlyArray<Ad>;
   };
+  parametersChange: Map<string, ReadonlyArray<string> | string>;
 };
 
 export type Adhese = Omit<AdheseOptions, 'location' | 'parameters' | 'consent'> & Merge<SlotManager, {
   /**
    * The parameters that are used for all ads.
    */
-  parameters: Map<string, ReadonlyArray<string> | string>;
+  parameters: MapWithEvents<string, ReadonlyArray<string> | string>;
   /**
    * The event manager for the Adhese instance.
    */
@@ -254,6 +255,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     'removeSlot',
     'requestAd',
     'changeSlots',
+    'parametersChange',
   ]);
 
   function getLocation(): typeof context.location {
@@ -270,6 +272,12 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
   });
 
   context.parameters = createParameters(mergedOptions, deviceDetector);
+  context.parameters.addEventListener(onParametersChange);
+
+  function onParametersChange(): void {
+    if (context.parameters)
+      context.events?.parametersChange.dispatch(context.parameters);
+  }
 
   async function onDeviceChange(): Promise<void> {
     const device = deviceDetector.getDevice();
@@ -375,6 +383,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     slotManager.dispose();
     deviceDetector.dispose();
     disposeOnTcfConsentChange();
+    context.parameters?.dispose();
     context.parameters?.clear();
     logger.resetLogs();
     context.events?.dispose();

@@ -48,11 +48,7 @@ export async function createSlotManager({
   })));
 
   function getAll(): ReadonlyArray<Slot> {
-    const slotList = Array.from(slots).map(([, slot]) => slot);
-    logger.debug('Getting slots', {
-      slots: slotList,
-    });
-    return slotList;
+    return Array.from(slots).map(([, slot]) => slot);
   }
 
   async function add(options: Omit<SlotOptions, 'context' | 'onDispose'>): Promise<Readonly<Slot>> {
