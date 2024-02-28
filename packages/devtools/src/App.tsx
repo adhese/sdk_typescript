@@ -37,9 +37,10 @@ export function App({ adheseContext }: {
       {isOpen
         ? (
           <>
-            <div
+            <section
               className="fixed bottom-0 w-full border-t-2 border-t-accent bg-background shadow-lg overflow-auto"
               ref={appRef}
+              aria-label="Adhese Devtools"
             >
               <Tabs defaultValue="slots">
                 <div className="flex justify-between  p-4">
@@ -62,7 +63,7 @@ export function App({ adheseContext }: {
                   </TabsContent>
                 </div>
               </Tabs>
-            </div>
+            </section>
             <div style={{
               height: spacing,
             }}
