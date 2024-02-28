@@ -193,6 +193,17 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
     renderIntersectionObserver.observe(element);
 
   async function render(adToRender?: Ad): Promise<HTMLElement> {
+    await waitForDomLoad();
+
+    if (!element) {
+      const error = `Could not create slot for format ${format}.?`;
+      logger.error(error, options);
+      throw new Error(error);
+    }
+
+    element.innerHTML = '';
+    element.style.position = 'relative';
+
     // eslint-disable-next-line require-atomic-updates
     ad = adToRender ?? ad ?? await requestAd({
       slot: {
@@ -204,16 +215,6 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
       parameters: context.parameters,
       context,
     });
-
-    await waitForDomLoad();
-
-    if (!element) {
-      const error = `Could not create slot for format ${format}.?`;
-      logger.error(error, options);
-      throw new Error(error);
-    }
-
-    element.innerHTML = '';
 
     const iframe = document.createElement('iframe');
     iframe.srcdoc = `

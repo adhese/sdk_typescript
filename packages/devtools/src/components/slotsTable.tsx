@@ -1,5 +1,6 @@
-import { type ReactElement, useEffect, useMemo, useState } from 'react';
+import { Fragment, type ReactElement, useEffect, useMemo, useState } from 'react';
 import type { AdheseContext, Slot } from '@core';
+import { createPortal } from 'react-dom';
 import { cn } from '../utils';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Badge } from './badge';
@@ -11,6 +12,16 @@ const slotStatus = {
   loaded: 'Ready to render',
   rendered: 'Rendered',
 } as const;
+
+const slotIndexBadgeClasses = [
+  'bg-blue-500',
+  'bg-amber-500',
+  'bg-green-500',
+  'bg-red-500',
+  'bg-purple-500',
+  'bg-cyan-500',
+  'bg-pink-500',
+] as const;
 
 // eslint-disable-next-line ts/naming-convention
 export function SlotsTable({ adheseContext }: {
@@ -24,8 +35,7 @@ export function SlotsTable({ adheseContext }: {
     }
 
     adheseContext.events?.changeSlots.addListener(onSlotsChange);
-
-    setSlots(adheseContext.getAll?.() ?? []); // This line is added to set the initial slots
+    onSlotsChange(adheseContext.getAll?.() ?? []);
 
     return (): void => {
       adheseContext.events?.changeSlots.removeListener(onSlotsChange);
@@ -53,6 +63,8 @@ export function SlotsTable({ adheseContext }: {
     });
   }), [slots]);
 
+  const slotParametersExist = formattedSlots.some(formattedSlot => formattedSlot.parameters.length > 0);
+
   return (
     formattedSlots.length > 0
       ? (
@@ -72,7 +84,7 @@ export function SlotsTable({ adheseContext }: {
               <TableHead>Impression tracked</TableHead>
               <TableHead>Element</TableHead>
               {
-                formattedSlots.some(({ parameters }) => parameters.length > 0)
+                slotParametersExist
                   ? <TableHead>Parameters</TableHead>
                   : null
               }
@@ -89,152 +101,174 @@ export function SlotsTable({ adheseContext }: {
               isImpressionTracked,
               iframe,
               parameters,
-            }) => (
-              <TableRow key={name}>
-                <TableCell className="font-medium">{name}</TableCell>
-                <TableCell>{format}</TableCell>
-                <TableCell>{location}</TableCell>
-                <TableCell>
-                  <Badge className={cn('', {
-                    unloaded: 'bg-secondary text-secondary-foreground hover:bg-secondary',
-                    loaded: 'bg-blue-100 text-blue-900 hover:bg-blue-100',
-                    rendered: 'bg-green-100 text-green-900 hover:bg-green-100',
-                  }[status])}
-                  >
-                    {slotStatus[status]}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  {ad?.orderId
-                    ? (
-                      <a
-                        href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/editCampaign/${ad.orderId}`}
-                        target="_blank"
-                        referrerPolicy="no-referrer"
-                        className={cn(buttonVariants({
-                          variant: 'ghost',
-                          size: 'sm',
-                        }))}
-                      >
-                        {ad.orderId}
-
-                      </a>
-                      )
-                    : '-'}
-                </TableCell>
-                <TableCell>
-                  {ad?.adspaceId
-                    ? (
-                      <a
-                        href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/bookingDetail/${ad.adspaceId}/${ad.orderId}`}
-                        target="_blank"
-                        referrerPolicy="no-referrer"
-                        className={cn(buttonVariants({
-                          variant: 'ghost',
-                          size: 'sm',
-                        }))}
-                      >
-                        {ad.adspaceId}
-
-                      </a>
-                      )
-                    : '-'}
-                </TableCell>
-                <TableCell>
-                  {ad?.libId
-                    ? (
-                      <a
-                        href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/creativeDetail/${ad.libId}/${ad.orderId}`}
-                        target="_blank"
-                        referrerPolicy="no-referrer"
-                        className={cn(buttonVariants({
-                          variant: 'ghost',
-                          size: 'sm',
-                        }))}
-                      >
-                        {ad.libId}
-                      </a>
-                      )
-                    : '-'}
-                </TableCell>
-                <TableCell>{ad?.id ?? '-'}</TableCell>
-                <TableCell>{ad?.ext ? <Badge variant="outline">{ad.ext}</Badge> : '-'}</TableCell>
-                <TableCell>{isViewabilityTracked() ? <Badge className="bg-green-100 text-green-900 hover:bg-green-100">Yes</Badge> : <Badge variant="secondary">No</Badge>}</TableCell>
-                <TableCell>{isImpressionTracked() ? <Badge className="bg-green-100 text-green-900 hover:bg-green-100">Yes</Badge> : <Badge variant="secondary">No</Badge>}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    disabled={!iframe}
-                    onClick={() => {
-                      if (iframe) {
-                        iframe.scrollIntoView();
-                        iframe.style.outline = 'solid 5px red';
-
-                        setTimeout(() => {
-                          iframe.style.outline = '';
-                        }, 1000);
-                      }
-                    }}
-                  >
-                    Go to element
-                  </Button>
-                </TableCell>
-                <TableCell>
-                  {
-                    parameters.length > 0 && (
-                      <Sheet>
-                        <SheetTrigger className={buttonVariants({
-                          variant: 'secondary',
-                          size: 'sm',
-                        })}
+            }, index) => (
+              <Fragment key={name}>
+                <TableRow id={name}>
+                  <TableCell className="font-medium">
+                    <Badge className={cn(slotIndexBadgeClasses[index % slotIndexBadgeClasses.length], 'text-white')}>{name}</Badge>
+                  </TableCell>
+                  <TableCell>{format}</TableCell>
+                  <TableCell>{location}</TableCell>
+                  <TableCell>
+                    <Badge className={cn({
+                      unloaded: 'bg-secondary text-secondary-foreground hover:bg-secondary',
+                      loaded: 'bg-blue-100 text-blue-900 hover:bg-blue-100',
+                      rendered: 'bg-green-100 text-green-900 hover:bg-green-100',
+                    }[status])}
+                    >
+                      {slotStatus[status]}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {ad?.orderId
+                      ? (
+                        <a
+                          href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/editCampaign/${ad.orderId}`}
+                          target="_blank"
+                          referrerPolicy="no-referrer"
+                          className={cn(buttonVariants({
+                            variant: 'ghost',
+                            size: 'sm',
+                          }))}
                         >
-                          Show
-                        </SheetTrigger>
-                        <SheetContent className="bg-white flex flex-col gap-4">
-                          <SheetHeader>
-                            <SheetTitle>
-                              Parameters
-                            </SheetTitle>
-                          </SheetHeader>
-                          <Table>
-                            <TableHeader>
-                              <TableRow>
-                                <TableHead>Key</TableHead>
-                                <TableHead>Value</TableHead>
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                              {parameters.map(([key, value]) => (
-                                <TableRow key={key}>
-                                  <TableCell>
-                                    <Badge variant="outline">{key}</Badge>
-                                  </TableCell>
-                                  <TableCell>
-                                    {
-                                    Array.isArray(value)
-                                      ? (
-                                        <ul className="flex gap-1">
-                                          {value.map((item, index) => (
-                                            <li key={index}>
-                                              <Badge variant="outline">{item}</Badge>
-                                            </li>
-                                          ))}
-                                        </ul>
-                                        )
-                                      : <Badge variant="outline">{value}</Badge>
-                                  }
-                                  </TableCell>
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                        </SheetContent>
-                      </Sheet>
+                          {ad.orderId}
+                        </a>
+                        )
+                      : '-'}
+                  </TableCell>
+                  <TableCell>
+                    {ad?.adspaceId
+                      ? (
+                        <a
+                          href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/bookingDetail/${ad.adspaceId}/${ad.orderId}`}
+                          target="_blank"
+                          referrerPolicy="no-referrer"
+                          className={cn(buttonVariants({
+                            variant: 'ghost',
+                            size: 'sm',
+                          }))}
+                        >
+                          {ad.adspaceId}
+                        </a>
+                        )
+                      : '-'}
+                  </TableCell>
+                  <TableCell>
+                    {ad?.libId
+                      ? (
+                        <a
+                          href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/creativeDetail/${ad.libId}/${ad.orderId}`}
+                          target="_blank"
+                          referrerPolicy="no-referrer"
+                          className={cn(buttonVariants({
+                            variant: 'ghost',
+                            size: 'sm',
+                          }))}
+                        >
+                          {ad.libId}
+                        </a>
+                        )
+                      : '-'}
+                  </TableCell>
+                  <TableCell>{ad?.id ?? '-'}</TableCell>
+                  <TableCell>{ad?.ext ? <Badge variant="outline">{ad.ext}</Badge> : '-'}</TableCell>
+                  <TableCell>
+                    {isViewabilityTracked()
+                      ? <Badge className="bg-green-100 text-green-900 hover:bg-green-100">Yes</Badge>
+                      : <Badge variant="secondary">No</Badge>}
+                  </TableCell>
+                  <TableCell>
+                    {isImpressionTracked()
+                      ? <Badge className="bg-green-100 text-green-900 hover:bg-green-100">Yes</Badge>
+                      : <Badge variant="secondary">No</Badge>}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      disabled={!iframe}
+                      onClick={() => {
+                        if (iframe) {
+                          iframe.scrollIntoView();
+                          iframe.style.outline = 'solid 5px red';
+
+                          setTimeout(() => {
+                            iframe.style.outline = '';
+                          }, 1000);
+                        }
+                      }}
+                    >
+                      Go to element
+                    </Button>
+                  </TableCell>
+                  {
+                    slotParametersExist && (
+                      <TableCell>
+                        {
+                        parameters.length > 0 && (
+                          <Sheet>
+                            <SheetTrigger className={buttonVariants({
+                              variant: 'secondary',
+                              size: 'sm',
+                            })}
+                            >
+                              Show
+                            </SheetTrigger>
+                            <SheetContent className="bg-white flex flex-col gap-4">
+                              <SheetHeader>
+                                <SheetTitle>
+                                  Parameters
+                                </SheetTitle>
+                              </SheetHeader>
+                              <Table>
+                                <TableHeader>
+                                  <TableRow>
+                                    <TableHead>Key</TableHead>
+                                    <TableHead>Value</TableHead>
+                                  </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                  {parameters.map(([parameterName, value]) => (
+                                    <TableRow key={parameterName}>
+                                      <TableCell>
+                                        <Badge variant="outline">{parameterName}</Badge>
+                                      </TableCell>
+                                      <TableCell>
+                                        {
+                                          Array.isArray(value)
+                                            ? (
+                                              <ul className="flex gap-1">
+                                                {value.map((item, paramIndex) => (
+                                                  <li key={paramIndex}>
+                                                    <Badge variant="outline">{item}</Badge>
+                                                  </li>
+                                                ))}
+                                              </ul>
+                                              )
+                                            : <Badge variant="outline">{value}</Badge>
+                                        }
+                                      </TableCell>
+                                    </TableRow>
+                                  ))}
+                                </TableBody>
+                              </Table>
+                            </SheetContent>
+                          </Sheet>
+                        )
+                      }
+                      </TableCell>
                     )
                   }
-                </TableCell>
-              </TableRow>
+                </TableRow>
+                {iframe?.parentElement && createPortal(
+                  <div className="absolute inset-1">
+                    <Badge className={cn(slotIndexBadgeClasses[index % slotIndexBadgeClasses.length], 'text-white')}>
+                      {name}
+                    </Badge>
+                  </div>,
+                  iframe.parentElement,
+                )}
+              </Fragment>
             ))}
           </TableBody>
         </Table>
