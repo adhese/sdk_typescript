@@ -10,8 +10,7 @@ The SDK offers a inline application to debug the Adhese instance. The Devtools i
 Whenever the `debug` mode is enabled, the Devtools is available by clicking the button `Open Adhese Devtools` in the
 bottom right corner of the page.
 
-## Features
-### Inspect slots
+## Inspect slots
 The Devtools allows you to inspect the added slots on the page. It shows the following information:
 - Slot name
 - Format
@@ -25,6 +24,10 @@ The Devtools allows you to inspect the added slots on the page. It shows the fol
 - Viewability tracked
 - Impression tracked
 - Element
+- Slot parameters - if available
 
-### Logs
+## Logs
 The Devtools logs all messages from the SDK. These logs are also available in the browser console.
+
+## Parameters
+The parameters tab shows all the global parameters set on the Adhese instance.
