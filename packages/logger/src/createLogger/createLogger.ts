@@ -1,3 +1,6 @@
+import { createEventManager } from '@utils';
+import { uniqueId } from 'lodash-es';
+
 /**
  * A log entry saved by the logger
  */
@@ -22,6 +25,7 @@ export type Log<T extends string> = {
    * The timestamp of this log entry
    */
   timestamp: number;
+  id: string;
 };
 
 export type LogFunction = (message: string, attributes?: unknown) => void;
@@ -32,6 +36,13 @@ export type Logger<T extends string> = {
    * The scope of the logger
    */
   readonly scope: string;
+  /**
+   * The event manager of the logger
+   */
+  events: ReturnType<typeof createEventManager<{
+    log: Log<T>;
+    reset: void;
+  }>>;
   /**
    * Set the minimum log level threshold
    */
@@ -85,6 +96,10 @@ export function createLogger<T extends string = typeof defaultLogLevels[number],
 }: LoggerOptions<T, U>): Logger<T> {
   const logs = new Set<Log<T>>();
   let currentMinLogLevelThreshold: T = minLogLevelThreshold;
+  const events = createEventManager<{
+    log: Log<T>;
+    reset: void;
+  }>(['log', 'reset']);
 
   const logFunctions = Object.fromEntries(logLevels.map((level, index) => {
     const logFunction: LogFunction = (message, attributes) => {
@@ -94,6 +109,16 @@ export function createLogger<T extends string = typeof defaultLogLevels[number],
         message,
         attributes,
         timestamp: Date.now(),
+        id: uniqueId(),
+      });
+
+      events.log.dispatch({
+        scope,
+        level,
+        message,
+        attributes,
+        timestamp: Date.now(),
+        id: uniqueId(),
       });
 
       if (index >= logLevels.indexOf(currentMinLogLevelThreshold)) {
@@ -127,6 +152,7 @@ export function createLogger<T extends string = typeof defaultLogLevels[number],
   return {
     ...logFunctions,
     scope,
+    events,
     setMinLogLevelThreshold(level: T): void {
       currentMinLogLevelThreshold = level;
     },
@@ -140,6 +166,7 @@ export function createLogger<T extends string = typeof defaultLogLevels[number],
       return Array.from(logs) as ReadonlyArray<Log<T>>;
     },
     resetLogs(): void {
+      events.reset.dispatch();
       logs.clear();
     },
   };

@@ -1,7 +1,10 @@
 import path from 'node:path';
 import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
+
+  plugins: [react()],
   build: {
     outDir: 'lib',
     emptyOutDir: true,
@@ -17,6 +20,7 @@ export default defineConfig({
       /* eslint-disable ts/naming-convention */
       '@utils': `${path.resolve()}/../utils/src`,
       '@core': `${path.resolve()}/src`,
+      '@devtools': `${path.resolve()}/../devtools/src`,
       '@logger': `${path.resolve()}/../logger/src`,
       '@server-mocks': `${path.resolve()}/../server-mocks/src`,
       /* eslint-enable ts/naming-convention */

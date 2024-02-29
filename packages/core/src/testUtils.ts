@@ -1,10 +1,12 @@
 import { vi } from 'vitest';
 import type { AdheseContext } from './main';
+import { logger } from './logger/logger';
 
 export const testContext: AdheseContext = {
   location: 'foo',
   consent: false,
   get: vi.fn(() => undefined),
+  debug: true,
   options: {
     account: 'test',
     host: 'https://ads-test.adhese.com',
@@ -23,4 +25,5 @@ export const testContext: AdheseContext = {
       duration: 50,
     },
   },
+  logger,
 };

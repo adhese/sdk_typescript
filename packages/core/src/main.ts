@@ -3,7 +3,7 @@ import { type Ad, type AdRequestOptions, type Slot, type SlotOptions, logger, re
 import { type SlotManager, type SlotManagerOptions, createSlotManager } from './slot/slotManager/slotManager';
 import { onTcfConsentChange } from './consent/tcfConsent';
 import { createDeviceDetector } from './deviceDetector/deviceDetector';
-import { createParameters, createPreviewUi, setupLogging } from './main.utils';
+import { type MapWithEvents, createParameters, createPreviewUi, setupLogging } from './main.utils';
 
 export type AdheseOptions = {
   /**
@@ -130,17 +130,19 @@ type AdheseEvents = {
   consentChange: boolean;
   addSlot: Slot;
   removeSlot: Slot;
+  changeSlots: ReadonlyArray<Slot>;
   requestAd: {
     request: AdRequestOptions;
     response: ReadonlyArray<Ad>;
   };
+  parametersChange: Map<string, ReadonlyArray<string> | string>;
 };
 
 export type Adhese = Omit<AdheseOptions, 'location' | 'parameters' | 'consent'> & Merge<SlotManager, {
   /**
    * The parameters that are used for all ads.
    */
-  parameters: Map<string, ReadonlyArray<string> | string>;
+  parameters: MapWithEvents<string, ReadonlyArray<string> | string>;
   /**
    * The event manager for the Adhese instance.
    */
@@ -175,13 +177,28 @@ export type Adhese = Omit<AdheseOptions, 'location' | 'parameters' | 'consent'> 
    * After calling this method, the Adhese instance is no longer usable.
    */
   dispose(): void;
+  /**
+   * Toggles the debug mode of the Adhese instance.
+   */
+  toggleDebug(): Promise<boolean>;
 }>;
 
 export type AdheseContext = Partial<Pick<Adhese, 'events' | 'getAll' | 'get' | 'parameters'>> & {
   location: string;
   consent: boolean;
   options: Readonly<MergedOptions>;
+  logger: typeof logger;
+  debug: boolean;
 };
+
+async function createDevtools(context: AdheseContext): Promise<() => void> {
+  const devtools = await import('@devtools');
+
+  const wrapperElement = document.createElement('div');
+  document.body.appendChild(wrapperElement);
+
+  return devtools.createAdheseDevtools(wrapperElement, context);
+}
 
 /**
  * Creates an Adhese instance. This instance is your main entry point to the Adhese API.
@@ -229,9 +246,11 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
   } = Proxy.revocable<AdheseContext>({
     location: mergedOptions.location,
     consent: mergedOptions.consent,
+    debug: mergedOptions.debug,
     getAll,
     get,
     options: mergedOptions,
+    logger,
   }, {});
 
   context.events = createEventManager<AdheseEvents>([
@@ -240,6 +259,8 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     'addSlot',
     'removeSlot',
     'requestAd',
+    'changeSlots',
+    'parametersChange',
   ]);
 
   function getLocation(): typeof context.location {
@@ -256,6 +277,16 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
   });
 
   context.parameters = createParameters(mergedOptions, deviceDetector);
+  context.parameters.addEventListener(onParametersChange);
+
+  let unmountDevtools: (() => void) | undefined;
+  if (mergedOptions.debug || window.location.search.includes('adhese_debug=true'))
+    unmountDevtools = await createDevtools(context);
+
+  function onParametersChange(): void {
+    if (context.parameters)
+      context.events?.parametersChange.dispatch(context.parameters);
+  }
 
   async function onDeviceChange(): Promise<void> {
     const device = deviceDetector.getDevice();
@@ -326,6 +357,25 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     return domSlots;
   }
 
+  async function toggleDebug(): Promise<boolean> {
+    context.debug = !context.debug;
+
+    if (context.debug && !unmountDevtools) {
+      // eslint-disable-next-line require-atomic-updates
+      unmountDevtools = await createDevtools(context);
+      logger.setMinLogLevelThreshold('debug');
+      logger.debug('Debug mode enabled');
+    }
+    else {
+      logger.debug('Debug mode disabled');
+      unmountDevtools?.();
+      unmountDevtools = undefined;
+      logger.setMinLogLevelThreshold('info');
+    }
+
+    return context.debug;
+  }
+
   async function fetchAndRenderAllSlots(): Promise<void> {
     const ads = await requestAds({
       host: mergedOptions.host,
@@ -353,22 +403,24 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     await fetchAndRenderAllSlots();
   });
 
+  if (slotManager.getAll().length > 0)
+    await fetchAndRenderAllSlots();
+
   function dispose(): void {
     deviceDetector.dispose();
     slotManager.dispose();
     deviceDetector.dispose();
     disposeOnTcfConsentChange();
+    context.parameters?.dispose();
     context.parameters?.clear();
     logger.resetLogs();
     context.events?.dispose();
     revokeContext();
+    unmountDevtools?.();
   }
 
   if (mergedOptions.findDomSlotsOnLoad)
     await slotManager.findDomSlots();
-
-  if (slotManager.getAll().length > 0)
-    await fetchAndRenderAllSlots();
 
   return {
     ...mergedOptions,
@@ -382,5 +434,6 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     addSlot,
     findDomSlots,
     dispose,
+    toggleDebug,
   };
 }

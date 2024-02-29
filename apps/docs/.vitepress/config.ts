@@ -15,6 +15,7 @@ export default defineConfig({
       { text: 'Getting Started', link: '/getting-started' },
       { text: 'Slots', link: '/slots' },
       { text: 'Consent', link: '/consent' },
+      { text: 'Devtools', link: '/devtools' },
       {
         text: 'Contributing',
         items: [

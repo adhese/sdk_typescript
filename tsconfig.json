@@ -1,12 +1,14 @@
 {
   "compilerOptions": {
     "target": "ESNext",
+    "jsx": "react-jsx",
     "lib": ["ESNext", "DOM"],
     "baseUrl": ".",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "paths": {
       "@core": ["packages/core/src/index.ts"],
+      "@devtools": ["packages/devtools/src/index.tsx"],
       "@logger": ["packages/logger/src/index.ts"],
       "@utils": ["packages/utils/src/index.ts"],
       "@server-mocks": ["packages/server-mocks/src/index.ts"]

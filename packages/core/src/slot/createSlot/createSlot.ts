@@ -76,6 +76,14 @@ export type Slot = Merge<Omit<SlotOptions, 'onDispose' | 'context'>, {
    */
   setAd(ad: Ad): Promise<void>;
   /**
+   * Returns whether the viewability tracking pixel has been fired.
+   */
+  isViewabilityTracked(): boolean;
+  /**
+   * Returns whether the impression tracking pixel has been fired.
+   */
+  isImpressionTracked(): boolean;
+  /**
    * Removes the slot from the DOM and cleans up the slot instance.
    */
   dispose(): void;
@@ -99,7 +107,7 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
     ? document.querySelector<HTMLElement>(`.adunit[data-format="${format}"]#${containingElement}${slot ? `[data-slot="${slot}"]` : ''}`)
     : containingElement;
   function getElement(): HTMLElement | null {
-    return element;
+    return element?.querySelector('iframe') ?? null;
   }
 
   let impressionTrackingPixelElement: HTMLImageElement | null = null;
@@ -117,6 +125,8 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
 
     if (isInViewport || context.options.eagerRendering)
       await render(ad);
+
+    await context.events?.changeSlots.dispatchAsync(Array.from(context.getAll?.() ?? []));
   }
 
   const renderIntersectionObserver = new IntersectionObserver((entries) => {
@@ -161,6 +171,8 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
             viewabilityTrackingPixelElement = addTrackingPixel(ad.viewableImpressionCounter);
 
             logger.debug(`Viewability tracking pixel fired for ${getName()}`);
+
+            context.events?.changeSlots.dispatch(Array.from(context.getAll?.() ?? []));
           }
         }, duration);
       }
@@ -181,6 +193,17 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
     renderIntersectionObserver.observe(element);
 
   async function render(adToRender?: Ad): Promise<HTMLElement> {
+    await waitForDomLoad();
+
+    if (!element) {
+      const error = `Could not create slot for format ${format}.?`;
+      logger.error(error, options);
+      throw new Error(error);
+    }
+
+    element.innerHTML = '';
+    element.style.position = 'relative';
+
     // eslint-disable-next-line require-atomic-updates
     ad = adToRender ?? ad ?? await requestAd({
       slot: {
@@ -192,16 +215,6 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
       parameters: context.parameters,
       context,
     });
-
-    await waitForDomLoad();
-
-    if (!element) {
-      const error = `Could not create slot for format ${format}.?`;
-      logger.error(error, options);
-      throw new Error(error);
-    }
-
-    element.innerHTML = '';
 
     const iframe = document.createElement('iframe');
     iframe.srcdoc = `
@@ -241,6 +254,8 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
 
     renderIntersectionObserver.disconnect();
 
+    await context.events?.changeSlots.dispatchAsync(Array.from(context.getAll?.() ?? []));
+
     return element;
   }
 
@@ -264,6 +279,14 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
     options.onDispose?.();
   }
 
+  function isViewabilityTracked(): boolean {
+    return Boolean(viewabilityTrackingPixelElement);
+  }
+
+  function isImpressionTracked(): boolean {
+    return Boolean(impressionTrackingPixelElement);
+  }
+
   return {
     location: context.location,
     lazyLoading: options.lazyLoading ?? false,
@@ -275,6 +298,8 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
     getName,
     getAd,
     setAd,
+    isViewabilityTracked,
+    isImpressionTracked,
     dispose,
   };
 }
