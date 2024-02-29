@@ -14,13 +14,13 @@ const slotStatus = {
 } as const;
 
 const slotIndexBadgeClasses = [
-  'bg-blue-500',
-  'bg-amber-500',
-  'bg-green-500',
-  'bg-red-500',
-  'bg-purple-500',
-  'bg-cyan-500',
-  'bg-pink-500',
+  'blue',
+  'amber',
+  'green',
+  'red',
+  'purple',
+  'cyan',
+  'pink',
 ] as const;
 
 // eslint-disable-next-line ts/naming-convention
@@ -105,7 +105,7 @@ export function SlotsTable({ adheseContext }: {
               <Fragment key={name}>
                 <TableRow id={name}>
                   <TableCell className="font-medium">
-                    <Badge className={cn(slotIndexBadgeClasses[index % slotIndexBadgeClasses.length], 'text-white')}>{name}</Badge>
+                    <Badge className={cn(`bg-${slotIndexBadgeClasses[index % slotIndexBadgeClasses.length]}-500 hover:bg-${slotIndexBadgeClasses[index % slotIndexBadgeClasses.length]}-500`, 'text-white')}>{name}</Badge>
                   </TableCell>
                   <TableCell>{format}</TableCell>
                   <TableCell>{location}</TableCell>
@@ -262,7 +262,7 @@ export function SlotsTable({ adheseContext }: {
                 </TableRow>
                 {iframe?.parentElement && createPortal(
                   <div className="absolute inset-1">
-                    <Badge className={cn(slotIndexBadgeClasses[index % slotIndexBadgeClasses.length], 'text-white')}>
+                    <Badge className={cn(`bg-${slotIndexBadgeClasses[index % slotIndexBadgeClasses.length]}-500`, 'text-white')}>
                       {name}
                     </Badge>
                   </div>,

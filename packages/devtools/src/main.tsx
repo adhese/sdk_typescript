@@ -7,5 +7,7 @@ export function createAdheseDevtools(element: HTMLElement, context: AdheseContex
 
   root.render(<App adheseContext={context} />);
 
-  return root.unmount.bind(null);
+  return () => {
+    root.unmount();
+  };
 }

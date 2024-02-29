@@ -177,6 +177,10 @@ export type Adhese = Omit<AdheseOptions, 'location' | 'parameters' | 'consent'> 
    * After calling this method, the Adhese instance is no longer usable.
    */
   dispose(): void;
+  /**
+   * Toggles the debug mode of the Adhese instance.
+   */
+  toggleDebug(): Promise<boolean>;
 }>;
 
 export type AdheseContext = Partial<Pick<Adhese, 'events' | 'getAll' | 'get' | 'parameters'>> & {
@@ -184,7 +188,17 @@ export type AdheseContext = Partial<Pick<Adhese, 'events' | 'getAll' | 'get' | '
   consent: boolean;
   options: Readonly<MergedOptions>;
   logger: typeof logger;
+  debug: boolean;
 };
+
+async function createDevtools(context: AdheseContext): Promise<() => void> {
+  const devtools = await import('@devtools');
+
+  const wrapperElement = document.createElement('div');
+  document.body.appendChild(wrapperElement);
+
+  return devtools.createAdheseDevtools(wrapperElement, context);
+}
 
 /**
  * Creates an Adhese instance. This instance is your main entry point to the Adhese API.
@@ -232,21 +246,12 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
   } = Proxy.revocable<AdheseContext>({
     location: mergedOptions.location,
     consent: mergedOptions.consent,
+    debug: mergedOptions.debug,
     getAll,
     get,
     options: mergedOptions,
     logger,
   }, {});
-
-  let unmountDevtools: (() => void) | undefined;
-  if (mergedOptions.debug || window.location.search.includes('adhese_debug=true')) {
-    const devtools = await import('@devtools');
-
-    const wrapperElement = document.createElement('div');
-    document.body.appendChild(wrapperElement);
-
-    unmountDevtools = devtools.createAdheseDevtools(wrapperElement, context);
-  }
 
   context.events = createEventManager<AdheseEvents>([
     'locationChange',
@@ -273,6 +278,10 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
 
   context.parameters = createParameters(mergedOptions, deviceDetector);
   context.parameters.addEventListener(onParametersChange);
+
+  let unmountDevtools: (() => void) | undefined;
+  if (mergedOptions.debug || window.location.search.includes('adhese_debug=true'))
+    unmountDevtools = await createDevtools(context);
 
   function onParametersChange(): void {
     if (context.parameters)
@@ -348,6 +357,25 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     return domSlots;
   }
 
+  async function toggleDebug(): Promise<boolean> {
+    context.debug = !context.debug;
+
+    if (context.debug && !unmountDevtools) {
+      // eslint-disable-next-line require-atomic-updates
+      unmountDevtools = await createDevtools(context);
+      logger.setMinLogLevelThreshold('debug');
+      logger.debug('Debug mode enabled');
+    }
+    else {
+      logger.debug('Debug mode disabled');
+      unmountDevtools?.();
+      unmountDevtools = undefined;
+      logger.setMinLogLevelThreshold('info');
+    }
+
+    return context.debug;
+  }
+
   async function fetchAndRenderAllSlots(): Promise<void> {
     const ads = await requestAds({
       host: mergedOptions.host,
@@ -406,5 +434,6 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     addSlot,
     findDomSlots,
     dispose,
+    toggleDebug,
   };
 }
