@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/tabs';
 import { LogTable } from './components/logTable';
 import { Button } from './components/button';
 import { ParametersTable } from './components/parametersTable';
+import { Settings } from './components/settings';
 
 // eslint-disable-next-line ts/naming-convention
 export function App({ adheseContext }: {
@@ -49,6 +50,7 @@ export function App({ adheseContext }: {
                     <TabsTrigger value="slots">Slots</TabsTrigger>
                     <TabsTrigger value="logs">Logs</TabsTrigger>
                     <TabsTrigger value="parameters">Parameters</TabsTrigger>
+                    <TabsTrigger value="settings">Settings</TabsTrigger>
                   </TabsList>
                   <Button
                     onClick={setIsOpen.bind(null, false)}
@@ -65,6 +67,9 @@ export function App({ adheseContext }: {
                   </TabsContent>
                   <TabsContent value="parameters">
                     <ParametersTable adheseContext={adheseContext} />
+                  </TabsContent>
+                  <TabsContent value="settings">
+                    <Settings adheseContext={adheseContext} />
                   </TabsContent>
                 </div>
               </Tabs>
