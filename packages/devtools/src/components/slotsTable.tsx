@@ -64,6 +64,7 @@ export function SlotsTable({ adheseContext }: {
   }), [slots]);
 
   const slotParametersExist = formattedSlots.some(formattedSlot => formattedSlot.parameters.length > 0);
+  const previewExist = formattedSlots.some(formattedSlot => formattedSlot.ad?.preview);
 
   return (
     formattedSlots.length > 0
@@ -84,9 +85,10 @@ export function SlotsTable({ adheseContext }: {
               <TableHead>Impression tracked</TableHead>
               <TableHead>Element</TableHead>
               {
-                slotParametersExist
-                  ? <TableHead>Parameters</TableHead>
-                  : null
+                slotParametersExist && <TableHead>Parameters</TableHead>
+              }
+              {
+                previewExist && <TableHead>Preview</TableHead>
               }
             </TableRow>
           </TableHeader>
@@ -120,7 +122,7 @@ export function SlotsTable({ adheseContext }: {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {ad?.orderId
+                    {ad?.orderId && ad?.orderId !== '0'
                       ? (
                         <a
                           href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/editCampaign/${ad.orderId}`}
@@ -137,7 +139,7 @@ export function SlotsTable({ adheseContext }: {
                       : '-'}
                   </TableCell>
                   <TableCell>
-                    {ad?.adspaceId
+                    {ad?.adspaceId && ad?.adspaceId !== '0'
                       ? (
                         <a
                           href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/bookingDetail/${ad.adspaceId}/${ad.orderId}`}
@@ -154,7 +156,7 @@ export function SlotsTable({ adheseContext }: {
                       : '-'}
                   </TableCell>
                   <TableCell>
-                    {ad?.libId
+                    {ad?.libId && ad?.orderId !== '0'
                       ? (
                         <a
                           href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/creativeDetail/${ad.libId}/${ad.orderId}`}
@@ -259,12 +261,25 @@ export function SlotsTable({ adheseContext }: {
                       </TableCell>
                     )
                   }
+                  {previewExist && (
+                    <TableCell>
+                      {ad?.preview
+                      && (
+                        <Badge className="bg-amber-400 text-amber-950 hover:bg-amber-400">
+                          PREVIEW
+                        </Badge>
+                      )}
+                    </TableCell>
+                  )}
                 </TableRow>
                 {iframe?.parentElement && createPortal(
-                  <div className="absolute inset-1">
+                  <div className="absolute inset-1 flex gap-2 items-start">
                     <Badge className={cn(slotIndexBadgeClasses[index % slotIndexBadgeClasses.length], 'text-white')}>
                       {name}
                     </Badge>
+                    {
+                      ad?.preview && <Badge className="bg-amber-400 text-amber-950 hover:bg-amber-400">PREVIEW</Badge>
+                    }
                   </div>,
                   iframe.parentElement,
                 )}

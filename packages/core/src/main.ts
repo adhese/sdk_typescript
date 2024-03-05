@@ -3,7 +3,7 @@ import { type Ad, type AdRequestOptions, type Slot, type SlotOptions, logger, re
 import { type SlotManager, type SlotManagerOptions, createSlotManager } from './slot/slotManager/slotManager';
 import { onTcfConsentChange } from './consent/tcfConsent';
 import { createDeviceDetector } from './deviceDetector/deviceDetector';
-import { type MapWithEvents, createParameters, createPreviewUi, setupLogging } from './main.utils';
+import { type MapWithEvents, createParameters, isPreviewMode, setupLogging } from './main.utils';
 
 export type AdheseOptions = {
   /**
@@ -280,7 +280,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
   context.parameters.addEventListener(onParametersChange);
 
   let unmountDevtools: (() => void) | undefined;
-  if (mergedOptions.debug || window.location.search.includes('adhese_debug=true'))
+  if (mergedOptions.debug || window.location.search.includes('adhese_debug=true') || isPreviewMode())
     unmountDevtools = await createDevtools(context);
 
   function onParametersChange(): void {
@@ -307,7 +307,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     context.events?.consentChange.dispatch(newConsent);
   }
 
-  createPreviewUi();
+  // createPreviewUi();
 
   const slotManager = await createSlotManager({
     initialSlots: mergedOptions.initialSlots,

@@ -68,6 +68,7 @@ const baseAdResponseScheme = object({
   origin: string().optional(),
   originData: unknown().optional(),
   poolPath: urlLike.optional(),
+  preview: booleanLike.optional(),
   priority: numberLike.optional(),
   share: string().optional(),
   // eslint-disable-next-line ts/naming-convention

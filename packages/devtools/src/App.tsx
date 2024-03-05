@@ -7,6 +7,7 @@ import { LogTable } from './components/logTable';
 import { Button } from './components/button';
 import { ParametersTable } from './components/parametersTable';
 import { Settings } from './components/settings';
+import { PreviewButton } from './components/previewButton';
 
 // eslint-disable-next-line ts/naming-convention
 export function App({ adheseContext }: {
@@ -52,11 +53,15 @@ export function App({ adheseContext }: {
                     <TabsTrigger value="parameters">Parameters</TabsTrigger>
                     <TabsTrigger value="settings">Settings</TabsTrigger>
                   </TabsList>
-                  <Button
-                    onClick={setIsOpen.bind(null, false)}
-                  >
-                    Close
-                  </Button>
+
+                  <div className="flex items-center gap-2">
+                    <PreviewButton />
+                    <Button
+                      onClick={setIsOpen.bind(null, false)}
+                    >
+                      Close
+                    </Button>
+                  </div>
                 </div>
                 <div className="overflow-auto max-h-96 border-t-2 border-t-accent p-4">
                   <TabsContent value="slots">
@@ -81,12 +86,12 @@ export function App({ adheseContext }: {
           </>
           )
         : (
-          <Button
-            className="fixed bottom-4 right-4"
-            onClick={setIsOpen.bind(null, true)}
-          >
-            Open Adhese Devtools
-          </Button>
+          <div className="fixed bottom-4 right-4 flex flex-col gap-2">
+            <Button onClick={setIsOpen.bind(null, true)}>
+              Open Adhese Devtools
+            </Button>
+            <PreviewButton />
+          </div>
           )}
     </div>
   );

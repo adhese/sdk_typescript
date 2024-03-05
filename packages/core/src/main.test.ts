@@ -288,30 +288,4 @@ describe('createAdhese', () => {
 
     expect(adhese.getAll().length).toBe(0);
   });
-
-  it('should create a exit preview button when in preview mode', async () => {
-    const href = 'http://localhost/?adhesePreviewCreativeId=foo';
-
-    Object.defineProperty(window, 'location', {
-      value: {
-        search: '?adhesePreviewCreativeId=foo',
-        href,
-        replace: vi.fn((url: string) => {
-          window.location.href = url;
-        }),
-      },
-    });
-
-    await createAdhese({
-      account: 'test',
-    });
-
-    const button = document.querySelector('button');
-
-    expect(button).not.toBeNull();
-
-    button?.dispatchEvent(new Event('click'));
-
-    expect(window.location.href).toBe('http://localhost');
-  });
 });

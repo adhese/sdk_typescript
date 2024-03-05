@@ -10,13 +10,13 @@ export const adPreviewRequestHandlers = [
       });
     }
 
-    return new HttpResponse(JSON.stringify({
+    return new HttpResponse(JSON.stringify([{
       adType: 'bar',
       // eslint-disable-next-line ts/naming-convention
       slotID: 'foo',
       slotName: 'foo-bar',
       tag: '<a>preview</a>',
       libId: 'foo-bar',
-    }));
+    }]));
   }),
 ];

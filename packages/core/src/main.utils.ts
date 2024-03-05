@@ -38,33 +38,8 @@ export function setupLogging(mergedOptions: AdheseContext['options']): void {
   });
 }
 
-export function createPreviewUi(): void {
-  if (window.location.search.includes('adhesePreviewCreativeId')) {
-    logger.warn('Adhese preview mode enabled');
-
-    const disableButton = document.createElement('button');
-    disableButton.textContent = 'Disable Adhese preview mode. Click to close';
-    disableButton.style.position = 'fixed';
-    disableButton.style.insetBlockStart = '10px';
-    disableButton.style.insetInlineEnd = '10px';
-    disableButton.style.zIndex = '9999';
-    disableButton.style.padding = '10px';
-    disableButton.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-    disableButton.style.color = 'white';
-    disableButton.style.fontFamily = 'sans-serif';
-    disableButton.style.border = 'none';
-    disableButton.style.cursor = 'pointer';
-    disableButton.style.maxInlineSize = '120px';
-    disableButton.type = 'button';
-
-    disableButton.addEventListener('click', () => {
-      const currentUrl = new URL(window.location.href);
-
-      window.location.replace(`${currentUrl.origin}${currentUrl.pathname === '/' ? '' : currentUrl.pathname}`);
-    });
-
-    document.body.appendChild(disableButton);
-  }
+export function isPreviewMode(): boolean {
+  return window.location.search.includes('adhesePreviewCreativeId');
 }
 
 export class MapWithEvents<T, U> extends Map<T, U> {

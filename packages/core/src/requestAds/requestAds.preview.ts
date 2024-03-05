@@ -25,14 +25,17 @@ export async function requestPreviews(account: string): Promise<ReadonlyArray<Ad
 
       return await response.json() as unknown;
     })))
-    .filter((response): response is PromiseFulfilledResult<ReadonlyArray<unknown>> => {
+    .filter((response): response is PromiseFulfilledResult<ReadonlyArray<Record<string, unknown>>> => {
       if (response.status === 'rejected') {
         logger.error(response.reason as string);
         return false;
       }
       return response.status === 'fulfilled';
     })
-    .map(response => response.value);
+    .map(response => response.value.map(item => ({
+      ...item,
+      preview: true,
+    })));
 
   return adSchema.array().parse(list.flat());
 }
