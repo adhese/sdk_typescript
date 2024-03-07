@@ -72,7 +72,7 @@ export async function createSlotManager({
 
     logger.debug('Slot added', {
       slot,
-      slots: Array.from(slots),
+      slots: Array.from(slots.values()),
     });
 
     context.events?.addSlot.dispatch(slot);
