@@ -16,6 +16,7 @@ export default defineConfig({
       { text: 'Slots', link: '/slots' },
       { text: 'Consent', link: '/consent' },
       { text: 'Devtools', link: '/devtools' },
+      { text: 'React SDK', link: '/react-sdk' },
       {
         text: 'Contributing',
         items: [
