@@ -11,6 +11,7 @@ vi.mock('./logger/logger', async (importOriginal) => {
       debug: vi.fn(),
       warn: vi.fn(),
       error: vi.fn(),
+      info: vi.fn(),
       setMinLogLevelThreshold: vi.fn((level) => { module.logger.setMinLogLevelThreshold(level); }),
       getMinLogLevelThreshold: vi.fn(() => module.logger.getMinLogLevelThreshold()),
       resetLogs: vi.fn(),

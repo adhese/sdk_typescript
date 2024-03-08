@@ -195,15 +195,6 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
   async function render(adToRender?: Ad): Promise<HTMLElement> {
     await waitForDomLoad();
 
-    if (!element) {
-      const error = `Could not create slot for format ${format}.?`;
-      logger.error(error, options);
-      throw new Error(error);
-    }
-
-    element.innerHTML = '';
-    element.style.position = 'relative';
-
     // eslint-disable-next-line require-atomic-updates
     ad = adToRender ?? ad ?? await requestAd({
       slot: {
@@ -216,6 +207,15 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
       context,
     });
 
+    if (!element) {
+      const error = `Could not create slot for format ${format}.?`;
+      logger.error(error, options);
+      throw new Error(error);
+    }
+
+    if (context.debug)
+      element.style.position = 'relative';
+
     const iframe = document.createElement('iframe');
     iframe.srcdoc = `
       <!DOCTYPE html>
@@ -225,6 +225,7 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
             body {
               margin: 0;
               padding: 0;
+              overflow: hidden;
             }
           </style>
         </head>
@@ -236,8 +237,7 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
     iframe.style.border = 'none';
     iframe.style.width = ad.width ? `${ad.width}px` : '100%';
     iframe.style.height = ad.height ? `${ad.height}px` : '100%';
-
-    element.appendChild(iframe);
+    element.replaceChildren(iframe);
 
     if (ad?.impressionCounter && !impressionTrackingPixelElement) {
       impressionTrackingPixelElement = addTrackingPixel(ad.impressionCounter);

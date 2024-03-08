@@ -197,7 +197,12 @@ async function createDevtools(context: AdheseContext): Promise<() => void> {
   const wrapperElement = document.createElement('div');
   document.body.appendChild(wrapperElement);
 
-  return devtools.createAdheseDevtools(wrapperElement, context);
+  const unmount = devtools.createAdheseDevtools(wrapperElement, context);
+
+  return () => {
+    unmount();
+    wrapperElement.outerHTML = '';
+  };
 }
 
 /**
@@ -240,10 +245,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
   } satisfies MergedOptions;
   setupLogging(mergedOptions);
 
-  const {
-    revoke: revokeContext,
-    proxy: context,
-  } = Proxy.revocable<AdheseContext>({
+  const context = new Proxy<AdheseContext>({
     location: mergedOptions.location,
     consent: mergedOptions.consent,
     debug: mergedOptions.debug,
@@ -306,8 +308,6 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
 
     context.events?.consentChange.dispatch(newConsent);
   }
-
-  // createPreviewUi();
 
   const slotManager = await createSlotManager({
     initialSlots: mergedOptions.initialSlots,
@@ -415,8 +415,8 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     context.parameters?.clear();
     logger.resetLogs();
     context.events?.dispose();
-    revokeContext();
     unmountDevtools?.();
+    logger.info('Adhese instance disposed');
   }
 
   if (mergedOptions.findDomSlotsOnLoad)
