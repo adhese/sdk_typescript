@@ -15,6 +15,7 @@ export default defineConfig({
       '@devtools': `${path.resolve()}/../../packages/devtools/src`,
       '@logger': `${path.resolve()}/../../packages/logger/src`,
       '@server-mocks': `${path.resolve()}/../../packages/server-mocks/src`,
+      '@react-sdk': `${path.resolve()}/../../packages/sdk-react/src`,
       /* eslint-enable ts/naming-convention */
     },
   },

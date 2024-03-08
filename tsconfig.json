@@ -11,7 +11,8 @@
       "@devtools": ["packages/devtools/src/index.tsx"],
       "@logger": ["packages/logger/src/index.ts"],
       "@utils": ["packages/utils/src/index.ts"],
-      "@server-mocks": ["packages/server-mocks/src/index.ts"]
+      "@server-mocks": ["packages/server-mocks/src/index.ts"],
+      "@react-sdk": ["packages/sdk-react/src/index.ts"]
     },
     "resolveJsonModule": true,
     "types": [

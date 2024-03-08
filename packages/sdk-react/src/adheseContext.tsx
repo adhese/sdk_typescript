@@ -1,5 +1,5 @@
-import { type Adhese, type AdheseOptions, createAdhese } from '@core';
 import { type PropsWithChildren, type ReactElement, createContext, useContext, useSyncExternalStore } from 'react';
+import { type Adhese, type AdheseOptions, createAdhese } from '@adhese/sdk';
 import { isEqual } from 'lodash-es';
 
 const listeners = new Set<() => void>();
@@ -38,6 +38,13 @@ function getSnapshot(options: AdheseOptions): Adhese | null {
 
 const adheseContext = createContext<Adhese | null>(null);
 
+/**
+ * Provider to create an Adhese instance with the given options. Via the `useAdhese` hook, the Adhese instance can be
+ * used in all child components.
+ * @param children The children to render
+ * @param options The options to create the Adhese instance with. When the options change, the Adhese instance will be recreated.
+ * @constructor
+ */
 // eslint-disable-next-line ts/naming-convention
 export function AdheseProvider({ children, options }: PropsWithChildren<{ options: AdheseOptions }>): ReactElement {
   const adhese = useSyncExternalStore(subscribe, getSnapshot.bind(null, options), () => null);
@@ -49,6 +56,9 @@ export function AdheseProvider({ children, options }: PropsWithChildren<{ option
   );
 }
 
+/**
+ * Hook to get the Adhese instance from the nearest `AdheseProvider`. When the Adhese instance is not available yet, `null`
+ */
 export function useAdhese(): Adhese | null {
   return useContext(adheseContext);
 }
