@@ -14,6 +14,7 @@ export default defineConfig({
     sidebar: [
       { text: 'Getting Started', link: '/getting-started' },
       { text: 'Slots', link: '/slots' },
+      { text: 'Events', link: '/events' },
       { text: 'Consent', link: '/consent' },
       { text: 'Devtools', link: '/devtools' },
       { text: 'React SDK', link: '/react-sdk' },

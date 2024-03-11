@@ -131,10 +131,10 @@ type AdheseEvents = {
   addSlot: Slot;
   removeSlot: Slot;
   changeSlots: ReadonlyArray<Slot>;
-  requestAd: {
-    request: AdRequestOptions;
-    response: ReadonlyArray<Ad>;
-  };
+  responseReceived: ReadonlyArray<Ad>;
+  requestAd: AdRequestOptions;
+  requestError: Error;
+  previewReceived: ReadonlyArray<Ad>;
   parametersChange: Map<string, ReadonlyArray<string> | string>;
 };
 
@@ -261,6 +261,9 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     'addSlot',
     'removeSlot',
     'requestAd',
+    'responseReceived',
+    'requestError',
+    'previewReceived',
     'changeSlots',
     'parametersChange',
   ]);

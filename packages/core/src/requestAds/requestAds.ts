@@ -39,6 +39,12 @@ export async function requestAds({
   ...options
 }: AdRequestOptions): Promise<ReadonlyArray<Ad>> {
   try {
+    context.events?.requestAd.dispatch({
+      ...options,
+      context,
+      method,
+    });
+
     const [response, previews] = await Promise.all([method?.toUpperCase() === 'POST'
       ? requestWithPost(options)
       : requestWithGet(options), requestPreviews(options.account)]);
@@ -54,31 +60,30 @@ export async function requestAds({
     if (previews.length > 0)
       logger.info(`Found ${previews.length} ${previews.length === 1 ? 'preview' : 'previews'}. Replacing ads in response with preview items`, previews);
 
-    const mergedResult = [
-      ...result.filter(ad => !previews.some(preview => preview.libId === ad.libId)),
-      ...previews.map(({ slotName, ...preview }) => {
-        const partnerAd = result.find(ad => ad.libId === preview.libId);
+    const matchedPreviews = previews.map(({ slotName, ...preview }) => {
+      const partnerAd = result.find(ad => ad.libId === preview.libId);
 
-        return ({
-          slotName: `${partnerAd?.slotName ?? slotName}`,
-          ...preview,
-        });
-      }),
+      return ({
+        slotName: `${partnerAd?.slotName ?? slotName}`,
+        ...preview,
+      });
+    });
+
+    if (matchedPreviews.length > 0)
+      context.events?.previewReceived.dispatch(matchedPreviews);
+
+    const mergedResult: ReadonlyArray<Ad> = [
+      ...result.filter(ad => !previews.some(preview => preview.libId === ad.libId)),
+      ...matchedPreviews,
     ];
 
-    await context.events?.requestAd.dispatchAsync({
-      response: mergedResult,
-      request: {
-        ...options,
-        context,
-        method,
-      },
-    });
+    context.events?.responseReceived.dispatch(mergedResult);
 
     return mergedResult;
   }
   catch (error) {
     logger.error(String(error));
+    context.events?.requestError.dispatch(error as Error);
 
     throw error;
   }
