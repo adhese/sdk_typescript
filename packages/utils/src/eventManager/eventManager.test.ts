@@ -5,13 +5,16 @@ describe('eventManager', () => {
   it('should create an event manager', () => {
     const eventManager = createEventManager<{
       event1: string;
-    }>(['event1'] as const);
+    }>();
+
+    const listener = vi.fn();
+    eventManager.event1.addListener(listener);
 
     expect(eventManager).toBeDefined();
     expect(eventManager).toEqual({
       /* eslint-disable ts/no-unsafe-assignment */
       event1: {
-        listeners: new Set(),
+        listeners: new Set([listener]),
         dispatch: expect.any(Function),
         dispatchAsync: expect.any(Function),
         addListener: expect.any(Function),
@@ -25,7 +28,7 @@ describe('eventManager', () => {
   it('should dispatch an event', () => {
     const eventManager = createEventManager<{
       event1: string;
-    }>(['event1'] as const);
+    }>();
     const listener = vi.fn();
     eventManager.event1.addListener(listener);
 
@@ -37,7 +40,7 @@ describe('eventManager', () => {
   it('should dispatch an event asynchronously', async () => {
     const eventManager = createEventManager<{
       event1: string;
-    }>(['event1'] as const);
+    }>();
     const listener = vi.fn();
     eventManager.event1.addListener(listener);
 
@@ -49,7 +52,7 @@ describe('eventManager', () => {
   it('should add and remove a listener', () => {
     const eventManager = createEventManager<{
       event1: string;
-    }>(['event1'] as const);
+    }>();
     const listener = vi.fn();
     eventManager.event1.addListener(listener);
     eventManager.event1.removeListener(listener);
@@ -62,7 +65,7 @@ describe('eventManager', () => {
   it('should dispose of all listeners', () => {
     const eventManager = createEventManager<{
       event1: string;
-    }>(['event1'] as const);
+    }>();
     const listener = vi.fn();
     eventManager.event1.addListener(listener);
     eventManager.dispose();

@@ -255,18 +255,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     logger,
   }, {});
 
-  context.events = createEventManager<AdheseEvents>([
-    'locationChange',
-    'consentChange',
-    'addSlot',
-    'removeSlot',
-    'requestAd',
-    'responseReceived',
-    'requestError',
-    'previewReceived',
-    'changeSlots',
-    'parametersChange',
-  ]);
+  context.events = createEventManager();
 
   function getLocation(): typeof context.location {
     return context.location;

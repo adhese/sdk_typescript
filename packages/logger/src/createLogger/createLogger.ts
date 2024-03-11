@@ -99,7 +99,7 @@ export function createLogger<T extends string = typeof defaultLogLevels[number],
   const events = createEventManager<{
     log: Log<T>;
     reset: void;
-  }>(['log', 'reset']);
+  }>();
 
   const logFunctions = Object.fromEntries(logLevels.map((level, index) => {
     const logFunction: LogFunction = (message, attributes) => {

@@ -1,32 +1,32 @@
+type Event<T> = {
+  /**
+   * The listeners for this event. This is a set of functions that will be called when the event is dispatched.
+   */
+  listeners: Set<(data: T) => void | Promise<void>>;
+  /**
+   * Dispatches the event to all listeners. This is a synchronous operation.
+   * @param data
+   */
+  dispatch(data: T): void;
+  /**
+   * Dispatches the event to all listeners. This is an asynchronous operation.
+   * @param data
+   */
+  dispatchAsync(data: T): Promise<void>;
+  /**
+   * Adds a listener to the event.
+   * @param listener
+   */
+  addListener(listener: (data: T) => void | Promise<void>): void;
+  /**
+   * Removes a listener from the event.
+   * @param listener
+   */
+  removeListener(listener: (data: T) => void | Promise<void>): void;
+};
+
 type EventManagerGroup<Events extends Record<string, unknown>> = {
-  [Key in keyof Events]: Readonly<
-    {
-      /**
-       * The listeners for this event. This is a set of functions that will be called when the event is dispatched.
-       */
-      listeners: Set<(data: Events[Key]) => void | Promise<void>>;
-      /**
-       * Dispatches the event to all listeners. This is a synchronous operation.
-       * @param data
-       */
-      dispatch(data: Events[Key]): void;
-      /**
-       * Dispatches the event to all listeners. This is an asynchronous operation.
-       * @param data
-       */
-      dispatchAsync(data: Events[Key]): Promise<void>;
-      /**
-       * Adds a listener to the event.
-       * @param listener
-       */
-      addListener(listener: (data: Events[Key]) => void | Promise<void>): void;
-      /**
-       * Removes a listener from the event.
-       * @param listener
-       */
-      removeListener(listener: (data: Events[Key]) => void | Promise<void>): void;
-    }
-  >;
+  [Key in keyof Events]: Readonly<Event<Events[Key]>>;
 };
 
 export type EventManager<Events extends Record<string, unknown>> = {
@@ -40,53 +40,66 @@ export type EventManager<Events extends Record<string, unknown>> = {
  * Creates a new event manager with the given event names.
  *
  * @typeParam Events The events that the event manager will handle and their data types.
- * @param eventNames The names of the events. These will be used as keys in the returned event manager.
  */
 export function createEventManager<
   Events extends Record<Name, unknown>,
   Name extends Readonly<string | number | symbol> = keyof Events,
->(eventNames: ReadonlyArray<Name>): EventManager<Events> {
-  const events = {} as EventManagerGroup<Events>;
-
-  for (const key of eventNames) {
-    const listeners = new Set<(data: Events[typeof key]) => void | Promise<void>>();
-
-    function dispatch(data: Events[typeof key]): void {
-      for (const listener of listeners)
-        // eslint-disable-next-line no-void
-        void listener(data);
-    }
-
-    async function dispatchAsync(data: Events[typeof key]): Promise<void> {
-      await Promise.allSettled(
-        Array.from(listeners).map(listener => listener(data)),
-      );
-    }
-
-    function addListener(listener: (data: Events[typeof key]) => void | Promise<void>): void {
-      listeners.add(listener);
-    }
-
-    function removeListener(listener: (data: Events[typeof key]) => void | Promise<void>): void {
-      listeners.delete(listener);
-    }
-
-    events[key] = {
-      listeners,
-      dispatch,
-      dispatchAsync,
-      addListener,
-      removeListener,
-    };
-  }
+>(): EventManager<Events> {
+  const disposables = new Set<() => void>();
 
   function dispose(): void {
-    for (const key in events)
-      events[key].listeners.clear();
+    for (const disposable of disposables)
+      disposable();
+  }
+
+  return new Proxy<EventManager<Events>>({
+    dispose,
+  } as EventManager<Events>, {
+    // eslint-disable-next-line ts/explicit-function-return-type
+    get(target, key, receiver) {
+      if (!(key in target) && typeof key === 'string') {
+        const event = createEvent<Events[Name]>();
+
+        disposables.add(() => {
+          event.listeners.clear();
+        });
+
+        Reflect.set(target, key, event, receiver);
+      }
+
+      return Reflect.get(target, key, receiver);
+    },
+  });
+}
+
+function createEvent<T>(): Event<T> {
+  const listeners = new Set<(data: T) => void | Promise<void>>();
+
+  function dispatch(data: T): void {
+    for (const listener of listeners)
+      // eslint-disable-next-line no-void
+      void listener(data);
+  }
+
+  async function dispatchAsync(data: T): Promise<void> {
+    await Promise.allSettled(
+      Array.from(listeners).map(listener => listener(data)),
+    );
+  }
+
+  function addListener(listener: (data: T) => void | Promise<void>): void {
+    listeners.add(listener);
+  }
+
+  function removeListener(listener: (data: T) => void | Promise<void>): void {
+    listeners.delete(listener);
   }
 
   return {
-    ...events,
-    dispose,
+    listeners,
+    dispatch,
+    dispatchAsync,
+    addListener,
+    removeListener,
   };
 }
