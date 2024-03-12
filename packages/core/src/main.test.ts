@@ -246,6 +246,12 @@ describe('createAdhese', () => {
       account: 'test',
     });
 
+    const element = document.createElement('div');
+    await adhese.addSlot({
+      format: 'foo',
+      containingElement: element,
+    });
+
     expect(adhese.parameters.get('xt')).toBeUndefined();
     expect(adhese.parameters.get('tl')).toBe('none');
 
@@ -264,6 +270,13 @@ describe('createAdhese', () => {
   it('should be able to handle device change', async () => {
     const adhese = await createAdhese({
       account: 'test',
+      location: '_sdk-example_',
+    });
+
+    const element = document.createElement('div');
+    await adhese.addSlot({
+      format: 'foo',
+      containingElement: element,
     });
 
     expect(adhese.parameters.get('dt')).toBe('mobile');

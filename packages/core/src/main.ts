@@ -184,9 +184,14 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
   }
 
   async function fetchAndRenderAllSlots(): Promise<void> {
+    const slots = slotManager.getAll().filter(slot => !slot.lazyLoading);
+
+    if (slots.length === 0)
+      return;
+
     const ads = await requestAds({
       host: mergedOptions.host,
-      slots: slotManager.getAll().filter(slot => !slot.lazyLoading),
+      slots,
       method: mergedOptions.requestType,
       account: mergedOptions.account,
       parameters: context.parameters,

@@ -77,6 +77,9 @@ export async function requestAds({
       ...matchedPreviews,
     ];
 
+    if (mergedResult.length === 0)
+      throw new Error('No ads found');
+
     context.events?.responseReceived.dispatch(mergedResult);
 
     return mergedResult;
