@@ -1,5 +1,5 @@
 import { type RefObject, useEffect, useRef, useState } from 'react';
-import type { Slot, SlotOptions } from '@adhese/sdk';
+import type { AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
 import { useAdhese } from './adheseContext';
 
 /**
@@ -8,12 +8,12 @@ import { useAdhese } from './adheseContext';
  * @param elementRef The ref to the containing element
  * @param options The options to create the slot
  */
-export function useAdheseSlot(elementRef: RefObject<HTMLElement>, options: Omit<SlotOptions, 'containingElement' | 'context'>): Slot | null {
-  const [slot, setSlot] = useState<Slot | null>(null);
+export function useAdheseSlot(elementRef: RefObject<HTMLElement>, options: Omit<AdheseSlotOptions, 'containingElement' | 'context'>): AdheseSlot | null {
+  const [slot, setSlot] = useState<AdheseSlot | null>(null);
   const adhese = useAdhese();
 
-  const slotPromise = useRef<Promise<Slot> | null>(null);
-  const intermediateSlot = useRef<Slot | null>(null);
+  const slotPromise = useRef<Promise<AdheseSlot> | null>(null);
+  const intermediateSlot = useRef<AdheseSlot | null>(null);
 
   useEffect(() => {
     if (elementRef.current && adhese && !slotPromise.current) {

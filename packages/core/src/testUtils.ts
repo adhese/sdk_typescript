@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
-import type { AdheseContext } from './main';
 import { logger } from './logger/logger';
+import type { AdheseContext } from './main.types';
 
 export const testContext: AdheseContext = {
   location: 'foo',

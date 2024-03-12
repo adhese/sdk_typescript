@@ -1,7 +1,8 @@
 import { random } from 'lodash-es';
 import type { DeviceDetector } from './deviceDetector/deviceDetector';
 import { logger } from './logger/logger';
-import type { AdheseContext, AdheseOptions } from './main';
+
+import type { AdheseContext, AdheseOptions } from './main.types';
 
 export function createParameters(
   options: Pick<AdheseOptions, 'parameters' | 'consent' | 'logUrl' | 'logReferrer'>,

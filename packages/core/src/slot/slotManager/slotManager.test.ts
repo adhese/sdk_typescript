@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import type { AdheseContext, Slot, SlotOptions } from '@core';
+import type { AdheseContext, AdheseSlot, AdheseSlotOptions } from '@core';
 import { testContext } from '../../testUtils';
 import { createSlotManager } from './slotManager';
 
@@ -17,10 +17,10 @@ describe('slotManager', () => {
     });
 
     expect(slotManager).toEqual({
-      add: expect.any(Function) as (slot: SlotOptions) => Promise<Readonly<Slot>>,
-      getAll: expect.any(Function) as () => ReadonlyArray<Slot>,
-      findDomSlots: expect.any(Function) as () => Promise<ReadonlyArray<Slot>>,
-      get: expect.any(Function) as (name: string) => Slot | undefined,
+      add: expect.any(Function) as (slot: AdheseSlotOptions) => Promise<Readonly<AdheseSlot>>,
+      getAll: expect.any(Function) as () => ReadonlyArray<AdheseSlot>,
+      findDomSlots: expect.any(Function) as () => Promise<ReadonlyArray<AdheseSlot>>,
+      get: expect.any(Function) as (name: string) => AdheseSlot | undefined,
       dispose: expect.any(Function) as () => void,
     } satisfies typeof slotManager);
   });

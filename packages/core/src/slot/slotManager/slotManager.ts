@@ -1,25 +1,24 @@
 import type { Merge } from '@utils';
-import { type Slot, type SlotOptions, createSlot, logger } from '@core';
+import { type AdheseContext, type AdheseSlot, type AdheseSlotOptions, createSlot, logger } from '@core';
 import { findDomSlots as extFindDomSlots } from '../findDomSlots/findDomSlots';
-import type { AdheseContext } from '../../main';
 
 export type SlotManager = {
   /**
    * Returns all slots that are currently registered and rendered.
    */
-  getAll(): ReadonlyArray<Slot>;
+  getAll(): ReadonlyArray<AdheseSlot>;
   /**
    * Adds a new slot to the Adhese instance and renders it.
    */
-  add(slot: Omit<SlotOptions, 'context'>): Promise<Readonly<Slot>>;
+  add(slot: Omit<AdheseSlotOptions, 'context'>): Promise<Readonly<AdheseSlot>>;
   /**
    * Finds all slots in the DOM and adds them to the Adhese instance.
    */
-  findDomSlots(): Promise<ReadonlyArray<Slot>>;
+  findDomSlots(): Promise<ReadonlyArray<AdheseSlot>>;
   /**
    * Returns the slot with the given name.
    */
-  get(name: string): Slot | undefined;
+  get(name: string): AdheseSlot | undefined;
   /**
    * Removes all slots from the Adhese instance and cleans up the slot manager.
    */
@@ -30,7 +29,7 @@ export type SlotManagerOptions = {
   /**
    * List of initial slots to add to the slot manager.
    */
-  initialSlots?: ReadonlyArray<Merge<Omit<SlotOptions, 'containingElement' | 'context' | 'lazy'>, {
+  initialSlots?: ReadonlyArray<Merge<Omit<AdheseSlotOptions, 'containingElement' | 'context' | 'lazy'>, {
     containingElement: string;
   }>>;
   context: AdheseContext;
@@ -40,23 +39,23 @@ export async function createSlotManager({
   initialSlots = [],
   context,
 }: SlotManagerOptions): Promise<Readonly<SlotManager>> {
-  const slots = new Map<string, Slot>();
+  const slots = new Map<string, AdheseSlot>();
 
   await Promise.allSettled(initialSlots.map(async slot => add({
     ...slot,
     lazyLoading: false,
   })));
 
-  function getAll(): ReadonlyArray<Slot> {
+  function getAll(): ReadonlyArray<AdheseSlot> {
     return Array.from(slots).map(([, slot]) => slot);
   }
 
-  async function add(options: Omit<SlotOptions, 'context' | 'onDispose'>): Promise<Readonly<Slot>> {
+  async function add(options: Omit<AdheseSlotOptions, 'context' | 'onDispose'>): Promise<Readonly<AdheseSlot>> {
     const slot = await createSlot({
       ...options,
       onDispose,
       context,
-    } as SlotOptions);
+    } as AdheseSlotOptions);
 
     function onDispose(): void {
       slots.delete(slot.getName());
@@ -81,7 +80,7 @@ export async function createSlotManager({
     return slot;
   }
 
-  async function findDomSlots(): Promise<ReadonlyArray<Slot>> {
+  async function findDomSlots(): Promise<ReadonlyArray<AdheseSlot>> {
     const domSlots = await extFindDomSlots(
       context,
     );
@@ -94,7 +93,7 @@ export async function createSlotManager({
     return domSlots;
   }
 
-  function get(name: string): Slot | undefined {
+  function get(name: string): AdheseSlot | undefined {
     return slots.get(name);
   }
 

@@ -1,5 +1,5 @@
 import { Fragment, type ReactElement, useEffect, useMemo, useState } from 'react';
-import type { AdheseContext, Slot } from '@core';
+import type { AdheseContext, AdheseSlot } from '@core';
 import { createPortal } from 'react-dom';
 import { cn } from '../utils';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
@@ -27,10 +27,10 @@ const slotIndexBadgeClasses = [
 export function SlotsTable({ adheseContext }: {
   adheseContext: AdheseContext;
 }): ReactElement {
-  const [slots, setSlots] = useState<ReadonlyArray<Slot>>([]);
+  const [slots, setSlots] = useState<ReadonlyArray<AdheseSlot>>([]);
 
   useEffect(() => {
-    function onSlotsChange(newSlots: ReadonlyArray<Slot>): void {
+    function onSlotsChange(newSlots: ReadonlyArray<AdheseSlot>): void {
       setSlots(newSlots);
     }
 

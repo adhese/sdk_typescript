@@ -1,4 +1,4 @@
-import type { Adhese } from './main';
+import type { Adhese } from './main.types';
 
 type ConsentObject = {
   [key: string]: boolean;

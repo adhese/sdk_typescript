@@ -1,5 +1,5 @@
 import type { UrlString } from '@utils';
-import { type Adhese, type Slot, logger } from '@core';
+import { type Adhese, type AdheseSlot, logger } from '@core';
 import { type Ad, adSchema } from './requestAds.schema';
 import { requestPreviews } from './requestAds.preview';
 import { requestWithGet, requestWithPost } from './requestAds.utils';
@@ -8,7 +8,7 @@ export type AdRequestOptions = {
   /**
    * List of slots you want to fetch the ad for
    */
-  slots: ReadonlyArray<Pick<Slot, 'getName' | 'parameters'>>;
+  slots: ReadonlyArray<Pick<AdheseSlot, 'getName' | 'parameters'>>;
   /**
    * Host that you want to fetch the ads from
    */
@@ -96,7 +96,7 @@ export async function requestAd({
   slot,
   ...options
 }: Omit<AdRequestOptions, 'slots'> & {
-  slot: Pick<Slot, 'getName' | 'parameters'>;
+  slot: Pick<AdheseSlot, 'getName' | 'parameters'>;
 }): Promise<Ad> {
   const [ad] = await requestAds({
     slots: [slot],

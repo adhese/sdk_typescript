@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createSlot } from '@core';
-import type { AdheseContext } from '../../main';
+import { type AdheseContext, createSlot } from '@core';
 import { testContext } from '../../testUtils';
 import { findDomSlots } from './findDomSlots';
 
