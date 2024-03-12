@@ -4,7 +4,7 @@ export function createConfig(
   pathToRoot,
 ) {
   return antfu({
-    ignores: ['**/**.iife.*js'],
+    ignores: ['**/dist/**/*', '**/lib/**/*'],
     stylistic: {
       semi: true,
     },

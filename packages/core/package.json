@@ -15,7 +15,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "clean": "rm -rf lib & rm -rf coverage",
+    "clean": "rm -rf dist & rm -rf coverage",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

@@ -6,13 +6,23 @@ export default defineConfig({
 
   plugins: [react()],
   build: {
-    outDir: 'lib',
+    outDir: 'dist',
     emptyOutDir: true,
+    minify: true,
     lib: {
       entry: `${path.resolve()}/src/index.ts`,
       name: 'Adhese',
-      formats: ['iife'],
-      fileName: format => `adhese.${format}.js`,
+      formats: ['cjs', 'es'],
+      fileName: format => `${format}/adhese.js`,
+    },
+    rollupOptions: {
+      output: {
+        inlineDynamicImports: false,
+        manualChunks: {
+          devtools: ['@devtools'],
+        },
+        chunkFileNames: '[format]/[name].js',
+      },
     },
   },
   resolve: {

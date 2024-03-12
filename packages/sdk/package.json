@@ -3,16 +3,16 @@
   "type": "module",
   "version": "1.0.0",
   "description": "Adhese SDK",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.cts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/es/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "LICENSE",
     "README.md",
     "dist"
   ],
   "scripts": {
-    "build": "vite build && tsup src/index.ts --dts-only --minify",
+    "build": "vite build && tsup src/index.ts --dts-only --minify --format esm",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "clean": "rm -rf dist",

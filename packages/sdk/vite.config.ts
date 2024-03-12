@@ -11,10 +11,17 @@ export default defineConfig({
       entry: 'src/index.ts',
       name: '@adhese/sdk',
       formats: ['es', 'cjs'],
-      fileName: format => `index.${format === 'cjs' ? 'cjs' : 'js'}`,
+      fileName: format => `${format}/index.js`,
     },
     rollupOptions: {
       external: packageJson.dependencies ? Object.keys(packageJson.dependencies) : [],
+      output: {
+        inlineDynamicImports: false,
+        manualChunks: {
+          devtools: ['@devtools'],
+        },
+        chunkFileNames: `[format]/[name].js`,
+      },
     },
   },
   resolve: {
