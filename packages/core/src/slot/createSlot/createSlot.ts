@@ -126,6 +126,11 @@ export async function createSlot(options: SlotOptions): Promise<Readonly<Slot>> 
     if (isInViewport || context.options.eagerRendering)
       await render(ad);
 
+    if (element) {
+      element.style.width = `${ad.width}px`;
+      element.style.height = `${ad.height}px`;
+    }
+
     await context.events?.changeSlots.dispatchAsync(Array.from(context.getAll?.() ?? []));
   }
 
