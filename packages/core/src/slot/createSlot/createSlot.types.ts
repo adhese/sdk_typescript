@@ -7,7 +7,10 @@ export type AdheseSlotOptions = {
   /**
    * The format code of the slot. Used to find the correct element on the page to render the ad in.
    */
-  format: string;
+  format: string | ReadonlyArray<{
+    format: string;
+    query: string;
+  }>;
   /**
    * If we have multiple slots with the same format, we can use this to differentiate between them.
    */
@@ -28,6 +31,10 @@ export type AdheseSlotOptions = {
    * Callback that is called when the slot is disposed.
    */
   onDispose?(): void;
+  /**
+   * Callback that is called when the format of the slot changes.
+   */
+  onNameChange?(newName: string, oldName: string): void;
 } & ({
   /**
    * If the slot should be lazy loaded. This means that the ad will only be requested when the slot is in the viewport.
@@ -45,7 +52,7 @@ export type AdheseSlotOptions = {
   lazyLoadingOptions?: never;
 });
 
-export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context'>, {
+export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' | 'onFormatChange' | 'format'>, {
   /**
    * The location of the slot. This is the location that is used to determine the current page URL.
    */
@@ -82,6 +89,14 @@ export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context'>,
    * Returns whether the impression tracking pixel has been fired.
    */
   isImpressionTracked(): boolean;
+  /**
+   * Sets the format of the slot. This is used to change the format of the slot after it has been created.
+   */
+  setFormat(format: string): Promise<void>;
+  /**
+   * Returns the format of the slot.
+   */
+  getFormat(): string;
   /**
    * Removes the slot from the DOM and cleans up the slot instance.
    */

@@ -6,15 +6,15 @@ export type DeviceDetectorOptions = {
   onChange?(device: string): void | Promise<void>;
 };
 
-export type DeviceDetector = {
+export type QueryDetector = {
   /**
    * Map of passed media queries
    */
   queries: Map<string, MediaQueryList>;
   /**
-   * Get the current active device
+   * Get the current active query
    */
-  getDevice(): string;
+  getQuery(): string;
   /**
    * Clean up all event listeners. After this the instance will no longer react to changes
    */
@@ -22,13 +22,13 @@ export type DeviceDetector = {
 };
 
 /**
- * Create a device detector that will match a list of media queries and keeps track of the current matching device
+ * Create a query detector that will match a list of media queries and keeps track of the current matching query
  *
  * @param options
  * @param options.onChange - Callback to fire when the device changes
  * @param options.queries Map of devices, and it's media query to match
  */
-export function createDeviceDetector(
+export function createQueryDetector(
   {
     onChange,
     queries = {
@@ -37,12 +37,12 @@ export function createDeviceDetector(
       desktop: '(min-width: 1025px) and (pointer: fine)',
     },
   }: DeviceDetectorOptions = {},
-): DeviceDetector {
+): QueryDetector {
   const mediaMap = new Map(
     Object.entries(queries).map(([key, query]) => [key, window.matchMedia(query)]),
   );
 
-  function getDevice(): string {
+  function getQuery(): string {
     for (const [device, query] of Object.entries(queries)) {
       if (window.matchMedia(query).matches)
         return device;
@@ -53,9 +53,9 @@ export function createDeviceDetector(
 
   const handleOnChange = debounce((): void => {
     // eslint-disable-next-line no-void
-    void onChange?.(getDevice());
+    void onChange?.(getQuery());
 
-    logger.debug(`Change device ${getDevice()}`);
+    logger.debug(`Change device ${getQuery()}`);
   }, 50);
 
   if (onChange) {
@@ -70,7 +70,7 @@ export function createDeviceDetector(
 
   return {
     queries: mediaMap,
-    getDevice,
+    getQuery,
     dispose,
   };
 }

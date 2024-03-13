@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type Ad, type AdheseContext, createSlot } from '@core';
 
 import { awaitTimeout } from '@utils';
@@ -12,6 +12,33 @@ vi.mock('../logger/logger', () => ({
 }));
 
 describe('slot', () => {
+  const mediaListeners = new Map<string, Set<() => void>>();
+  let validQuery = '(max-width: 767px)';
+
+  beforeAll(() => {
+    Object.defineProperty(window, 'matchMedia', {
+      value: vi.fn((
+        query: string,
+      ) => ({
+        media: query,
+        onchange: null,
+        dispatchEvent: null,
+        matches: query === validQuery,
+        addEventListener: vi.fn((type: string, listener: () => void) => {
+          if (mediaListeners.has(type))
+            mediaListeners.get(type)?.add(listener);
+          else
+            mediaListeners.set(type, new Set([listener]));
+        }),
+        removeEventListener: vi.fn(
+          (type: string, listener: () => void) => {
+            mediaListeners.get(type)?.delete(listener);
+          },
+        ),
+      })),
+    });
+  });
+
   let context: AdheseContext;
 
   beforeEach(() => {
@@ -25,6 +52,7 @@ describe('slot', () => {
   });
 
   afterEach(() => {
+    mediaListeners.clear();
     vi.restoreAllMocks();
     document.body.innerHTML = '';
   });
@@ -46,7 +74,7 @@ describe('slot', () => {
 
     expect(slot).toEqual({
       location: 'foo',
-      format: 'leaderboard',
+      // format: 'leaderboard',
       render: expect.any(Function) as () => Promise<HTMLElement>,
       getElement: expect.any(Function) as () => HTMLElement | null,
       getName: expect.any(Function) as () => string,
@@ -57,6 +85,8 @@ describe('slot', () => {
       lazyLoading: false,
       isViewabilityTracked: expect.any(Function) as () => boolean,
       isImpressionTracked: expect.any(Function) as () => boolean,
+      getFormat: expect.any(Function) as () => string,
+      setFormat: expect.any(Function) as (format: string) => Promise<void>,
     } satisfies typeof slot);
 
     await slot.render({
@@ -322,5 +352,35 @@ describe('slot', () => {
     });
 
     await slot.render();
+  });
+
+  it('should be able to accept format with different media queries', async () => {
+    const element = document.createElement('div');
+
+    const slot = await createSlot({
+      format: [
+        {
+          format: 'skyscraper',
+          query: '(max-width: 767px)',
+        },
+        {
+          format: 'leaderboard',
+          query: '(min-width: 768px)',
+        },
+      ],
+      containingElement: element,
+      context,
+    });
+
+    expect(slot.getFormat()).toBe('skyscraper');
+
+    validQuery = '(min-width: 768px)';
+
+    for (const listener of mediaListeners.get('change') ?? [])
+      listener();
+
+    await awaitTimeout(70);
+
+    expect(slot.getFormat()).toBe('leaderboard');
   });
 });

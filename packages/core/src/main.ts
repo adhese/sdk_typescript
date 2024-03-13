@@ -2,7 +2,7 @@ import { createEventManager } from '@utils';
 import { type AdheseSlot, type AdheseSlotOptions, logger, requestAd, requestAds } from '@core';
 import { createSlotManager } from './slot/slotManager/slotManager';
 import { onTcfConsentChange } from './consent/tcfConsent';
-import { createDeviceDetector } from './deviceDetector/deviceDetector';
+import { createQueryDetector } from './queryDetector/queryDetector';
 import { createParameters, isPreviewMode, setupLogging } from './main.utils';
 import type { Adhese, AdheseContext, AdheseOptions, MergedOptions } from './main.types';
 
@@ -81,11 +81,11 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     context.events?.locationChange.dispatch(newLocation);
   }
 
-  const deviceDetector = createDeviceDetector({
-    onChange: onDeviceChange,
+  const queryDetector = createQueryDetector({
+    onChange: onQueryChange,
   });
 
-  context.parameters = createParameters(mergedOptions, deviceDetector);
+  context.parameters = createParameters(mergedOptions, queryDetector);
   context.parameters.addEventListener(onParametersChange);
 
   let unmountDevtools: (() => void) | undefined;
@@ -97,10 +97,10 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
       context.events?.parametersChange.dispatch(context.parameters);
   }
 
-  async function onDeviceChange(): Promise<void> {
-    const device = deviceDetector.getDevice();
-    context.parameters?.set('dt', device);
-    context.parameters?.set('br', device);
+  async function onQueryChange(): Promise<void> {
+    const query = queryDetector.getQuery();
+    context.parameters?.set('dt', query);
+    context.parameters?.set('br', query);
 
     await fetchAndRenderAllSlots();
   }
@@ -219,9 +219,9 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     await fetchAndRenderAllSlots();
 
   function dispose(): void {
-    deviceDetector.dispose();
+    queryDetector.dispose();
     slotManager.dispose();
-    deviceDetector.dispose();
+    queryDetector.dispose();
     disposeOnTcfConsentChange();
     context.parameters?.dispose();
     context.parameters?.clear();

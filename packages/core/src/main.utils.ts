@@ -1,12 +1,12 @@
 import { random } from 'lodash-es';
-import type { DeviceDetector } from './deviceDetector/deviceDetector';
 import { logger } from './logger/logger';
+import type { QueryDetector } from './queryDetector/queryDetector';
 
 import type { AdheseContext, AdheseOptions } from './main.types';
 
 export function createParameters(
   options: Pick<AdheseOptions, 'parameters' | 'consent' | 'logUrl' | 'logReferrer'>,
-  deviceDetector: DeviceDetector,
+  queryDetector: QueryDetector,
 ): MapWithEvents<string, string | ReadonlyArray<string>> {
   const parameters = new MapWithEvents<string, string | ReadonlyArray<string>>();
 
@@ -19,8 +19,8 @@ export function createParameters(
   for (const [key, value] of Object.entries({
     ...options.parameters ?? {},
     tl: options.consent ? 'all' : 'none',
-    dt: deviceDetector.getDevice(),
-    br: deviceDetector.getDevice(),
+    dt: queryDetector.getQuery(),
+    br: queryDetector.getQuery(),
     rn: random(10_000).toString(),
   }))
     parameters.set(key, value);

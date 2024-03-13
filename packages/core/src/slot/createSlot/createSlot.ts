@@ -2,6 +2,7 @@ import { type Ad, logger, requestAd } from '@core';
 import { waitForDomLoad } from '@utils';
 import { round } from 'lodash-es';
 import { addTrackingPixel } from '../../impressionTracking/impressionTracking';
+import { type QueryDetector, createQueryDetector } from '../../queryDetector/queryDetector';
 import type { AdheseSlot, AdheseSlotOptions } from './createSlot.types';
 
 /**
@@ -9,7 +10,6 @@ import type { AdheseSlot, AdheseSlotOptions } from './createSlot.types';
  */
 export async function createSlot(options: AdheseSlotOptions): Promise<Readonly<AdheseSlot>> {
   const {
-    format,
     containingElement,
     slot,
     context,
@@ -17,6 +17,48 @@ export async function createSlot(options: AdheseSlotOptions): Promise<Readonly<A
   await waitForDomLoad();
 
   const parameters = new Map(Object.entries(options.parameters ?? {}));
+
+  let format: string;
+  let queryDetector: QueryDetector | null = null;
+
+  if (typeof options.format === 'string') {
+    // eslint-disable-next-line prefer-destructuring
+    format = options.format;
+  }
+  else {
+    queryDetector = createQueryDetector({
+      onChange: setFormat,
+      queries: Object.fromEntries(options.format.map(item => [item.format, item.query])),
+    });
+
+    format = queryDetector.getQuery();
+  }
+
+  async function setFormat(newFormat: string): Promise<void> {
+    const oldName = getName();
+
+    format = newFormat;
+    options.onNameChange?.(getName(), oldName);
+
+    const newAd = await requestAd({
+      slot: {
+        getName,
+        parameters,
+      },
+      account: context.options.account,
+      host: context.options.host,
+      parameters: context.parameters,
+      context,
+    });
+
+    cleanElement();
+
+    await setAd(newAd);
+  }
+
+  function getFormat(): string {
+    return format;
+  }
 
   let element: HTMLElement | null = typeof containingElement === 'string' || !containingElement
     ? document.querySelector<HTMLElement>(`.adunit[data-format="${format}"]#${containingElement}${slot ? `[data-slot="${slot}"]` : ''}`)
@@ -179,13 +221,22 @@ export async function createSlot(options: AdheseSlotOptions): Promise<Readonly<A
     return element;
   }
 
+  function cleanElement(): void {
+    if (!element)
+      return;
+
+    element.innerHTML = '';
+    element.style.position = '';
+    element.style.width = '';
+    element.style.height = '';
+  }
+
   function getName(): string {
     return `${context.location}${slot ? `${slot}` : ''}-${format}`;
   }
 
   function dispose(): void {
-    if (element)
-      element.innerHTML = '';
+    cleanElement();
 
     impressionTrackingPixelElement?.remove();
     viewabilityTrackingPixelElement?.remove();
@@ -197,6 +248,8 @@ export async function createSlot(options: AdheseSlotOptions): Promise<Readonly<A
     viewabilityObserver.disconnect();
 
     options.onDispose?.();
+
+    queryDetector?.dispose();
   }
 
   function isViewabilityTracked(): boolean {
@@ -210,9 +263,10 @@ export async function createSlot(options: AdheseSlotOptions): Promise<Readonly<A
   return {
     location: context.location,
     lazyLoading: options.lazyLoading ?? false,
-    format,
     slot,
     parameters,
+    setFormat,
+    getFormat,
     render,
     getElement,
     getName,

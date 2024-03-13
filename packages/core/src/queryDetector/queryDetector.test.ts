@@ -1,8 +1,8 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { awaitTimeout } from '@utils';
-import { createDeviceDetector } from './deviceDetector';
+import { createQueryDetector } from './queryDetector';
 
-describe('deviceDetector', () => {
+describe('queryDetector', () => {
   const listeners = new Map<string, Set<() => void>>();
   let validQuery = '(max-width: 768px) and (pointer: coarse)';
 
@@ -34,15 +34,15 @@ describe('deviceDetector', () => {
     listeners.clear();
   });
 
-  it('should create a deviceDetector', async () => {
-    const detector = createDeviceDetector();
+  it('should create a queryDetector', async () => {
+    const detector = createQueryDetector();
 
-    expect(detector.getDevice()).toBe('mobile');
+    expect(detector.getQuery()).toBe('mobile');
   });
 
-  it('should create a deviceDetector with onChange', async () => {
+  it('should create a queryDetector with onChange', async () => {
     const onChange = vi.fn();
-    const detector = createDeviceDetector({ onChange });
+    const detector = createQueryDetector({ onChange });
 
     listeners.get('change')?.forEach((listener) => {
       listener();
@@ -63,13 +63,13 @@ describe('deviceDetector', () => {
 
   it('should return unknown device', () => {
     validQuery = '(min-width: 1280px) and (pointer: fine)';
-    const detector = createDeviceDetector();
+    const detector = createQueryDetector();
 
-    expect(detector.getDevice()).toBe('unknown');
+    expect(detector.getQuery()).toBe('unknown');
   });
 
-  it('should create a deviceDetector with custom queries', () => {
-    const detector = createDeviceDetector({
+  it('should create a queryDetector with custom queries', () => {
+    const detector = createQueryDetector({
       queries: {
         mobile: '(max-width: 768px) and (pointer: coarse)',
         tablet: '(min-width: 769px) and (max-width: 1024px) and (pointer: coarse)',

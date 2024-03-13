@@ -84,3 +84,30 @@ await adhese.addSlot({
   lazyLoad: true,
 });
 ```
+
+## Device specific formats
+If you want to fetch a different format for a specific device, you can pass an array of formats to the `format` option
+of the `addSlot` with a format and a media query.
+
+```js
+const adhese = await createAdhese({
+  account: 'your-account-id',
+})
+
+await adhese.addSlot({
+  containingElement: 'slot-1', // ID of the element that contains the slot
+  format: [
+    {
+      format: 'leaderboard',
+      mediaQuery: '(max-width: 1023px)',
+    },
+    {
+      format: 'billboard',
+      mediaQuery: '(min-width: 1024px)',
+    },
+  ],
+});
+```
+
+In this example, the `leaderboard` format will be fetched when the viewport is smaller than 1024px and the `billboard`
+format will be fetched when the viewport is larger than 1023px.

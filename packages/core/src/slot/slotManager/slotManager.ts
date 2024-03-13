@@ -50,12 +50,13 @@ export async function createSlotManager({
     return Array.from(slots).map(([, slot]) => slot);
   }
 
-  async function add(options: Omit<AdheseSlotOptions, 'context' | 'onDispose'>): Promise<Readonly<AdheseSlot>> {
+  async function add(options: Omit<AdheseSlotOptions, 'context' | 'onDispose' | 'onNameChange'>): Promise<Readonly<AdheseSlot>> {
     const slot = await createSlot({
-      ...options,
+      ...options as AdheseSlotOptions,
       onDispose,
+      onNameChange,
       context,
-    } as AdheseSlotOptions);
+    });
 
     function onDispose(): void {
       slots.delete(slot.getName());
@@ -68,6 +69,13 @@ export async function createSlotManager({
     }
 
     slots.set(slot.getName(), slot);
+
+    function onNameChange(newName: string, previousName: string): void {
+      slots.set(newName, slot);
+      slots.delete(previousName);
+
+      context.events?.changeSlots.dispatch(Array.from(slots.values()));
+    }
 
     logger.debug('Slot added', {
       slot,
