@@ -16,6 +16,7 @@ async function app(): Promise<void> {
   await adhese.addSlot({
     format: 'leaderboard',
     containingElement: 'leaderboard',
+    renderMode: 'inline',
   });
 
   await adhese.addSlot({

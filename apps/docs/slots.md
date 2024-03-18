@@ -2,6 +2,19 @@
 
 Slots are the main building blocks of the Adhese SDK. They are used to fetch and render ads on your page.
 
+## Options
+Slots accept the following options:
+
+| Option               | Type                                                          | Default    | Description                                                                                                                                                                                                                              |
+|----------------------|---------------------------------------------------------------|------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `format`<sup>*</sup> | `string \| ReadonlyArray<{ format: string; query: string; }>` | -          | The format code of the slot. Used to find the correct element on the page to render the ad in. If the format is a string, it is used as the format code. If the format is an array, the format code is determined by the query detector. |
+| `slot`               | `string`                                                      | -          | If we have multiple slots with the same format, we can use this to differentiate between them.                                                                                                                                           |
+| `containingElement`  | `string \| HTMLElement`                                       | -          | The element that contains the slot. Used to find the correct element on the page to render the ad in.                                                                                                                                    |
+| `parameters`         | `Record<string, ReadonlyArray<string> \| string>`             | -          | The parameters that are used to render the ad.                                                                                                                                                                                           |
+| `renderMode`         | `'iframe' \| 'inline'`                                        | `'iframe'` | The render mode of the slot. <ul><li>`iframe`: The ad will be rendered in an iframe. </li><li>`inline`: The ad will be rendered in the containing element.    </li></ul>                                                                 |
+| `lazyLoading`        | `boolean`                                                     | `false`    | If the slot should be lazy loaded. This means that the ad will only be requested when the slot is in the viewport. If `true`, the slot will handle the request itself and render the ad.                                                 |
+| `lazyLoadingOptions` | `{ rootMargin?: string; }`                                    | -          | Options related to lazy loading. Only available when `lazyLoading` is set to true.                                                                                                                                                       |
+
 ## Slots on initialisation
 If you know beforehand which slots are going to be on the page, you can pass the `initialSlots` option to the
 `createAdhese` function. This is particularly useful if you want to start the fetching process as soon as possible.
@@ -111,3 +124,23 @@ await adhese.addSlot({
 
 In this example, the `leaderboard` format will be fetched when the viewport is smaller than 1024px and the `billboard`
 format will be fetched when the viewport is larger than 1023px.
+
+## Render modes
+The SDK supports different render modes. The render mode can be set on the slot by passing the `renderMode` option to the
+`addSlot` method.
+
+```js
+const adhese = await createAdhese({
+  account: 'your-account-id',
+})
+
+await adhese.addSlot({
+  containingElement: 'slot-1', // ID of the element that contains the slot
+  format: 'billboard',
+  renderMode: 'iframe',
+});
+```
+
+The following render modes are supported:
+- `iframe`: The ad is rendered in an iframe.
+- `inline`: The ad is rendered inline in the containing element.

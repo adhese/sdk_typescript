@@ -383,4 +383,25 @@ describe('slot', () => {
 
     expect(slot.getFormat()).toBe('leaderboard');
   });
+
+  it('should be able to render a slot with the render mode set to inline', async () => {
+    const element = document.createElement('div');
+
+    element.classList.add('adunit');
+    element.dataset.format = 'leaderboard';
+    element.id = 'leaderboard';
+
+    document.body.appendChild(element);
+
+    const slot = await createSlot({
+      format: 'leaderboard',
+      containingElement: 'leaderboard',
+      renderMode: 'inline',
+      context,
+    });
+
+    await slot.render();
+
+    expect(slot.getElement()).not.toBe(null);
+  });
 });

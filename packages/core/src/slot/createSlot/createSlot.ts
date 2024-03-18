@@ -3,7 +3,13 @@ import { waitForDomLoad } from '@utils';
 import { round } from 'lodash-es';
 import { addTrackingPixel } from '../../impressionTracking/impressionTracking';
 import { type QueryDetector, createQueryDetector } from '../../queryDetector/queryDetector';
-import type { AdheseSlot, AdheseSlotOptions } from './createSlot.types';
+import type { AdheseSlot, AdheseSlotOptions, RenderMode } from './createSlot.types';
+import { renderIframe, renderInline } from './createSlot.utils';
+
+const renderFunctions: Record<RenderMode, (ad: Ad, element: HTMLElement) => void> = {
+  iframe: renderIframe,
+  inline: renderInline,
+};
 
 /**
  * Create a new slot instance.
@@ -13,6 +19,7 @@ export async function createSlot(options: AdheseSlotOptions): Promise<Readonly<A
     containingElement,
     slot,
     context,
+    renderMode = 'iframe',
   } = options;
   await waitForDomLoad();
 
@@ -64,7 +71,10 @@ export async function createSlot(options: AdheseSlotOptions): Promise<Readonly<A
     ? document.querySelector<HTMLElement>(`.adunit[data-format="${format}"]#${containingElement}${slot ? `[data-slot="${slot}"]` : ''}`)
     : containingElement;
   function getElement(): HTMLElement | null {
-    return element?.querySelector('iframe') ?? null;
+    if (renderMode === 'iframe')
+      return element?.querySelector('iframe') ?? null;
+
+    return element?.innerHTML ? (element.firstElementChild as HTMLElement) : null;
   }
 
   let impressionTrackingPixelElement: HTMLImageElement | null = null;
@@ -178,28 +188,7 @@ export async function createSlot(options: AdheseSlotOptions): Promise<Readonly<A
     if (context.debug)
       element.style.position = 'relative';
 
-    const iframe = document.createElement('iframe');
-    iframe.srcdoc = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <style>
-            body {
-              margin: 0;
-              padding: 0;
-              overflow: hidden;
-            }
-          </style>
-        </head>
-        <body>
-          ${ad.tag}
-        </body>
-      `.replaceAll(/\s+/g, ' ').trim();
-
-    iframe.style.border = 'none';
-    iframe.style.width = ad.width ? `${ad.width}px` : '100%';
-    iframe.style.height = ad.height ? `${ad.height}px` : '100%';
-    element.replaceChildren(iframe);
+    renderFunctions[renderMode](ad, element);
 
     if (ad?.impressionCounter && !impressionTrackingPixelElement) {
       impressionTrackingPixelElement = addTrackingPixel(ad.impressionCounter);

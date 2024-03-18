@@ -3,9 +3,13 @@ import type { Merge } from '@utils';
 import type { Ad } from '../../requestAds/requestAds.schema';
 import type { AdheseContext } from '../../main.types';
 
+export type RenderMode = 'iframe' | 'inline';
+
 export type AdheseSlotOptions = {
   /**
-   * The format code of the slot. Used to find the correct element on the page to render the ad in.
+   * The format code of the slot. Used to find the correct element on the page to render the ad in. If the format is a
+   * string, it is used as the format code. If the format is an array, the format code is determined by the query
+   * detector.
    */
   format: string | ReadonlyArray<{
     format: string;
@@ -27,6 +31,15 @@ export type AdheseSlotOptions = {
    * The Adhese context
    */
   context: AdheseContext;
+  /**
+   * The render mode of the slot.
+   *
+   * - `iframe`: The ad will be rendered in an iframe.
+   * - `inline`: The ad will be rendered in the containing element.
+   *
+   * @default 'iframe'
+   */
+  renderMode?: RenderMode;
   /**
    * Callback that is called when the slot is disposed.
    */
