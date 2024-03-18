@@ -170,7 +170,7 @@ export async function createSlot(options: AdheseSlotOptions): Promise<Readonly<A
     });
 
     if (!element) {
-      const error = `Could not create slot for format ${format}.?`;
+      const error = `Could not create slot for format ${format}. No element found.`;
       logger.error(error, options);
       throw new Error(error);
     }

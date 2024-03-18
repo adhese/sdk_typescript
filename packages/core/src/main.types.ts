@@ -82,6 +82,10 @@ export type AdheseOptions = {
    * @default false
    */
   eagerRendering?: boolean;
+  /**
+   * The query detector options for the Adhese instance.
+   */
+  queries?: Record<string, string>;
 } & ({
   viewabilityTracking?: true;
   /**

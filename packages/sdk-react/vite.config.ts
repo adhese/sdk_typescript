@@ -13,6 +13,7 @@ export default defineConfig({
       formats: ['es', 'cjs'],
       fileName: format => `${format}/index.js`,
     },
+    sourcemap: true,
     rollupOptions: {
       external: packageJson.dependencies ? Object.keys(packageJson.dependencies) : [],
       output: {

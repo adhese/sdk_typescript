@@ -83,6 +83,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
 
   const queryDetector = createQueryDetector({
     onChange: onQueryChange,
+    queries: mergedOptions.queries,
   });
 
   context.parameters = createParameters(mergedOptions, queryDetector);
@@ -216,7 +217,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
   });
 
   if (slotManager.getAll().length > 0)
-    await fetchAndRenderAllSlots();
+    await fetchAndRenderAllSlots().catch(logger.error);
 
   function dispose(): void {
     queryDetector.dispose();

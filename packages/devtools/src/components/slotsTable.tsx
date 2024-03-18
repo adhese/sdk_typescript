@@ -110,7 +110,16 @@ export function SlotsTable({ adheseContext }: {
                   <TableCell className="font-medium">
                     <Badge className={cn(slotIndexBadgeClasses[index % slotIndexBadgeClasses.length], 'text-white')}>{name}</Badge>
                   </TableCell>
-                  <TableCell>{format}</TableCell>
+                  <TableCell>
+                    {!ad?.adFormat || ad?.adFormat === format
+                      ? format
+                      : (
+                        <>
+                          <del className="text-red-300 italic">{format}</del>
+                          <ins className="no-underline text-green-700">{ad?.adFormat}</ins>
+                        </>
+                        )}
+                  </TableCell>
                   <TableCell>{location}</TableCell>
                   <TableCell>
                     <Badge className={cn({
