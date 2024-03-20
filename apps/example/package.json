@@ -9,9 +9,5 @@
     "lint:fix": "eslint --fix .",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
-  },
-  "dependencies": {
-    "core": "*",
-    "zod": "^3.22.4"
   }
 }
