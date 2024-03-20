@@ -31,7 +31,8 @@
     "prepare": "husky install",
     "changeset": "changeset",
     "changeset:version": "changeset version",
-    "release": "turbo build --cache-dir=.turbo && changeset publish"
+    "release": "turbo build --cache-dir=.turbo && changeset publish",
+    "commit": "cz"
   },
   "dependencies": {
     "lodash-es": "^4.17.21",
@@ -43,6 +44,7 @@
     "@types/node": "^20.11.30",
     "@vitest/coverage-v8": "^1.4.0",
     "autoprefixer": "^10.4.18",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.57.0",
     "glob": "^10.3.10",
     "husky": "^8.0.3",
@@ -57,5 +59,10 @@
     "vite": "^5.1.6",
     "vite-plugin-dts": "^3.7.3",
     "vitest": "^1.2.2"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
