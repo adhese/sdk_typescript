@@ -53,3 +53,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
+
+      - name: Push git tags
+        if: steps.changesets.outputs.publish === 'true'
+        run: git push --follow-tags
