@@ -12,7 +12,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 env:
   GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  NPM_TOKEN: ${{ secrets.NPMJS_PUBLISH_TOKEN }}
 
 jobs:
   release:
@@ -52,7 +52,7 @@ jobs:
           commit: 'chore(release): version packages [skip ci]'
         env:
           GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ env.NPM_TOKEN }}
+          NPM_TOKEN: ${{ env.NPMJS_PUBLISH_TOKEN }}
 
       - name: Push git tags
         run: git push --follow-tags
