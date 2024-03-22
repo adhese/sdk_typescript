@@ -1,5 +1,11 @@
 # @adhese/docs
 
+## 0.1.4
+
+### Patch Changes
+
+- 422aeb4: Fix GH action for deploying docs not using right 3rd pary action
+
 ## 0.1.3
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @adhese/sdk-react
 
+## 0.1.4
+
+### Patch Changes
+
+- @adhese/sdk@0.1.4
+
 ## 0.1.3
 
 ### Patch Changes
