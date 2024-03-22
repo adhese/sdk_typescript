@@ -1,5 +1,12 @@
 # @adhese/sdk
 
+## 0.1.2
+
+### Patch Changes
+
+- 6c3b93e: Add license file
+- 6c3b93e: Add license field to package.json files
+
 ## 0.1.1
 
 ### Patch Changes
