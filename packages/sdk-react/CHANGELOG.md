@@ -1,5 +1,13 @@
 # @adhese/sdk-react
 
+## 0.1.1
+
+### Patch Changes
+
+- d481a4e: Add license file
+- Updated dependencies [d481a4e]
+  - @adhese/sdk@0.1.1
+
 ## 0.1.0
 
 ### Minor Changes
