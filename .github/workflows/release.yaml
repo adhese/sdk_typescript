@@ -64,7 +64,7 @@ jobs:
 
       - name: Deploy docs to GitHub pages
         if: steps.changesets.outputs.published == 'true'
-        uses: crazy-max/ghaction-github-pages@v2
+        uses: actions/deploy-pages@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
