@@ -1,7 +1,7 @@
 {
   "name": "@adhese/sdk",
   "type": "module",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Adhese SDK",
   "main": "./dist/cjs/index.js",
   "module": "./dist/es/index.js",
@@ -16,7 +16,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "clean": "rm -rf dist",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "release": "npm publish --access public"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",
@@ -30,7 +31,7 @@
     "lodash-es": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "tailwind-merge": "^2.2.1",
+    "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.4"
   }

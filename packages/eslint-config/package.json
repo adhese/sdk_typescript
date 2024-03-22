@@ -1,6 +1,7 @@
 {
   "name": "sdk-eslint-config",
   "type": "module",
+  "version": "1.0.0",
   "private": true,
   "main": "index.js",
   "files": [
@@ -14,6 +15,6 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.8.0"
+    "@antfu/eslint-config": "^2.8.3"
   }
 }
