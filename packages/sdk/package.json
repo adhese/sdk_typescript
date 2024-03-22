@@ -3,6 +3,7 @@
   "type": "module",
   "version": "0.1.1",
   "description": "Adhese SDK",
+  "license": "GPL-3.0",
   "main": "./dist/cjs/index.js",
   "module": "./dist/es/index.js",
   "types": "./dist/index.d.ts",
