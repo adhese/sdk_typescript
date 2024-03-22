@@ -24,7 +24,8 @@ jobs:
         pnpm-version: [latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Cache Turbo artifacts
         uses: actions/cache@v3
         with:
@@ -49,10 +50,7 @@ jobs:
           title: 'chore(release): version packages'
           publish: npm run release
           version: npm run changeset:version
-          commit: 'chore(release): version packages [skip ci]'
+          commit: 'Bump version packages [skip ci]'
         env:
           GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ env.NPMJS_PUBLISH_TOKEN }}
-
-      - name: Push git tags
-        run: git push --follow-tags
