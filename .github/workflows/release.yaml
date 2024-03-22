@@ -14,6 +14,10 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   NPM_TOKEN: ${{ secrets.NPMJS_PUBLISH_TOKEN }}
 
+permissions:
+  pages: write
+  id-token: write
+
 jobs:
   release:
     name: Release
@@ -26,6 +30,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
       - name: Cache Turbo artifacts
         uses: actions/cache@v3
         with:
@@ -38,10 +43,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+
       - name: Install dependencies
         run: npm ci
-      - name: Build
-        run: npm run build
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
@@ -54,6 +58,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
+
+      - name: Upload docs build artifact
+        if: steps.changesets.outputs.published == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-pages
+          path: ./apps/docs/.vitepress/dist
+
+      - name: Deploy docs to GitHub pages
+        if: steps.changesets.outputs.published == 'true'
+        uses: crazy-max/ghaction-github-pages@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push git tag after publish
         if: steps.changesets.outputs.published == 'true'
