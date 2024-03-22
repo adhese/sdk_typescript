@@ -15,8 +15,10 @@ env:
   NPM_TOKEN: ${{ secrets.NPMJS_PUBLISH_TOKEN }}
 
 permissions:
+  contents: write
   pages: write
   id-token: write
+  pull-requests: write
 
 jobs:
   release:
