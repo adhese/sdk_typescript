@@ -1,5 +1,12 @@
+import { execSync } from 'node:child_process';
+
 export default {
   '**/*.{ts,js,json,cjs,mjs,cts,mts,yaml}': (fileNames) => {
+    const gitUser = execSync('git config user.name').toString().trim();
+
+    if (gitUser === 'github-actions[bot]')
+      return [];
+
     const workspaces = ['packages', 'apps'];
     const workspaceFiles = fileNames
       .filter(fileName => workspaces.some(workspace => fileName.includes(workspace)));
