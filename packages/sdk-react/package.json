@@ -1,7 +1,7 @@
 {
   "name": "@adhese/sdk-react",
   "type": "module",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Adhese SDK",
   "main": "./dist/cjs/index.js",
   "module": "./dist/es/index.js",
@@ -19,7 +19,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@adhese/sdk": "^0.1.3",
+    "@adhese/sdk": "^0.1.4",
     "lodash-es": "^4.17.21",
     "react": "^18.0.2",
     "react-dom": "^18.2.0"
