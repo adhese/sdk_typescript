@@ -14,11 +14,7 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   NPM_TOKEN: ${{ secrets.NPMJS_PUBLISH_TOKEN }}
 
-permissions:
-  contents: write
-  pages: write
-  id-token: write
-  pull-requests: write
+permissions: write-all
 
 jobs:
   release:
