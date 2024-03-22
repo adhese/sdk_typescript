@@ -55,5 +55,4 @@ jobs:
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
 
       - name: Push git tags
-        if: steps.changesets.outputs.publish === 'true'
         run: git push --follow-tags
