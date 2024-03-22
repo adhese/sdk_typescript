@@ -1,5 +1,14 @@
 # @adhese/sdk-react
 
+## 0.1.2
+
+### Patch Changes
+
+- 6c3b93e: Add license file
+- Updated dependencies [6c3b93e]
+- Updated dependencies [6c3b93e]
+  - @adhese/sdk@0.1.2
+
 ## 0.1.1
 
 ### Patch Changes
