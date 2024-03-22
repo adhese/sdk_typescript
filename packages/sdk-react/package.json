@@ -3,6 +3,10 @@
   "type": "module",
   "version": "0.1.4",
   "description": "Adhese SDK",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adhese/sdk_typescript.git"
+  },
   "main": "./dist/cjs/index.js",
   "module": "./dist/es/index.js",
   "types": "./dist/index.d.ts",
