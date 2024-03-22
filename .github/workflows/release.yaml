@@ -53,4 +53,4 @@ jobs:
           commit: 'Bump version packages [skip ci]'
         env:
           GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ env.NPMJS_PUBLISH_TOKEN }}
+          NPM_TOKEN: ${{ env.NPM_TOKEN }}
