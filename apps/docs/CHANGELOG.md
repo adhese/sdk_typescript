@@ -1,5 +1,11 @@
 # @adhese/docs
 
+## 0.1.3
+
+### Patch Changes
+
+- f3d6bb6: Add deploy workflow for docs to GitHub Pages
+
 ## 0.1.2
 
 ## 0.1.1
