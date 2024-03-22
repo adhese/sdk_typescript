@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 0.1.5
+
+### Patch Changes
+
+- 6725b17: Add repository field to package.json
+
 ## 0.1.4
 
 ## 0.1.3
