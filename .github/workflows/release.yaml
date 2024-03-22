@@ -47,7 +47,7 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          title: 'chore(release): version packages'
+          title: Bump version packages
           publish: npm run release
           version: npm run changeset:version
           commit: 'Bump version packages [skip ci]'
