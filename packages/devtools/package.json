@@ -1,6 +1,7 @@
 {
   "name": "devtools",
   "type": "module",
+  "private": true,
   "main": "./src/index.tsx",
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",
