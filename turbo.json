@@ -32,7 +32,16 @@
       "dependsOn": ["^build", "lint", "test", "@adhese/sdk#build"],
       "outputMode": "errors-only"
     },
+    "@adhese/sdk-devtools#typecheck": {
+      "dependsOn": ["^build", "lint", "test", "@adhese/sdk#build"],
+      "outputMode": "errors-only"
+    },
     "@adhese/sdk-react#build": {
+      "outputs": ["dist/**", "lib/**"],
+      "dependsOn": ["^build", "lint", "test", "typecheck", "@adhese/sdk#build"],
+      "outputMode": "new-only"
+    },
+    "@adhese/sdk-devtools#build": {
       "outputs": ["dist/**", "lib/**"],
       "dependsOn": ["^build", "lint", "test", "typecheck", "@adhese/sdk#build"],
       "outputMode": "new-only"

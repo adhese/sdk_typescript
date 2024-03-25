@@ -29,7 +29,7 @@ function. When the `options` prop changes, the Adhese instance is recreated.
 ```jsx
 import { AdheseProvider } from '@adhese/sdk-react';
 
-function App() {
+function Devtools() {
   return (
     <AdheseProvider options={{
       account: 'your-account-id',

@@ -1,11 +1,11 @@
 import { createRoot } from 'react-dom/client';
 import type { AdheseContext } from '@core';
-import { App } from './App';
+import { Devtools } from './Devtools';
 
 export function createAdheseDevtools(element: HTMLElement, context: AdheseContext): () => void {
   const root = createRoot(element);
 
-  root.render(<App adheseContext={context} />);
+  root.render(<Devtools adheseContext={context} />);
 
   return () => {
     root.unmount();
