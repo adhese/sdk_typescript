@@ -4,6 +4,7 @@ import { defineConfig } from 'vitepress';
 export default defineConfig({
   title: 'Adhese SDK',
   description: 'SDK for communication with Adhese ads',
+  base: '/sdk_typescript/',
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
