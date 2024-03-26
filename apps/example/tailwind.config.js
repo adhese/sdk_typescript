@@ -1,1 +1,1 @@
-export { default } from '../../packages/devtools/tailwind.config.js';
+export { default } from '../../packages/sdk-devtools/tailwind.config.js';

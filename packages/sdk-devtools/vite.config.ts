@@ -19,7 +19,7 @@ export default defineConfig({
       output: {
         inlineDynamicImports: false,
         manualChunks: {
-          devtools: ['@devtools'],
+          devtools: ['./src/Devtools.tsx', './src/main.tsx'],
         },
         chunkFileNames: `[format]/[name].js`,
       },
@@ -30,7 +30,6 @@ export default defineConfig({
       /* eslint-disable ts/naming-convention */
       '@utils': `${path.resolve()}/../utils/src`,
       '@core': `${path.resolve()}/../core/src`,
-      '@devtools': `${path.resolve()}/../devtools/src`,
       '@logger': `${path.resolve()}/../logger/src`,
       '@server-mocks': `${path.resolve()}/../server-mocks/src`,
       /* eslint-enable ts/naming-convention */

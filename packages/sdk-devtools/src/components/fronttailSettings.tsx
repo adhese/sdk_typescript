@@ -84,13 +84,10 @@ export function FronttailSettings({
             value={fronttailDebugKey}
             onChange={onFronttailDebugKeyChange}
             className={
-              cn(
-                'max-w-60',
-                {
-                  // eslint-disable-next-line ts/naming-convention
-                  'border-destructive': fronttailDebugKey.length < 4,
-                },
-              )
+              cn('max-w-60', {
+                // eslint-disable-next-line ts/naming-convention
+                'border-destructive': fronttailDebugKey.length < 4,
+              })
             }
           />
 
