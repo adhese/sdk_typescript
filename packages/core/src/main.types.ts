@@ -86,11 +86,6 @@ export type AdheseOptions = {
    * The query detector options for the Adhese instance.
    */
   queries?: Record<string, string>;
-  /**
-   * The function that creates the devtools instance. Pass in the `createDevtools` function from the
-   * `@adhese/skd-devtools` package
-   */
-  onCreateDevtools?(context: AdheseContext): Promise<() => void>;
 } & ({
   viewabilityTracking?: true;
   /**

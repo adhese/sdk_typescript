@@ -1,5 +1,6 @@
 import { createEventManager } from '@utils';
 import { type AdheseSlot, type AdheseSlotOptions, logger, requestAd, requestAds } from '@core';
+import { createDevtools } from '@adhese/sdk-devtools';
 import { createSlotManager } from './slot/slotManager/slotManager';
 import { onTcfConsentChange } from './consent/tcfConsent';
 import { createQueryDetector } from './queryDetector/queryDetector';
@@ -77,7 +78,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
 
   let unmountDevtools: (() => void) | undefined;
   if (mergedOptions.debug || window.location.search.includes('adhese_debug=true') || isPreviewMode()) {
-    unmountDevtools = await mergedOptions.onCreateDevtools?.(context);
+    unmountDevtools = await createDevtools(context);
     context.events?.debugChange.dispatch(true);
   }
 
@@ -158,7 +159,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
 
     if (context.debug && !unmountDevtools) {
       // eslint-disable-next-line require-atomic-updates
-      unmountDevtools = await mergedOptions.onCreateDevtools?.(context);
+      unmountDevtools = await createDevtools(context);
       logger.setMinLogLevelThreshold('debug');
       logger.debug('Debug mode enabled');
       context.events?.debugChange.dispatch(true);

@@ -1,4 +1,3 @@
-import { createDevtools } from '@adhese/sdk-devtools';
 import { createAdhese } from '@adhese/sdk';
 
 async function app(): Promise<void> {
@@ -10,7 +9,6 @@ async function app(): Promise<void> {
       containingElement: 'skyscraper',
     }],
     location: '_sdk_example_',
-    onCreateDevtools: async context => createDevtools(context),
   });
 
   window.adhese = adhese;

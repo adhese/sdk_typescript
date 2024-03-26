@@ -30,6 +30,7 @@ export default defineConfig({
       '@devtools': `${path.resolve()}/../devtools/src`,
       '@logger': `${path.resolve()}/../logger/src`,
       '@server-mocks': `${path.resolve()}/../server-mocks/src`,
+      '@adhese/sdk-devtools': `${path.resolve()}/../sdk-devtools/src`,
       /* eslint-enable ts/naming-convention */
     },
   },
