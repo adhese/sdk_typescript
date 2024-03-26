@@ -1,7 +1,7 @@
 {
   "name": "@adhese/sdk-devtools",
   "type": "module",
-  "version": "0.1.5",
+  "version": "1.0.0",
   "description": "Adhese SDK Devtools",
   "license": "GPL-3.0",
   "repository": {
@@ -25,7 +25,7 @@
     "release": "npm publish --access public"
   },
   "peerDependencies": {
-    "@adhese/sdk": "^0.1.5"
+    "@adhese/sdk": "^1.0.0"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",
