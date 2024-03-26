@@ -19,9 +19,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@adhese/sdk-devtools": "^0.1.5"
+    "@adhese/sdk-devtools": "^0.2.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1"
-  }
+  },
+  "version": null
 }
