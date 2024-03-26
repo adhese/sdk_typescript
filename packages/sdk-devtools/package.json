@@ -1,7 +1,7 @@
 {
   "name": "@adhese/sdk-devtools",
   "type": "module",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "Adhese SDK Devtools",
   "license": "GPL-3.0",
   "repository": {
