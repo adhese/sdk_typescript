@@ -53,17 +53,20 @@ jobs:
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
 
       - name: Fix permissions
+        if: steps.changesets.outputs.published == 'true'
         run: |
           chmod -c -R +rX "_site/" | while read line; do
             echo "::warning title=Invalid file permissions automatically fixed::$line"
           done
 
       - name: Upload docs build artifact
+        if: steps.changesets.outputs.published == 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           path: apps/docs/.vitepress/dist
 
       - name: Deploy docs to GitHub pages
+        if: steps.changesets.outputs.published == 'true'
         uses: actions/deploy-pages@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
