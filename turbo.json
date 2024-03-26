@@ -5,19 +5,12 @@
       "outputs": ["coverage/**"],
       "dependsOn": []
     },
-    "lint": {
-      "outputMode": "errors-only"
-    },
-    "lint:fix": {
-      "outputMode": "errors-only"
-    },
-    "typecheck": {
-      "outputMode": "errors-only"
-    },
+    "lint": {},
+    "lint:fix": {},
+    "typecheck": {},
     "build": {
       "outputs": ["dist/**", "lib/**"],
-      "dependsOn": ["^build"],
-      "outputMode": "new-only"
+      "dependsOn": ["^build"]
     },
     "dev": {
       "cache": false,

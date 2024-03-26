@@ -82,7 +82,7 @@ jobs:
         run: npm ci
 
       - name: Build docs
-        run: npm run build -- --filter=docs
+        run: npm run build -- --filter=docs --force
 
       - name: Fix permissions
         run: |
