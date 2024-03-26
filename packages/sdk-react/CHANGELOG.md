@@ -1,5 +1,15 @@
 # @adhese/sdk-react
 
+## 0.3.0
+
+### Patch Changes
+
+- Updated dependencies [22c81ff]
+- Updated dependencies [e88cce4]
+- Updated dependencies [63cd49f]
+  - @adhese/sdk-devtools@0.3.0
+  - @adhese/sdk@0.3.0
+
 ## 0.2.0
 
 ### Minor Changes
