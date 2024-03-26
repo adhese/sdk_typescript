@@ -13,6 +13,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": [],
-  "bumpVersionsWithWorkspaceProtocolOnly": true
+  "ignore": []
 }

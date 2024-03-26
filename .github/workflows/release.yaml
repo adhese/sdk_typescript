@@ -47,7 +47,7 @@ jobs:
           title: Bump version packages
           publish: npm run release
           version: npm run changeset:version
-          commit: 'Bump version packages [skip ci]'
+          commit: Bump version packages
         env:
           GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
