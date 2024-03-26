@@ -16,7 +16,7 @@
     },
     "build": {
       "outputs": ["dist/**", "lib/**"],
-      "dependsOn": ["^build", "lint", "test", "typecheck"],
+      "dependsOn": ["^build"],
       "outputMode": "new-only"
     },
     "dev": {

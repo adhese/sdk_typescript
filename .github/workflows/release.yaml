@@ -8,8 +8,6 @@ on:
       - main
   workflow_dispatch:
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
-
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   NPM_TOKEN: ${{ secrets.NPMJS_PUBLISH_TOKEN }}
@@ -20,20 +18,22 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    outputs:
+      published: ${{ steps.changesets.outputs.published }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Cache Turbo artifacts
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: .turbo
-          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          key: ${{ runner.os }}-turbo-build-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-turbo-
+            ${{ runner.os }}-turbo-build-
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
 
@@ -52,25 +52,50 @@ jobs:
           GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
 
-      - name: Fix permissions
+      - name: Push git tag after publish
         if: steps.changesets.outputs.published == 'true'
+        run: git push --follow-tags
+
+  deploy_docs:
+    name: Deploy docs
+    needs: [release]
+    runs-on: ubuntu-latest
+    if: ${{ needs.release.outputs.published == 'true' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache Turbo artifacts
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-build-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-build-
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build docs
+        run: npm run build -- --filter=docs
+
+      - name: Fix permissions
         run: |
           chmod -c -R +rX "_site/" | while read line; do
             echo "::warning title=Invalid file permissions automatically fixed::$line"
           done
 
       - name: Upload docs build artifact
-        if: steps.changesets.outputs.published == 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           path: apps/docs/.vitepress/dist
 
       - name: Deploy docs to GitHub pages
-        if: steps.changesets.outputs.published == 'true'
         uses: actions/deploy-pages@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Push git tag after publish
-        if: steps.changesets.outputs.published == 'true'
-        run: git push --follow-tags
