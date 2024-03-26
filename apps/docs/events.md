@@ -44,3 +44,4 @@ adhese.events.locationChange.removeEventListener(listener);
 | `requestError`     | When somewhere in the request pipeline an error pops up                                                                           | `Error`                                         |
 | `previewReceived`  | When there is a preview detected in the in browser URL and it has a matching ad in the requested response.                        | `ReadonlyArray<Ad>`                             |
 | `parametersChange` | When the global parameters are changed                                                                                            | `Map<string, ReadonlyArray<string>  \| string>` |
+| `debugChange`      | When the the debug mode is changed                                                                                                | `boolean`                                       |
