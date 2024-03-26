@@ -1,4 +1,4 @@
-import { createAdhese } from 'core';
+import { createAdhese } from '@adhese/sdk';
 
 async function app(): Promise<void> {
   const adhese = await createAdhese({

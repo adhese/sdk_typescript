@@ -10,5 +10,9 @@
     "lint:fix": "eslint --fix .",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@adhese/sdk": "^0.1.5",
+    "@adhese/sdk-devtools": "^0.1.5"
   }
 }

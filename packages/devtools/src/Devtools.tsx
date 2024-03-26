@@ -10,7 +10,7 @@ import { Settings } from './components/settings';
 import { PreviewButton } from './components/previewButton';
 
 // eslint-disable-next-line ts/naming-convention
-export function App({ adheseContext }: {
+export function Devtools({ adheseContext }: {
   adheseContext: AdheseContext;
 }): ReactElement {
   const [spacing, setSpacing] = useState(0);

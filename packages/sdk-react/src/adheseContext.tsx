@@ -1,5 +1,15 @@
-import { type PropsWithChildren, type ReactElement, createContext, useContext, useSyncExternalStore } from 'react';
+import {
+  type PropsWithChildren,
+  type ReactElement,
+  Suspense,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useSyncExternalStore,
+} from 'react';
 import { type Adhese, type AdheseOptions, createAdhese } from '@adhese/sdk';
+import { Devtools } from '@adhese/sdk-devtools';
 import { isEqual } from 'lodash-es';
 
 const listeners = new Set<() => void>();
@@ -47,11 +57,30 @@ const adheseContext = createContext<Adhese | null>(null);
  */
 // eslint-disable-next-line ts/naming-convention
 export function AdheseProvider({ children, options }: PropsWithChildren<{ options: AdheseOptions }>): ReactElement {
-  const adhese = useSyncExternalStore(subscribe, getSnapshot.bind(null, options), () => null);
+  const adhese: Adhese | null = useSyncExternalStore(subscribe, getSnapshot.bind(null, options), () => null);
+  const [isDebug, setIsDebug] = useState(false);
+
+  useEffect(() => {
+    function onDebugChange(debug: boolean): void {
+      setIsDebug(debug);
+    }
+
+    setIsDebug(adhese?.context?.debug || false);
+    onDebugChange(adhese?.context?.debug || false);
+
+    adhese?.events.debugChange.addListener(onDebugChange);
+
+    return () => {
+      adhese?.events.debugChange.removeListener(onDebugChange);
+    };
+  }, [adhese]);
 
   return (
     <adheseContext.Provider value={adhese}>
       {children}
+      <Suspense fallback={<p>loading</p>}>
+        {isDebug && adhese?.context && <Devtools adheseContext={adhese.context} />}
+      </Suspense>
     </adheseContext.Provider>
   );
 }

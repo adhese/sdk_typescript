@@ -6,7 +6,8 @@
     [
       "@adhese/sdk",
       "@adhese/sdk-react",
-      "@adhese/docs"
+      "@adhese/docs",
+      "@adhese/sdk-devtools"
     ]
   ],
   "access": "public",

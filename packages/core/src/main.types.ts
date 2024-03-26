@@ -142,6 +142,7 @@ type AdheseEvents = {
   requestError: Error;
   previewReceived: ReadonlyArray<Ad>;
   parametersChange: Map<string, ReadonlyArray<string> | string>;
+  debugChange: boolean;
 };
 
 export type Adhese = Omit<AdheseOptions, 'location' | 'parameters' | 'consent'> & Merge<SlotManager, {
@@ -153,6 +154,7 @@ export type Adhese = Omit<AdheseOptions, 'location' | 'parameters' | 'consent'> 
    * The event manager for the Adhese instance.
    */
   events: EventManager<AdheseEvents>;
+  context: AdheseContext;
   /**
    * Returns the current page location.
    */

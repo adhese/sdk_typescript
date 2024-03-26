@@ -1,24 +1,11 @@
 import { createEventManager } from '@utils';
 import { type AdheseSlot, type AdheseSlotOptions, logger, requestAd, requestAds } from '@core';
+import { createDevtools } from '@adhese/sdk-devtools';
 import { createSlotManager } from './slot/slotManager/slotManager';
 import { onTcfConsentChange } from './consent/tcfConsent';
 import { createQueryDetector } from './queryDetector/queryDetector';
 import { createParameters, isPreviewMode, setupLogging } from './main.utils';
 import type { Adhese, AdheseContext, AdheseOptions, MergedOptions } from './main.types';
-
-async function createDevtools(context: AdheseContext): Promise<() => void> {
-  const devtools = await import('@devtools');
-
-  const wrapperElement = document.createElement('div');
-  document.body.appendChild(wrapperElement);
-
-  const unmount = devtools.createAdheseDevtools(wrapperElement, context);
-
-  return () => {
-    unmount();
-    wrapperElement.outerHTML = '';
-  };
-}
 
 /**
  * Creates an Adhese instance. This instance is your main entry point to the Adhese API.
@@ -90,8 +77,10 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
   context.parameters.addEventListener(onParametersChange);
 
   let unmountDevtools: (() => void) | undefined;
-  if (mergedOptions.debug || window.location.search.includes('adhese_debug=true') || isPreviewMode())
+  if (mergedOptions.debug || window.location.search.includes('adhese_debug=true') || isPreviewMode()) {
     unmountDevtools = await createDevtools(context);
+    context.events?.debugChange.dispatch(true);
+  }
 
   function onParametersChange(): void {
     if (context.parameters)
@@ -173,12 +162,14 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
       unmountDevtools = await createDevtools(context);
       logger.setMinLogLevelThreshold('debug');
       logger.debug('Debug mode enabled');
+      context.events?.debugChange.dispatch(true);
     }
     else {
       logger.debug('Debug mode disabled');
       unmountDevtools?.();
       unmountDevtools = undefined;
       logger.setMinLogLevelThreshold('info');
+      context.events?.debugChange.dispatch(false);
     }
 
     return context.debug;
@@ -248,5 +239,6 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     findDomSlots,
     dispose,
     toggleDebug,
+    context,
   };
 }

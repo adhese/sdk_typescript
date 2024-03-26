@@ -32,8 +32,7 @@
     "prepare": "husky install",
     "changeset": "changeset",
     "changeset:version": "changeset version",
-    "release": "turbo build --cache-dir=.turbo && changeset publish",
-    "cz": "cz"
+    "release": "turbo build --cache-dir=.turbo && changeset publish"
   },
   "dependencies": {
     "lodash-es": "^4.17.21",

@@ -19,29 +19,6 @@
       "dependsOn": ["^build", "lint", "test", "typecheck"],
       "outputMode": "new-only"
     },
-    "@adhese/sdk#build": {
-      "outputs": ["dist/**", "lib/**"],
-      "dependsOn": ["^build", "lint", "test", "typecheck", "core#build"],
-      "outputMode": "new-only"
-    },
-    "@adhese/sdk-react#lint": {
-      "dependsOn": ["^build", "test", "@adhese/sdk#build"],
-      "outputMode": "errors-only"
-    },
-    "@adhese/sdk-react#typecheck": {
-      "dependsOn": ["^build", "lint", "test", "@adhese/sdk#build"],
-      "outputMode": "errors-only"
-    },
-    "@adhese/sdk-react#build": {
-      "outputs": ["dist/**", "lib/**"],
-      "dependsOn": ["^build", "lint", "test", "typecheck", "@adhese/sdk#build"],
-      "outputMode": "new-only"
-    },
-    "react-example#build": {
-      "outputs": ["dist/**", "lib/**"],
-      "dependsOn": ["^build", "lint", "test", "typecheck", "@adhese/sdk-react#build"],
-      "outputMode": "new-only"
-    },
     "dev": {
       "cache": false,
       "persistent": true
