@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress';
+import packageJson from '../package.json';
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -10,6 +11,7 @@ export default defineConfig({
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Getting started', link: '/getting-started' },
+      { text: `v${packageJson.version}`, link: '' },
     ],
 
     sidebar: [
@@ -33,5 +35,16 @@ export default defineConfig({
     socialLinks: [
       { icon: 'github', link: 'https://github.com/adhese/sdk_typescript' },
     ],
+
+    lastUpdated: {
+      text: 'Last Updated',
+      formatOptions: {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+      },
+    },
   },
 });
