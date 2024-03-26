@@ -18,9 +18,6 @@ export default defineConfig({
     rollupOptions: {
       output: {
         inlineDynamicImports: false,
-        manualChunks: {
-          devtools: ['@devtools'],
-        },
         chunkFileNames: '[format]/[name].js',
       },
     },

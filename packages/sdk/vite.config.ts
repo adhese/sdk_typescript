@@ -18,9 +18,6 @@ export default defineConfig({
       external: packageJson.dependencies ? Object.keys(packageJson.dependencies) : [],
       output: {
         inlineDynamicImports: false,
-        manualChunks: {
-          devtools: ['@devtools'],
-        },
         chunkFileNames: `[format]/[name].js`,
       },
     },

@@ -86,6 +86,11 @@ export type AdheseOptions = {
    * The query detector options for the Adhese instance.
    */
   queries?: Record<string, string>;
+  /**
+   * The function that creates the devtools instance. Pass in the `createDevtools` function from the
+   * `@adhese/skd-devtools` package
+   */
+  onCreateDevtools?(context: AdheseContext): Promise<() => void>;
 } & ({
   viewabilityTracking?: true;
   /**
@@ -142,6 +147,7 @@ type AdheseEvents = {
   requestError: Error;
   previewReceived: ReadonlyArray<Ad>;
   parametersChange: Map<string, ReadonlyArray<string> | string>;
+  debugChange: boolean;
 };
 
 export type Adhese = Omit<AdheseOptions, 'location' | 'parameters' | 'consent'> & Merge<SlotManager, {
@@ -153,6 +159,7 @@ export type Adhese = Omit<AdheseOptions, 'location' | 'parameters' | 'consent'> 
    * The event manager for the Adhese instance.
    */
   events: EventManager<AdheseEvents>;
+  context: AdheseContext;
   /**
    * Returns the current page location.
    */
