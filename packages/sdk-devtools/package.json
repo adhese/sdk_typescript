@@ -25,7 +25,7 @@
     "release": "npm publish --access public"
   },
   "peerDependencies": {
-    "@adhese/sdk": "^0.1.5"
+    "@adhese/sdk": "*"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",
