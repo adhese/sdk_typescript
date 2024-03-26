@@ -1,5 +1,4 @@
 import type { AdheseContext } from '@adhese/sdk';
-import type { AdheseContext as CoreContext } from '@core';
 import { lazy } from 'react';
 
 export async function createDevtools(context: AdheseContext): Promise<() => void> {
@@ -8,7 +7,7 @@ export async function createDevtools(context: AdheseContext): Promise<() => void
   const wrapperElement = document.createElement('div');
   document.body.appendChild(wrapperElement);
 
-  const unmount = devtools.createAdheseDevtools(wrapperElement, context as CoreContext);
+  const unmount = devtools.createAdheseDevtools(wrapperElement, context);
 
   return () => {
     unmount();

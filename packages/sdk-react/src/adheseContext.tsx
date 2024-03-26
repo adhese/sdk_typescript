@@ -61,15 +61,12 @@ export function AdheseProvider({ children, options }: PropsWithChildren<{ option
   const [isDebug, setIsDebug] = useState(false);
 
   useEffect(() => {
-    async function onDebugChange(debug: boolean): Promise<void> {
+    function onDebugChange(debug: boolean): void {
       setIsDebug(debug);
-
-      if (debug)
-        await import('@adhese/sdk-devtools/dist/style.css');
     }
 
     setIsDebug(adhese?.context?.debug || false);
-    onDebugChange(adhese?.context?.debug || false).catch(console.error);
+    onDebugChange(adhese?.context?.debug || false);
 
     adhese?.events.debugChange.addListener(onDebugChange);
 
@@ -82,7 +79,6 @@ export function AdheseProvider({ children, options }: PropsWithChildren<{ option
     <adheseContext.Provider value={adhese}>
       {children}
       <Suspense fallback={<p>loading</p>}>
-        {/* @ts-expect-error error */}
         {isDebug && adhese?.context && <Devtools adheseContext={adhese.context} />}
       </Suspense>
     </adheseContext.Provider>

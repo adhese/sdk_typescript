@@ -1,5 +1,5 @@
-import { createAdhese } from 'core';
 import { createDevtools } from '@adhese/sdk-devtools';
+import { createAdhese } from '@adhese/sdk';
 
 async function app(): Promise<void> {
   const adhese = await createAdhese({
@@ -10,15 +10,7 @@ async function app(): Promise<void> {
       containingElement: 'skyscraper',
     }],
     location: '_sdk_example_',
-    onCreateDevtools: async (context) => {
-      const [unmount] = await Promise.all([
-        // @ts-expect-error - context is not the correct type for some reason
-        createDevtools(context),
-        import('@adhese/sdk-devtools/dist/style.css'),
-      ]);
-
-      return unmount;
-    },
+    onCreateDevtools: async context => createDevtools(context),
   });
 
   window.adhese = adhese;
