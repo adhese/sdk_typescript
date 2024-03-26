@@ -1,5 +1,16 @@
 # @adhese/docs
 
+## 0.3.0
+
+### Minor Changes
+
+- 0aa7136: Add current version number to docs nav bar
+
+### Patch Changes
+
+- e88cce4: Update external dependencies
+- 63cd49f: Add missing documentation for debugChange event
+
 ## 0.2.0
 
 ## 0.1.5
