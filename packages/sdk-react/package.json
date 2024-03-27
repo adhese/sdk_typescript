@@ -20,7 +20,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "clean": "rm -rf dist",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepareRelease": "npm run build"
   },
   "dependencies": {
     "@adhese/sdk": "^0.3.0",

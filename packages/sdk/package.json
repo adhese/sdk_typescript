@@ -22,7 +22,7 @@
     "lint:fix": "eslint --fix .",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
-    "release": "npm publish --access public"
+    "prepareRelease": "npm run build"
   },
   "dependencies": {
     "@adhese/sdk-devtools": "^0.3.0",

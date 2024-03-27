@@ -28,9 +28,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .turbo
-          key: ${{ runner.os }}-turbo-build-${{ github.sha }}
+          key: ${{ runner.os }}-turbo-release-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-turbo-build-
+            ${{ runner.os }}-turbo-release-
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -39,6 +39,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Prepare packages for potential release
+        run: npm run prepareRelease
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
