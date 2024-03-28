@@ -1,5 +1,19 @@
 # @adhese/sdk-react
 
+## 0.4.0
+
+### Minor Changes
+
+- 52862a1: Add support for DALE gateway responses
+
+### Patch Changes
+
+- a4da136: Fix GET request not working with some slots properly
+- 7bbe1ff: Fix @adhese/sdk-devtools not outputting css to example
+- Updated dependencies [52862a1]
+- Updated dependencies [a4da136]
+  - @adhese/sdk@0.4.0
+
 ## 0.3.0
 
 ### Patch Changes

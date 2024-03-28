@@ -4,6 +4,15 @@
 
 ### Patch Changes
 
+- Updated dependencies [52862a1]
+- Updated dependencies [a4da136]
+- Updated dependencies [7bbe1ff]
+  - @adhese/sdk-react@0.4.0
+
+## null
+
+### Patch Changes
+
 - @adhese/sdk-react@0.3.0
 
 ## null
