@@ -88,6 +88,31 @@ describe('requestAds', () => {
       expect(error).toBeInstanceOf(Error);
     }
   });
+
+  it('should be able to parse ads from the DALE gateway', async () => {
+    const ads = await requestAds({
+      host: 'https://ads-dale.adhese.com',
+      account: 'test',
+      slots: [
+        await createSlot({
+          format: 'bar',
+          context: testContext,
+        }),
+        await createSlot({
+          format: 'baz',
+          context: testContext,
+        }),
+      ],
+      context,
+    });
+
+    expect(ads.length).toBe(2);
+
+    for (const ad of ads) {
+      expect(ad.origin).toBe('DALE');
+      expect(ad.tag).toBeDefined();
+    }
+  });
 });
 
 describe('requestAd', () => {
@@ -125,6 +150,7 @@ describe('schema', () => {
       slotID: 'bar',
       slotName: 'baz',
       tag: '<a>foo</a>',
+      origin: 'JERLICIA',
     } satisfies AdResponse;
 
     const result = adSchema.parse(response);
@@ -159,12 +185,14 @@ describe('schema', () => {
       slotID: 'bar',
       slotName: 'baz',
       tag: '<a>foo</a>',
+      origin: 'JERLICIA',
       additionalCreatives: [{
         adType: 'foo',
         // eslint-disable-next-line ts/naming-convention
         slotID: 'bar',
         slotName: 'baz',
         tag: '<a>foo</a>',
+        origin: 'JERLICIA',
       }],
     } satisfies AdResponse;
 

@@ -1,4 +1,14 @@
-import { type TypeOf, type ZodType, coerce, lazy, literal, object, string, union, unknown } from 'zod';
+import {
+  type TypeOf,
+  type ZodType,
+  coerce,
+  lazy,
+  literal,
+  object,
+  string,
+  union,
+  unknown,
+} from 'zod';
 
 export const numberLike = union([coerce.string().regex(/^\d+$/), literal('')]).transform(value => value === '' ? undefined : Number(value));
 export const booleanLike = union([coerce.boolean(), literal('')]);
@@ -21,13 +31,9 @@ export const dateLike = union([coerce.string(), literal('')]).transform((value) 
 
   return date;
 });
-const baseAdResponseScheme = object({
+
+const baseSchema = object({
   adDuration: numberLike.optional(),
-  adDuration2nd: numberLike.optional(),
-  adDuration3rd: numberLike.optional(),
-  adDuration4th: numberLike.optional(),
-  adDuration5th: numberLike.optional(),
-  adDuration6th: numberLike.optional(),
   adFormat: string().optional(),
   adType: string(),
   additionalCreativeTracker: urlLike.optional(),
@@ -45,28 +51,21 @@ const baseAdResponseScheme = object({
   creativeName: string().optional(),
   deliveryGroupId: string().optional(),
   deliveryMultiples: string().optional(),
-  dm: string().optional(),
   ext: string().optional(),
   extension: object({
     mediaType: string(),
     prebid: unknown().optional(),
   }).optional(),
-  extraField1: string().optional(),
-  extraField2: string().optional(),
   height: numberLike.optional(),
-  height3rd: numberLike.optional(),
-  height4th: numberLike.optional(),
-  height5th: numberLike.optional(),
-  height6th: numberLike.optional(),
-  heightLarge: numberLike.optional(),
   id: string().optional(),
   impressionCounter: urlLike.optional(),
   libId: string().optional(),
   orderId: string().optional(),
   orderName: string().optional(),
   orderProperty: string().optional(),
-  origin: string().optional(),
+  origin: union([literal('JERLICIA'), literal('DALE')]),
   originData: unknown().optional(),
+  originInstance: string().optional(),
   poolPath: urlLike.optional(),
   preview: booleanLike.optional(),
   priority: numberLike.optional(),
@@ -75,12 +74,7 @@ const baseAdResponseScheme = object({
   slotID: string(),
   slotName: string(),
   swfSrc: urlLike.optional(),
-  swfSrc2nd: string().optional(),
-  swfSrc3rd: string().optional(),
-  swfSrc4th: string().optional(),
-  swfSrc5th: string().optional(),
-  swfSrc6th: string().optional(),
-  tag: string(),
+  tag: string().optional(),
   tagUrl: urlLike.optional(),
   timeStamp: dateLike.optional(),
   trackedImpressionCounter: urlLike.optional(),
@@ -89,22 +83,39 @@ const baseAdResponseScheme = object({
   url: urlLike.optional(),
   viewableImpressionCounter: urlLike.optional(),
   width: numberLike.optional(),
-  width3rd: numberLike.optional(),
-  width4th: numberLike.optional(),
-  width5th: numberLike.optional(),
-  width6th: numberLike.optional(),
   widthLarge: numberLike.optional(),
 });
-export type AdResponse = TypeOf<typeof baseAdResponseScheme> & {
+
+export const jerliciaSchema = object({
+  origin: literal('JERLICIA'),
+  tag: string(),
+}).passthrough();
+
+export const daleSchema = object({
+  origin: literal('DALE'),
+  body: string(),
+}).passthrough().transform(({ body, ...data }) => ({
+  ...data,
+  tag: body,
+}));
+
+export type AdResponse = (TypeOf<typeof baseSchema> & {
   additionalCreatives?: ReadonlyArray<AdResponse> | string;
-};
-const adResponseSchema: ZodType<AdResponse> = baseAdResponseScheme.extend({
+});
+
+const adResponseSchema: ZodType<AdResponse> = baseSchema.extend({
   additionalCreatives: lazy(() => union([adResponseSchema.array(), string()]).optional()),
 }) as ZodType<AdResponse>;
-export type Ad = TypeOf<typeof adResponseSchema> & {
-  additionalCreatives?: ReadonlyArray<Ad> | string;
+
+export type PreParsedAd = TypeOf<typeof adResponseSchema> & {
+  additionalCreatives?: ReadonlyArray<PreParsedAd> | string;
 };
-export const adSchema: ZodType<Ad> = adResponseSchema.transform(({
+
+export type Ad = Omit<PreParsedAd, 'tag'> & {
+  tag: string;
+};
+
+export const adSchema: ZodType<PreParsedAd> = adResponseSchema.transform(({
   additionalCreatives,
   ...data
 }) => {
@@ -121,3 +132,23 @@ export const adSchema: ZodType<Ad> = adResponseSchema.transform(({
     additionalCreatives: Array.isArray(additionalCreatives) ? additionalCreatives.map(creative => adSchema.parse(creative)) : additionalCreatives,
   });
 });
+
+export function parseResponse(response: unknown): ReadonlyArray<Ad> {
+  const schemaMap = {
+    /* eslint-disable ts/naming-convention */
+    JERLICIA: jerliciaSchema,
+    DALE: daleSchema,
+    /* eslint-enable ts/naming-convention */
+  };
+
+  const preParsed = adResponseSchema.array().parse(response);
+
+  return preParsed.map((item) => {
+    const schema = schemaMap[item.origin];
+
+    if (!schema)
+      return adSchema.parse(item);
+
+    return schema.parse(item);
+  }) as ReadonlyArray<Ad>;
+}

@@ -7,6 +7,9 @@ async function app(): Promise<void> {
     initialSlots: [{
       format: 'skyscraper',
       containingElement: 'skyscraper',
+    }, {
+      format: 'halfpage',
+      containingElement: 'halfpage',
     }],
     location: '_sdk_example_',
   });

@@ -17,6 +17,7 @@ export const adPreviewRequestHandlers = [
       slotName: 'foo-bar',
       tag: '<a>preview</a>',
       libId: 'foo-bar',
+      origin: 'JERLICIA',
     }]));
   }),
 ];

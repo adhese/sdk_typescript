@@ -19,6 +19,7 @@ export const adRequestHandlers = [
       slotName: slot.slotname,
       tag: '<a>foo</a>',
       libId: slot.slotname,
+      origin: 'JERLICIA',
     }))));
   }),
   http.post('https://ads-fail.adhese.com/json', async () => new HttpResponse(undefined, {
@@ -35,6 +36,28 @@ export const adRequestHandlers = [
       slotName,
       tag: '<a>foo</a>',
       libId: slotName,
+      origin: 'JERLICIA',
+    }))));
+  }),
+  http.post('https://ads-dale.adhese.com/json', async ({
+    request,
+  }) => {
+    const requestBody = await request.json() as {
+      slots: ReadonlyArray<{
+        slotname: string;
+        parameters?: Record<string, ReadonlyArray<string> | string>;
+      }>;
+      parameters?: Record<string, ReadonlyArray<string> | string>;
+    };
+
+    return new HttpResponse(JSON.stringify(requestBody.slots.map(slot => ({
+      adType: 'foo',
+      // eslint-disable-next-line ts/naming-convention
+      slotID: slot.slotname,
+      slotName: slot.slotname,
+      body: '<a>foo</a>',
+      libId: slot.slotname,
+      origin: 'DALE',
     }))));
   }),
 ];

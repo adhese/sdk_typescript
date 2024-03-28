@@ -1,6 +1,6 @@
 import type { UrlString } from '@utils';
 import { type Adhese, type AdheseSlot, logger } from '@core';
-import { type Ad, adSchema } from './requestAds.schema';
+import { type Ad, parseResponse } from './requestAds.schema';
 import { requestPreviews } from './requestAds.preview';
 import { requestWithGet, requestWithPost } from './requestAds.utils';
 
@@ -54,7 +54,7 @@ export async function requestAds({
     if (!response.ok)
       throw new Error(`Failed to request ad: ${response.status} ${response.statusText}`);
 
-    const result = adSchema.array().parse((await response.json() as unknown));
+    const result = parseResponse((await response.json() as unknown));
     logger.debug('Parsed ad', result);
 
     if (previews.length > 0)

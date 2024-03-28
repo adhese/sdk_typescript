@@ -37,7 +37,7 @@ export async function requestPreviews(account: string): Promise<ReadonlyArray<Ad
       preview: true,
     })));
 
-  return adSchema.array().parse(list.flat());
+  return adSchema.array().parse(list.flat()) as ReadonlyArray<Ad>;
 }
 
 function getPreviewObjects(): ReadonlyArray<Record<string, string>> {
