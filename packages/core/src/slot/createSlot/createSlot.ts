@@ -55,6 +55,7 @@ export async function createSlot(options: AdheseSlotOptions): Promise<Readonly<A
       account: context.options.account,
       host: context.options.host,
       parameters: context.parameters,
+      method: context.options.requestType,
       context,
     });
 
@@ -176,6 +177,7 @@ export async function createSlot(options: AdheseSlotOptions): Promise<Readonly<A
       account: context.options.account,
       host: context.options.host,
       parameters: context.parameters,
+      method: context.options.requestType,
       context,
     });
 
