@@ -1,6 +1,7 @@
 import { Fragment, type ReactElement, useEffect, useMemo, useState } from 'react';
 import type { AdheseContext, AdheseSlot } from '@core';
 import { createPortal } from 'react-dom';
+import { upperFirst } from 'lodash-es';
 import { cn } from '../utils';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Badge } from './badge';
@@ -67,6 +68,19 @@ export function SlotsTable({ adheseContext }: {
   const slotParametersExist = formattedSlots.some(formattedSlot => formattedSlot.parameters.length > 0);
   const previewExist = formattedSlots.some(formattedSlot => formattedSlot.ad?.preview);
 
+  const origins: ReadonlyArray<string> = useMemo(() => {
+    const set = new Set<string>();
+
+    for (const slot of formattedSlots) {
+      const ad = slot.getAd();
+
+      if (ad)
+        set.add(ad.origin);
+    }
+
+    return Array.from(set);
+  }, [formattedSlots]);
+
   return (
     formattedSlots.length > 0
       ? (
@@ -75,6 +89,7 @@ export function SlotsTable({ adheseContext }: {
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Format</TableHead>
+              {origins.length > 1 && <TableHead>Origin</TableHead>}
               <TableHead>Location</TableHead>
               <TableHead>Render Status</TableHead>
               <TableHead>Campaign ID</TableHead>
@@ -120,6 +135,11 @@ export function SlotsTable({ adheseContext }: {
                         </>
                         )}
                   </TableCell>
+                  {origins.length > 1 && (
+                    <TableCell>
+                      {ad?.origin && <Badge className={cn(slotIndexBadgeClasses[origins.indexOf(ad.origin) % slotIndexBadgeClasses.length], 'text-white')}>{upperFirst(ad.origin.toLowerCase())}</Badge>}
+                    </TableCell>
+                  )}
                   <TableCell>{location}</TableCell>
                   <TableCell>
                     <Badge className={cn({
