@@ -6,7 +6,7 @@ export default {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
-    '../../packages/devtools/src/**/*.{ts,tsx}',
+    '../../packages/sdk-devtools/src/**/*.{ts,tsx}',
   ],
   prefix: '',
   theme: {
