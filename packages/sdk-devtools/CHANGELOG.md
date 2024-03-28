@@ -1,5 +1,15 @@
 # @adhese/sdk-devtools
 
+## 0.4.0
+
+### Minor Changes
+
+- 52862a1: Add label to devtools to show response origin
+
+### Patch Changes
+
+- 7bbe1ff: Fix @adhese/sdk-devtools not outputting css to example
+
 ## 0.3.0
 
 ### Patch Changes
