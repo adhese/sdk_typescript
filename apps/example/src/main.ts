@@ -4,10 +4,16 @@ async function app(): Promise<void> {
   const adhese = createAdhese({
     account: 'demo',
     debug: true,
-    initialSlots: [{
-      format: 'skyscraper',
-      containingElement: 'skyscraper',
-    }],
+    initialSlots: [
+      {
+        format: 'skyscraper',
+        containingElement: 'skyscraper',
+      },
+      {
+        format: 'halfwidthsmallresponsive',
+        containingElement: 'halfwidthsmallresponsive',
+      },
+    ],
     location: '_sdk_example_',
   });
 

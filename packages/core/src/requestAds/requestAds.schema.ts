@@ -1,5 +1,7 @@
 import {
+  NEVER,
   type TypeOf,
+  ZodIssueCode,
   type ZodType,
   coerce,
   lazy,
@@ -32,6 +34,50 @@ export const dateLike = union([coerce.string(), literal('')]).transform((value) 
   return date;
 });
 
+export const isJson = string().transform((value, { addIssue }) => {
+  try {
+    return JSON.parse(value.replaceAll('\'', '"')) as Record<string, unknown> | ReadonlyArray<unknown>;
+  }
+  catch (error) {
+    addIssue({
+      code: ZodIssueCode.custom,
+      message: `Invalid JSON: ${(error as Error).message}`,
+    });
+
+    return NEVER;
+  }
+});
+
+export const isHtmlString = string().transform((value, { addIssue }) => {
+  const htmlParser = new DOMParser();
+
+  try {
+    const html = htmlParser.parseFromString(value, 'text/html');
+
+    if (html.body?.children.length === 0)
+      throw new Error('Invalid HTML');
+
+    return value;
+  }
+  catch (error) {
+    addIssue({
+      code: ZodIssueCode.custom,
+      message: (error as Error).message,
+    });
+
+    return NEVER;
+  }
+});
+
+export const isJsonOrHtmlString = union([isJson, isHtmlString]);
+
+export const isJsonOrHtmlOptionalString = union([coerce.string(), isJsonOrHtmlString]).transform((value) => {
+  if (value === '')
+    return undefined;
+
+  return value;
+}).optional();
+
 const baseSchema = object({
   adDuration: numberLike.optional(),
   adFormat: string().optional(),
@@ -45,7 +91,7 @@ const baseSchema = object({
   advertiserId: string().optional(),
   altText: string().optional(),
   auctionable: booleanLike.optional(),
-  body: string().optional(),
+  body: isJsonOrHtmlOptionalString,
   clickTag: urlLike.optional(),
   comment: string().optional(),
   creativeName: string().optional(),
@@ -74,7 +120,7 @@ const baseSchema = object({
   slotID: string(),
   slotName: string(),
   swfSrc: urlLike.optional(),
-  tag: string().optional(),
+  tag: isJsonOrHtmlOptionalString,
   tagUrl: urlLike.optional(),
   timeStamp: dateLike.optional(),
   trackedImpressionCounter: urlLike.optional(),
@@ -88,12 +134,12 @@ const baseSchema = object({
 
 export const jerliciaSchema = object({
   origin: literal('JERLICIA'),
-  tag: string(),
+  tag: isJsonOrHtmlString,
 }).passthrough();
 
 export const daleSchema = object({
   origin: literal('DALE'),
-  body: string(),
+  body: isJsonOrHtmlString,
 }).passthrough().transform(({ body, ...data }) => ({
   ...data,
   tag: body,
@@ -112,7 +158,7 @@ export type PreParsedAd = TypeOf<typeof adResponseSchema> & {
 };
 
 export type Ad = Omit<PreParsedAd, 'tag'> & {
-  tag: string;
+  tag: string | Record<string, unknown> | ReadonlyArray<unknown>;
 };
 
 export const adSchema: ZodType<PreParsedAd> = adResponseSchema.transform(({

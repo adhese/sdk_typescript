@@ -1,7 +1,11 @@
 import type { Ad } from '@core';
 
 export function renderIframe(ad: Ad, element: HTMLElement): void {
+  if (typeof ad.tag !== 'string')
+    return;
+
   const iframe = document.createElement('iframe');
+
   iframe.srcdoc = `
       <!DOCTYPE html>
       <html>
@@ -26,6 +30,9 @@ export function renderIframe(ad: Ad, element: HTMLElement): void {
 }
 
 export function renderInline(ad: Ad, element: HTMLElement): void {
+  if (typeof ad.tag !== 'string')
+    return;
+
   element.style.width = ad.width ? `${ad.width}px` : '100%';
   element.style.height = ad.height ? `${ad.height}px` : '100%';
 
