@@ -55,13 +55,14 @@ async function app(): Promise<void> {
               background-repeat: no-repeat;
               background-color: ${backgroundColor};
               padding: 20px;
+              max-width: ${image?.w}px;
               display: block">
               <div style="
-              max-width: 40%;
-              display: flex;
-              flex-direction: column;
-              justify-content: space-between;
-              height: 100%;">
+                max-width: 40%;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                height: 100%;">
                 <h2 style="font-weight: bold; font-size: 24px;">${heading}</h2>
                 <p>${linkText}</p>
               </div>
