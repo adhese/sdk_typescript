@@ -6,6 +6,7 @@ import {
   coerce,
   lazy,
   literal,
+  number,
   object,
   string,
   union,
@@ -33,6 +34,17 @@ export const dateLike = union([coerce.string(), literal('')]).transform((value) 
 
   return date;
 });
+
+export const cssValueLike
+  = union([coerce.string(), literal(''), number()]).transform<string | undefined>((value) => {
+    if (value === '' || value === 0 || value === '0')
+      return undefined;
+
+    if (numberLike.parse(value))
+      return `${numberLike.parse(value)}px`;
+
+    return String(value);
+  });
 
 export const isJson = string().transform((value, { addIssue }) => {
   try {
@@ -102,7 +114,7 @@ const baseSchema = object({
     mediaType: string(),
     prebid: unknown().optional(),
   }).optional(),
-  height: numberLike.optional(),
+  height: cssValueLike.optional(),
   id: string().optional(),
   impressionCounter: urlLike.optional(),
   libId: string().optional(),
@@ -128,8 +140,8 @@ const baseSchema = object({
   trackingUrl: urlLike.optional(),
   url: urlLike.optional(),
   viewableImpressionCounter: urlLike.optional(),
-  width: numberLike.optional(),
-  widthLarge: numberLike.optional(),
+  width: cssValueLike.optional(),
+  widthLarge: cssValueLike.optional(),
 });
 
 export const jerliciaSchema = object({
@@ -157,8 +169,8 @@ export type PreParsedAd = TypeOf<typeof adResponseSchema> & {
   additionalCreatives?: ReadonlyArray<PreParsedAd> | string;
 };
 
-export type Ad = Omit<PreParsedAd, 'tag'> & {
-  tag: string | Record<string, unknown> | ReadonlyArray<unknown>;
+export type Ad<T = string | Record<string, unknown> | ReadonlyArray<unknown>> = Omit<PreParsedAd, 'tag'> & {
+  tag: T;
 };
 
 export const adSchema: ZodType<PreParsedAd> = adResponseSchema.transform(({

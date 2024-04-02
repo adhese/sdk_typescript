@@ -53,6 +53,11 @@ export type AdheseSlotOptions = {
    * Callback that is called when the slot is rendered.
    */
   onRender?(element: HTMLElement): void;
+  /**
+   * Callback that is called before the ad is rendered. This can be used to modify the ad before it is rendered.
+   * Particularly useful for rendering ads with custom HTML if the ad tag contains a JSON object.
+   */
+  onBeforeRender?(ad: Ad): Ad | void;
 } & ({
   /**
    * If the slot should be lazy loaded. This means that the ad will only be requested when the slot is in the viewport.

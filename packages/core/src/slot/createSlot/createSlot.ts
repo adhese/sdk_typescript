@@ -132,7 +132,10 @@ export function createSlot(options: AdheseSlotOptions): Readonly<AdheseSlot> {
         context,
       });
 
-      if (!element.value) {
+      // eslint-disable-next-line require-atomic-updates
+    ad = options.onBeforeRender?.(ad) ?? ad;
+
+    if (!element.value) {
         const error = `Could not create slot for format ${format.value}. No element found.`;
         logger.error(error, options);
         throw new Error(error);
@@ -141,7 +144,9 @@ export function createSlot(options: AdheseSlotOptions): Readonly<AdheseSlot> {
       if (context.debug)
         element.value.style.position = 'relative';
 
-      renderFunctions[renderMode](ad.value, element.value);
+      // console.log(options.onBeforeRender?.(ad), element);
+
+    renderFunctions[renderMode](ad.value, element.value);
 
       if (ad.value?.impressionCounter && !impressionTrackingPixelElement.value) {
         impressionTrackingPixelElement.value = addTrackingPixel(ad.value?.impressionCounter);
