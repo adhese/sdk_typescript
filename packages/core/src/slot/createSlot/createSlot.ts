@@ -1,6 +1,6 @@
 import { type Ad, logger, requestAd } from '@core';
 import { waitForDomLoad } from '@utils';
-import { computed, reactive, ref, watch } from '@vue/runtime-core';
+import { computed, effectScope, reactive, ref, watch } from '@vue/runtime-core';
 import { isEqual } from 'lodash-es';
 import { addTrackingPixel } from '../../impressionTracking/impressionTracking';
 import { type QueryDetector, createQueryDetector } from '../../queryDetector/queryDetector';
@@ -18,182 +18,184 @@ const renderFunctions: Record<RenderMode, (ad: Ad, element: HTMLElement) => void
  * Create a new slot instance.
  */
 export async function createSlot(options: AdheseSlotOptions): Promise<Readonly<AdheseSlot>> {
-  const {
-    containingElement,
-    slot,
-    context,
-    renderMode = 'iframe',
-  } = options;
+  const scope = effectScope();
   await waitForDomLoad();
 
-  const parameters = reactive(new Map(Object.entries(options.parameters ?? {})));
-
-  let queryDetector: QueryDetector | null = null;
-
-  if (typeof options.format !== 'string') {
-    queryDetector = createQueryDetector({
-      onChange: onQueryChange,
-      queries: Object.fromEntries(options.format.map(item => [item.format, item.query])),
-    });
-  }
-
-  const format = ref(queryDetector ? queryDetector.getQuery() : options.format as string);
-  function onQueryChange(newFormat: string): void {
-    format.value = newFormat;
-  }
-
-  const ad = ref<Ad | null>(null);
-
-  const name = computed(() => generateName(context.location, format.value, slot));
-  watch(name, async (newName, oldName) => {
-    if (newName === oldName)
-      return;
-
-    options.onNameChange?.(newName, oldName);
-
-    const newAd = await requestAd({
-      slot: {
-        name: newName,
-        parameters,
-      },
-      context,
-    });
-
-    cleanElement();
-
-    ad.value = newAd;
-  });
-
-  const element = computed(() =>
-    typeof containingElement === 'string' || !containingElement
-      ? document.querySelector<HTMLElement>(`.adunit[data-format="${format.value}"]#${containingElement}${slot ? `[data-slot="${slot}"]` : ''}`)
-      : containingElement,
-  );
-
-  function getElement(): HTMLElement | null {
-    if (renderMode === 'iframe')
-      return element.value?.querySelector('iframe') ?? null;
-
-    return element.value?.innerHTML ? (element.value.firstElementChild as HTMLElement) : null;
-  }
-
-  const [isInViewport, disposeRenderIntersectionObserver] = useRenderIntersectionObserver({
-    ad,
-    options,
-    element,
-    render,
-  });
-
-  watch(ad, async (newAd, oldAd) => {
-    if (isEqual(newAd, oldAd) || !newAd)
-      return;
-
-    if (isInViewport.value || context.options.eagerRendering)
-      await render(newAd);
-
-    if (element.value) {
-      element.value.style.width = `${newAd.width}px`;
-      element.value.style.height = `${newAd.height}px`;
-    }
-
-    context.events?.changeSlots.dispatch(Array.from(context.getAll?.() ?? []));
-  });
-
-  const [
-    isViewabilityTracked,
-    disposeViewabilityObserver,
-  ] = useViewabilityObserver({
-    context,
-    ad,
-    name,
-    element,
-  });
-
-  const impressionTrackingPixelElement = ref<HTMLImageElement | null>(null);
-  const isImpressionTracked = computed(() => Boolean(impressionTrackingPixelElement.value));
-
-  async function render(adToRender?: Ad): Promise<HTMLElement> {
-    await waitForDomLoad();
-
-    // eslint-disable-next-line require-atomic-updates
-    ad.value = adToRender ?? ad.value ?? await requestAd({
-      slot: {
-        name,
-        parameters,
-      },
-      context,
-    });
-
-    if (!element.value) {
-      const error = `Could not create slot for format ${format.value}. No element found.`;
-      logger.error(error, options);
-      throw new Error(error);
-    }
-
-    if (context.debug)
-      element.value.style.position = 'relative';
-
-    renderFunctions[renderMode](ad.value, element.value);
-
-    if (ad.value?.impressionCounter && !impressionTrackingPixelElement.value) {
-      impressionTrackingPixelElement.value = addTrackingPixel(ad.value?.impressionCounter);
-
-      logger.debug(`Impression tracking pixel fired for ${name.value}`);
-    }
-
-    logger.debug('Slot rendered', {
-      renderedElement: element,
-      location: context.location,
-      format,
+  return scope.run(() => {
+    const {
       containingElement,
+      slot,
+      context,
+      renderMode = 'iframe',
+    } = options;
+    const parameters = reactive(new Map(Object.entries(options.parameters ?? {})));
+    let queryDetector: QueryDetector | null = null;
+
+    if (typeof options.format !== 'string') {
+      queryDetector = createQueryDetector({
+        onChange: onQueryChange,
+        queries: Object.fromEntries(options.format.map(item => [item.format, item.query])),
+      });
+    }
+
+    const format = ref(queryDetector ? queryDetector.getQuery() : options.format as string);
+    function onQueryChange(newFormat: string): void {
+      format.value = newFormat;
+    }
+
+    const ad = ref<Ad | null>(null);
+
+    const name = computed(() => generateName(context.location, format.value, slot));
+    watch(name, async (newName, oldName) => {
+      if (newName === oldName)
+        return;
+
+      options.onNameChange?.(newName, oldName);
+
+      const newAd = await requestAd({
+        slot: {
+          name: newName,
+          parameters,
+        },
+        context,
+      });
+
+      cleanElement();
+
+      ad.value = newAd;
     });
 
-    // disposeRenderIntersectionObserver();
+    const element = computed(() =>
+      typeof containingElement === 'string' || !containingElement
+        ? document.querySelector<HTMLElement>(`.adunit[data-format="${format.value}"]#${containingElement}${slot ? `[data-slot="${slot}"]` : ''}`)
+        : containingElement,
+    );
 
-    await context.events?.changeSlots.dispatchAsync(Array.from(context.getAll?.() ?? []));
+    function getElement(): HTMLElement | null {
+      if (renderMode === 'iframe')
+        return element.value?.querySelector('iframe') ?? null;
 
-    options.onRender?.(element.value);
+      return element.value?.innerHTML ? (element.value.firstElementChild as HTMLElement) : null;
+    }
 
-    return element.value;
-  }
+    const [isInViewport, disposeRenderIntersectionObserver] = useRenderIntersectionObserver({
+      ad,
+      options,
+      element,
+      render,
+    });
 
-  function cleanElement(): void {
-    if (!element.value)
-      return;
+    watch(ad, async (newAd, oldAd) => {
+      if (isEqual(newAd, oldAd) || !newAd)
+        return;
 
-    element.value.innerHTML = '';
-    element.value.style.position = '';
-    element.value.style.width = '';
-    element.value.style.height = '';
-  }
+      if (isInViewport.value || context.options.eagerRendering)
+        await render(newAd);
 
-  function dispose(): void {
-    cleanElement();
+      if (element.value) {
+        element.value.style.width = `${newAd.width}px`;
+        element.value.style.height = `${newAd.height}px`;
+      }
 
-    impressionTrackingPixelElement.value?.remove();
+      context.events?.changeSlots.dispatch(Array.from(context.getAll?.() ?? []));
+    });
 
-    ad.value = null;
+    const [
+      isViewabilityTracked,
+      disposeViewabilityObserver,
+    ] = useViewabilityObserver({
+      context,
+      ad,
+      name,
+      element,
+    });
 
-    disposeRenderIntersectionObserver();
-    disposeViewabilityObserver();
+    const impressionTrackingPixelElement = ref<HTMLImageElement | null>(null);
+    const isImpressionTracked = computed(() => Boolean(impressionTrackingPixelElement.value));
 
-    options.onDispose?.();
+    async function render(adToRender?: Ad): Promise<HTMLElement> {
+      await waitForDomLoad();
 
-    queryDetector?.dispose();
-  }
+      // eslint-disable-next-line require-atomic-updates
+      ad.value = adToRender ?? ad.value ?? await requestAd({
+        slot: {
+          name,
+          parameters,
+        },
+        context,
+      });
 
-  return {
-    location: context.location,
-    lazyLoading: options.lazyLoading ?? false,
-    slot,
-    parameters,
-    format,
-    name,
-    ad,
-    isViewabilityTracked,
-    isImpressionTracked,
-    render,
-    getElement,
-    dispose,
-  };
+      if (!element.value) {
+        const error = `Could not create slot for format ${format.value}. No element found.`;
+        logger.error(error, options);
+        throw new Error(error);
+      }
+
+      if (context.debug)
+        element.value.style.position = 'relative';
+
+      renderFunctions[renderMode](ad.value, element.value);
+
+      if (ad.value?.impressionCounter && !impressionTrackingPixelElement.value) {
+        impressionTrackingPixelElement.value = addTrackingPixel(ad.value?.impressionCounter);
+
+        logger.debug(`Impression tracking pixel fired for ${name.value}`);
+      }
+
+      logger.debug('Slot rendered', {
+        renderedElement: element,
+        location: context.location,
+        format,
+        containingElement,
+      });
+
+      await context.events?.changeSlots.dispatchAsync(Array.from(context.getAll?.() ?? []));
+
+      options.onRender?.(element.value);
+
+      return element.value;
+    }
+
+    function cleanElement(): void {
+      if (!element.value)
+        return;
+
+      element.value.innerHTML = '';
+      element.value.style.position = '';
+      element.value.style.width = '';
+      element.value.style.height = '';
+    }
+
+    function dispose(): void {
+      cleanElement();
+
+      impressionTrackingPixelElement.value?.remove();
+
+      ad.value = null;
+
+      disposeRenderIntersectionObserver();
+      disposeViewabilityObserver();
+
+      options.onDispose?.();
+
+      queryDetector?.dispose();
+
+      scope.stop();
+    }
+
+    return {
+      location: context.location,
+      lazyLoading: options.lazyLoading ?? false,
+      slot,
+      parameters,
+      format,
+      name,
+      ad,
+      isViewabilityTracked,
+      isImpressionTracked,
+      render,
+      getElement,
+      dispose,
+    };
+  })!;
 }
