@@ -1,10 +1,11 @@
 import { type Ad, logger, requestAd } from '@core';
 import { waitForDomLoad } from '@utils';
 import { round } from 'lodash-es';
+import { computed, reactive, ref, watch } from '@vue/runtime-core';
 import { addTrackingPixel } from '../../impressionTracking/impressionTracking';
 import { type QueryDetector, createQueryDetector } from '../../queryDetector/queryDetector';
 import type { AdheseSlot, AdheseSlotOptions, RenderMode } from './createSlot.types';
-import { renderIframe, renderInline } from './createSlot.utils';
+import { generateName, renderIframe, renderInline } from './createSlot.utils';
 
 const renderFunctions: Record<RenderMode, (ad: Ad, element: HTMLElement) => void> = {
   iframe: renderIframe,
@@ -23,53 +24,44 @@ export async function createSlot(options: AdheseSlotOptions): Promise<Readonly<A
   } = options;
   await waitForDomLoad();
 
-  const parameters = new Map(Object.entries(options.parameters ?? {}));
+  const parameters = reactive(new Map(Object.entries(options.parameters ?? {})));
 
-  let format: string;
   let queryDetector: QueryDetector | null = null;
 
-  if (typeof options.format === 'string') {
-    // eslint-disable-next-line prefer-destructuring
-    format = options.format;
-  }
-  else {
+  if (typeof options.format !== 'string') {
     queryDetector = createQueryDetector({
-      onChange: setFormat,
+      onChange: onQueryChange,
       queries: Object.fromEntries(options.format.map(item => [item.format, item.query])),
     });
-
-    format = queryDetector.getQuery();
   }
 
-  async function setFormat(newFormat: string): Promise<void> {
-    const oldName = getName();
+  const format = ref<string>(queryDetector ? queryDetector.getQuery() : options.format as string);
+  function onQueryChange(newFormat: string): void {
+    format.value = newFormat;
+  }
 
-    format = newFormat;
-    options.onNameChange?.(getName(), oldName);
+  const name = computed(() => generateName(context.location, format.value, slot));
+  watch(name, async (newName, oldName) => {
+    if (newName === oldName)
+      return;
+
+    options.onNameChange?.(newName, oldName);
 
     const newAd = await requestAd({
       slot: {
-        getName,
+        name: newName,
         parameters,
       },
-      account: context.options.account,
-      host: context.options.host,
-      parameters: context.parameters,
-      method: context.options.requestType,
       context,
     });
 
     cleanElement();
 
     await setAd(newAd);
-  }
-
-  function getFormat(): string {
-    return format;
-  }
+  });
 
   let element: HTMLElement | null = typeof containingElement === 'string' || !containingElement
-    ? document.querySelector<HTMLElement>(`.adunit[data-format="${format}"]#${containingElement}${slot ? `[data-slot="${slot}"]` : ''}`)
+    ? document.querySelector<HTMLElement>(`.adunit[data-format="${format.value}"]#${containingElement}${slot ? `[data-slot="${slot}"]` : ''}`)
     : containingElement;
   function getElement(): HTMLElement | null {
     if (renderMode === 'iframe')
@@ -171,18 +163,14 @@ export async function createSlot(options: AdheseSlotOptions): Promise<Readonly<A
     // eslint-disable-next-line require-atomic-updates
     ad = adToRender ?? ad ?? await requestAd({
       slot: {
-        getName,
+        name,
         parameters,
       },
-      account: context.options.account,
-      host: context.options.host,
-      parameters: context.parameters,
-      method: context.options.requestType,
       context,
     });
 
     if (!element) {
-      const error = `Could not create slot for format ${format}. No element found.`;
+      const error = `Could not create slot for format ${format.value}. No element found.`;
       logger.error(error, options);
       throw new Error(error);
     }
@@ -223,7 +211,7 @@ export async function createSlot(options: AdheseSlotOptions): Promise<Readonly<A
   }
 
   function getName(): string {
-    return `${context.location}${slot ? `${slot}` : ''}-${format}`;
+    return `${context.location}${slot ? `${slot}` : ''}-${format.value}`;
   }
 
   function dispose(): void {
@@ -256,11 +244,10 @@ export async function createSlot(options: AdheseSlotOptions): Promise<Readonly<A
     lazyLoading: options.lazyLoading ?? false,
     slot,
     parameters,
-    setFormat,
-    getFormat,
+    format,
+    name,
     render,
     getElement,
-    getName,
     getAd,
     setAd,
     isViewabilityTracked,

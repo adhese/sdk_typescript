@@ -17,5 +17,5 @@ export async function findDomSlots(
       slot: element.dataset.slot,
       context,
     }))))
-    .filter(slot => !context.getAll?.().some(activeSlot => activeSlot.getName() === slot.getName()));
+    .filter(slot => !context.getAll?.().some(activeSlot => activeSlot.name.value === slot.name.value));
 }

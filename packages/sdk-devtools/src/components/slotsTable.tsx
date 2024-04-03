@@ -56,10 +56,10 @@ export function SlotsTable({ adheseContext }: {
 
     return ({
       ...slot,
-      name: slot.getName(),
+      name: slot.name.value,
       ad,
       status,
-      format: slot.getFormat(),
+      format: slot.format.value,
       iframe,
       parameters: Array.from(slot.parameters.entries()),
     });

@@ -125,9 +125,6 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     if (!slot.lazyLoading) {
       const ad = await requestAd({
         slot,
-        host: mergedOptions.host,
-        parameters: context.parameters,
-        account: mergedOptions.account,
         context,
       });
 
@@ -141,11 +138,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     const domSlots = (await slotManager.findDomSlots()).filter(slot => !slot.lazyLoading);
 
     const ads = await requestAds({
-      host: mergedOptions.host,
       slots: domSlots,
-      method: mergedOptions.requestType,
-      account: mergedOptions.account,
-      parameters: context.parameters,
       context,
     });
 
@@ -182,11 +175,7 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
       return;
 
     const ads = await requestAds({
-      host: mergedOptions.host,
       slots,
-      method: mergedOptions.requestType,
-      account: mergedOptions.account,
-      parameters: context.parameters,
       context,
     });
 

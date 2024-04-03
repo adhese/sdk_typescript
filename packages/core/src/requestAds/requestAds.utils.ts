@@ -1,4 +1,5 @@
 import { type AdRequestOptions, logger } from '@core';
+import { toValue } from '@vue/runtime-core';
 
 type AdPostPayload = {
   slots: ReadonlyArray<{
@@ -9,16 +10,16 @@ type AdPostPayload = {
 };
 
 export function requestWithPost({
-  host,
+  context: { options: { host }, parameters },
   ...options
-}: Omit<AdRequestOptions, 'method' | 'context'>): Promise<Response> {
+}: Omit<AdRequestOptions, 'method'>): Promise<Response> {
   const payload = {
     ...options,
     slots: options.slots.map(slot => ({
-      slotname: slot.getName(),
+      slotname: toValue(slot.name),
       parameters: parseParameters(slot.parameters),
     })),
-    parameters: options.parameters && parseParameters(options.parameters),
+    parameters: parameters && parseParameters(parameters),
   } satisfies AdPostPayload;
 
   return fetch(`${new URL(host).href}json`, {
@@ -31,8 +32,8 @@ export function requestWithPost({
   });
 }
 
-export async function requestWithGet(options: Omit<AdRequestOptions, 'method' | 'context'>): Promise<Response> {
-  return fetch(new URL(`${options.host}/json/sl${options.slots.map(slot => slot.getName()).join('/sl')}`), {
+export async function requestWithGet({ context, slots }: Omit<AdRequestOptions, 'method'>): Promise<Response> {
+  return fetch(new URL(`${context.options.host}/json/sl${slots.map(slot => toValue(slot.name)).join('/sl')}`), {
     method: 'GET',
     headers: {
       // eslint-disable-next-line ts/naming-convention

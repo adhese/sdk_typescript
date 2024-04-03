@@ -59,7 +59,7 @@ export async function createSlotManager({
     });
 
     function onDispose(): void {
-      slots.delete(slot.getName());
+      slots.delete(slot.name.value);
       logger.debug('Slot removed', {
         slot,
         slots: Array.from(slots),
@@ -68,7 +68,7 @@ export async function createSlotManager({
       context.events?.changeSlots.dispatch(Array.from(slots.values()));
     }
 
-    slots.set(slot.getName(), slot);
+    slots.set(slot.name.value, slot);
 
     function onNameChange(newName: string, previousName: string): void {
       slots.set(newName, slot);
@@ -94,7 +94,7 @@ export async function createSlotManager({
     );
 
     for (const slot of domSlots) {
-      slots.set(slot.getName(), slot);
+      slots.set(slot.name.value, slot);
       context.events?.changeSlots.dispatch(Array.from(slots.values()));
     }
 

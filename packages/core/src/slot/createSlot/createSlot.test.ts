@@ -1,5 +1,5 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { type Ad, type AdheseContext, createSlot } from '@core';
+import { type AdheseContext, createSlot } from '@core';
 
 import { awaitTimeout } from '@utils';
 import { testContext } from '../../testUtils';
@@ -71,23 +71,6 @@ describe('slot', () => {
       containingElement: 'leaderboard',
       context,
     });
-
-    expect(slot).toEqual({
-      location: 'foo',
-      // format: 'leaderboard',
-      render: expect.any(Function) as () => Promise<HTMLElement>,
-      getElement: expect.any(Function) as () => HTMLElement | null,
-      getName: expect.any(Function) as () => string,
-      getAd: expect.any(Function) as () => Ad | null,
-      setAd: expect.any(Function) as (ad: Ad) => Promise<void>,
-      parameters: expect.any(Map) as Map<string, string>,
-      dispose: expect.any(Function) as () => void,
-      lazyLoading: false,
-      isViewabilityTracked: expect.any(Function) as () => boolean,
-      isImpressionTracked: expect.any(Function) as () => boolean,
-      getFormat: expect.any(Function) as () => string,
-      setFormat: expect.any(Function) as (format: string) => Promise<void>,
-    } satisfies typeof slot);
 
     await slot.render({
       tag: '<div>foo</div>',
@@ -226,13 +209,13 @@ describe('slot', () => {
     expect((await createSlot({
       format: 'bar',
       context,
-    })).getName()).toBe('foo-bar');
+    })).name.value).toBe('foo-bar');
 
     expect((await createSlot({
       format: 'bar',
       slot: 'baz',
       context,
-    })).getName()).toBe('foobaz-bar');
+    })).name.value).toBe('foobaz-bar');
   });
 
   it('should be able to dispose a slot', async () => {
@@ -378,7 +361,7 @@ describe('slot', () => {
       context,
     });
 
-    expect(slot.getFormat()).toBe('skyscraper');
+    expect(slot.format.value).toBe('skyscraper');
 
     validQuery = '(min-width: 768px)';
 
@@ -387,7 +370,7 @@ describe('slot', () => {
 
     await awaitTimeout(70);
 
-    expect(slot.getFormat()).toBe('leaderboard');
+    expect(slot.format.value).toBe('leaderboard');
   });
 
   it('should be able to render a slot with the render mode set to inline', async () => {

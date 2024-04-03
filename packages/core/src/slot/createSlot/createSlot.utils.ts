@@ -31,3 +31,11 @@ export function renderInline(ad: Ad, element: HTMLElement): void {
 
   element.innerHTML = ad.tag;
 }
+
+export function generateName(
+  location: string,
+  format: string,
+  slot: string | undefined,
+): string {
+  return `${location}${slot ? `${slot}` : ''}-${format}`;
+}

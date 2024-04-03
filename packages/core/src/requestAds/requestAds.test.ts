@@ -21,8 +21,6 @@ describe('requestAds', () => {
   it('should be able to request multiple ads', async () => {
     const ads = await requestAds(
       {
-        host: 'https://ads-test.adhese.com' as UrlString,
-        account: 'demo',
         slots: [
           await createSlot({
             format: 'foo',
@@ -35,7 +33,7 @@ describe('requestAds', () => {
             context,
           }),
         ],
-        context: {},
+        context,
       },
     );
 
@@ -43,10 +41,16 @@ describe('requestAds', () => {
   });
 
   it('should be able to request ads with the GET method', async () => {
+    context = {
+      ...context,
+      options: {
+        ...context.options,
+        requestType: 'GET',
+      },
+    };
+
     const ads = await requestAds(
       {
-        host: 'https://ads-test.adhese.com' as UrlString,
-        account: 'demo',
         slots: [
           await createSlot({
             format: 'foo',
@@ -59,7 +63,6 @@ describe('requestAds', () => {
             context,
           }),
         ],
-        method: 'GET',
         context,
       },
     );
@@ -68,11 +71,17 @@ describe('requestAds', () => {
   });
 
   it('should throw an error when requestAds fails', async () => {
+    context = {
+      ...context,
+      options: {
+        ...context.options,
+        host: 'https://ads-fail.adhese.com' as UrlString,
+      },
+    };
+
     try {
       await requestAds(
         {
-          host: 'https://ads-fail.adhese.com' as UrlString,
-          account: 'demo',
           slots: [
             await createSlot({
               format: 'foo',
@@ -90,9 +99,15 @@ describe('requestAds', () => {
   });
 
   it('should be able to parse ads from the DALE gateway', async () => {
+    context = {
+      ...context,
+      options: {
+        ...context.options,
+        host: 'https://ads-dale.adhese.com' as UrlString,
+      },
+    };
+
     const ads = await requestAds({
-      host: 'https://ads-dale.adhese.com',
-      account: 'test',
       slots: [
         await createSlot({
           format: 'bar',
@@ -129,8 +144,6 @@ describe('requestAd', () => {
 
   it('should be able to fetch a single ad', async () => {
     const ad = await requestAd({
-      host: 'https://ads-test.adhese.com',
-      account: 'demo',
       slot: await createSlot({
         format: 'bar',
         context,
@@ -179,7 +192,6 @@ describe('schema', () => {
 
   it('should be able to handle a recursively nested response', () => {
     const response = {
-
       adType: 'foo',
       // eslint-disable-next-line ts/naming-convention
       slotID: 'bar',
@@ -285,8 +297,6 @@ describe('requestPreviews', () => {
 
   it('should be able to request previews', async () => {
     const ads = await requestAds({
-      host: 'https://ads-test.adhese.com',
-      account: 'test',
       slots: [
         await createSlot({
           format: 'bar',
