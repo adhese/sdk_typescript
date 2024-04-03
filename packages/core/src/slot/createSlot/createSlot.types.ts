@@ -49,6 +49,10 @@ export type AdheseSlotOptions = {
    * Callback that is called when the format of the slot changes.
    */
   onNameChange?(newName: string, oldName: string): void;
+  /**
+   * Callback that is called when the slot is rendered.
+   */
+  onRender?(element: HTMLElement): void;
 } & ({
   /**
    * If the slot should be lazy loaded. This means that the ad will only be requested when the slot is in the viewport.
@@ -91,6 +95,18 @@ export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' |
    */
   parameters: Map<string, ReadonlyArray<string> | string>;
   /**
+   * Whether the viewability tracking pixel has been fired.
+   */
+  isViewabilityTracked: ComputedRef<boolean>;
+  /**
+   * Whether the impression tracking pixel has been fired.
+   */
+  isImpressionTracked: ComputedRef<boolean>;
+  /**
+   * Ad object that is fetched from the API.
+   */
+  ad: Ref<Ad | null>;
+  /**
    * Renders the slot in the containing element. If no ad is provided, a new ad will be requested from the API.
    */
   render(ad?: Ad): Promise<HTMLElement>;
@@ -98,22 +114,6 @@ export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' |
    * Returns the rendered element.
    */
   getElement(): HTMLElement | null;
-  /**
-   * Returns the ad that is to be rendered in the slot or is currently rendered in the slot.
-   */
-  getAd(): Ad | null;
-  /**
-   * Sets the ad that is to be rendered in the slot. If the slot is in the viewport, the ad will be rendered immediately.
-   */
-  setAd(ad: Ad): Promise<void>;
-  /**
-   * Returns whether the viewability tracking pixel has been fired.
-   */
-  isViewabilityTracked(): boolean;
-  /**
-   * Returns whether the impression tracking pixel has been fired.
-   */
-  isImpressionTracked(): boolean;
   /**
    * Removes the slot from the DOM and cleans up the slot instance.
    */

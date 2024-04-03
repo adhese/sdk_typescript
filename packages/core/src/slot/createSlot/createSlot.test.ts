@@ -54,6 +54,7 @@ describe('slot', () => {
   afterEach(() => {
     mediaListeners.clear();
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
     document.body.innerHTML = '';
   });
 
@@ -109,7 +110,7 @@ describe('slot', () => {
       origin: 'JERLICIA',
     });
     expect(slot.getElement()).not.toBe(null);
-    expect(slot.getAd()).toBeDefined();
+    expect(slot.ad.value).toBeDefined();
   });
 
   it('should create a slot with parameters', async () => {
@@ -139,13 +140,19 @@ describe('slot', () => {
   });
 
   it('should log an error when no element is found', async () => {
-    const slot = await createSlot({
-      format: 'leaderboard',
-      containingElement: 'leaderboard',
-      context,
-    });
-
     try {
+      const slot = await createSlot({
+        format: 'leaderboard',
+        containingElement: 'leaderboard',
+        context: {
+          ...context,
+          options: {
+            ...context.options,
+            eagerRendering: false,
+          },
+        },
+      });
+
       await slot.render({
         tag: '<div>foo</div>',
         // eslint-disable-next-line ts/naming-convention
@@ -274,20 +281,16 @@ describe('slot', () => {
 
     const element = document.createElement('div');
 
-    element.classList.add('adunit');
-    element.dataset.format = 'leaderboard';
-    element.id = 'leaderboard';
-
     document.body.appendChild(element);
 
     const slot = await createSlot({
       format: 'leaderboard',
-      containingElement: 'leaderboard',
+      containingElement: element,
       context,
       lazyLoading: true,
     });
 
-    await slot.setAd({
+    slot.ad.value = {
       tag: '<div>foo</div>',
       // eslint-disable-next-line ts/naming-convention
       slotID: 'bar',
@@ -296,7 +299,7 @@ describe('slot', () => {
       impressionCounter: new URL('https://foo.bar'),
       viewableImpressionCounter: new URL('https://foo.bar'),
       origin: 'JERLICIA',
-    });
+    };
 
     expect(observe).toBeCalledTimes(2);
     expect(intersectionObserverMock).toBeCalledTimes(2);

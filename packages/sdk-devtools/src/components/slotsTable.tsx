@@ -44,7 +44,7 @@ export function SlotsTable({ adheseContext }: {
   }, []);
 
   const formattedSlots = useMemo(() => slots.map((slot) => {
-    const ad = slot.getAd();
+    const ad = slot.ad.value;
     const iframe = slot.getElement();
 
     let status: keyof typeof slotStatus = 'unloaded';
@@ -72,7 +72,7 @@ export function SlotsTable({ adheseContext }: {
     const set = new Set<string>();
 
     for (const slot of formattedSlots) {
-      const ad = slot.getAd();
+      const { ad } = slot;
 
       if (ad)
         set.add(ad.origin);
@@ -205,12 +205,12 @@ export function SlotsTable({ adheseContext }: {
                   <TableCell>{ad?.id ?? '-'}</TableCell>
                   <TableCell>{ad?.ext ? <Badge variant="outline">{ad.ext}</Badge> : '-'}</TableCell>
                   <TableCell>
-                    {isViewabilityTracked()
+                    {isViewabilityTracked.value
                       ? <Badge className="bg-green-100 text-green-900 hover:bg-green-100">Yes</Badge>
                       : <Badge variant="secondary">No</Badge>}
                   </TableCell>
                   <TableCell>
-                    {isImpressionTracked()
+                    {isImpressionTracked.value
                       ? <Badge className="bg-green-100 text-green-900 hover:bg-green-100">Yes</Badge>
                       : <Badge variant="secondary">No</Badge>}
                   </TableCell>

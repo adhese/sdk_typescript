@@ -123,12 +123,10 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
     const slot = await slotManager.add(slotOptions);
 
     if (!slot.lazyLoading) {
-      const ad = await requestAd({
+      slot.ad.value = await requestAd({
         slot,
         context,
       });
-
-      await slot.setAd(ad);
     }
 
     return slot;
@@ -142,7 +140,12 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
       context,
     });
 
-    await Promise.allSettled(ads.map(ad => slotManager.get(ad.slotName)?.setAd(ad)));
+    for (const ad of ads) {
+      const slot = slotManager.get(ad.slotName);
+
+      if (slot)
+        slot.ad.value = ad;
+    }
 
     return domSlots;
   }
@@ -179,7 +182,12 @@ export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adh
       context,
     });
 
-    await Promise.allSettled(ads.map(ad => slotManager.get(ad.slotName)?.setAd(ad)));
+    for (const ad of ads) {
+      const slot = slotManager.get(ad.slotName);
+
+      if (slot)
+        slot.ad.value = ad;
+    }
   }
 
   const disposeOnTcfConsentChange = onTcfConsentChange(async (data) => {
