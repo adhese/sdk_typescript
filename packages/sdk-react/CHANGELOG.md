@@ -1,5 +1,21 @@
 # @adhese/sdk-react
 
+## 0.5.0
+
+### Minor Changes
+
+- eac9754: Add Vue based reactivity to offer more flexible control flow
+- eac9754: Make createAdhese and createSlot syncronous to simplify implementation
+- eac9754: Allow having more than one Adhese instance in React applications
+
+### Patch Changes
+
+- Updated dependencies [a666b90]
+- Updated dependencies [eac9754]
+- Updated dependencies [eac9754]
+- Updated dependencies [a666b90]
+  - @adhese/sdk@0.5.0
+
 ## 0.4.0
 
 ### Minor Changes
