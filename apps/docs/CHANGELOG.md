@@ -1,5 +1,18 @@
 # @adhese/docs
 
+## 0.5.0
+
+### Minor Changes
+
+- a666b90: Add onBeforeRender callback to intercept the to be rendered ad
+- eac9754: Add Vue based reactivity to offer more flexible control flow
+- eac9754: Make createAdhese and createSlot syncronous to simplify implementation
+- a666b90: Add ability to receive JSON strings in the response tag/body
+
+### Patch Changes
+
+- d7f6111: Update dependencies
+
 ## 0.4.0
 
 ## 0.3.0

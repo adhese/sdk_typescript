@@ -1,5 +1,16 @@
 # @adhese/sdk-devtools
 
+## 0.5.0
+
+### Minor Changes
+
+- eac9754: Add Vue based reactivity to offer more flexible control flow
+- eac9754: Make createAdhese and createSlot syncronous to simplify implementation
+
+### Patch Changes
+
+- d7f6111: Update dependencies
+
 ## 0.4.0
 
 ### Minor Changes

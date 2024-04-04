@@ -4,6 +4,15 @@
 
 ### Patch Changes
 
+- Updated dependencies [eac9754]
+- Updated dependencies [eac9754]
+- Updated dependencies [eac9754]
+  - @adhese/sdk-react@0.5.0
+
+## null
+
+### Patch Changes
+
 - Updated dependencies [52862a1]
 - Updated dependencies [a4da136]
 - Updated dependencies [7bbe1ff]
