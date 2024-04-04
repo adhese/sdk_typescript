@@ -12,7 +12,7 @@ Binary consent is a straightforward form of consent. It is either granted or not
 can pass the `consent` option to the `createAdhese` function:
 
 ```js{3}
-const adhese = await createAdhese({
+const adhese = createAdhese({
   account: 'your-account-id',
   consent: true, // `false` is default
 });
