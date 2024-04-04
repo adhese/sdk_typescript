@@ -20,8 +20,7 @@ export function useRenderIntersectionObserver({ ad, options, element, render }: 
         if (!ad.value && options.lazyLoading)
           await render();
 
-        else if (ad.value)
-          await render(ad.value);
+        await render(ad.value ?? undefined);
       })().catch(logger.error);
     }
   }, {

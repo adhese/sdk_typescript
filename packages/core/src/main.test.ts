@@ -1,7 +1,9 @@
 import { type MockInstance, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { awaitTimeout } from '@utils';
+import { awaitTimeout, waitForDomLoad } from '@utils';
 import { createAdhese } from './main';
 import { logger } from './logger/logger';
+import type { Adhese } from './main.types';
+import { waitOnInit } from './hooks/onInit';
 
 vi.mock('./logger/logger', async (importOriginal) => {
   const module: { logger: typeof logger } = await importOriginal();
@@ -22,6 +24,8 @@ vi.mock('./logger/logger', async (importOriginal) => {
 describe('createAdhese', () => {
   const listeners = new Map<string, Set<() => void>>();
   let validQuery = '(max-width: 768px) and (pointer: coarse)';
+
+  let adhese: Adhese | undefined;
 
   beforeAll(() => {
     Object.defineProperty(window, 'matchMedia', {
@@ -51,6 +55,9 @@ describe('createAdhese', () => {
 
   beforeEach(() => {
     debugLoggerSpy = vi.spyOn(logger, 'debug');
+
+    adhese?.dispose();
+    adhese = undefined;
   });
 
   afterEach(() => {
@@ -59,18 +66,21 @@ describe('createAdhese', () => {
     document.body.innerHTML = '';
     listeners.clear();
     validQuery = '(max-width: 768px) and (pointer: coarse)';
+
+    adhese?.dispose();
+    adhese = undefined;
   });
 
   it('should create an adhese instance', () => {
-    const adhese = createAdhese({
+    adhese = createAdhese({
       account: 'test',
     });
 
     expect(adhese).not.toBeUndefined();
   });
 
-  it('should create an adhese instance with default options', async () => {
-    const adhese = await createAdhese({
+  it('should create an adhese instance with default options', () => {
+    adhese = createAdhese({
       account: 'test',
     });
 
@@ -80,8 +90,8 @@ describe('createAdhese', () => {
     expect(adhese.requestType).toBe('POST');
   });
 
-  it('should create an adhese instance with custom options', async () => {
-    const adhese = await createAdhese({
+  it('should create an adhese instance with custom options', () => {
+    adhese = createAdhese({
       account: 'test',
       host: 'https://ads.example.com',
       poolHost: 'https://pool.example.com',
@@ -107,8 +117,8 @@ describe('createAdhese', () => {
     expect(adhese.eagerRendering).toBe(true);
   });
 
-  it('should create an adhese instance with debug logging', async () => {
-    await createAdhese({
+  it('should create an adhese instance with debug logging', () => {
+    adhese = createAdhese({
       account: 'test',
       debug: true,
     });
@@ -118,7 +128,7 @@ describe('createAdhese', () => {
     expect(debugLoggerSpy).toHaveBeenCalled();
   });
 
-  it('should create an adhese instance with initial slots', async () => {
+  it('should create an adhese instance with initial slots', () => {
     const element = document.createElement('div');
     element.id = 'billboard';
     element.classList.add('adunit');
@@ -126,7 +136,7 @@ describe('createAdhese', () => {
 
     document.body.appendChild(element);
 
-    const adhese = await createAdhese({
+    adhese = createAdhese({
       account: 'test',
       initialSlots: [
         {
@@ -142,30 +152,35 @@ describe('createAdhese', () => {
 
   it('should create an adhese instance with findDomSlotsOnLoad', async () => {
     const element = document.createElement('div');
-    element.id = 'billboard';
+    element.id = 'leaderboard';
     element.classList.add('adunit');
-    element.dataset.format = 'billboard';
+    element.dataset.format = 'leaderboard';
 
     document.body.appendChild(element);
 
-    const adhese = await createAdhese({
+    await waitForDomLoad();
+
+    adhese = createAdhese({
       account: 'test',
       findDomSlotsOnLoad: true,
     });
 
+    await waitOnInit;
+
+    await awaitTimeout(100);
+
     expect(adhese.getAll().length).toBe(1);
   });
 
-  it('should be able to get the current page location', async () => {
-    const adhese = await createAdhese({
+  it('should be able to get the current page location', () => {
+    adhese = createAdhese({
       account: 'test',
     });
 
     expect(adhese.getLocation()).toBe('homepage');
   });
-
-  it('should be able to set the current page location', async () => {
-    const adhese = await createAdhese({
+  it('should be able to set the current page location', () => {
+    adhese = createAdhese({
       account: 'test',
     });
 
@@ -175,7 +190,7 @@ describe('createAdhese', () => {
   });
 
   it('should be able to add a slot', async () => {
-    const adhese = await createAdhese({
+    adhese = createAdhese({
       account: 'test',
       location: '_sdk_example_',
     });
@@ -196,7 +211,7 @@ describe('createAdhese', () => {
   });
 
   it('should be able to find all slots in the DOM', async () => {
-    const adhese = await createAdhese({
+    adhese = createAdhese({
       account: 'test',
     });
 
@@ -212,8 +227,8 @@ describe('createAdhese', () => {
     expect(slots.length).toBe(1);
   });
 
-  it('should be able to change the consent', async () => {
-    const adhese = await createAdhese({
+  it('should be able to change the consent', () => {
+    adhese = createAdhese({
       account: 'test',
     });
 
@@ -242,7 +257,7 @@ describe('createAdhese', () => {
       }),
     });
 
-    const adhese = await createAdhese({
+    adhese = createAdhese({
       account: 'test',
     });
 
@@ -268,7 +283,7 @@ describe('createAdhese', () => {
   });
 
   it('should be able to handle device change', async () => {
-    const adhese = await createAdhese({
+    adhese = createAdhese({
       account: 'test',
       location: '_sdk-example_',
     });
@@ -293,8 +308,8 @@ describe('createAdhese', () => {
     expect(adhese.parameters.get('br')).toBe('tablet');
   });
 
-  it('should dispose the instance', async () => {
-    const adhese = await createAdhese({
+  it('should dispose the instance', () => {
+    adhese = createAdhese({
       account: 'test',
     });
 

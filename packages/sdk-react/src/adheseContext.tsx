@@ -3,46 +3,12 @@ import {
   type ReactElement,
   createContext,
   useContext,
-  useSyncExternalStore,
+  useEffect,
+  useState,
 } from 'react';
 import { type Adhese, type AdheseOptions, createAdhese } from '@adhese/sdk';
-import { isEqual } from 'lodash-es';
 
-const listeners = new Set<() => void>();
-let cachedAdhese: Adhese | null = null;
-let adhesePromise: Promise<Adhese> | null = null;
-let cachedOptions: AdheseOptions | null = null;
-
-function subscribe(callback: () => void): () => void {
-  listeners.add(callback);
-
-  return () => {
-    listeners.delete(callback);
-
-    for (const listener of listeners)
-      listener();
-  };
-}
-
-function getSnapshot(options: AdheseOptions): Adhese | null {
-  if ((!cachedAdhese && !adhesePromise) || !isEqual(options, cachedOptions)) {
-    cachedOptions = options;
-    adhesePromise = createAdhese(options).then((value) => {
-      cachedAdhese?.dispose();
-      adhesePromise = null;
-      cachedAdhese = value;
-
-      for (const listener of listeners)
-        listener();
-
-      return value;
-    });
-  }
-
-  return cachedAdhese;
-}
-
-const adheseContext = createContext<Adhese | null>(null);
+const adheseContext = createContext<Adhese | undefined>(undefined);
 
 /**
  * Provider to create an Adhese instance with the given options. Via the `useAdhese` hook, the Adhese instance can be
@@ -53,7 +19,16 @@ const adheseContext = createContext<Adhese | null>(null);
  */
 // eslint-disable-next-line ts/naming-convention
 export function AdheseProvider({ children, options }: PropsWithChildren<{ options: AdheseOptions }>): ReactElement {
-  const adhese: Adhese | null = useSyncExternalStore(subscribe, getSnapshot.bind(null, options), () => null);
+  const [adhese, setAdhese] = useState<Adhese | undefined>(undefined);
+
+  useEffect(() => {
+    const instance = createAdhese(options);
+    setAdhese(instance);
+
+    return () => {
+      instance.dispose();
+    };
+  }, [options]);
 
   return (
     <adheseContext.Provider value={adhese}>
@@ -65,6 +40,6 @@ export function AdheseProvider({ children, options }: PropsWithChildren<{ option
 /**
  * Hook to get the Adhese instance from the nearest `AdheseProvider`. When the Adhese instance is not available yet, `null`
  */
-export function useAdhese(): Adhese | null {
+export function useAdhese(): Adhese | undefined {
   return useContext(adheseContext);
 }

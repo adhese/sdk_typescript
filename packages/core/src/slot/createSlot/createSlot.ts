@@ -1,9 +1,10 @@
 import { type Ad, logger, requestAd } from '@core';
 import { waitForDomLoad } from '@utils';
-import { computed, effectScope, reactive, ref, watch } from '@vue/runtime-core';
+import { type Ref, computed, effectScope, reactive, ref, watch } from '@vue/runtime-core';
 import { isEqual } from 'lodash-es';
 import { addTrackingPixel } from '../../impressionTracking/impressionTracking';
 import { type QueryDetector, createQueryDetector } from '../../queryDetector/queryDetector';
+import { onInit } from '../../hooks/onInit';
 import type { AdheseSlot, AdheseSlotOptions, RenderMode } from './createSlot.types';
 import { generateName, renderIframe, renderInline } from './createSlot.utils';
 import { useViewabilityObserver } from './useViewabilityObserver';
@@ -17,9 +18,8 @@ const renderFunctions: Record<RenderMode, (ad: Ad, element: HTMLElement) => void
 /**
  * Create a new slot instance.
  */
-export async function createSlot(options: AdheseSlotOptions): Promise<Readonly<AdheseSlot>> {
+export function createSlot(options: AdheseSlotOptions): Readonly<AdheseSlot> {
   const scope = effectScope();
-  await waitForDomLoad();
 
   return scope.run(() => {
     const {
@@ -65,10 +65,17 @@ export async function createSlot(options: AdheseSlotOptions): Promise<Readonly<A
       ad.value = newAd;
     });
 
-    const element = computed(() =>
-      typeof containingElement === 'string' || !containingElement
-        ? document.querySelector<HTMLElement>(`.adunit[data-format="${format.value}"]#${containingElement}${slot ? `[data-slot="${slot}"]` : ''}`)
-        : containingElement,
+    const isDomLoaded = useDomLoaded();
+
+    const element = computed(() => {
+      if (!(typeof containingElement === 'string' || !containingElement))
+        return containingElement;
+
+      if (!isDomLoaded.value)
+        return null;
+
+      return document.querySelector<HTMLElement>(`.adunit[data-format="${format.value}"]#${containingElement}${slot ? `[data-slot="${slot}"]` : ''}`);
+    },
     );
 
     function getElement(): HTMLElement | null {
@@ -85,11 +92,11 @@ export async function createSlot(options: AdheseSlotOptions): Promise<Readonly<A
       render,
     });
 
-    watch(ad, async (newAd, oldAd) => {
-      if (isEqual(newAd, oldAd) || !newAd)
+    watch([ad, isInViewport], async ([newAd, newIsInViewport], [oldAd]) => {
+      if (!newAd || isEqual(newAd, oldAd))
         return;
 
-      if (isInViewport.value || context.options.eagerRendering)
+      if (newIsInViewport || context.options.eagerRendering)
         await render(newAd);
 
       if (element.value) {
@@ -149,9 +156,9 @@ export async function createSlot(options: AdheseSlotOptions): Promise<Readonly<A
         containingElement,
       });
 
-      await context.events?.changeSlots.dispatchAsync(Array.from(context.getAll?.() ?? []));
-
       options.onRender?.(element.value);
+
+      disposeRenderIntersectionObserver();
 
       return element.value;
     }
@@ -198,4 +205,15 @@ export async function createSlot(options: AdheseSlotOptions): Promise<Readonly<A
       dispose,
     };
   })!;
+}
+
+function useDomLoaded(): Readonly<Ref<boolean>> {
+  const isDomLoaded = ref(false);
+
+  onInit(async () => {
+    await waitForDomLoad();
+
+    isDomLoaded.value = true;
+  });
+  return isDomLoaded;
 }

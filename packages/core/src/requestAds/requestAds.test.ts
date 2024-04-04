@@ -22,12 +22,12 @@ describe('requestAds', () => {
     const ads = await requestAds(
       {
         slots: [
-          await createSlot({
+          createSlot({
             format: 'foo',
             slot: 'baz',
             context,
           }),
-          await createSlot({
+          createSlot({
             format: 'foo2',
             slot: 'baz2',
             context,
@@ -52,12 +52,12 @@ describe('requestAds', () => {
     const ads = await requestAds(
       {
         slots: [
-          await createSlot({
+          createSlot({
             format: 'foo',
             slot: 'baz',
             context,
           }),
-          await createSlot({
+          createSlot({
             format: 'foo2',
             slot: 'baz2',
             context,
@@ -83,7 +83,7 @@ describe('requestAds', () => {
       await requestAds(
         {
           slots: [
-            await createSlot({
+            createSlot({
               format: 'foo',
               slot: 'baz',
               context,
@@ -109,11 +109,11 @@ describe('requestAds', () => {
 
     const ads = await requestAds({
       slots: [
-        await createSlot({
+        createSlot({
           format: 'bar',
           context: testContext,
         }),
-        await createSlot({
+        createSlot({
           format: 'baz',
           context: testContext,
         }),
@@ -144,7 +144,7 @@ describe('requestAd', () => {
 
   it('should be able to fetch a single ad', async () => {
     const ad = await requestAd({
-      slot: await createSlot({
+      slot: createSlot({
         format: 'bar',
         context,
       }),
@@ -298,11 +298,11 @@ describe('requestPreviews', () => {
   it('should be able to request previews', async () => {
     const ads = await requestAds({
       slots: [
-        await createSlot({
+        createSlot({
           format: 'bar',
           context,
         }),
-        await createSlot({
+        createSlot({
           format: 'baz',
           context,
         }),

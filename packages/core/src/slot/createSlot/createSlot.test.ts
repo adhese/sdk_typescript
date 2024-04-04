@@ -3,6 +3,7 @@ import { type AdheseContext, createSlot } from '@core';
 
 import { awaitTimeout } from '@utils';
 import { testContext } from '../../testUtils';
+import { runOnInit } from '../../hooks/onInit';
 
 vi.mock('../logger/logger', () => ({
   logger: {
@@ -49,6 +50,8 @@ describe('slot', () => {
         eagerRendering: true,
       },
     };
+
+    runOnInit();
   });
 
   afterEach(() => {
@@ -67,7 +70,7 @@ describe('slot', () => {
 
     document.body.appendChild(element);
 
-    const slot = await createSlot({
+    const slot = createSlot({
       format: 'leaderboard',
       containingElement: 'leaderboard',
       context,
@@ -81,6 +84,7 @@ describe('slot', () => {
       adType: 'foo',
       origin: 'JERLICIA',
     });
+
     expect(slot.getElement()).not.toBe(null);
   });
 
@@ -94,7 +98,7 @@ describe('slot', () => {
 
     document.body.appendChild(element);
 
-    const slot = await createSlot({
+    const slot = createSlot({
       format: 'leaderboard',
       containingElement: 'leaderboard',
       slot: 'bar',
@@ -122,7 +126,7 @@ describe('slot', () => {
 
     document.body.appendChild(element);
 
-    const slot = await createSlot({
+    const slot = createSlot({
       format: 'leaderboard',
       containingElement: 'leaderboard',
       parameters: {
@@ -141,7 +145,7 @@ describe('slot', () => {
 
   it('should log an error when no element is found', async () => {
     try {
-      const slot = await createSlot({
+      const slot = createSlot({
         format: 'leaderboard',
         containingElement: 'leaderboard',
         context: {
@@ -177,7 +181,7 @@ describe('slot', () => {
 
     document.body.appendChild(element);
 
-    await createSlot({
+    createSlot({
       format: 'leaderboard',
       containingElement: element,
       context,
@@ -193,7 +197,7 @@ describe('slot', () => {
 
     document.body.appendChild(element);
 
-    const slot = await createSlot({
+    const slot = createSlot({
       format: 'leaderboard',
       containingElement: 'leaderboard',
       context,
@@ -213,12 +217,12 @@ describe('slot', () => {
   });
 
   it('should be able generate a slot name', async () => {
-    expect((await createSlot({
+    expect((createSlot({
       format: 'bar',
       context,
     })).name.value).toBe('foo-bar');
 
-    expect((await createSlot({
+    expect((createSlot({
       format: 'bar',
       slot: 'baz',
       context,
@@ -234,7 +238,7 @@ describe('slot', () => {
 
     document.body.appendChild(element);
 
-    const slot = await createSlot({
+    const slot = createSlot({
       format: 'leaderboard',
       containingElement: 'leaderboard',
       context,
@@ -283,7 +287,7 @@ describe('slot', () => {
 
     document.body.appendChild(element);
 
-    const slot = await createSlot({
+    const slot = createSlot({
       format: 'leaderboard',
       containingElement: element,
       context,
@@ -337,7 +341,7 @@ describe('slot', () => {
 
     document.body.appendChild(element);
 
-    const slot = await createSlot({
+    const slot = createSlot({
       format: 'leaderboard',
       containingElement: 'leaderboard',
       context,
@@ -349,7 +353,7 @@ describe('slot', () => {
   it('should be able to accept format with different media queries', async () => {
     const element = document.createElement('div');
 
-    const slot = await createSlot({
+    const slot = createSlot({
       format: [
         {
           format: 'skyscraper',
@@ -385,7 +389,7 @@ describe('slot', () => {
 
     document.body.appendChild(element);
 
-    const slot = await createSlot({
+    const slot = createSlot({
       format: 'leaderboard',
       containingElement: 'leaderboard',
       renderMode: 'inline',

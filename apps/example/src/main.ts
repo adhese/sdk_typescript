@@ -1,15 +1,12 @@
 import { createAdhese } from '@adhese/sdk';
 
 async function app(): Promise<void> {
-  const adhese = await createAdhese({
+  const adhese = createAdhese({
     account: 'demo',
     debug: true,
     initialSlots: [{
       format: 'skyscraper',
       containingElement: 'skyscraper',
-    }, {
-      format: 'halfpage',
-      containingElement: 'halfpage',
     }],
     location: '_sdk_example_',
   });
