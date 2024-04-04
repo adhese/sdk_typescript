@@ -132,6 +132,9 @@ export function createSlot(options: AdheseSlotOptions): Readonly<AdheseSlot> {
         context,
       });
 
+      // eslint-disable-next-line require-atomic-updates
+      ad.value = options.onBeforeRender?.(ad.value) ?? ad.value;
+
       if (!element.value) {
         const error = `Could not create slot for format ${format.value}. No element found.`;
         logger.error(error, options);

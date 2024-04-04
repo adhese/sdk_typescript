@@ -1,9 +1,12 @@
 import {
+  NEVER,
   type TypeOf,
+  ZodIssueCode,
   type ZodType,
   coerce,
   lazy,
   literal,
+  number,
   object,
   string,
   union,
@@ -32,6 +35,61 @@ export const dateLike = union([coerce.string(), literal('')]).transform((value) 
   return date;
 });
 
+export const cssValueLike
+  = union([coerce.string(), literal(''), number()]).transform<string | undefined>((value) => {
+    if (value === '' || value === 0 || value === '0')
+      return undefined;
+
+    if (numberLike.parse(value))
+      return `${numberLike.parse(value)}px`;
+
+    return String(value);
+  });
+
+export const isJson = string().transform((value, { addIssue }) => {
+  try {
+    return JSON.parse(value.replaceAll('\'', '"')) as Record<string, unknown> | ReadonlyArray<unknown>;
+  }
+  catch (error) {
+    addIssue({
+      code: ZodIssueCode.custom,
+      message: `Invalid JSON: ${(error as Error).message}`,
+    });
+
+    return NEVER;
+  }
+});
+
+export const isHtmlString = string().transform((value, { addIssue }) => {
+  const htmlParser = new DOMParser();
+
+  try {
+    const html = htmlParser.parseFromString(value, 'text/html');
+
+    if (html.body?.children.length === 0)
+      throw new Error('Invalid HTML');
+
+    return value;
+  }
+  catch (error) {
+    addIssue({
+      code: ZodIssueCode.custom,
+      message: (error as Error).message,
+    });
+
+    return NEVER;
+  }
+});
+
+export const isJsonOrHtmlString = union([isJson, isHtmlString]);
+
+export const isJsonOrHtmlOptionalString = union([coerce.string(), isJsonOrHtmlString]).transform((value) => {
+  if (value === '')
+    return undefined;
+
+  return value;
+}).optional();
+
 const baseSchema = object({
   adDuration: numberLike.optional(),
   adFormat: string().optional(),
@@ -45,7 +103,7 @@ const baseSchema = object({
   advertiserId: string().optional(),
   altText: string().optional(),
   auctionable: booleanLike.optional(),
-  body: string().optional(),
+  body: isJsonOrHtmlOptionalString,
   clickTag: urlLike.optional(),
   comment: string().optional(),
   creativeName: string().optional(),
@@ -56,7 +114,7 @@ const baseSchema = object({
     mediaType: string(),
     prebid: unknown().optional(),
   }).optional(),
-  height: numberLike.optional(),
+  height: cssValueLike.optional(),
   id: string().optional(),
   impressionCounter: urlLike.optional(),
   libId: string().optional(),
@@ -74,7 +132,7 @@ const baseSchema = object({
   slotID: string(),
   slotName: string(),
   swfSrc: urlLike.optional(),
-  tag: string().optional(),
+  tag: isJsonOrHtmlOptionalString,
   tagUrl: urlLike.optional(),
   timeStamp: dateLike.optional(),
   trackedImpressionCounter: urlLike.optional(),
@@ -82,18 +140,18 @@ const baseSchema = object({
   trackingUrl: urlLike.optional(),
   url: urlLike.optional(),
   viewableImpressionCounter: urlLike.optional(),
-  width: numberLike.optional(),
-  widthLarge: numberLike.optional(),
+  width: cssValueLike.optional(),
+  widthLarge: cssValueLike.optional(),
 });
 
 export const jerliciaSchema = object({
   origin: literal('JERLICIA'),
-  tag: string(),
+  tag: isJsonOrHtmlString,
 }).passthrough();
 
 export const daleSchema = object({
   origin: literal('DALE'),
-  body: string(),
+  body: isJsonOrHtmlString,
 }).passthrough().transform(({ body, ...data }) => ({
   ...data,
   tag: body,
@@ -111,8 +169,8 @@ export type PreParsedAd = TypeOf<typeof adResponseSchema> & {
   additionalCreatives?: ReadonlyArray<PreParsedAd> | string;
 };
 
-export type Ad = Omit<PreParsedAd, 'tag'> & {
-  tag: string;
+export type Ad<T = string | Record<string, unknown> | ReadonlyArray<unknown>> = Omit<PreParsedAd, 'tag'> & {
+  tag: T;
 };
 
 export const adSchema: ZodType<PreParsedAd> = adResponseSchema.transform(({

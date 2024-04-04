@@ -75,3 +75,42 @@ function YourComponent() {
   );
 }
 ```
+
+## `useAdheseSlot` with `onBeforeRender`
+Like described in the [slots documentation](/slots.html#hijacking-the-rendering-process), you can use the
+`onBeforeRender` callback to intercept the to be rendered ad. The example there is written in vanilla JavaScript. To use
+`jsx` you can use the React `renderToStaticMarkup` function to create static HTML while still having the benefits of JSX.
+
+```jsx
+import { renderToStaticMarkup } from 'react-dom/server';
+import { useAdheseSlot } from '@adhese/sdk-react';
+
+function YourComponent() {
+  const adhese = useAdhese();
+  const elementRef = useRef(null);
+
+  const slot = useAdheseSlot(elementRef, {
+    format: 'your-format',
+    onBeforeRender: (ad) => {
+      if (typeof ad.tag !== 'object') {
+        // If the tag is not an object, return the ad as is
+        return ad;
+      }
+
+      return {
+        ...ad,
+        tag: renderToStaticMarkup((
+          <div>
+            <h1>{ad.tag.title}</h1>
+            <p>{ad.tag.description}</p>
+          </div>
+        )),
+      }
+    },
+  });
+
+  return (
+    <div ref={slot.elementRef} />
+  );
+}
+```

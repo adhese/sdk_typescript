@@ -12,6 +12,9 @@ Slots accept the following options:
 | `containingElement`  | `string \| HTMLElement`                                       | -          | The element that contains the slot. Used to find the correct element on the page to render the ad in.                                                                                                                                    |
 | `parameters`         | `Record<string, ReadonlyArray<string> \| string>`             | -          | The parameters that are used to render the ad.                                                                                                                                                                                           |
 | `renderMode`         | `'iframe' \| 'inline'`                                        | `'iframe'` | The render mode of the slot. <ul><li>`iframe`: The ad will be rendered in an iframe. </li><li>`inline`: The ad will be rendered in the containing element.    </li></ul>                                                                 |
+| `onDispose`          | `() => void`                                                  | -          | Callback when the slot is disposed                                                                                                                                                                                                       |
+| `onBeforeRender`     | `(ad: Ad) => Ad \| void;`                                     | -          | Callback that is called before the ad is rendered. This can be used to modify the ad before it is rendered. Particularly useful for rendering ads with custom HTML if the ad tag contains a JSON object.                                 |
+| `onRender`           | `() => void`                                                  | -          | Callback that is called after the ad is rendered.                                                                                                                                                                                        |
 | `lazyLoading`        | `boolean`                                                     | `false`    | If the slot should be lazy loaded. This means that the ad will only be requested when the slot is in the viewport. If `true`, the slot will handle the request itself and render the ad.                                                 |
 | `lazyLoadingOptions` | `{ rootMargin?: string; }`                                    | -          | Options related to lazy loading. Only available when `lazyLoading` is set to true.                                                                                                                                                       |
 
@@ -144,3 +147,35 @@ await adhese.addSlot({
 The following render modes are supported:
 - `iframe`: The ad is rendered in an iframe.
 - `inline`: The ad is rendered inline in the containing element.
+
+## Hijacking the rendering process
+If you want to modify the ad before it is rendered, you can pass the `onBeforeRender` option to the `addSlot` method.
+
+```js
+const adhese = createAdhese({
+  account: 'your-account-id',
+})
+
+adhese.addSlot({
+  containingElement: 'slot-1', // ID of the element that contains the slot
+  format: 'billboard',
+  onBeforeRender: (ad) => {
+    if (typeof ad.tag !== 'object') {
+      // If the tag is not an object, return the ad as is
+      return ad;
+    }
+
+    return {
+      ...ad,
+      tag: '<div>Custom HTML</div>',
+    };
+  },
+});
+```
+
+Modifying the ad can be useful if you want to render ads with custom HTML. For example, if the ad tag contains a JSON object.
+
+> [!WARNING]
+> The `tag` on the `ad` object can be a JSON object or a HTML string. If you want to dynamically render the ad, you need
+> to check if the `tag` is a JSON object yourself. To make sure the tag you return in your `onBeforeRender` as the SDK
+> can't render JSON objects.

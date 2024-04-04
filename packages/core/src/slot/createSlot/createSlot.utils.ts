@@ -2,6 +2,7 @@ import type { Ad } from '@core';
 
 export function renderIframe(ad: Ad, element: HTMLElement): void {
   const iframe = document.createElement('iframe');
+
   iframe.srcdoc = `
       <!DOCTYPE html>
       <html>
@@ -15,21 +16,21 @@ export function renderIframe(ad: Ad, element: HTMLElement): void {
           </style>
         </head>
         <body>
-          ${ad.tag}
+          ${String(ad.tag)}
         </body>
       `.replaceAll(/\s+/g, ' ').trim();
 
   iframe.style.border = 'none';
-  iframe.style.width = ad.width ? `${ad.width}px` : '100%';
-  iframe.style.height = ad.height ? `${ad.height}px` : '100%';
+  iframe.style.width = ad.width ?? 'auto';
+  iframe.style.height = ad.height ?? 'auto';
   element.replaceChildren(iframe);
 }
 
 export function renderInline(ad: Ad, element: HTMLElement): void {
-  element.style.width = ad.width ? `${ad.width}px` : '100%';
-  element.style.height = ad.height ? `${ad.height}px` : '100%';
+  element.style.width = ad.width ?? 'auto';
+  element.style.height = ad.height ?? 'auto';
 
-  element.innerHTML = ad.tag;
+  element.innerHTML = String(ad.tag);
 }
 
 export function generateName(
