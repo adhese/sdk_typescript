@@ -1,8 +1,9 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { type Ad, type AdheseContext, createSlot } from '@core';
+import { type AdheseContext, createSlot } from '@core';
 
 import { awaitTimeout } from '@utils';
 import { testContext } from '../../testUtils';
+import { runOnInit } from '../../hooks/onInit';
 
 vi.mock('../logger/logger', () => ({
   logger: {
@@ -49,11 +50,14 @@ describe('slot', () => {
         eagerRendering: true,
       },
     };
+
+    runOnInit();
   });
 
   afterEach(() => {
     mediaListeners.clear();
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
     document.body.innerHTML = '';
   });
 
@@ -66,28 +70,11 @@ describe('slot', () => {
 
     document.body.appendChild(element);
 
-    const slot = await createSlot({
+    const slot = createSlot({
       format: 'leaderboard',
       containingElement: 'leaderboard',
       context,
     });
-
-    expect(slot).toEqual({
-      location: 'foo',
-      // format: 'leaderboard',
-      render: expect.any(Function) as () => Promise<HTMLElement>,
-      getElement: expect.any(Function) as () => HTMLElement | null,
-      getName: expect.any(Function) as () => string,
-      getAd: expect.any(Function) as () => Ad | null,
-      setAd: expect.any(Function) as (ad: Ad) => Promise<void>,
-      parameters: expect.any(Map) as Map<string, string>,
-      dispose: expect.any(Function) as () => void,
-      lazyLoading: false,
-      isViewabilityTracked: expect.any(Function) as () => boolean,
-      isImpressionTracked: expect.any(Function) as () => boolean,
-      getFormat: expect.any(Function) as () => string,
-      setFormat: expect.any(Function) as (format: string) => Promise<void>,
-    } satisfies typeof slot);
 
     await slot.render({
       tag: '<div>foo</div>',
@@ -97,6 +84,7 @@ describe('slot', () => {
       adType: 'foo',
       origin: 'JERLICIA',
     });
+
     expect(slot.getElement()).not.toBe(null);
   });
 
@@ -110,7 +98,7 @@ describe('slot', () => {
 
     document.body.appendChild(element);
 
-    const slot = await createSlot({
+    const slot = createSlot({
       format: 'leaderboard',
       containingElement: 'leaderboard',
       slot: 'bar',
@@ -126,7 +114,7 @@ describe('slot', () => {
       origin: 'JERLICIA',
     });
     expect(slot.getElement()).not.toBe(null);
-    expect(slot.getAd()).toBeDefined();
+    expect(slot.ad.value).toBeDefined();
   });
 
   it('should create a slot with parameters', async () => {
@@ -138,7 +126,7 @@ describe('slot', () => {
 
     document.body.appendChild(element);
 
-    const slot = await createSlot({
+    const slot = createSlot({
       format: 'leaderboard',
       containingElement: 'leaderboard',
       parameters: {
@@ -156,13 +144,19 @@ describe('slot', () => {
   });
 
   it('should log an error when no element is found', async () => {
-    const slot = await createSlot({
-      format: 'leaderboard',
-      containingElement: 'leaderboard',
-      context,
-    });
-
     try {
+      const slot = createSlot({
+        format: 'leaderboard',
+        containingElement: 'leaderboard',
+        context: {
+          ...context,
+          options: {
+            ...context.options,
+            eagerRendering: false,
+          },
+        },
+      });
+
       await slot.render({
         tag: '<div>foo</div>',
         // eslint-disable-next-line ts/naming-convention
@@ -187,7 +181,7 @@ describe('slot', () => {
 
     document.body.appendChild(element);
 
-    await createSlot({
+    createSlot({
       format: 'leaderboard',
       containingElement: element,
       context,
@@ -203,7 +197,7 @@ describe('slot', () => {
 
     document.body.appendChild(element);
 
-    const slot = await createSlot({
+    const slot = createSlot({
       format: 'leaderboard',
       containingElement: 'leaderboard',
       context,
@@ -223,16 +217,16 @@ describe('slot', () => {
   });
 
   it('should be able generate a slot name', async () => {
-    expect((await createSlot({
+    expect((createSlot({
       format: 'bar',
       context,
-    })).getName()).toBe('foo-bar');
+    })).name.value).toBe('foo-bar');
 
-    expect((await createSlot({
+    expect((createSlot({
       format: 'bar',
       slot: 'baz',
       context,
-    })).getName()).toBe('foobaz-bar');
+    })).name.value).toBe('foobaz-bar');
   });
 
   it('should be able to dispose a slot', async () => {
@@ -244,7 +238,7 @@ describe('slot', () => {
 
     document.body.appendChild(element);
 
-    const slot = await createSlot({
+    const slot = createSlot({
       format: 'leaderboard',
       containingElement: 'leaderboard',
       context,
@@ -291,20 +285,16 @@ describe('slot', () => {
 
     const element = document.createElement('div');
 
-    element.classList.add('adunit');
-    element.dataset.format = 'leaderboard';
-    element.id = 'leaderboard';
-
     document.body.appendChild(element);
 
-    const slot = await createSlot({
+    const slot = createSlot({
       format: 'leaderboard',
-      containingElement: 'leaderboard',
+      containingElement: element,
       context,
       lazyLoading: true,
     });
 
-    await slot.setAd({
+    slot.ad.value = {
       tag: '<div>foo</div>',
       // eslint-disable-next-line ts/naming-convention
       slotID: 'bar',
@@ -313,7 +303,7 @@ describe('slot', () => {
       impressionCounter: new URL('https://foo.bar'),
       viewableImpressionCounter: new URL('https://foo.bar'),
       origin: 'JERLICIA',
-    });
+    };
 
     expect(observe).toBeCalledTimes(2);
     expect(intersectionObserverMock).toBeCalledTimes(2);
@@ -351,7 +341,7 @@ describe('slot', () => {
 
     document.body.appendChild(element);
 
-    const slot = await createSlot({
+    const slot = createSlot({
       format: 'leaderboard',
       containingElement: 'leaderboard',
       context,
@@ -363,7 +353,7 @@ describe('slot', () => {
   it('should be able to accept format with different media queries', async () => {
     const element = document.createElement('div');
 
-    const slot = await createSlot({
+    const slot = createSlot({
       format: [
         {
           format: 'skyscraper',
@@ -378,7 +368,7 @@ describe('slot', () => {
       context,
     });
 
-    expect(slot.getFormat()).toBe('skyscraper');
+    expect(slot.format.value).toBe('skyscraper');
 
     validQuery = '(min-width: 768px)';
 
@@ -387,7 +377,7 @@ describe('slot', () => {
 
     await awaitTimeout(70);
 
-    expect(slot.getFormat()).toBe('leaderboard');
+    expect(slot.format.value).toBe('leaderboard');
   });
 
   it('should be able to render a slot with the render mode set to inline', async () => {
@@ -399,7 +389,7 @@ describe('slot', () => {
 
     document.body.appendChild(element);
 
-    const slot = await createSlot({
+    const slot = createSlot({
       format: 'leaderboard',
       containingElement: 'leaderboard',
       renderMode: 'inline',

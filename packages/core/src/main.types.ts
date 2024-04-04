@@ -4,7 +4,6 @@ import type { SlotManager, SlotManagerOptions } from './slot/slotManager/slotMan
 import type { AdheseSlot, AdheseSlotOptions } from './slot/createSlot/createSlot.types';
 import type { Ad } from './requestAds/requestAds.schema';
 import type { AdRequestOptions } from './requestAds/requestAds';
-import type { MapWithEvents } from './main.utils';
 import type { logger } from './logger/logger';
 
 export type AdheseOptions = {
@@ -149,7 +148,7 @@ export type Adhese = Omit<AdheseOptions, 'location' | 'parameters' | 'consent'> 
   /**
    * The parameters that are used for all ads.
    */
-  parameters: MapWithEvents<string, ReadonlyArray<string> | string>;
+  parameters: Map<string, ReadonlyArray<string> | string>;
   /**
    * The event manager for the Adhese instance.
    */

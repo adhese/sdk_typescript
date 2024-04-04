@@ -31,7 +31,7 @@ You can also include the SDK in your project by including the following script t
 To use the SDK, you need to create an Adhese instance and configure it with your account ID:
 
 ```js
-const adhese = await createAdhese({
+const adhese = createAdhese({
   account: 'your-account-id',
 });
 ```
@@ -40,7 +40,7 @@ const adhese = await createAdhese({
 The SDK can automatically find all slots on the page and load them. This is the easiest way to get started:
 
 ```js
-const adhese = await createAdhese({
+const adhese = createAdhese({
   account: 'your-account-id',
   findDomSlotsOnLoad: true,
 });
@@ -61,7 +61,7 @@ function. This is particularly useful if you want to start the fetching process 
 you need to know which slots are going to be on the page on beforehand.
 
 ```js
-const adhese = await createAdhese({
+const adhese = createAdhese({
   account: 'your-account-id',
   initialSlots: [
     {

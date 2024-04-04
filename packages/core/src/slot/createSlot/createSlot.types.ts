@@ -1,5 +1,6 @@
 /* v8 ignore start */
 import type { Merge } from '@utils';
+import type { ComputedRef, Ref } from '@vue/runtime-core';
 import type { Ad } from '../../requestAds/requestAds.schema';
 import type { AdheseContext } from '../../main.types';
 
@@ -48,6 +49,10 @@ export type AdheseSlotOptions = {
    * Callback that is called when the format of the slot changes.
    */
   onNameChange?(newName: string, oldName: string): void;
+  /**
+   * Callback that is called when the slot is rendered.
+   */
+  onRender?(element: HTMLElement): void;
 } & ({
   /**
    * If the slot should be lazy loaded. This means that the ad will only be requested when the slot is in the viewport.
@@ -67,6 +72,21 @@ export type AdheseSlotOptions = {
 
 export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' | 'onFormatChange' | 'format'>, {
   /**
+   * The name of the slot. This is used to identify the slot in the Adhese instance.
+   *
+   * The name is generated based on the location, format, and slot of the slot.
+   */
+  name: ComputedRef<string>;
+  /**
+   * The format code of the slot. Used to find the correct element on the page to render the ad in.
+   *
+   * If the format is a string, it is used as the format code. If the format is an array, the format code is determined
+   * by the query detector.
+   *
+   * When you change the format, the slot will request a new ad from the API automatically.
+   */
+  format: Ref<string>;
+  /**
    * The location of the slot. This is the location that is used to determine the current page URL.
    */
   location: string;
@@ -75,6 +95,18 @@ export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' |
    */
   parameters: Map<string, ReadonlyArray<string> | string>;
   /**
+   * Whether the viewability tracking pixel has been fired.
+   */
+  isViewabilityTracked: ComputedRef<boolean>;
+  /**
+   * Whether the impression tracking pixel has been fired.
+   */
+  isImpressionTracked: ComputedRef<boolean>;
+  /**
+   * Ad object that is fetched from the API.
+   */
+  ad: Ref<Ad | null>;
+  /**
    * Renders the slot in the containing element. If no ad is provided, a new ad will be requested from the API.
    */
   render(ad?: Ad): Promise<HTMLElement>;
@@ -82,34 +114,6 @@ export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' |
    * Returns the rendered element.
    */
   getElement(): HTMLElement | null;
-  /**
-   * Returns the name of the slot.
-   */
-  getName(): string;
-  /**
-   * Returns the ad that is to be rendered in the slot or is currently rendered in the slot.
-   */
-  getAd(): Ad | null;
-  /**
-   * Sets the ad that is to be rendered in the slot. If the slot is in the viewport, the ad will be rendered immediately.
-   */
-  setAd(ad: Ad): Promise<void>;
-  /**
-   * Returns whether the viewability tracking pixel has been fired.
-   */
-  isViewabilityTracked(): boolean;
-  /**
-   * Returns whether the impression tracking pixel has been fired.
-   */
-  isImpressionTracked(): boolean;
-  /**
-   * Sets the format of the slot. This is used to change the format of the slot after it has been created.
-   */
-  setFormat(format: string): Promise<void>;
-  /**
-   * Returns the format of the slot.
-   */
-  getFormat(): string;
   /**
    * Removes the slot from the DOM and cleans up the slot instance.
    */

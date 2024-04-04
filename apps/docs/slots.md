@@ -20,7 +20,7 @@ If you know beforehand which slots are going to be on the page, you can pass the
 `createAdhese` function. This is particularly useful if you want to start the fetching process as soon as possible.
 
 ```js
-const adhese = await createAdhese({
+const adhese = createAdhese({
   account: 'your-account-id',
   initialSlots: [
     {
@@ -48,7 +48,7 @@ The SDK is also able to automatically find slots on the page and load them. Pass
 `createAdhese` function to enable this behaviour.
 
 ```js
-const adhese = await createAdhese({
+const adhese = createAdhese({
   account: 'your-account-id',
   findDomSlotsOnLoad: true,
 })
@@ -59,7 +59,7 @@ required to have a `data-format="YOUR_FORMAT"` attribute set on the element to k
 If after initialisation you want to rescan the DOM you can call the `findDomSlots` method on the Adhese instance.
 
 ```js
-const adhse = await createAdhese({
+const adhse = createAdhese({
   account: 'your-account-id',
 })
 
@@ -71,7 +71,7 @@ It is also possible to manually register slots. You can use the `addSlot` method
 slot.
 
 ```js
-const adhese = await createAdhese({
+const adhese = createAdhese({
   account: 'your-account-id',
 })
 
@@ -87,7 +87,7 @@ requests you can pass the `lazyLoad` option to the `addSlot` method. This will m
 element is in the viewport.
 
 ```js
-const adhese = await createAdhese({
+const adhese = createAdhese({
   account: 'your-account-id',
 })
 
@@ -103,7 +103,7 @@ If you want to fetch a different format for a specific device, you can pass an a
 of the `addSlot` with a format and a media query.
 
 ```js
-const adhese = await createAdhese({
+const adhese = createAdhese({
   account: 'your-account-id',
 })
 
@@ -130,7 +130,7 @@ The SDK supports different render modes. The render mode can be set on the slot 
 `addSlot` method.
 
 ```js
-const adhese = await createAdhese({
+const adhese = createAdhese({
   account: 'your-account-id',
 })
 

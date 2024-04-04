@@ -1,4 +1,4 @@
-import { type RefObject, useEffect, useRef, useState } from 'react';
+import { type RefObject, useEffect, useState } from 'react';
 import type { AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
 import { useAdhese } from './adheseContext';
 
@@ -12,31 +12,23 @@ export function useAdheseSlot(elementRef: RefObject<HTMLElement>, options: Omit<
   const [slot, setSlot] = useState<AdheseSlot | null>(null);
   const adhese = useAdhese();
 
-  const slotPromise = useRef<Promise<AdheseSlot> | null>(null);
-  const intermediateSlot = useRef<AdheseSlot | null>(null);
-
   useEffect(() => {
-    if (elementRef.current && adhese && !slotPromise.current) {
-      slotPromise.current = adhese.addSlot({
-        ...options,
-        containingElement: elementRef.current,
-      }).then((fetchedSlot) => {
-        intermediateSlot.current = fetchedSlot;
+    let intermediate: AdheseSlot | undefined;
 
-        slotPromise.current = null;
+    if (adhese && elementRef.current) {
+      intermediate = adhese.add(
+        {
+          ...options,
+          containingElement: elementRef.current,
+        },
+      );
 
-        setSlot(fetchedSlot);
-
-        return fetchedSlot;
-      }).catch((error) => {
-        throw error;
-      });
+      setSlot(intermediate);
     }
-
     return () => {
-      intermediateSlot.current?.dispose();
+      intermediate?.dispose();
     };
-  }, [adhese, options]);
+  }, [adhese, options, elementRef.current]);
 
   return slot;
 }

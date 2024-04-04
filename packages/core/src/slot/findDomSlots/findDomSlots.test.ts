@@ -6,16 +6,15 @@ import { findDomSlots } from './findDomSlots';
 describe('findDomSlots', () => {
   let context: AdheseContext;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     context = testContext;
 
-    const mockedSlot = await createSlot({
+    const mockedSlot = createSlot({
       format: 'leaderboard',
       containingElement: 'leaderboard',
       context,
     });
 
-    // eslint-disable-next-line require-atomic-updates
     context.getAll = vi.fn(() => [mockedSlot]);
   });
 

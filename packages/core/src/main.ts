@@ -1,11 +1,13 @@
 import { createEventManager } from '@utils';
 import { type AdheseSlot, type AdheseSlotOptions, logger, requestAd, requestAds } from '@core';
 import { createDevtools } from '@adhese/sdk-devtools';
+import { effectScope, reactive, watch } from '@vue/runtime-core';
 import { createSlotManager } from './slot/slotManager/slotManager';
 import { onTcfConsentChange } from './consent/tcfConsent';
 import { createQueryDetector } from './queryDetector/queryDetector';
 import { createParameters, isPreviewMode, setupLogging } from './main.utils';
 import type { Adhese, AdheseContext, AdheseOptions, MergedOptions } from './main.types';
+import { onInit, runOnInit } from './hooks/onInit';
 
 /**
  * Creates an Adhese instance. This instance is your main entry point to the Adhese API.
@@ -29,216 +31,236 @@ import type { Adhese, AdheseContext, AdheseOptions, MergedOptions } from './main
  *
  * @return Promise<Adhese> The Adhese instance.
  */
-export async function createAdhese(options: AdheseOptions): Promise<Readonly<Adhese>> {
-  const mergedOptions = {
-    host: `https://ads-${options.account}.adhese.com`,
-    poolHost: `https://pool-${options.account}.adhese.com`,
-    location: 'homepage',
-    requestType: 'POST',
-    debug: false,
-    initialSlots: [],
-    findDomSlotsOnLoad: false,
-    consent: false,
-    logReferrer: true,
-    logUrl: true,
-    eagerRendering: false,
-    viewabilityTracking: true,
-    ...options,
-  } satisfies MergedOptions;
-  setupLogging(mergedOptions);
+export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
+  const scope = effectScope();
 
-  const context = new Proxy<AdheseContext>({
-    location: mergedOptions.location,
-    consent: mergedOptions.consent,
-    debug: mergedOptions.debug,
-    getAll,
-    get,
-    options: mergedOptions,
-    logger,
-  }, {});
+  return scope.run(() => {
+    const mergedOptions = {
+      host: `https://ads-${options.account}.adhese.com`,
+      poolHost: `https://pool-${options.account}.adhese.com`,
+      location: 'homepage',
+      requestType: 'POST',
+      debug: false,
+      initialSlots: [],
+      findDomSlotsOnLoad: false,
+      consent: false,
+      logReferrer: true,
+      logUrl: true,
+      eagerRendering: false,
+      viewabilityTracking: true,
+      ...options,
+    } satisfies MergedOptions;
+    setupLogging(mergedOptions);
 
-  context.events = createEventManager();
+    const context = reactive({
+      location: mergedOptions.location,
+      consent: mergedOptions.consent,
+      debug: mergedOptions.debug,
+      getAll,
+      get,
+      options: mergedOptions,
+      logger,
+    }) as AdheseContext;
 
-  function getLocation(): typeof context.location {
-    return context.location;
-  }
+    context.events = createEventManager();
 
-  function setLocation(newLocation: string): void {
-    context.location = newLocation;
-    context.events?.locationChange.dispatch(newLocation);
-  }
+    function getLocation(): typeof context.location {
+      return context.location;
+    }
 
-  const queryDetector = createQueryDetector({
-    onChange: onQueryChange,
-    queries: mergedOptions.queries,
-  });
+    function setLocation(newLocation: string): void {
+      context.location = newLocation;
+      context.events?.locationChange.dispatch(newLocation);
+    }
 
-  context.parameters = createParameters(mergedOptions, queryDetector);
-  context.parameters.addEventListener(onParametersChange);
+    const queryDetector = createQueryDetector({
+      onChange: onQueryChange,
+      queries: mergedOptions.queries,
+    });
 
-  let unmountDevtools: (() => void) | undefined;
-  if (mergedOptions.debug || window.location.search.includes('adhese_debug=true') || isPreviewMode()) {
-    unmountDevtools = await createDevtools(context);
-    context.events?.debugChange.dispatch(true);
-  }
+    context.parameters = createParameters(mergedOptions, queryDetector);
 
-  function onParametersChange(): void {
-    if (context.parameters)
-      context.events?.parametersChange.dispatch(context.parameters);
-  }
+    watch(
+      context.parameters,
+      onParametersChange,
+      {
+        deep: true,
+        immediate: true,
+      },
+    );
 
-  async function onQueryChange(): Promise<void> {
-    const query = queryDetector.getQuery();
-    context.parameters?.set('dt', query);
-    context.parameters?.set('br', query);
+    function onParametersChange(): void {
+      if (context.parameters)
+        context.events?.parametersChange.dispatch(context.parameters);
+    }
 
-    await fetchAndRenderAllSlots();
-  }
+    async function onQueryChange(): Promise<void> {
+      const query = queryDetector.getQuery();
+      context.parameters?.set('dt', query);
+      context.parameters?.set('br', query);
 
-  function getConsent(): typeof context.consent {
-    return context.consent;
-  }
+      await fetchAndRenderAllSlots();
+    }
 
-  function setConsent(newConsent: boolean): void {
-    context.parameters?.set('tl', newConsent ? 'all' : 'none');
-    context.consent = newConsent;
+    function getConsent(): typeof context.consent {
+      return context.consent;
+    }
 
-    context.events?.consentChange.dispatch(newConsent);
-  }
+    function setConsent(newConsent: boolean): void {
+      context.parameters?.set('tl', newConsent ? 'all' : 'none');
+      context.consent = newConsent;
 
-  const slotManager = await createSlotManager({
-    initialSlots: mergedOptions.initialSlots,
-    context,
-  });
+      context.events?.consentChange.dispatch(newConsent);
+    }
 
-  function getAll(): ReadonlyArray<AdheseSlot> {
-    return slotManager.getAll();
-  }
+    const slotManager = createSlotManager({
+      initialSlots: mergedOptions.initialSlots,
+      context,
+    });
+    function getAll(): ReadonlyArray<AdheseSlot> {
+      return slotManager.getAll() ?? [];
+    }
 
-  function get(name: string): AdheseSlot | undefined {
-    return slotManager.get(name);
-  }
+    function get(name: string): AdheseSlot | undefined {
+      return slotManager.get(name);
+    }
 
-  async function addSlot(slotOptions: AdheseSlotOptions): Promise<Readonly<AdheseSlot>> {
-    const slot = await slotManager.add(slotOptions);
+    async function addSlot(slotOptions: AdheseSlotOptions): Promise<Readonly<AdheseSlot>> {
+      if (!slotManager)
+        throw new Error('Slot manager not initialized');
 
-    if (!slot.lazyLoading) {
-      const ad = await requestAd({
-        slot,
-        host: mergedOptions.host,
-        parameters: context.parameters,
-        account: mergedOptions.account,
+      const slot = slotManager.add(slotOptions);
+
+      if (!slot.lazyLoading) {
+        slot.ad.value = await requestAd({
+          slot,
+          context,
+        });
+      }
+
+      return slot;
+    }
+
+    async function findDomSlots(): Promise<ReadonlyArray<AdheseSlot>> {
+      const domSlots = (await slotManager.findDomSlots() ?? []).filter(slot => !slot.lazyLoading);
+
+      if (domSlots.length <= 0)
+        return [];
+
+      const ads = await requestAds({
+        slots: domSlots,
         context,
       });
 
-      await slot.setAd(ad);
+      for (const ad of ads) {
+        const slot = slotManager.get(ad.slotName);
+
+        if (slot)
+          slot.ad.value = ad;
+      }
+
+      return domSlots;
     }
 
-    return slot;
-  }
+    let unmountDevtools: (() => void) | undefined;
 
-  async function findDomSlots(): Promise<ReadonlyArray<AdheseSlot>> {
-    const domSlots = (await slotManager.findDomSlots()).filter(slot => !slot.lazyLoading);
+    async function toggleDebug(): Promise<boolean> {
+      context.debug = !context.debug;
 
-    const ads = await requestAds({
-      host: mergedOptions.host,
-      slots: domSlots,
-      method: mergedOptions.requestType,
-      account: mergedOptions.account,
-      parameters: context.parameters,
-      context,
-    });
-
-    await Promise.allSettled(ads.map(ad => slotManager.get(ad.slotName)?.setAd(ad)));
-
-    return domSlots;
-  }
-
-  async function toggleDebug(): Promise<boolean> {
-    context.debug = !context.debug;
-
-    if (context.debug && !unmountDevtools) {
+      if (context.debug && !unmountDevtools) {
       // eslint-disable-next-line require-atomic-updates
-      unmountDevtools = await createDevtools(context);
-      logger.setMinLogLevelThreshold('debug');
-      logger.debug('Debug mode enabled');
-      context.events?.debugChange.dispatch(true);
+        unmountDevtools = await createDevtools(context);
+        logger.setMinLogLevelThreshold('debug');
+        logger.debug('Debug mode enabled');
+        context.events?.debugChange.dispatch(true);
+      }
+      else {
+        logger.debug('Debug mode disabled');
+        unmountDevtools?.();
+        unmountDevtools = undefined;
+        logger.setMinLogLevelThreshold('info');
+        context.events?.debugChange.dispatch(false);
+      }
+
+      return context.debug;
     }
-    else {
-      logger.debug('Debug mode disabled');
+
+    async function fetchAndRenderAllSlots(): Promise<void> {
+      const slots = (slotManager.getAll() ?? []).filter(slot => !slot.lazyLoading);
+
+      if (slots.length === 0)
+        return;
+
+      const ads = await requestAds({
+        slots,
+        context,
+      });
+
+      for (const ad of ads) {
+        const slot = slotManager.get(ad.slotName);
+
+        if (slot)
+          slot.ad.value = ad;
+      }
+    }
+
+    const disposeOnTcfConsentChange = onTcfConsentChange(async (data) => {
+      if (!data.tcString)
+        return;
+
+      logger.debug('TCF v2 consent data received', {
+        data,
+      });
+
+      context.parameters?.set('xt', data.tcString);
+      context.parameters?.delete('tl');
+
+      await fetchAndRenderAllSlots();
+    });
+
+    function dispose(): void {
       unmountDevtools?.();
-      unmountDevtools = undefined;
-      logger.setMinLogLevelThreshold('info');
-      context.events?.debugChange.dispatch(false);
+      queryDetector.dispose();
+      slotManager.dispose();
+      queryDetector.dispose();
+      disposeOnTcfConsentChange();
+      context.parameters?.clear();
+      logger.resetLogs();
+      context.events?.dispose();
+      logger.info('Adhese instance disposed');
+
+      scope.stop();
     }
 
-    return context.debug;
-  }
+    onInit(async () => {
+      if ((slotManager.getAll().length ?? 0) > 0)
+        await fetchAndRenderAllSlots().catch(logger.error);
 
-  async function fetchAndRenderAllSlots(): Promise<void> {
-    const slots = slotManager.getAll().filter(slot => !slot.lazyLoading);
+      if (mergedOptions.findDomSlotsOnLoad)
+        await findDomSlots();
 
-    if (slots.length === 0)
-      return;
+      if (mergedOptions.debug || window.location.search.includes('adhese_debug=true') || isPreviewMode()) {
+        unmountDevtools = await createDevtools(context);
+        context.events?.debugChange.dispatch(true);
+      }
+    });
 
-    const ads = await requestAds({
-      host: mergedOptions.host,
-      slots,
-      method: mergedOptions.requestType,
-      account: mergedOptions.account,
+    runOnInit();
+
+    return {
+      ...mergedOptions,
+      ...slotManager,
       parameters: context.parameters,
+      events: context.events,
+      getLocation,
+      setLocation,
+      getConsent,
+      setConsent,
+      addSlot,
+      findDomSlots,
+      dispose,
+      toggleDebug,
       context,
-    });
-
-    await Promise.allSettled(ads.map(ad => slotManager.get(ad.slotName)?.setAd(ad)));
-  }
-
-  const disposeOnTcfConsentChange = onTcfConsentChange(async (data) => {
-    if (!data.tcString)
-      return;
-
-    logger.debug('TCF v2 consent data received', {
-      data,
-    });
-
-    context.parameters?.set('xt', data.tcString);
-    context.parameters?.delete('tl');
-
-    await fetchAndRenderAllSlots();
-  });
-
-  if (slotManager.getAll().length > 0)
-    await fetchAndRenderAllSlots().catch(logger.error);
-
-  function dispose(): void {
-    queryDetector.dispose();
-    slotManager.dispose();
-    queryDetector.dispose();
-    disposeOnTcfConsentChange();
-    context.parameters?.dispose();
-    context.parameters?.clear();
-    logger.resetLogs();
-    context.events?.dispose();
-    unmountDevtools?.();
-    logger.info('Adhese instance disposed');
-  }
-
-  if (mergedOptions.findDomSlotsOnLoad)
-    await slotManager.findDomSlots();
-
-  return {
-    ...mergedOptions,
-    ...slotManager,
-    parameters: context.parameters,
-    events: context.events,
-    getLocation,
-    setLocation,
-    getConsent,
-    setConsent,
-    addSlot,
-    findDomSlots,
-    dispose,
-    toggleDebug,
-    context,
-  };
+    } satisfies Adhese;
+  })!;
 }

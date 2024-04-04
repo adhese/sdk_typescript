@@ -1,5 +1,6 @@
 import type { Merge } from '@utils';
 import { type AdheseContext, type AdheseSlot, type AdheseSlotOptions, createSlot, logger } from '@core';
+import { effectScope, shallowReactive, watch, watchEffect } from '@vue/runtime-core';
 import { findDomSlots as extFindDomSlots } from '../findDomSlots/findDomSlots';
 
 export type SlotManager = {
@@ -10,7 +11,7 @@ export type SlotManager = {
   /**
    * Adds a new slot to the Adhese instance and renders it.
    */
-  add(slot: Omit<AdheseSlotOptions, 'context'>): Promise<Readonly<AdheseSlot>>;
+  add(slot: Omit<AdheseSlotOptions, 'context'>): Readonly<AdheseSlot>;
   /**
    * Finds all slots in the DOM and adds them to the Adhese instance.
    */
@@ -35,89 +36,92 @@ export type SlotManagerOptions = {
   context: AdheseContext;
 };
 
-export async function createSlotManager({
+export function createSlotManager({
   initialSlots = [],
   context,
-}: SlotManagerOptions): Promise<Readonly<SlotManager>> {
-  const slots = new Map<string, AdheseSlot>();
+}: SlotManagerOptions): Readonly<SlotManager> {
+  const scope = effectScope();
 
-  await Promise.allSettled(initialSlots.map(async slot => add({
-    ...slot,
-    lazyLoading: false,
-  })));
+  return scope.run(() => {
+    const slots = shallowReactive<Map<string, AdheseSlot>>(new Map<string, AdheseSlot>());
 
-  function getAll(): ReadonlyArray<AdheseSlot> {
-    return Array.from(slots).map(([, slot]) => slot);
-  }
-
-  async function add(options: Omit<AdheseSlotOptions, 'context' | 'onDispose' | 'onNameChange'>): Promise<Readonly<AdheseSlot>> {
-    const slot = await createSlot({
-      ...options as AdheseSlotOptions,
-      onDispose,
-      onNameChange,
-      context,
+    watchEffect(() => {
+      context.events?.changeSlots.dispatch(Array.from(slots.values()));
     });
 
-    function onDispose(): void {
-      slots.delete(slot.getName());
-      logger.debug('Slot removed', {
-        slot,
-        slots: Array.from(slots),
+    function getAll(): ReadonlyArray<AdheseSlot> {
+      return Array.from(slots).map(([, slot]) => slot);
+    }
+
+    function add(options: Omit<AdheseSlotOptions, 'context' | 'onDispose' | 'onNameChange'>): Readonly<AdheseSlot> {
+      const slot = createSlot({
+        ...options as AdheseSlotOptions,
+        onDispose,
+        context,
       });
-      context.events?.removeSlot.dispatch(slot);
-      context.events?.changeSlots.dispatch(Array.from(slots.values()));
+
+      function onDispose(): void {
+        slots.delete(slot.name.value);
+        logger.debug('Slot removed', {
+          slot,
+          slots: Array.from(slots),
+        });
+        context.events?.removeSlot.dispatch(slot);
+      }
+
+      slots.set(slot.name.value, slot);
+
+      watch(slot.name, (newName, previousName) => {
+        slots.set(newName, slot);
+        slots.delete(previousName);
+      });
+
+      logger.debug('Slot added', {
+        slot,
+        slots: Array.from(slots.values()),
+      });
+
+      context.events?.addSlot.dispatch(slot);
+
+      return slot;
     }
 
-    slots.set(slot.getName(), slot);
+    async function findDomSlots(): Promise<ReadonlyArray<AdheseSlot>> {
+      const domSlots = await extFindDomSlots(
+        context,
+      );
 
-    function onNameChange(newName: string, previousName: string): void {
-      slots.set(newName, slot);
-      slots.delete(previousName);
+      for (const slot of domSlots)
+        slots.set(slot.name.value, slot);
 
-      context.events?.changeSlots.dispatch(Array.from(slots.values()));
+      return domSlots;
     }
 
-    logger.debug('Slot added', {
-      slot,
-      slots: Array.from(slots.values()),
-    });
-
-    context.events?.addSlot.dispatch(slot);
-    context.events?.changeSlots.dispatch(Array.from(slots.values()));
-
-    return slot;
-  }
-
-  async function findDomSlots(): Promise<ReadonlyArray<AdheseSlot>> {
-    const domSlots = await extFindDomSlots(
-      context,
-    );
-
-    for (const slot of domSlots) {
-      slots.set(slot.getName(), slot);
-      context.events?.changeSlots.dispatch(Array.from(slots.values()));
+    function get(name: string): AdheseSlot | undefined {
+      return slots.get(name);
     }
 
-    return domSlots;
-  }
+    function dispose(): void {
+      for (const slot of slots.values())
+        slot.dispose();
 
-  function get(name: string): AdheseSlot | undefined {
-    return slots.get(name);
-  }
+      slots.clear();
+      scope.stop();
+    }
 
-  function dispose(): void {
-    for (const slot of slots.values())
-      slot.dispose();
+    for (const options of initialSlots) {
+      add({
+        ...options,
+        lazyLoading: false,
+      });
+    }
 
-    slots.clear();
-    context.events?.changeSlots.dispatch(Array.from(slots.values()));
-  }
-
-  return {
-    getAll,
-    add,
-    findDomSlots,
-    get,
-    dispose,
-  };
+    return {
+      getAll,
+      add,
+      findDomSlots,
+      get,
+      dispose,
+    };
+  })!;
 }

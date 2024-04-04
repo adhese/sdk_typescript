@@ -1,5 +1,5 @@
-import type { UrlString } from '@utils';
-import { type Adhese, type AdheseSlot, logger } from '@core';
+import { type AdheseContext, logger } from '@core';
+import type { MaybeRef } from '@vue/runtime-core';
 import { type Ad, parseResponse } from './requestAds.schema';
 import { requestPreviews } from './requestAds.preview';
 import { requestWithGet, requestWithPost } from './requestAds.utils';
@@ -8,46 +8,28 @@ export type AdRequestOptions = {
   /**
    * List of slots you want to fetch the ad for
    */
-  slots: ReadonlyArray<Pick<AdheseSlot, 'getName' | 'parameters'>>;
-  /**
-   * Host that you want to fetch the ads from
-   */
-  host: UrlString;
-  /**
-   * The Adhese account name.
-   */
-  account: string;
-  /**
-   * Request method to use for the requestAds
-   *
-   * @default 'POST'
-   */
-  method?: 'GET' | 'POST' | 'get' | 'post';
-  /**
-   * The parameters that are used for all ads.
-   */
-  parameters?: Map<string, ReadonlyArray<string> | string>;
-  context: Partial<Adhese>;
+  slots: ReadonlyArray<{
+    name: MaybeRef<string>;
+    parameters: Map<string, ReadonlyArray<string> | string>;
+  }>;
+  context: AdheseContext;
 };
 
 /**
  * Request multiple ads at once from the API
  */
-export async function requestAds({
-  method = 'POST',
-  context,
-  ...options
-}: AdRequestOptions): Promise<ReadonlyArray<Ad>> {
+export async function requestAds(options: AdRequestOptions): Promise<ReadonlyArray<Ad>> {
+  const { context } = options;
+
   try {
     context.events?.requestAd.dispatch({
       ...options,
       context,
-      method,
     });
 
-    const [response, previews] = await Promise.all([method?.toUpperCase() === 'POST'
+    const [response, previews] = await Promise.all([context.options.requestType?.toUpperCase() === 'POST'
       ? requestWithPost(options)
-      : requestWithGet(options), requestPreviews(options.account)]);
+      : requestWithGet(options), requestPreviews(context.options.account)]);
 
     logger.debug('Received response', response);
 
@@ -99,7 +81,7 @@ export async function requestAd({
   slot,
   ...options
 }: Omit<AdRequestOptions, 'slots'> & {
-  slot: Pick<AdheseSlot, 'getName' | 'parameters'>;
+  slot: AdRequestOptions['slots'][number];
 }): Promise<Ad> {
   const [ad] = await requestAds({
     slots: [slot],
