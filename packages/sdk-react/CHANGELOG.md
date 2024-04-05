@@ -1,5 +1,14 @@
 # @adhese/sdk-react
 
+## 0.5.1
+
+### Patch Changes
+
+- a211689: Fix issue where the transformed ad was sent again to the onBeforeRender callback making subsequent transforms not possible
+- Updated dependencies [a211689]
+- Updated dependencies [7fc299d]
+  - @adhese/sdk@0.5.1
+
 ## 0.5.0
 
 ### Minor Changes

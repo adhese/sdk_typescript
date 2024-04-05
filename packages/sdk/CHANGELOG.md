@@ -1,5 +1,13 @@
 # @adhese/sdk
 
+## 0.5.1
+
+### Patch Changes
+
+- a211689: Fix issue where the transformed ad was sent again to the onBeforeRender callback making subsequent transforms not possible
+- 7fc299d: Fix issue where onInit was executed multiple times
+  - @adhese/sdk-devtools@0.5.1
+
 ## 0.5.0
 
 ### Minor Changes
