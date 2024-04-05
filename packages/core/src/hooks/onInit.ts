@@ -8,12 +8,14 @@ const waitOnInit = new Promise<void>((resolve) => {
 });
 
 const [runOnInit, onInit] = createHook({
-  onRun() {
+  onRun(callbacks) {
     isInit = true;
 
     resolveOnInitPromise();
 
     logger.debug('Initialization completed');
+
+    callbacks.clear();
   },
   onAdd() {
     if (isInit)

@@ -3,8 +3,8 @@ export function createHook<T extends Function>(
     onRun,
     onAdd,
   }: {
-    onRun?(): void;
-    onAdd?(): void;
+    onRun?(callbacks: Set<T>): void;
+    onAdd?(callbacks: Set<T>): void;
   },
 ): [() => void, (callback: T) => void] {
   const callbacks = new Set<T>();
@@ -13,13 +13,13 @@ export function createHook<T extends Function>(
     for (const callback of callbacks)
       callback();
 
-    onRun?.();
+    onRun?.(callbacks);
   }
 
   function add(callback: T): void {
     callbacks.add(callback);
 
-    onAdd?.();
+    onAdd?.(callbacks);
   }
 
   return [run, add];

@@ -241,8 +241,12 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
 
       if (mergedOptions.debug || window.location.search.includes('adhese_debug=true') || isPreviewMode()) {
         unmountDevtools = await createDevtools(context);
+
         context.events?.debugChange.dispatch(true);
       }
+
+      if (!scope.active)
+        dispose();
     });
 
     runOnInit();
