@@ -1,4 +1,4 @@
-import { type Ad, logger, requestAd } from '@core';
+import { type Ad, requestAd as extRequestAd, logger } from '@core';
 import { waitForDomLoad } from '@utils';
 import { type Ref, computed, effectScope, reactive, ref, watch } from '@vue/runtime-core';
 import { isEqual } from 'lodash-es';
@@ -44,6 +44,7 @@ export function createSlot(options: AdheseSlotOptions): Readonly<AdheseSlot> {
     }
 
     const ad = ref<Ad | null>(null);
+    const originalAd = ref(ad.value);
 
     const name = computed(() => generateName(context.location, format.value, slot));
     watch(name, async (newName, oldName) => {
@@ -52,17 +53,12 @@ export function createSlot(options: AdheseSlotOptions): Readonly<AdheseSlot> {
 
       options.onNameChange?.(newName, oldName);
 
-      const newAd = await requestAd({
-        slot: {
-          name: newName,
-          parameters,
-        },
-        context,
-      });
+      const newAd = await requestAd();
 
       cleanElement();
 
       ad.value = newAd;
+      originalAd.value = newAd;
     });
 
     const isDomLoaded = useDomLoaded();
@@ -120,20 +116,29 @@ export function createSlot(options: AdheseSlotOptions): Readonly<AdheseSlot> {
     const impressionTrackingPixelElement = ref<HTMLImageElement | null>(null);
     const isImpressionTracked = computed(() => Boolean(impressionTrackingPixelElement.value));
 
-    async function render(adToRender?: Ad): Promise<HTMLElement> {
-      await waitForDomLoad();
-
-      // eslint-disable-next-line require-atomic-updates
-      ad.value = adToRender ?? ad.value ?? await requestAd({
+    async function requestAd(): Promise<Ad> {
+      const response = await extRequestAd({
         slot: {
-          name,
+          name: name.value,
           parameters,
         },
         context,
       });
 
-      // eslint-disable-next-line require-atomic-updates
-      ad.value = options.onBeforeRender?.(ad.value) ?? ad.value;
+      originalAd.value = response;
+
+      return response;
+    }
+
+    async function render(adToRender?: Ad): Promise<HTMLElement> {
+      await waitForDomLoad();
+
+      const renderAd = adToRender ?? ad.value ?? await requestAd();
+
+      if (originalAd.value) {
+        // eslint-disable-next-line require-atomic-updates
+        ad.value = options.onBeforeRender?.(adToRender ?? originalAd.value) ?? renderAd;
+      }
 
       if (!element.value) {
         const error = `Could not create slot for format ${format.value}. No element found.`;
@@ -144,10 +149,10 @@ export function createSlot(options: AdheseSlotOptions): Readonly<AdheseSlot> {
       if (context.debug)
         element.value.style.position = 'relative';
 
-      renderFunctions[renderMode](ad.value, element.value);
+      renderFunctions[renderMode](renderAd, element.value);
 
-      if (ad.value?.impressionCounter && !impressionTrackingPixelElement.value) {
-        impressionTrackingPixelElement.value = addTrackingPixel(ad.value?.impressionCounter);
+      if (renderAd.impressionCounter && !impressionTrackingPixelElement.value) {
+        impressionTrackingPixelElement.value = addTrackingPixel(renderAd.impressionCounter);
 
         logger.debug(`Impression tracking pixel fired for ${name.value}`);
       }

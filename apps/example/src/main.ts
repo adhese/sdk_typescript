@@ -38,6 +38,9 @@ async function app(): Promise<void> {
             };
           };
         }>): Ad<string> {
+          if (typeof ad.tag === 'string')
+            return ad as Ad<string>;
+
           const heading = ad.tag.native.assets.find(asset => asset.id === 1)?.title?.text;
           const image = ad.tag.native.assets.find(asset => asset.id === 3)?.img;
           const backgroundColor = ad.tag.native.assets.find(asset => asset.id === 6)?.data?.value;

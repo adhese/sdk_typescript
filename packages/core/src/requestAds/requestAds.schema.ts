@@ -170,7 +170,7 @@ export type PreParsedAd = TypeOf<typeof adResponseSchema> & {
 };
 
 export type Ad<T = string | Record<string, unknown> | ReadonlyArray<unknown>> = Omit<PreParsedAd, 'tag'> & {
-  tag: T;
+  tag: T | string;
 };
 
 export const adSchema: ZodType<PreParsedAd> = adResponseSchema.transform(({
