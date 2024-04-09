@@ -27,6 +27,7 @@
     "@adhese/sdk": "^0.5.1",
     "lodash-es": "^4.17.21",
     "react": "^18.0.2",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "use-deep-compare-effect": "^1.8.1"
   }
 }

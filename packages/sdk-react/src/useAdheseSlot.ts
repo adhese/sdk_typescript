@@ -1,5 +1,7 @@
-import { type RefObject, useEffect, useState } from 'react';
+import { type RefObject, useState } from 'react';
 import type { AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
+import useDeepCompareEffect from 'use-deep-compare-effect';
+import { omit } from 'lodash-es';
 import { useAdhese } from './adheseContext';
 
 /**
@@ -12,7 +14,7 @@ export function useAdheseSlot(elementRef: RefObject<HTMLElement>, options: Omit<
   const [slot, setSlot] = useState<AdheseSlot | null>(null);
   const adhese = useAdhese();
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     let intermediate: AdheseSlot | undefined;
 
     if (adhese && elementRef.current) {
@@ -25,10 +27,11 @@ export function useAdheseSlot(elementRef: RefObject<HTMLElement>, options: Omit<
 
       setSlot(intermediate);
     }
+
     return () => {
       intermediate?.dispose();
     };
-  }, [adhese, options, elementRef.current]);
+  }, [adhese, omit(options, Object.entries(options).filter(([, value]) => typeof value === 'function').map(([key]) => key)), elementRef.current]);
 
   return slot;
 }
