@@ -1,5 +1,11 @@
 # @adhese/docs
 
+## 0.5.2
+
+### Patch Changes
+
+- a7b4c6c: Fix outdated example in react-sdk docs
+
 ## 0.5.1
 
 ## 0.5.0

@@ -1,5 +1,12 @@
 # @adhese/sdk-react
 
+## 0.5.2
+
+### Patch Changes
+
+- f594b82: Fix issue where useAdheseSlot would land in an infinite loop without the options being wrapped in a useMemo
+  - @adhese/sdk@0.5.2
+
 ## 0.5.1
 
 ### Patch Changes
