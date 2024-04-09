@@ -66,12 +66,14 @@ import { useAdheseSlot } from '@adhese/sdk-react';
 
 function YourComponent() {
   const adhese = useAdhese();
-  const slot = useAdheseSlot('your-slot-name', {
+  const elementRef = useRef(null);
+
+  const slot = useAdheseSlot(elementRef, {
     format: 'your-format',
   });
 
   return (
-    <div ref={slot.elementRef} />
+    <div ref={elementRef} />
   );
 }
 ```
