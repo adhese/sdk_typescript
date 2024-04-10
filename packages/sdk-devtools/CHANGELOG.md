@@ -1,5 +1,11 @@
 # @adhese/sdk-devtools
 
+## 0.6.0
+
+### Patch Changes
+
+- 9c80d57: Update dependencies
+
 ## 0.5.2
 
 ## 0.5.1

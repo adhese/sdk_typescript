@@ -4,6 +4,15 @@
 
 ### Patch Changes
 
+- Updated dependencies [9c80d57]
+- Updated dependencies [41b0dd8]
+  - @adhese/sdk-devtools@0.6.0
+  - @adhese/sdk@0.6.0
+
+## null
+
+### Patch Changes
+
 - Updated dependencies [d7f6111]
 - Updated dependencies [a666b90]
 - Updated dependencies [eac9754]
