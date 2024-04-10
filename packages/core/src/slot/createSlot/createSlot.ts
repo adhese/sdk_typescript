@@ -4,7 +4,7 @@ import { type Ref, computed, effectScope, reactive, ref, watch } from '@vue/runt
 import { isEqual } from 'lodash-es';
 import { addTrackingPixel } from '../../impressionTracking/impressionTracking';
 import { type QueryDetector, createQueryDetector } from '../../queryDetector/queryDetector';
-import { onInit } from '../../hooks/onInit';
+import { onInit, waitOnInit } from '../../hooks/onInit';
 import type { AdheseSlot, AdheseSlotOptions, RenderMode } from './createSlot.types';
 import { generateName, renderIframe, renderInline } from './createSlot.utils';
 import { useViewabilityObserver } from './useViewabilityObserver';
@@ -95,11 +95,6 @@ export function createSlot(options: AdheseSlotOptions): Readonly<AdheseSlot> {
       if (newIsInViewport || context.options.eagerRendering)
         await render(newAd);
 
-      if (element.value) {
-        element.value.style.width = `${newAd.width}px`;
-        element.value.style.height = `${newAd.height}px`;
-      }
-
       context.events?.changeSlots.dispatch(Array.from(context.getAll?.() ?? []));
     });
 
@@ -132,6 +127,7 @@ export function createSlot(options: AdheseSlotOptions): Readonly<AdheseSlot> {
 
     async function render(adToRender?: Ad): Promise<HTMLElement> {
       await waitForDomLoad();
+      await waitOnInit;
 
       const renderAd = adToRender ?? ad.value ?? await requestAd();
 
@@ -149,7 +145,14 @@ export function createSlot(options: AdheseSlotOptions): Readonly<AdheseSlot> {
       if (context.debug)
         element.value.style.position = 'relative';
 
-      renderFunctions[renderMode](renderAd, element.value);
+      if (context.safeFrame && ad.value && renderMode === 'iframe') {
+        const position = context.safeFrame.addPosition(ad.value, element.value);
+
+        await context.safeFrame.render(position);
+      }
+      else {
+        renderFunctions[renderMode](renderAd, element.value);
+      }
 
       if (renderAd.impressionCounter && !impressionTrackingPixelElement.value) {
         impressionTrackingPixelElement.value = addTrackingPixel(renderAd.impressionCounter);

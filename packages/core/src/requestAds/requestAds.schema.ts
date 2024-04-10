@@ -114,8 +114,8 @@ const baseSchema = object({
     mediaType: string(),
     prebid: unknown().optional(),
   }).optional(),
-  height: cssValueLike.optional(),
-  id: string().optional(),
+  height: numberLike.optional(),
+  id: string(),
   impressionCounter: urlLike.optional(),
   libId: string().optional(),
   orderId: string().optional(),
@@ -127,6 +127,7 @@ const baseSchema = object({
   poolPath: urlLike.optional(),
   preview: booleanLike.optional(),
   priority: numberLike.optional(),
+  sfSrc: urlLike.optional(),
   share: string().optional(),
   // eslint-disable-next-line ts/naming-convention
   slotID: string(),
@@ -140,7 +141,7 @@ const baseSchema = object({
   trackingUrl: urlLike.optional(),
   url: urlLike.optional(),
   viewableImpressionCounter: urlLike.optional(),
-  width: cssValueLike.optional(),
+  width: numberLike.optional(),
   widthLarge: cssValueLike.optional(),
 });
 

@@ -1,5 +1,6 @@
 /* v8 ignore start */
 import type { EventManager, Merge, UrlString } from '@utils';
+import type { SafeFrame } from '@safeframe';
 import type { SlotManager, SlotManagerOptions } from './slot/slotManager/slotManager';
 import type { AdheseSlot, AdheseSlotOptions } from './slot/createSlot/createSlot.types';
 import type { Ad } from './requestAds/requestAds.schema';
@@ -85,6 +86,7 @@ export type AdheseOptions = {
    * The query detector options for the Adhese instance.
    */
   queries?: Record<string, string>;
+  safeFrame?: boolean;
 } & ({
   viewabilityTracking?: true;
   /**
@@ -196,4 +198,5 @@ export type AdheseContext = Partial<Pick<Adhese, 'events' | 'getAll' | 'get' | '
   options: Readonly<MergedOptions>;
   logger: typeof logger;
   debug: boolean;
+  safeFrame?: SafeFrame;
 };

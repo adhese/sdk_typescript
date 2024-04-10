@@ -18,6 +18,7 @@ export const adPreviewRequestHandlers = [
       tag: '<a>preview</a>',
       libId: 'foo-bar',
       origin: 'JERLICIA',
+      id: 'foo-bar',
     }]));
   }),
 ];

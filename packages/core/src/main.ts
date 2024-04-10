@@ -2,6 +2,7 @@ import { createEventManager } from '@utils';
 import { type AdheseSlot, type AdheseSlotOptions, logger, requestAd, requestAds } from '@core';
 import { createDevtools } from '@adhese/sdk-devtools';
 import { effectScope, reactive, watch } from '@vue/runtime-core';
+import { createSafeFrame } from '@safeframe';
 import { createSlotManager } from './slot/slotManager/slotManager';
 import { onTcfConsentChange } from './consent/tcfConsent';
 import { createQueryDetector } from './queryDetector/queryDetector';
@@ -46,6 +47,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       consent: false,
       logReferrer: true,
       logUrl: true,
+      safeFrame: false,
       eagerRendering: false,
       viewabilityTracking: true,
       ...options,
@@ -63,6 +65,13 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
     }) as AdheseContext;
 
     context.events = createEventManager();
+
+    context.safeFrame = options.safeFrame
+      ? createSafeFrame({
+        renderFile: `${mergedOptions.poolHost}/sf/r.html`,
+        context,
+      })
+      : undefined;
 
     function getLocation(): typeof context.location {
       return context.location;

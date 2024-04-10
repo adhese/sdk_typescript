@@ -19,6 +19,7 @@ export default defineConfig({
       { text: 'Slots', link: '/slots' },
       { text: 'Events', link: '/events' },
       { text: 'Consent', link: '/consent' },
+      { text: 'Safeframe', link: '/safeframe' },
       { text: 'Devtools', link: '/devtools' },
       { text: 'React SDK', link: '/react-sdk' },
       {

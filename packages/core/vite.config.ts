@@ -29,6 +29,7 @@ export default defineConfig({
       '@core': `${path.resolve()}/src`,
       '@logger': `${path.resolve()}/../logger/src`,
       '@server-mocks': `${path.resolve()}/../server-mocks/src`,
+      '@safeframe': `${path.resolve()}/../safeframe/src`,
       '@adhese/sdk-devtools': `${path.resolve()}/../sdk-devtools/src`,
       /* eslint-enable ts/naming-convention */
     },

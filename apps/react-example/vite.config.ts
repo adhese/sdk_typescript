@@ -15,6 +15,7 @@ export default defineConfig({
       '@logger': `${path.resolve()}/../../packages/logger/src`,
       '@server-mocks': `${path.resolve()}/../../packages/server-mocks/src`,
       '@react-sdk': `${path.resolve()}/../../packages/sdk-react/src`,
+      '@safeframe': `${path.resolve()}/../../packages/safeframe/src`,
       '@adhese/sdk': `${path.resolve()}/../../packages/sdk/src`,
       '@adhese/sdk-devtools': `${path.resolve()}/../../packages/sdk-devtools/src`,
       '@adhese/sdk-react': `${path.resolve()}/../../packages/sdk-react/src`,

@@ -24,7 +24,7 @@
     "test": "turbo test --cache-dir=.turbo",
     "test:watch": "turbo test:watch",
     "lint": "eslint . --ignore-pattern apps --ignore-pattern packages --ignore-pattern **/*.md/**/* && turbo lint --cache-dir=.turbo",
-    "lint:fix": "eslint . --ignore-pattern apps --ignore-pattern packages --ignore-pattern **/*.md/**/* --fix && turbo lint:fix",
+    "lint:fix": "eslint . --ignore-pattern apps --ignore-pattern packages --ignore-pattern **/*.md/**/* --ignore-pattern **/*.md/**/* --fix && turbo lint:fix",
     "build": "turbo build --cache-dir=.turbo",
     "clean": "turbo clean",
     "preinstall": "npx only-allow npm",

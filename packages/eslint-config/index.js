@@ -4,7 +4,7 @@ export function createConfig(
   pathToRoot,
 ) {
   return antfu({
-    ignores: ['**/dist/**/*', '**/lib/**/*'],
+    ignores: ['**/dist/**/*', '**/lib/**/*', '**/vendor/**/*'],
     stylistic: {
       semi: true,
     },
