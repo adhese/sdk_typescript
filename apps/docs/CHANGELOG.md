@@ -1,5 +1,15 @@
 # @adhese/docs
 
+## 0.6.0
+
+### Minor Changes
+
+- 41b0dd8: Add support for IAB Safeframe
+
+### Patch Changes
+
+- 9c80d57: Update dependencies
+
 ## 0.5.2
 
 ### Patch Changes
