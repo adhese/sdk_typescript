@@ -66,6 +66,13 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
 
     context.events = createEventManager();
 
+    context.safeFrame = options.safeFrame
+      ? createSafeFrame({
+        renderFile: `${mergedOptions.poolHost}/sf/r.html`,
+        context,
+      })
+      : undefined;
+
     function getLocation(): typeof context.location {
       return context.location;
     }
@@ -235,12 +242,6 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
     }
 
     onInit(async () => {
-      context.safeFrame = options.safeFrame
-        ? await createSafeFrame({
-          renderFile: `${mergedOptions.poolHost}/sf/r.html`,
-        })
-        : undefined;
-
       if ((slotManager.getAll().length ?? 0) > 0)
         await fetchAndRenderAllSlots().catch(logger.error);
 

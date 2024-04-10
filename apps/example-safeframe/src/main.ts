@@ -75,6 +75,7 @@ async function app(): Promise<void> {
       },
     ],
     location: '_sdk_example_',
+    safeFrame: true,
   });
 
   window.adhese = adhese;
@@ -82,7 +83,6 @@ async function app(): Promise<void> {
   await adhese.addSlot({
     format: 'leaderboard',
     containingElement: 'leaderboard',
-    renderMode: 'inline',
   });
 
   await adhese.addSlot({

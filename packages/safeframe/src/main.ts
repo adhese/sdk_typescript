@@ -1,6 +1,6 @@
-import type { Ad } from '@core';
+import type { Ad, AdheseContext } from '@core';
 import { uniqueId } from 'lodash-es';
-import type { Config, Position, SafeFrameImplementation } from './main.types';
+import type { Config, Position } from './main.types';
 
 export type SafeFrame = {
   config: Config;
@@ -11,15 +11,14 @@ export type SafeFrame = {
 
 export type SafeFrameOptions = {
   renderFile: string;
+  context: AdheseContext;
 };
 
-export async function createSafeFrame({
+export function createSafeFrame({
   renderFile,
-}: SafeFrameOptions): Promise<SafeFrame> {
-  // @ts-expect-error - TS doesn't know about this module
-  await import('../vendor/sf');
-
-  const safeFrame = window.$sf as SafeFrameImplementation | undefined;
+  context,
+}: SafeFrameOptions): SafeFrame {
+  const safeFrame = window.$sf;
 
   if (!safeFrame)
     throw new Error('SafeFrame not found');
@@ -28,7 +27,7 @@ export async function createSafeFrame({
 
   const config = new safeFrame.host.Config({
     auto: false,
-    debug: true,
+    debug: context.debug,
     renderFile,
   });
 
@@ -48,7 +47,7 @@ export async function createSafeFrame({
     const position = new safeFrame.host.Position({
       id: elementId,
       html,
-      src: ad.swfSrc?.href,
+      src: ad.ext === 'js' ? ad.swfSrc?.href : undefined,
       config: new safeFrame.host.PosConfig({
         id: elementId,
         w: Number(ad.width),

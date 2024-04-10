@@ -114,7 +114,7 @@ const baseSchema = object({
     mediaType: string(),
     prebid: unknown().optional(),
   }).optional(),
-  height: cssValueLike.optional(),
+  height: numberLike.optional(),
   id: string(),
   impressionCounter: urlLike.optional(),
   libId: string().optional(),
@@ -141,7 +141,7 @@ const baseSchema = object({
   trackingUrl: urlLike.optional(),
   url: urlLike.optional(),
   viewableImpressionCounter: urlLike.optional(),
-  width: cssValueLike.optional(),
+  width: numberLike.optional(),
   widthLarge: cssValueLike.optional(),
 });
 

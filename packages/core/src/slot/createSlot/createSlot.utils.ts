@@ -21,14 +21,14 @@ export function renderIframe(ad: Ad, element: HTMLElement): void {
       `.replaceAll(/\s+/g, ' ').trim();
 
   iframe.style.border = 'none';
-  iframe.style.width = ad.width ?? 'auto';
-  iframe.style.height = ad.height ?? 'auto';
+  iframe.style.width = ad.width ? `${ad.width}px` : 'auto';
+  iframe.style.height = ad.height ? `${ad.height}px` : 'auto';
   element.replaceChildren(iframe);
 }
 
 export function renderInline(ad: Ad, element: HTMLElement): void {
-  element.style.width = ad.width ?? 'auto';
-  element.style.height = ad.height ?? 'auto';
+  // element.style.width = ad.width ? `${ad.width}px` : 'auto';
+  // element.style.height = ad.height ? `${ad.height}px` : 'auto';
 
   element.innerHTML = String(ad.tag);
 }

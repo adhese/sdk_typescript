@@ -95,11 +95,6 @@ export function createSlot(options: AdheseSlotOptions): Readonly<AdheseSlot> {
       if (newIsInViewport || context.options.eagerRendering)
         await render(newAd);
 
-      if (element.value) {
-        element.value.style.width = `${newAd.width}px`;
-        element.value.style.height = `${newAd.height}px`;
-      }
-
       context.events?.changeSlots.dispatch(Array.from(context.getAll?.() ?? []));
     });
 
@@ -147,7 +142,10 @@ export function createSlot(options: AdheseSlotOptions): Readonly<AdheseSlot> {
         throw new Error(error);
       }
 
-      if (context.safeFrame && ad.value) {
+      if (context.debug)
+        element.value.style.position = 'relative';
+
+      if (context.safeFrame && ad.value && renderMode === 'iframe') {
         const position = context.safeFrame.addPosition(ad.value, element.value);
 
         await context.safeFrame.render(position);
