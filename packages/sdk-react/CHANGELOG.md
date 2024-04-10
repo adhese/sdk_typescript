@@ -1,5 +1,13 @@
 # @adhese/sdk-react
 
+## 0.6.1
+
+### Patch Changes
+
+- a5846f2: Move React dependencies to peerDependencies to allow wider React support
+- Updated dependencies [c435430]
+  - @adhese/sdk@0.6.1
+
 ## 0.6.0
 
 ### Patch Changes

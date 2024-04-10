@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 0.6.1
+
+### Patch Changes
+
+- c435430: Remove unused safeframe package
+
 ## 0.6.0
 
 ### Minor Changes
