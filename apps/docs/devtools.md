@@ -1,4 +1,8 @@
-# Devtools
+<script setup>
+import sdkDevtoolsPackage from '../../packages/sdk-devtools/package.json';
+</script>
+
+# Devtools <Badge>{{sdkDevtoolsPackage.version}}</Badge>
 
 The SDK offers a inline application to debug the Adhese instance. The Devtools is available whenever the SDK is in
 `debug` mode.

@@ -1,4 +1,8 @@
-# React SDK
+<script setup>
+import sdkReactPackage from '../../packages/sdk-react/package.json';
+</script>
+
+# React SDK <Badge>{{sdkReactPackage.version}}</Badge>
 
 For React developers, we provide a React SDK that allows you to easily integrate our services into your React application.
 
