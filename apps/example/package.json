@@ -1,7 +1,6 @@
 {
   "name": "app-example",
   "type": "module",
-  "version": null,
   "private": true,
   "license": "GPL-3.0",
   "scripts": {

@@ -1,5 +1,4 @@
 import { defineConfig } from 'vitepress';
-import packageJson from '../package.json';
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -11,7 +10,6 @@ export default defineConfig({
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Getting started', link: '/getting-started' },
-      { text: `v${packageJson.version}`, link: '' },
     ],
 
     sidebar: [

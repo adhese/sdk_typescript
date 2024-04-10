@@ -1,7 +1,6 @@
 {
-  "name": "@adhese/docs",
+  "name": "docs",
   "type": "module",
-  "version": "0.6.0",
   "private": true,
   "scripts": {
     "dev": "vitepress dev --port 8080",

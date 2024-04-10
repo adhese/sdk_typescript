@@ -1,7 +1,6 @@
 {
   "name": "core",
   "type": "module",
-  "version": null,
   "private": true,
   "description": "Adhese SDK Core",
   "main": "./src/index.ts",
