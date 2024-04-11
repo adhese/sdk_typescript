@@ -1,5 +1,11 @@
 # @adhese/sdk-devtools
 
+## 0.6.2
+
+### Patch Changes
+
+- e9fb6f3: Update build outputs to allow installation in CommonJS env
+
 ## 0.6.0
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @adhese/sdk-react
 
+## 0.6.2
+
+### Patch Changes
+
+- e9fb6f3: Update build outputs to allow installation in CommonJS env
+- Updated dependencies [e9fb6f3]
+  - @adhese/sdk@0.6.2
+
 ## 0.6.1
 
 ### Patch Changes
