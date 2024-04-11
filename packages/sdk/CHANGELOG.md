@@ -1,5 +1,15 @@
 # @adhese/sdk
 
+## 0.6.3
+
+### Patch Changes
+
+- 99f728f: Replace lodash-es with lodash to prevent breaking CJS builds
+- 85ee707: Remove dynamicImportInCjs option
+- Updated dependencies [99f728f]
+- Updated dependencies [85ee707]
+  - @adhese/sdk-devtools@0.6.3
+
 ## 0.6.2
 
 ### Patch Changes
