@@ -21,8 +21,6 @@ export default defineConfig({
         manualChunks: {
           devtools: ['./src/Devtools.tsx', './src/main.tsx'],
         },
-        dynamicImportInCjs: true,
-        // chunkFileNames: `[format]/[name].js`,
       },
     },
   },

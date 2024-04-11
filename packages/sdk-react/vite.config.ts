@@ -18,7 +18,6 @@ export default defineConfig({
       external: packageJson.dependencies ? Object.keys(packageJson.dependencies) : [],
       output: {
         inlineDynamicImports: false,
-        dynamicImportInCjs: true,
       },
     },
   },
