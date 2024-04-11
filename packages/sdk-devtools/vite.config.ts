@@ -11,7 +11,7 @@ export default defineConfig({
       entry: 'src/index.ts',
       name: '@adhese/sdk',
       formats: ['es', 'cjs'],
-      fileName: format => `${format}/index.js`,
+      fileName: format => `index.${format === 'cjs' ? 'cjs' : 'js'}`,
     },
     sourcemap: true,
     rollupOptions: {
@@ -21,7 +21,8 @@ export default defineConfig({
         manualChunks: {
           devtools: ['./src/Devtools.tsx', './src/main.tsx'],
         },
-        chunkFileNames: `[format]/[name].js`,
+        dynamicImportInCjs: true,
+        // chunkFileNames: `[format]/[name].js`,
       },
     },
   },

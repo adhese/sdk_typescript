@@ -11,14 +11,14 @@ export default defineConfig({
       entry: 'src/index.ts',
       name: '@adhese/sdk-react',
       formats: ['es', 'cjs'],
-      fileName: format => `${format}/index.js`,
+      fileName: format => `index.${format === 'cjs' ? 'cjs' : 'js'}`,
     },
     sourcemap: true,
     rollupOptions: {
       external: packageJson.dependencies ? Object.keys(packageJson.dependencies) : [],
       output: {
         inlineDynamicImports: false,
-        chunkFileNames: `[format]/[name].js`,
+        dynamicImportInCjs: true,
       },
     },
   },
