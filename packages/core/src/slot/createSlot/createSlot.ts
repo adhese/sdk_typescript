@@ -1,7 +1,7 @@
 import { type Ad, requestAd as extRequestAd, logger } from '@core';
 import { waitForDomLoad } from '@utils';
 import { type Ref, computed, effectScope, reactive, ref, watch } from '@vue/runtime-core';
-import { isEqual } from 'lodash-es';
+import isEqual from 'lodash/isEqual';
 import { addTrackingPixel } from '../../impressionTracking/impressionTracking';
 import { type QueryDetector, createQueryDetector } from '../../queryDetector/queryDetector';
 import { onInit, waitOnInit } from '../../hooks/onInit';

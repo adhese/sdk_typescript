@@ -1,4 +1,4 @@
-import { random } from 'lodash-es';
+import random from 'lodash/random';
 import { logger } from './logger/logger';
 import type { QueryDetector } from './queryDetector/queryDetector';
 

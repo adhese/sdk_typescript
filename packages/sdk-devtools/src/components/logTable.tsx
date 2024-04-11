@@ -1,7 +1,7 @@
 import { type ReactElement, useEffect, useState } from 'react';
 import type { AdheseContext } from '@core';
 import type { Log } from '@logger';
-import { upperFirst } from 'lodash-es';
+import upperFirst from 'lodash/upperFirst';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Badge } from './badge';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './sheet';

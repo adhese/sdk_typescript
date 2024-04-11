@@ -1,7 +1,7 @@
 import { Fragment, type ReactElement, useEffect, useMemo, useState } from 'react';
 import type { AdheseContext, AdheseSlot } from '@core';
 import { createPortal } from 'react-dom';
-import { upperFirst } from 'lodash-es';
+import upperFirst from 'lodash/upperFirst';
 import { cn } from '../utils';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Badge } from './badge';

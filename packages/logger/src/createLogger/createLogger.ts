@@ -1,5 +1,5 @@
 import { createEventManager } from '@utils';
-import { uniqueId } from 'lodash-es';
+import uniqueId from 'lodash/uniqueId';
 
 /**
  * A log entry saved by the logger
