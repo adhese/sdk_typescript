@@ -1,7 +1,7 @@
 {
   "name": "@adhese/sdk-react",
   "type": "module",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Adhese SDK",
   "repository": {
     "type": "git",
@@ -28,7 +28,7 @@
     "react-dom": ">=16.13"
   },
   "dependencies": {
-    "@adhese/sdk": "^0.6.1",
+    "@adhese/sdk": "^0.6.2",
     "lodash-es": "^4.17.21",
     "use-deep-compare-effect": "^1.8.1"
   },
