@@ -73,7 +73,7 @@ const adhese = createAdhese({
 });
 ```
 
-## parseFromGambitSlotToAdheseSlot
+## `parseFromGambitSlotToAdheseSlot`
 Converts `GambitSlot` to `AdheseSlot`.
 
 ```js
