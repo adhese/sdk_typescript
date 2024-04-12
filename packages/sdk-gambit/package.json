@@ -1,0 +1,34 @@
+{
+  "name": "@adhese/sdk-gambit",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "Adhese SDK",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adhese/sdk_typescript.git"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "LICENSE",
+    "README.md",
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vitest --silent",
+    "dev:verbose": "vitest",
+    "test": "vitest --run --coverage --silent",
+    "test:verbose": "vitest --run --coverage",
+    "build": "vite build && tsup src/index.ts --dts-only --minify --format esm",
+    "lint": "eslint . --ignore-pattern **/*.md/**/*",
+    "lint:fix": "eslint --fix . --ignore-pattern **/*.md/**/*",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "prepareRelease": "npm run build"
+  },
+  "dependencies": {
+    "@adhese/sdk": "^0.6.1"
+  }
+}

@@ -16,6 +16,7 @@ export default defineConfig({
       { text: 'Getting Started', link: '/getting-started' },
       { text: 'Slots', link: '/slots' },
       { text: 'Events', link: '/events' },
+      { text: 'Gambit config', link: '/gambit' },
       { text: 'Consent', link: '/consent' },
       { text: 'Safeframe', link: '/safeframe' },
       { text: 'Devtools', link: '/devtools' },
