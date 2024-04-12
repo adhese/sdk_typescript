@@ -18,6 +18,7 @@ export default defineConfig({
     rollupOptions: {
       external: flatten([
         ...(packageJson.dependencies ? Object.keys(packageJson.dependencies) : []),
+        ...(packageJson.peerDependencies ? Object.keys(packageJson.peerDependencies) : []),
       ].map(dep => [dep, new RegExp(`^${dep}(/.*)?`)])),
       output: {
         inlineDynamicImports: false,
