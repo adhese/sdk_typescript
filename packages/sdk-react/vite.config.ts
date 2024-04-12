@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import flatten from 'lodash/flatten';
 import packageJson from './package.json';
 
 export default defineConfig({
@@ -15,7 +16,10 @@ export default defineConfig({
     },
     sourcemap: true,
     rollupOptions: {
-      external: packageJson.dependencies ? Object.keys(packageJson.dependencies) : [],
+      external: flatten([
+        ...(packageJson.dependencies ? Object.keys(packageJson.dependencies) : []),
+        ...(packageJson.peerDependencies ? Object.keys(packageJson.peerDependencies) : []),
+      ].map(dep => [dep, new RegExp(`^${dep}(/.*)?`)])),
       output: {
         inlineDynamicImports: false,
       },

@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { defineConfig } from 'vite';
+import flatten from 'lodash/flatten';
 import packageJson from './package.json';
 
 export default defineConfig({
@@ -15,7 +16,9 @@ export default defineConfig({
     },
     sourcemap: true,
     rollupOptions: {
-      external: packageJson.dependencies ? Object.keys(packageJson.dependencies) : [],
+      external: flatten([
+        ...(packageJson.dependencies ? Object.keys(packageJson.dependencies) : []),
+      ].map(dep => [dep, new RegExp(`^${dep}(/.*)?`)])),
       output: {
         inlineDynamicImports: false,
       },

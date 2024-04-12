@@ -4,9 +4,6 @@
   "commit": false,
   "access": "public",
   "baseBranch": "main",
-  "linked": [[
-    "@adhese/*"
-  ]],
   "updateInternalDependencies": "patch",
   "ignore": [
     "!@adhese/*"
