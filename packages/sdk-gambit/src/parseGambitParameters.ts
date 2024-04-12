@@ -1,31 +1,16 @@
 import isArray from 'lodash/isArray';
-import type { GambitData, Parameters } from './gambit.types';
-
-const gambitParameters = {
-  position: 'ps',
-  consent: 'tl',
-  pageType: 'pt',
-  category: 'ct',
-  subCategory: 'ct',
-  productGroup: 'ct',
-  searchTerm: 'kw',
-  userId: 'mi',
-  userMode: 'um',
-  inOrderMode: 'om',
-  customerType: 'cu',
-  pagePath: 'pp',
-  domain: 'dm',
-} as const;
+import type { Parameters } from './gambit.types';
 
 /**
  * Converts `GambitData` to `Parameters`.
- * @param parameters
+ * @param parameters - Parameters to be converted.
+ * @param parameterMap - Map of Gambit parameters to their corresponding keys.
  */
-export function parseGambitParameters(parameters: Partial<GambitData>): Parameters {
+export function parseGambitParameters(parameters: Record<string, string | ReadonlyArray<string> | boolean>, parameterMap: Record<string, string>): Parameters {
   const map = new Map<string, string | ReadonlyArray<string>>();
 
   for (let [key, value] of Object.entries(parameters)) {
-    key = gambitParameters[key as keyof typeof gambitParameters];
+    key = parameterMap[key];
     value = isArray(value) ? value as ReadonlyArray<string> : String(value);
 
     const currentValue = map.get(key);

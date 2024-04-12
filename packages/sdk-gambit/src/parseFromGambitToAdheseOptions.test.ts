@@ -34,6 +34,20 @@ describe('parseFromGambitToAdheseOptions', () => {
           },
         },
       ],
+    }, {
+      position: 'ps',
+      consent: 'tl',
+      pageType: 'pt',
+      category: 'ct',
+      subCategory: 'ct',
+      productGroup: 'ct',
+      searchTerm: 'kw',
+      userId: 'mi',
+      userMode: 'um',
+      inOrderMode: 'om',
+      customerType: 'cu',
+      pagePath: 'pp',
+      domain: 'dm',
     })).toEqual({
       debug: true,
       account: 'account',
@@ -42,6 +56,39 @@ describe('parseFromGambitToAdheseOptions', () => {
         pt: 'pageType',
         dm: 'domain',
       },
+      initialSlots: [
+        {
+          format: 'slotType',
+          containingElement: 'containerId',
+        },
+      ],
+    } satisfies AdheseOptions);
+  });
+
+  it('should return a Adhese options object without parameters', () => {
+    expect(parseFromGambitToAdheseOptions({
+      options: {
+        debug: true,
+        disableAds: true,
+        adDisclaimer: 'adDisclaimer',
+      },
+      account: 'account',
+      slots: [
+        {
+          slotType: 'slotType',
+          position: 'position',
+          containerId: 'containerId',
+          data: {
+            slotPayload: {
+              format: 'format',
+              slotname: 'slotname',
+            },
+          },
+        },
+      ],
+    })).toEqual({
+      debug: true,
+      account: 'account',
       initialSlots: [
         {
           format: 'slotType',

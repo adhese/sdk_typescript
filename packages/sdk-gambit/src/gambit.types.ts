@@ -50,7 +50,7 @@ export type GambitOptions = {
 };
 export type GambitConfig = {
   slots?: ReadonlyArray<GambitSlot>;
-  data: GambitData;
+  data?: GambitData;
   options: GambitOptions;
   account: string;
 };
