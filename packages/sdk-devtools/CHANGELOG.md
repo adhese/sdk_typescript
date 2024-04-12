@@ -1,5 +1,11 @@
 # @adhese/sdk-devtools
 
+## 0.6.5
+
+### Patch Changes
+
+- 3c52662: Move react and react-dom to peerDependencies to support older react versions
+
 ## 0.6.4
 
 ### Patch Changes
