@@ -1,4 +1,4 @@
-import type { AdheseSlotOptions } from '@core';
+import type { AdheseSlotOptions } from '@adhese/sdk';
 import type { GambitSlot } from './gambit.types';
 import { parseGambitParameters } from './parseGambitParameters';
 
