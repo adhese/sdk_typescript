@@ -1,5 +1,11 @@
 # @adhese/sdk-devtools
 
+## 0.6.4
+
+### Patch Changes
+
+- 53683c6: Filter out all external dependencies from bundle
+
 ## 0.6.3
 
 ### Patch Changes

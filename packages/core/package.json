@@ -21,7 +21,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@adhese/sdk-devtools": "^0.6.3"
+    "@adhese/sdk-devtools": "^0.6.4"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1"

@@ -1,5 +1,13 @@
 # @adhese/sdk-react
 
+## 0.6.4
+
+### Patch Changes
+
+- 53683c6: Filter out all external dependencies from bundle
+- Updated dependencies [53683c6]
+  - @adhese/sdk@0.6.4
+
 ## 0.6.3
 
 ### Patch Changes
