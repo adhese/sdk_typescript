@@ -33,11 +33,13 @@ You can also include the SDK in your project by including the following script t
 import sdkPackageJson from '../../packages/sdk/package.json';
 import sdkReactPackageJson from '../../packages/sdk-react/package.json';
 import sdkDevtoolsPackageJson from '../../packages/sdk-devtools/package.json';
+import sdkGambitPackageJson from '../../packages/sdk-gambit/package.json';
 
 </script>
 - [**@adhese/sdk**](https://npmjs.com/package/@adhese/sdk) - The main SDK package <Badge>v{{sdkPackageJson.version}}</Badge>
 - [**@adhese/sdk-react**](https://npmjs.com/package/@adhese/sdk-react) - React utilities for the SDK <Badge>v{{sdkReactPackageJson.version}}</Badge>
 - [**@adhese/sdk-devtools**](https://npmjs.com/package/@adhese/sdk-devtools) - Devtools for debugging SDK <Badge>v{{sdkDevtoolsPackageJson.version}}</Badge>
+- [**@adhese/sdk-gambit**](https://npmjs.com/package/@adhese/sdk-gambit) - Utilities for converting Gambit config objects to Adhese objects <Badge>v{{sdkGambitPackageJson.version}}</Badge>
 
 ## Usage
 To use the SDK, you need to create an Adhese instance and configure it with your account ID:
