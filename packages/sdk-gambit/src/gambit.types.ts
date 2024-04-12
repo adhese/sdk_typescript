@@ -12,7 +12,7 @@ export type GambitSlotData = {
   adData?: any;
   enumerator?: string;
   retryCount?: number;
-  slotPayload: SlotPayload;
+  slotPayload?: SlotPayload;
   parameters?: Parameters;
   location?: string;
 };

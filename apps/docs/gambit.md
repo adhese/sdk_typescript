@@ -72,3 +72,12 @@ const adhese = createAdhese({
   parameters,
 });
 ```
+
+## parseFromGambitSlotToAdheseSlot
+Converts `GambitSlot` to `AdheseSlot`.
+
+```js
+import { parseFromGambitSlotToAdheseSlot } from '@adhese/sdk-gambit';
+
+adheses.addSlot(parseFromGambitSlotToAdheseSlot(gambitSlot));
+```

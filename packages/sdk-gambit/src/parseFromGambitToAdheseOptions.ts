@@ -1,6 +1,7 @@
-import type { AdheseOptions, AdheseSlotOptions } from '@adhese/sdk';
+import type { AdheseOptions } from '@adhese/sdk';
 import { parseGambitParameters } from './parseGambitParameters';
 import type { GambitConfig } from './gambit.types';
+import { parseFromGambitSlotToAdheseSlot } from './parseFromGambitSlotToAdheseSlot';
 
 /**
  * Converts `GambitConfig` to `AdheseOptions`.
@@ -11,11 +12,7 @@ import type { GambitConfig } from './gambit.types';
  */
 export function parseFromGambitToAdheseOptions(config: GambitConfig, parameterMap?: Record<string, string>): AdheseOptions {
   return {
-    initialSlots: config.slots?.map(slot => ({
-      format: slot.slotType,
-      containingElement: slot.containerId,
-      parameters: slot.data?.parameters,
-    } satisfies Omit<AdheseSlotOptions, 'context'>)),
+    initialSlots: config.slots?.map(slot => parseFromGambitSlotToAdheseSlot(slot, parameterMap)) as AdheseOptions['initialSlots'],
     account: config.account,
     parameters: (parameterMap && config.data) ? parseGambitParameters(config.data, parameterMap) : undefined,
     location: config.data?.pagePath,
