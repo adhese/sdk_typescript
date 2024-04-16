@@ -8,11 +8,11 @@ functions to convert Gambit configuration to Adhese configuration.
 npm install @adhese/sdk-gambit
 ```
 
-## `parseFromGambitToAdheseOptions`
+## `toOptions`
 Converts `GambitConfig` to `AdheseOptions`.
 
 ```js
-import { parseFromGambitToAdheseOptions } from '@adhese/sdk-gambit';
+import { toOptions } from '@adhese/sdk-gambit';
 import { createAdhese } from '@adhese/sdk';
 
 const gambitConfig = {
@@ -30,16 +30,14 @@ const gambitConfig = {
   },
 };
 
-const adheseOptions = parseFromGambitToAdheseOptions(gambitConfig);
-
-const adhese = createAdhese(adheseOptions);
+const adhese = createAdhese(toOptions(gambitConfig));
 ```
 
-## `parseGambitParameters`
+## `toParameters`
 Converts `GambitData` to `Parameters`.
 
 ```js
-import { parseGambitParameters } from '@adhese/sdk-gambit';
+import { toParameters } from '@adhese/sdk-gambit';
 import { createAdhese } from '@adhese/sdk';
 
 const gambitData = {
@@ -47,7 +45,7 @@ const gambitData = {
   'key2': 'value2',
 };
 
-const parameters = parseGambitParameters(gambitData, {
+const parameters = toParameters(gambitData, {
   'k1': 'key1',
   'k2': 'key2',
 });
@@ -58,11 +56,16 @@ const adhese = createAdhese({
 });
 ```
 
-## `parseFromGambitSlotToAdheseSlot`
+## `toSlotOptions`
 Converts `GambitSlot` to `AdheseSlot`.
 
 ```js
-import { parseFromGambitSlotToAdheseSlot } from '@adhese/sdk-gambit';
+import { toSlotOptions } from '@adhese/sdk-gambit';
 
-adheses.addSlot(parseFromGambitSlotToAdheseSlot(gambitSlot));
+const gambitSlot = {
+  slotType: 'slot-id',
+  containerId: 'container-id',
+};
+
+adheses.addSlot(toSlotOptions(gambitSlot));
 ```

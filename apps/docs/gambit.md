@@ -23,7 +23,7 @@ bun add @adhese/sdk-gambit
 ```
 :::
 
-## `parseFromGambitToAdheseOptions`
+## `toOptions`
 Converts `GambitConfig` to `AdheseOptions`.
 
 ```js
