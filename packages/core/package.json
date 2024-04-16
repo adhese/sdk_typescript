@@ -20,9 +20,6 @@
     "clean": "rm -rf dist & rm -rf coverage",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {
-    "@adhese/sdk-devtools": "^0.6.5"
-  },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1"
   }

@@ -10,3 +10,5 @@ export { requestAds, requestAd } from './requestAds/requestAds';
 export type { Ad } from './requestAds/requestAds.schema';
 export type { AdheseSlot, AdheseSlotOptions } from './slot/createSlot/createSlot.types';
 export type { AdheseContext, Adhese, AdheseOptions } from './main.types';
+export { onInit } from './hooks/onInit';
+export { onDispose } from './hooks/onDispose';

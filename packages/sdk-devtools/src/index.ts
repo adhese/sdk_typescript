@@ -1,18 +1,40 @@
-import type { AdheseContext } from '@adhese/sdk';
+import { type AdheseContext, onDispose, onInit } from '@adhese/sdk';
 import { lazy } from 'react';
 
-export async function createDevtools(context: AdheseContext): Promise<() => void> {
-  const main = await import('./main');
-
+export function createDevtools(context: AdheseContext): void {
   const wrapperElement = document.createElement('div');
-  document.body.appendChild(wrapperElement);
+  let unmount: (() => void) | undefined;
 
-  const unmount = main.createAdheseDevtools(wrapperElement, context);
+  async function initDevtools(): Promise<void> {
+    const main = await import('./main');
 
-  return () => {
-    unmount();
-    wrapperElement.outerHTML = '';
-  };
+    if (!unmount) {
+      document.body.appendChild(wrapperElement);
+
+      unmount = main.createAdheseDevtools(wrapperElement, context);
+    }
+  }
+
+  onInit(async () => {
+    if (context.debug)
+      await initDevtools();
+
+    context.events?.debugChange.addListener(async (debug) => {
+      if (debug)
+        await initDevtools();
+      else
+        dispose();
+    });
+  });
+
+  function dispose(): void {
+    unmount?.();
+    unmount = undefined;
+    if (wrapperElement.parentElement)
+      wrapperElement.outerHTML = '';
+  }
+
+  onDispose(dispose);
 }
 
 // eslint-disable-next-line ts/naming-convention

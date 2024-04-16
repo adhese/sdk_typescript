@@ -1,4 +1,5 @@
 import { type Ad, createAdhese } from '@adhese/sdk';
+import { createDevtools } from '@adhese/sdk-devtools';
 
 async function app(): Promise<void> {
   const adhese = createAdhese({
@@ -75,6 +76,7 @@ async function app(): Promise<void> {
       },
     ],
     location: '_sdk_example_',
+    plugins: [createDevtools],
   });
 
   window.adhese = adhese;

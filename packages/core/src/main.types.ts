@@ -87,6 +87,11 @@ export type AdheseOptions = {
    */
   queries?: Record<string, string>;
   safeFrame?: boolean;
+  /**
+   * The plugins that are used for the Adhese instance. These plugins are called with the Adhese context and run during
+   * the initialization of the Adhese instance.
+   */
+  plugins?: ReadonlyArray<(context: AdheseContext) => void>;
 } & ({
   viewabilityTracking?: true;
   /**

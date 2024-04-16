@@ -1,4 +1,4 @@
-import type { AdheseContext } from '@core';
+import type { AdheseContext } from '@adhese/sdk';
 import { type ChangeEventHandler, type HTMLAttributes, type ReactElement, useCallback, useId, useMemo, useState } from 'react';
 import { cn, deleteCookie, getCookie, hasCookie, setCooke } from '../utils';
 import { Switch } from './switch';

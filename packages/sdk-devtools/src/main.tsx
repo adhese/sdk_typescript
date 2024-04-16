@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import type { AdheseContext } from '@core';
+import type { AdheseContext } from '@adhese/sdk';
 import { StrictMode } from 'react';
 import { Devtools } from './Devtools';
 

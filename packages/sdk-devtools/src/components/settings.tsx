@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import type { AdheseContext } from '@core';
+import type { AdheseContext } from '@adhese/sdk';
 import { FronttailSettings } from './fronttailSettings';
 
 const settingClasses = 'border-solid border-b-2 border-accent pb-8 mb-8 last:mb-0 last:pb-0 last:border-0';

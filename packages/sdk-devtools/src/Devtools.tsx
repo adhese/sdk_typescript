@@ -1,4 +1,4 @@
-import type { AdheseContext } from '@core';
+import type { AdheseContext } from '@adhese/sdk';
 import { type ReactElement, useEffect, useRef, useState } from 'react';
 import './globals.css';
 import { SlotsTable } from './components/slotsTable';

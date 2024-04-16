@@ -1,5 +1,5 @@
 import { Fragment, type ReactElement, useEffect, useMemo, useState } from 'react';
-import type { AdheseContext, AdheseSlot } from '@core';
+import type { AdheseContext, AdheseSlot } from '@adhese/sdk';
 import { createPortal } from 'react-dom';
 import upperFirst from 'lodash/upperFirst';
 import { cn } from '../utils';

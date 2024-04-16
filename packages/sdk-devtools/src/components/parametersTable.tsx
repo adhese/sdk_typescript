@@ -1,4 +1,4 @@
-import type { AdheseContext } from '@core';
+import type { AdheseContext } from '@adhese/sdk';
 import { type ReactElement, useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Badge } from './badge';

@@ -7,7 +7,7 @@ const waitOnInit = new Promise<void>((resolve) => {
   resolveOnInitPromise = resolve;
 });
 
-const [runOnInit, onInit] = createHook({
+const [runOnInit, onInit, disposeOnInit] = createHook({
   onRun(callbacks) {
     isInit = true;
 
@@ -27,4 +27,5 @@ export {
   onInit,
   runOnInit,
   waitOnInit,
+  disposeOnInit,
 };

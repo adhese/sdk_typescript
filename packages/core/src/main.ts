@@ -1,6 +1,6 @@
 import { createEventManager } from '@utils';
 import { type AdheseSlot, type AdheseSlotOptions, logger, requestAd, requestAds } from '@core';
-import { createDevtools } from '@adhese/sdk-devtools';
+// import { createDevtools } from '@adhese/sdk-devtools';
 import { effectScope, reactive, watch } from '@vue/runtime-core';
 import { createSafeFrame } from '@safeframe';
 import { createSlotManager } from './slot/slotManager/slotManager';
@@ -8,7 +8,8 @@ import { onTcfConsentChange } from './consent/tcfConsent';
 import { createQueryDetector } from './queryDetector/queryDetector';
 import { createParameters, isPreviewMode, setupLogging } from './main.utils';
 import type { Adhese, AdheseContext, AdheseOptions, MergedOptions } from './main.types';
-import { onInit, runOnInit } from './hooks/onInit';
+import { disposeOnInit, onInit, runOnInit } from './hooks/onInit';
+import { disposeOnDispose, runOnDispose } from './hooks/onDispose';
 
 /**
  * Creates an Adhese instance. This instance is your main entry point to the Adhese API.
@@ -50,6 +51,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       safeFrame: false,
       eagerRendering: false,
       viewabilityTracking: true,
+      plugins: [],
       ...options,
     } satisfies MergedOptions;
     setupLogging(mergedOptions);
@@ -171,22 +173,16 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       return domSlots;
     }
 
-    let unmountDevtools: (() => void) | undefined;
-
     async function toggleDebug(): Promise<boolean> {
       context.debug = !context.debug;
 
-      if (context.debug && !unmountDevtools) {
-      // eslint-disable-next-line require-atomic-updates
-        unmountDevtools = await createDevtools(context);
+      if (context.debug) {
         logger.setMinLogLevelThreshold('debug');
         logger.debug('Debug mode enabled');
         context.events?.debugChange.dispatch(true);
       }
       else {
         logger.debug('Debug mode disabled');
-        unmountDevtools?.();
-        unmountDevtools = undefined;
         logger.setMinLogLevelThreshold('info');
         context.events?.debugChange.dispatch(false);
       }
@@ -228,7 +224,6 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
     });
 
     function dispose(): void {
-      unmountDevtools?.();
       queryDetector.dispose();
       slotManager.dispose();
       queryDetector.dispose();
@@ -238,8 +233,15 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       context.events?.dispose();
       logger.info('Adhese instance disposed');
 
+      runOnDispose();
+
+      disposeOnInit();
+      disposeOnDispose();
+
       scope.stop();
     }
+    for (const plugin of mergedOptions.plugins)
+      plugin(context);
 
     onInit(async () => {
       if ((slotManager.getAll().length ?? 0) > 0)
@@ -248,11 +250,8 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       if (mergedOptions.findDomSlotsOnLoad)
         await findDomSlots();
 
-      if (mergedOptions.debug || window.location.search.includes('adhese_debug=true') || isPreviewMode()) {
-        unmountDevtools = await createDevtools(context);
-
+      if (mergedOptions.debug || window.location.search.includes('adhese_debug=true') || isPreviewMode())
         context.events?.debugChange.dispatch(true);
-      }
 
       if (!scope.active)
         dispose();
