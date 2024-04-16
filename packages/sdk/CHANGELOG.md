@@ -1,5 +1,17 @@
 # @adhese/sdk
 
+## 0.7.0
+
+### Minor Changes
+
+- 3e0b574: Create plugin system for @adhese/sdk and move @adhese/sdk-devtools to it
+
+### Patch Changes
+
+- c8c37d9: Replace special characters in parameters values with underscores
+- 80d943b: Update dependencies
+- fa24130: Replace lodash with remeda to offer a more modern solution to common utilities
+
 ## 0.6.4
 
 ### Patch Changes
