@@ -69,7 +69,6 @@ When your component is unmounted, the slot is automatically removed from the Adh
 import { useAdheseSlot } from '@adhese/sdk-react';
 
 function YourComponent() {
-  const adhese = useAdhese();
   const elementRef = useRef(null);
 
   const slot = useAdheseSlot(elementRef, {
