@@ -1,5 +1,17 @@
 # @adhese/sdk-gambit
 
+## 0.1.2
+
+### Patch Changes
+
+- 80d943b: Update dependencies
+- fa24130: Replace lodash with remeda to offer a more modern solution to common utilities
+- Updated dependencies [c8c37d9]
+- Updated dependencies [3e0b574]
+- Updated dependencies [80d943b]
+- Updated dependencies [fa24130]
+  - @adhese/sdk@0.7.0
+
 ## 0.1.1
 
 ### Patch Changes

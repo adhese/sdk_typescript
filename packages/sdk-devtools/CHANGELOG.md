@@ -1,5 +1,22 @@
 # @adhese/sdk-devtools
 
+## 0.7.0
+
+### Minor Changes
+
+- 3e0b574: Create plugin system for @adhese/sdk and move @adhese/sdk-devtools to it
+
+### Patch Changes
+
+- 7041fc2: Enable StrictMode for @adhese/sdk-devtools
+- 80d943b: Update dependencies
+- fa24130: Replace lodash with remeda to offer a more modern solution to common utilities
+- Updated dependencies [c8c37d9]
+- Updated dependencies [3e0b574]
+- Updated dependencies [80d943b]
+- Updated dependencies [fa24130]
+  - @adhese/sdk@0.7.0
+
 ## 0.6.5
 
 ### Patch Changes

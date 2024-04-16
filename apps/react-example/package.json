@@ -7,8 +7,8 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@adhese/sdk-devtools": "^0.6.5",
-    "@adhese/sdk-react": "^0.6.4",
+    "@adhese/sdk-devtools": "^0.7.0",
+    "@adhese/sdk-react": "^0.7.0",
     "react": "18.2.0",
     "react-dom": "^18.2.0",
     "zod": "^3.22.4"
