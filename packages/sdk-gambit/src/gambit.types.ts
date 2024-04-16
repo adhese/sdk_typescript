@@ -1,9 +1,9 @@
-export type Parameters = Record<string, string | ReadonlyArray<string>>;
-export type Device = 'desktop' | 'phone' | 'tablet';
-export type SlotPayload = {
+export type GambitParameters = Record<string, string | ReadonlyArray<string>>;
+export type GambitDevice = 'desktop' | 'phone' | 'tablet';
+export type GambitSlotPayload = {
   format: string;
   slotname?: string;
-  parameters?: Parameters;
+  parameters?: GambitParameters;
 };
 export type GambitSlotData = {
   adRendered?: boolean;
@@ -12,8 +12,8 @@ export type GambitSlotData = {
   adData?: any;
   enumerator?: string;
   retryCount?: number;
-  slotPayload?: SlotPayload;
-  parameters?: Parameters;
+  slotPayload?: GambitSlotPayload;
+  parameters?: GambitParameters;
   location?: string;
 };
 export type GambitSlot = {
@@ -21,7 +21,7 @@ export type GambitSlot = {
   position?: string;
   containerId: string;
   googleSlot?: string; // If set, used as fallback ad
-  devices?: ReadonlyArray<Device>; // Default: all devices
+  devices?: ReadonlyArray<GambitDevice>; // Default: all devices
   collapse?: {
     onLoad?: boolean;
     onEmpty?: boolean;

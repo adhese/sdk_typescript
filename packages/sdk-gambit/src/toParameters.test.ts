@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseGambitParameters } from './parseGambitParameters';
+import { toParameters } from './toParameters';
 
 const gambitParameters = {
   position: 'ps',
@@ -17,9 +17,9 @@ const gambitParameters = {
   domain: 'dm',
 } as const;
 
-describe('parseGambitParameters', () => {
+describe('toParameters', () => {
   it('should return the correct parameters', () => {
-    expect(parseGambitParameters({
+    expect(toParameters({
       consent: true,
       pageType: 'pageType',
       category: ['category'],
@@ -43,7 +43,7 @@ describe('parseGambitParameters', () => {
       pp: 'pagePath',
     });
 
-    expect(parseGambitParameters({
+    expect(toParameters({
       pageType: 'pageType',
       category: 'category',
       subCategory: 'subCategory',

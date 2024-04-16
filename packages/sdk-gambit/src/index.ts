@@ -1,5 +1,16 @@
 /* v8 ignore start */
-export { parseFromGambitToAdheseOptions } from './parseFromGambitToAdheseOptions';
-export { parseGambitParameters } from './parseGambitParameters';
-export { parseFromGambitSlotToAdheseSlot } from './parseFromGambitSlotToAdheseSlot';
-export type { GambitOptions, GambitSlot, GambitConfig, GambitSlotData, GambitData, SlotPayload, Device, Parameters } from './gambit.types';
+import { toOptions } from './toOptions';
+import { toParameters } from './toParameters';
+import { toSlotOptions } from './toSlotOptions';
+
+export type { GambitOptions, GambitSlot, GambitConfig, GambitSlotData, GambitData, GambitSlotPayload, GambitDevice, GambitParameters } from './gambit.types';
+
+export default {
+  toOptions,
+  toParameters,
+  toSlotOptions,
+};
+
+export { toOptions } from './toOptions';
+export { toParameters } from './toParameters';
+export { toSlotOptions } from './toSlotOptions';

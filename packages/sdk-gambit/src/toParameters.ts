@@ -1,12 +1,12 @@
 import { isArray } from 'remeda';
-import type { Parameters } from './gambit.types';
+import type { GambitParameters } from './gambit.types';
 
 /**
  * Converts `GambitData` to `Parameters`.
  * @param parameters - Parameters to be converted.
  * @param parameterMap - Map of Gambit parameters to their corresponding keys.
  */
-export function parseGambitParameters(parameters: Record<string, string | ReadonlyArray<string> | boolean>, parameterMap: Record<string, string>): Parameters {
+export function toParameters(parameters: Record<string, string | ReadonlyArray<string> | boolean>, parameterMap: Record<string, string>): GambitParameters {
   const map = new Map<string, string | ReadonlyArray<string>>();
 
   for (let [key, value] of Object.entries(parameters)) {
