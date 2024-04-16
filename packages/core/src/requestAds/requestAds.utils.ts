@@ -49,9 +49,16 @@ export function parseParameters<T extends string | ReadonlyArray<string>>(parame
 
     logger.warn(`Invalid parameter key: ${key}. Key should be exactly 2 characters long. Key will be ignored.`);
     return false;
+  }).map(([key, value]): [string, T] => {
+    if (typeof value === 'string')
+      return [key, filterSpecialChars(value) as T];
+
+    return [key, value.map(filterSpecialChars) as unknown as T];
   }));
 }
 
-export function isJsonLike(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
+function filterSpecialChars(value: string): string {
+  const specialRegex = /[^\p{L}\p{N}_]/gu;
+
+  return value.replaceAll(specialRegex, '_');
 }

@@ -278,6 +278,26 @@ describe('parseParameters', () => {
       fo: ['bar'],
     });
   });
+
+  it('should be able to parse and filter parameters with invalid values', () => {
+    const parsedParameters = parseParameters(new Map<string, string | ReadonlyArray<string>>([
+      ['aa', ['bar']],
+      ['bb', 'foo*bar'],
+      ['cc', ['foo*bar']],
+      ['dd', 'α&β'],
+      ['ee', ['α&β']],
+      ['ff', 'զվար)ճանք'],
+    ]));
+
+    expect(parsedParameters).toEqual({
+      aa: ['bar'],
+      bb: 'foo_bar',
+      cc: ['foo_bar'],
+      dd: 'α_β',
+      ee: ['α_β'],
+      ff: 'զվար_ճանք',
+    });
+  });
 });
 
 describe('requestPreviews', () => {
