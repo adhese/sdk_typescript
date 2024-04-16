@@ -1,9 +1,7 @@
 import path from 'node:path';
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  plugins: [react()],
   build: {
     outDir: 'dist',
     emptyOutDir: true,
@@ -11,14 +9,8 @@ export default defineConfig({
     lib: {
       entry: `${path.resolve()}/src/index.ts`,
       name: 'Adhese',
-      formats: ['cjs', 'es'],
-      fileName: format => `${format}/adhese.js`,
-    },
-    rollupOptions: {
-      output: {
-        inlineDynamicImports: false,
-        chunkFileNames: '[format]/[name].js',
-      },
+      formats: ['umd', 'iife'],
+      fileName: format => `adhese.${format}.js`,
     },
   },
   resolve: {
@@ -29,7 +21,6 @@ export default defineConfig({
       '@logger': `${path.resolve()}/../logger/src`,
       '@server-mocks': `${path.resolve()}/../server-mocks/src`,
       '@safeframe': `${path.resolve()}/../safeframe/src`,
-      '@adhese/sdk-devtools': `${path.resolve()}/../sdk-devtools/src`,
       /* eslint-enable ts/naming-convention */
     },
   },

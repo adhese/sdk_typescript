@@ -1,6 +1,5 @@
 import { createEventManager } from '@utils';
 import { type AdheseSlot, type AdheseSlotOptions, logger, requestAd, requestAds } from '@core';
-// import { createDevtools } from '@adhese/sdk-devtools';
 import { effectScope, reactive, watch } from '@vue/runtime-core';
 import { createSafeFrame } from '@safeframe';
 import { createSlotManager } from './slot/slotManager/slotManager';
