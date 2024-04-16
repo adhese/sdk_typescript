@@ -1,5 +1,11 @@
 # @adhese/sdk-gambit
 
+## 0.2.0
+
+### Minor Changes
+
+- e197aa4: Simplify @adhese/sdk-gambit function names
+
 ## 0.1.2
 
 ### Patch Changes
