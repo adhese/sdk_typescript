@@ -1,5 +1,5 @@
 import type { Ad, AdheseContext } from '@core';
-import uniqueId from 'lodash/uniqueId';
+import { uniqueId } from '@utils';
 import type { Config, Position } from './main.types';
 
 export type SafeFrame = {

@@ -1,4 +1,3 @@
-import random from 'lodash/random';
 import { logger } from './logger/logger';
 import type { QueryDetector } from './queryDetector/queryDetector';
 
@@ -21,7 +20,7 @@ export function createParameters(
     tl: options.consent ? 'all' : 'none',
     dt: queryDetector.getQuery(),
     br: queryDetector.getQuery(),
-    rn: random(10_000).toString(),
+    rn: Math.round(Math.random() * 10_000).toString(),
   }))
     parameters.set(key, value);
 

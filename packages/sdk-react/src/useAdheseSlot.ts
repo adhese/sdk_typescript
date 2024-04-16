@@ -1,7 +1,7 @@
 import { type RefObject, useState } from 'react';
 import type { AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
 import useDeepCompareEffect from 'use-deep-compare-effect';
-import omit from 'lodash/omit';
+import { omit } from 'remeda';
 import { useAdhese } from './adheseContext';
 
 /**
@@ -31,7 +31,7 @@ export function useAdheseSlot(elementRef: RefObject<HTMLElement>, options: Omit<
     return () => {
       intermediate?.dispose();
     };
-  }, [adhese, omit(options, Object.entries(options).filter(([, value]) => typeof value === 'function').map(([key]) => key)), elementRef.current]);
+  }, [adhese, omit(options, Object.entries(options).filter(([, value]) => typeof value === 'function').map(([key]) => key as keyof typeof options)), elementRef.current]);
 
   return slot;
 }

@@ -1,7 +1,6 @@
 import { Fragment, type ReactElement, useEffect, useMemo, useState } from 'react';
 import type { AdheseContext, AdheseSlot } from '@adhese/sdk';
 import { createPortal } from 'react-dom';
-import upperFirst from 'lodash/upperFirst';
 import { cn } from '../utils';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Badge } from './badge';
@@ -137,7 +136,7 @@ export function SlotsTable({ adheseContext }: {
                   </TableCell>
                   {origins.length > 1 && (
                     <TableCell>
-                      {ad?.origin && <Badge className={cn(slotIndexBadgeClasses[origins.indexOf(ad.origin) % slotIndexBadgeClasses.length], 'text-white')}>{upperFirst(ad.origin.toLowerCase())}</Badge>}
+                      {ad?.origin && <Badge className={cn(slotIndexBadgeClasses[origins.indexOf(ad.origin) % slotIndexBadgeClasses.length], 'text-white')}>{ad.origin.toLowerCase()}</Badge>}
                     </TableCell>
                   )}
                   <TableCell>{location}</TableCell>

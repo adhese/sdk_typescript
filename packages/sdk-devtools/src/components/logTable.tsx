@@ -1,7 +1,6 @@
 import { type ReactElement, useEffect, useState } from 'react';
 import type { AdheseContext } from '@adhese/sdk';
 import type { Log } from '@logger';
-import upperFirst from 'lodash/upperFirst';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Badge } from './badge';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './sheet';
@@ -73,7 +72,7 @@ export function LogTable({
                 variant="secondary"
                 className={logBadgeClasses[log.level] ?? ''}
               >
-                {upperFirst(log.level)}
+                {log.level}
               </Badge>
             </TableCell>
             <TableCell>{log.message}</TableCell>

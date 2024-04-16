@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@vue/runtime-core": "^3.4.21",
-    "lodash": "^4.17.21",
+    "remeda": "^1.59.0",
     "zod": "^3.22.4"
   }
 }

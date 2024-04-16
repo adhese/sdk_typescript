@@ -1,4 +1,4 @@
-import debounce from 'lodash/debounce';
+import { debounce } from 'remeda';
 import { logger } from '@core';
 
 export type DeviceDetectorOptions = {
@@ -56,16 +56,18 @@ export function createQueryDetector(
     void onChange?.(getQuery());
 
     logger.debug(`Change device ${getQuery()}`);
-  }, 50);
+  }, {
+    waitMs: 50,
+  });
 
   if (onChange) {
     for (const query of mediaMap.values())
-      query.addEventListener('change', handleOnChange);
+      query.addEventListener('change', handleOnChange.call);
   }
 
   function dispose(): void {
     for (const query of mediaMap.values())
-      query.removeEventListener('change', handleOnChange);
+      query.removeEventListener('change', handleOnChange.call);
   }
 
   return {

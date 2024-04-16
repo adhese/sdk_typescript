@@ -6,3 +6,4 @@ export { waitForDomLoad } from './waitForDomLoad/waitForDomLoad';
 export { awaitTimeout } from './awaitTimeout/awaitTimeout';
 export type { EventManager } from './eventManager/eventManager';
 export { createEventManager } from './eventManager/eventManager';
+export { uniqueId } from './uniqueId/uniqueId';

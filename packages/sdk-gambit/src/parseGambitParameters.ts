@@ -1,4 +1,4 @@
-import isArray from 'lodash/isArray';
+import { isArray } from 'remeda';
 import type { Parameters } from './gambit.types';
 
 /**
@@ -11,7 +11,7 @@ export function parseGambitParameters(parameters: Record<string, string | Readon
 
   for (let [key, value] of Object.entries(parameters)) {
     key = parameterMap[key];
-    value = isArray(value) ? value as ReadonlyArray<string> : String(value);
+    value = isArray(value) ? value : String(value);
 
     const currentValue = map.get(key);
 

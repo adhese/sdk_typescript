@@ -1,7 +1,7 @@
 import { type Ad, requestAd as extRequestAd, logger } from '@core';
 import { waitForDomLoad } from '@utils';
 import { type Ref, computed, effectScope, reactive, ref, watch } from '@vue/runtime-core';
-import isEqual from 'lodash/isEqual';
+import { isDeepEqual } from 'remeda';
 import { addTrackingPixel } from '../../impressionTracking/impressionTracking';
 import { type QueryDetector, createQueryDetector } from '../../queryDetector/queryDetector';
 import { onInit, waitOnInit } from '../../hooks/onInit';
@@ -89,7 +89,7 @@ export function createSlot(options: AdheseSlotOptions): Readonly<AdheseSlot> {
     });
 
     watch([ad, isInViewport], async ([newAd, newIsInViewport], [oldAd]) => {
-      if (!newAd || isEqual(newAd, oldAd))
+      if (!newAd || (oldAd && isDeepEqual(newAd, oldAd)))
         return;
 
       if (newIsInViewport || context.options.eagerRendering)
