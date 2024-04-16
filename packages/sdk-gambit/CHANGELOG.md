@@ -1,5 +1,11 @@
 # @adhese/sdk-gambit
 
+## 0.2.1
+
+### Patch Changes
+
+- 8b637f0: Fix readme
+
 ## 0.2.0
 
 ### Minor Changes
