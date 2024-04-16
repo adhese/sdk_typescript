@@ -9,12 +9,13 @@ To use Safeframe, you need to include the Safeframe library in your website. You
 script to your HTML file:
 
 ```html
-<script src="assets/sf.min.js"></script>
+
+<script src="public/files/sf.min.js"></script>
 ```
 
 > [!IMPORTANT]
 > The Safeframe library is not included in the Adhese SDK. You need to include it yourself. You can download the
-> Safeframe library <a href="./assets/sf.min.js" download>here</a>. Make sure to include the library in your HTML with a script tag as the library
+> Safeframe library <a href="./public/files/sf.min.js" download>here</a>. Make sure to include the library in your HTML with a script tag as the library
 > unfortunately does not adhere to stict mode and cannot be imported as a module.
 
 When you have included the library you can enable the `safeframe` option in the `createAdhese` options:

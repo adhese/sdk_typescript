@@ -1,50 +1,63 @@
+import { readFile, writeFile } from 'node:fs/promises';
 import { defineConfig } from 'vitepress';
 
-// https://vitepress.dev/reference/site-config
-export default defineConfig({
-  title: 'Adhese SDK',
-  description: 'SDK for communication with Adhese ads',
-  base: '/sdk_typescript/',
-  themeConfig: {
-    // https://vitepress.dev/reference/default-theme-config
-    nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Getting started', link: '/getting-started' },
-    ],
+export default async (data: {
+  command: string;
+  mode: string;
+// eslint-disable-next-line ts/explicit-function-return-type,ts/explicit-module-boundary-types
+}) => {
+  if (data.command === 'build')
+    await writeFile('public/files/adhese.js', await readFile('../../packages/sdk/lib/adhese.js'));
 
-    sidebar: [
-      { text: 'Getting Started', link: '/getting-started' },
-      { text: 'Slots', link: '/slots' },
-      { text: 'Events', link: '/events' },
-      { text: 'Gambit config', link: '/gambit' },
-      { text: 'Consent', link: '/consent' },
-      { text: 'Safeframe', link: '/safeframe' },
-      { text: 'Devtools', link: '/devtools' },
-      { text: 'React SDK', link: '/react-sdk' },
-      {
-        text: 'Contributing',
-        items: [
-          {
-            text: 'Running locally',
-            link: '/contributing/running-locally',
-          },
-        ],
-      },
-    ],
+  return defineConfig({
+    title: 'Adhese SDK',
+    description: 'SDK for communication with Adhese ads',
+    base: '/sdk_typescript/',
+    themeConfig: {
+      // https://vitepress.dev/reference/default-theme-config
+      nav: [
+        { text: 'Home', link: '/' },
+        { text: 'Getting started', link: '/getting-started' },
+      ],
 
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/adhese/sdk_typescript' },
-    ],
+      sidebar: [
+        { text: 'Getting Started', link: '/getting-started' },
+        { text: 'Slots', link: '/slots' },
+        { text: 'Events', link: '/events' },
+        { text: 'Gambit config', link: '/gambit' },
+        { text: 'Consent', link: '/consent' },
+        { text: 'Safeframe', link: '/safeframe' },
+        { text: 'Devtools', link: '/devtools' },
+        { text: 'React SDK', link: '/react-sdk' },
+        {
+          text: 'Contributing',
+          items: [
+            {
+              text: 'Running locally',
+              link: '/contributing/running-locally',
+            },
+            {
+              text: 'Releasing',
+              link: '/contributing/releasing',
+            },
+          ],
+        },
+      ],
 
-    lastUpdated: {
-      text: 'Last Updated',
-      formatOptions: {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
+      socialLinks: [
+        { icon: 'github', link: 'https://github.com/adhese/sdk_typescript' },
+      ],
+
+      lastUpdated: {
+        text: 'Last Updated',
+        formatOptions: {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+        },
       },
     },
-  },
-});
+  });
+};

@@ -12,6 +12,10 @@
       "outputs": ["dist/**", "lib/**"],
       "dependsOn": ["^build"]
     },
+    "docs#build": {
+      "outputs": ["dist/**"],
+      "dependsOn": ["@adhese/sdk#build"]
+    },
     "prepareRelease": {
       "outputs": ["dist/**", "lib/**"],
       "dependsOn": ["^prepareRelease"]

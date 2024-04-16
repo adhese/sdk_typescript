@@ -17,7 +17,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "vite build && tsup src/index.ts --dts-only --minify --format esm",
+    "build": "npm run build:npm && npm run build:standalone",
+    "build:npm": "vite build --config vite.config.npm.ts && tsup src/index.ts --dts-only --minify --format esm",
+    "build:standalone": "vite build --config vite.config.standalone.ts",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "clean": "rm -rf dist",

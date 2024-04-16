@@ -14,7 +14,6 @@
     "dev:verbose": "vitest",
     "test": "vitest --run --coverage --silent",
     "test:verbose": "vitest --run --coverage",
-    "build": "vite build",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "clean": "rm -rf dist & rm -rf coverage",
