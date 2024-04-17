@@ -40,7 +40,7 @@ export function SlotsTable({ adheseContext }: {
     return (): void => {
       adheseContext.events?.changeSlots.removeListener(onSlotsChange);
     };
-  }, []);
+  }, [adheseContext]);
 
   const formattedSlots = useMemo(() => slots.map((slot) => {
     const ad = slot.ad.value;
