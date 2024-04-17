@@ -86,6 +86,9 @@ export type AdheseOptions = {
    * The query detector options for the Adhese instance.
    */
   queries?: Record<string, string>;
+  /**
+   * Enable rendering ads in a SafeFrame.
+   */
   safeFrame?: boolean;
   /**
    * The plugins that are used for the Adhese instance. These plugins are called with the Adhese context and run during

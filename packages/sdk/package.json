@@ -20,8 +20,8 @@
     "build": "npm run build:npm && npm run build:standalone",
     "build:npm": "vite build --config vite.config.npm.ts && tsup src/index.ts --dts-only --minify --format esm",
     "build:standalone": "vite build --config vite.config.standalone.ts",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
+    "lint": "eslint . --ignore-pattern **/*.md/**/*",
+    "lint:fix": "eslint --fix . --ignore-pattern **/*.md/**/*",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
     "prepareRelease": "npm run build"
