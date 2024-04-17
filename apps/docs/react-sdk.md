@@ -6,6 +6,10 @@ import sdkReactPackage from '../../packages/sdk-react/package.json';
 
 For React developers, we provide a React SDK that allows you to easily integrate our services into your React application.
 
+> [!NOTE]
+> The React SDK is built on top of the [Adhese JavaScript SDK](/getting-started.html) and doesn't need the Adhese
+> JavaScript SDK to be installed separately.
+
 ## Installation
 ::: code-group
 ```bash [npm]
@@ -25,7 +29,8 @@ bun add @adhese/sdk-react
 ## `AdheseProvider`
 The `AdheseProvider` component is a context provider that makes the Adhese instance available to all child components.
 It should be placed at the root of your application. It accepts an `options` prop that is passed to the `createAdhese`
-function. When the `options` prop changes, the Adhese instance is recreated.
+function. When the `options` prop changes, the Adhese instance is recreated. This provider replaces the `createAdhese`
+function.
 
 > [!NOTE]
 > The `AdheseProvider` component is a wrapper around the `createAdhese` function. It is required to use the `AdheseProvider` if you want to use the `useAdhese` or `useAdheseSlot` hooks.

@@ -1,5 +1,8 @@
 # Getting started
 
+> [!TIP]
+> Using React? Check out the [React SDK](/react-sdk) documentation.
+
 ## Installation
 
 ### NPM
