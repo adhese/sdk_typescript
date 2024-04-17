@@ -12,5 +12,6 @@ export function toSlotOptions(slot: GambitSlot, parameterMap?: Record<string, st
     format: slot.slotType,
     containingElement: slot.containerId,
     parameters: slot.data?.parameters && parameterMap ? toParameters(slot.data.parameters, parameterMap) : undefined,
+    lazyLoading: slot.delayRender,
   };
 }

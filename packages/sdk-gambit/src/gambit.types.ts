@@ -19,7 +19,7 @@ export type GambitSlotData = {
 export type GambitSlot = {
   slotType: string;
   position?: string;
-  containerId: string;
+  containerId?: string;
   googleSlot?: string; // If set, used as fallback ad
   devices?: ReadonlyArray<GambitDevice>; // Default: all devices
   collapse?: {
@@ -30,9 +30,9 @@ export type GambitSlot = {
   data?: GambitSlotData;
 };
 export type GambitData = {
-  consent: boolean;
-  domain: string;
-  pageType: string;
+  consent?: boolean;
+  domain?: string;
+  pageType?: string;
   category?: ReadonlyArray<string> | string;
   subCategory?: ReadonlyArray<string> | string;
   productGroup?: ReadonlyArray<string> | string;

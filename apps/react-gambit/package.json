@@ -1,0 +1,17 @@
+{
+  "name": "react-gambit",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite --port 3001",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@adhese/sdk-devtools": "^0.7.0",
+    "@adhese/sdk-gambit": "^0.2.1",
+    "@adhese/sdk-react": "^0.7.0",
+    "react": "18.2.0",
+    "react-dom": "^18.2.0",
+    "zod": "^3.22.4"
+  }
+}
