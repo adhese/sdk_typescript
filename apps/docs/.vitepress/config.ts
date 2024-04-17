@@ -15,13 +15,8 @@ export default async (data: {
     base: '/sdk_typescript/',
     themeConfig: {
       // https://vitepress.dev/reference/default-theme-config
-      nav: [
-        { text: 'Home', link: '/' },
-        { text: 'Getting started', link: '/getting-started' },
-      ],
-
       sidebar: [
-        { text: 'Getting Started', link: '/getting-started' },
+        { text: 'Getting Started', link: '/index' },
         { text: 'Slots', link: '/slots' },
         { text: 'Events', link: '/events' },
         { text: 'Gambit config', link: '/gambit' },
