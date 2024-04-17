@@ -1,6 +1,6 @@
 import type { AdheseSlotOptions } from '@core';
 import { type ReactElement, useRef } from 'react';
-import { useAdheseSlot } from '@react-sdk';
+import { useAdheseSlot } from '@adhese/sdk-react';
 
 // eslint-disable-next-line ts/naming-convention
 export function AdheseSlot({ options }: { options: Omit<AdheseSlotOptions, 'containingElement' | 'context'> }): ReactElement {
