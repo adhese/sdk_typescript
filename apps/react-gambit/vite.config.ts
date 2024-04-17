@@ -11,7 +11,6 @@ export default defineConfig({
     alias: {
       /* eslint-disable ts/naming-convention */
       '@utils': `${path.resolve()}/../../packages/utils/src`,
-      '@core': `${path.resolve()}/../../packages/core/src`,
       '@logger': `${path.resolve()}/../../packages/logger/src`,
       '@server-mocks': `${path.resolve()}/../../packages/server-mocks/src`,
       '@safeframe': `${path.resolve()}/../../packages/safeframe/src`,

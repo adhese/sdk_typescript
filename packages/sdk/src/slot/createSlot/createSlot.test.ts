@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { type Ad, type AdheseContext, createSlot } from '@core';
 
 import { awaitTimeout } from '@utils';
+import { type Ad, type AdheseContext, createSlot } from '@adhese/sdk';
 import { testContext } from '../../testUtils';
 import { runOnInit } from '../../hooks/onInit';
 

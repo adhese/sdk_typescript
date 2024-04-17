@@ -1,4 +1,4 @@
-import type { ConsentData } from '@core/src/types';
+import type { ConsentData } from '@adhese/sdk/src/types';
 import type { SafeFrameImplementation } from './main.types';
 import type { Adhese } from '@/main';
 

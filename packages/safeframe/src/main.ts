@@ -1,5 +1,5 @@
-import type { Ad, AdheseContext } from '@core';
 import { uniqueId } from '@utils';
+import type { Ad, AdheseContext } from '@adhese/sdk';
 import type { Config, Position } from './main.types';
 
 export type SafeFrame = {

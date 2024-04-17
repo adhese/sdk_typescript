@@ -1,5 +1,5 @@
-import { type AdRequestOptions, logger } from '@core';
 import { toValue } from '@vue/runtime-core';
+import { type AdRequestOptions, logger } from '@adhese/sdk';
 
 type AdPostPayload = {
   slots: ReadonlyArray<{

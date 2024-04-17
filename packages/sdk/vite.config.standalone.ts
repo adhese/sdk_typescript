@@ -16,10 +16,10 @@ export default defineConfig({
     alias: {
       /* eslint-disable ts/naming-convention */
       '@utils': `${path.resolve()}/../utils/src`,
-      '@core': `${path.resolve()}/../core/src`,
       '@logger': `${path.resolve()}/../logger/src`,
       '@server-mocks': `${path.resolve()}/../server-mocks/src`,
       '@safeframe': `${path.resolve()}/../safeframe/src`,
+      '@adhese/sdk': `${path.resolve()}/src`,
       /* eslint-enable ts/naming-convention */
     },
   },

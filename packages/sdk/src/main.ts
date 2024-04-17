@@ -1,5 +1,4 @@
 import { createEventManager } from '@utils';
-import { type AdheseSlot, type AdheseSlotOptions, logger, requestAd, requestAds } from '@core';
 import { effectScope, reactive, watch } from '@vue/runtime-core';
 import { createSafeFrame } from '@safeframe';
 import { createSlotManager } from './slot/slotManager/slotManager';
@@ -9,6 +8,9 @@ import { createParameters, isPreviewMode, setupLogging } from './main.utils';
 import type { Adhese, AdheseContext, AdheseOptions, MergedOptions } from './main.types';
 import { disposeOnInit, onInit, runOnInit } from './hooks/onInit';
 import { disposeOnDispose, runOnDispose } from './hooks/onDispose';
+import { logger } from './logger/logger';
+import { requestAd, requestAds } from './requestAds/requestAds';
+import type { AdheseSlot, AdheseSlotOptions } from './slot/createSlot/createSlot.types';
 
 /**
  * Creates an Adhese instance. This instance is your main entry point to the Adhese API.

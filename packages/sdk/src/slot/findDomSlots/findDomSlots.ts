@@ -1,6 +1,8 @@
-import { type AdheseContext, type AdheseSlot, createSlot } from '@core';
 import { waitForDomLoad } from '@utils';
 import { generateName } from '../createSlot/createSlot.utils';
+import type { AdheseContext } from '../../main.types';
+import type { AdheseSlot } from '../createSlot/createSlot.types';
+import { createSlot } from '../createSlot/createSlot';
 
 /**
  * Find all slots in the DOM and render them. Ignore slots that are already active.

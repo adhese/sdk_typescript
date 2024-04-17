@@ -1,6 +1,6 @@
-import { type Ad, type AdheseContext, logger } from '@core';
 import { type ComputedRef, type Ref, computed, ref, watch } from '@vue/runtime-core';
 import { round } from 'remeda';
+import { type Ad, type AdheseContext, logger } from '@adhese/sdk';
 import { addTrackingPixel } from '../../impressionTracking/impressionTracking';
 
 export function useViewabilityObserver(

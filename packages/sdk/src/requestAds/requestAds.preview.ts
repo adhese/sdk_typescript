@@ -1,5 +1,5 @@
-import { type Ad, logger } from '@core';
-import { adSchema } from './requestAds.schema';
+import { logger } from '@adhese/sdk';
+import { type Ad, adSchema } from './requestAds.schema';
 
 export async function requestPreviews(account: string): Promise<ReadonlyArray<Ad>> {
   const previewObjects = getPreviewObjects();

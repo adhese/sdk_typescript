@@ -1,10 +1,12 @@
-import { type Ad, requestAd as extRequestAd, logger } from '@core';
 import { waitForDomLoad } from '@utils';
 import { type Ref, computed, effectScope, reactive, ref, watch } from '@vue/runtime-core';
 import { isDeepEqual } from 'remeda';
 import { addTrackingPixel } from '../../impressionTracking/impressionTracking';
 import { type QueryDetector, createQueryDetector } from '../../queryDetector/queryDetector';
 import { onInit, waitOnInit } from '../../hooks/onInit';
+import type { Ad } from '../../requestAds/requestAds.schema';
+import { requestAd as extRequestAd } from '../../requestAds/requestAds';
+import { logger } from '../../logger/logger';
 import type { AdheseSlot, AdheseSlotOptions, RenderMode } from './createSlot.types';
 import { generateName, renderIframe, renderInline } from './createSlot.utils';
 import { useViewabilityObserver } from './useViewabilityObserver';

@@ -7,7 +7,6 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "paths": {
-      "@core": ["packages/core/src/index.ts"],
       "@logger": ["packages/logger/src/index.ts"],
       "@utils": ["packages/utils/src/index.ts"],
       "@server-mocks": ["packages/server-mocks/src/index.ts"],

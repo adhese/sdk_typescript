@@ -1,5 +1,6 @@
-import { type AdheseContext, logger } from '@core';
 import type { MaybeRef } from '@vue/runtime-core';
+import type { AdheseContext } from '../main.types';
+import { logger } from '../logger/logger';
 import { type Ad, parseResponse } from './requestAds.schema';
 import { requestPreviews } from './requestAds.preview';
 import { requestWithGet, requestWithPost } from './requestAds.utils';

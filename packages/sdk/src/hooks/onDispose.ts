@@ -1,4 +1,4 @@
-import { logger } from '@core';
+import { logger } from '../logger/logger';
 import { createHook } from './createHook';
 
 let resolveOnDisposePromise = (): void => {};

@@ -1,5 +1,5 @@
 import { type Ref, ref, watch } from '@vue/runtime-core';
-import { type Ad, type AdheseSlotOptions, logger } from '@core';
+import { type Ad, type AdheseSlotOptions, logger } from '@adhese/sdk';
 
 export function useRenderIntersectionObserver({ ad, options, element, render }: {
   ad: Ref<Ad | null>;

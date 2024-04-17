@@ -1,5 +1,5 @@
 import { debounce } from 'remeda';
-import { logger } from '@core';
+import { logger } from '@adhese/sdk';
 
 export type DeviceDetectorOptions = {
   queries?: Record<string, string>;

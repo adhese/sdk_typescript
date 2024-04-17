@@ -1,7 +1,10 @@
 import type { Merge } from '@utils';
-import { type AdheseContext, type AdheseSlot, type AdheseSlotOptions, createSlot, logger } from '@core';
 import { effectScope, shallowReactive, watch, watchEffect } from '@vue/runtime-core';
 import { findDomSlots as extFindDomSlots } from '../findDomSlots/findDomSlots';
+import type { AdheseSlot, AdheseSlotOptions } from '../createSlot/createSlot.types';
+import type { AdheseContext } from '../../main.types';
+import { createSlot } from '../createSlot/createSlot';
+import { logger } from '../../logger/logger';
 
 export type SlotManager = {
   /**

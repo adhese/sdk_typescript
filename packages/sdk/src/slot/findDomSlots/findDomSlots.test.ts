@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { type AdheseContext, createSlot } from '@core';
 import { testContext } from '../../testUtils';
+import { createSlot } from '../createSlot/createSlot';
+import type { AdheseContext } from '../../main.types';
 import { findDomSlots } from './findDomSlots';
 
 describe('findDomSlots', () => {

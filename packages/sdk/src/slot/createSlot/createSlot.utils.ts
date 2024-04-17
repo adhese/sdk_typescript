@@ -1,4 +1,4 @@
-import type { Ad } from '@core';
+import type { Ad } from '@adhese/sdk';
 
 export function renderIframe(ad: Ad, element: HTMLElement): void {
   const iframe = document.createElement('iframe');
