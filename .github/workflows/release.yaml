@@ -40,9 +40,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Prepare packages for potential release
-        run: npm run prepareRelease
-
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@v1
@@ -61,9 +58,7 @@ jobs:
 
   deploy_docs:
     name: Deploy docs
-    needs: [release]
     runs-on: ubuntu-latest
-    if: ${{ needs.release.outputs.published == 'true' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
