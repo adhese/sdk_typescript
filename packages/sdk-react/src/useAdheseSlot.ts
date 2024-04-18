@@ -18,7 +18,7 @@ export function useAdheseSlot(elementRef: RefObject<HTMLElement>, options: Omit<
     let intermediate: AdheseSlot | undefined;
 
     if (adhese && elementRef.current) {
-      intermediate = adhese.add(
+      intermediate = adhese.addSlot(
         {
           ...options,
           containingElement: elementRef.current,

@@ -1,9 +1,6 @@
 /* v8 ignore start */
 export { createAdhese } from './main';
 export { logger } from './logger/logger';
-export { createSlot } from './slot/createSlot/createSlot';
-export { findDomSlots } from './slot/findDomSlots/findDomSlots';
-export { createSlotManager } from './slot/slotManager/slotManager';
 export type { SlotManager } from './slot/slotManager/slotManager';
 export type { AdRequestOptions } from './requestAds/requestAds';
 export { requestAds, requestAd } from './requestAds/requestAds';

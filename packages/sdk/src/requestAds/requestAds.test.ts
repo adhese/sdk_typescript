@@ -1,7 +1,8 @@
 import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { UrlString } from '@utils';
-import { type AdheseContext, createSlot, logger } from '@adhese/sdk';
+import { type AdheseContext, logger } from '@adhese/sdk';
 import { testContext } from '../testUtils';
+import { createSlot } from '../slot/createSlot/createSlot';
 import { requestAd, requestAds } from './requestAds';
 import { type AdResponse, adSchema, dateLike, numberLike, urlLike } from './requestAds.schema';
 import { parseParameters } from './requestAds.utils';

@@ -84,10 +84,10 @@ describe('createAdhese', () => {
       account: 'test',
     });
 
-    expect(adhese.account).toBe('test');
-    expect(adhese.host).toBe('https://ads-test.adhese.com');
-    expect(adhese.poolHost).toBe('https://pool-test.adhese.com');
-    expect(adhese.requestType).toBe('POST');
+    expect(adhese.options.account).toBe('test');
+    expect(adhese.options.host).toBe('https://ads-test.adhese.com');
+    expect(adhese.options.poolHost).toBe('https://pool-test.adhese.com');
+    expect(adhese.options.requestType).toBe('POST');
   });
 
   it('should create an adhese instance with custom options', () => {
@@ -108,13 +108,13 @@ describe('createAdhese', () => {
       eagerRendering: true,
     });
 
-    expect(adhese.account).toBe('test');
-    expect(adhese.host).toBe('https://ads.example.com');
-    expect(adhese.poolHost).toBe('https://pool.example.com');
+    expect(adhese.options.account).toBe('test');
+    expect(adhese.options.host).toBe('https://ads.example.com');
+    expect(adhese.options.poolHost).toBe('https://pool.example.com');
     expect(adhese.getConsent()).toBe(true);
-    expect(adhese.requestType).toBe('GET');
+    expect(adhese.options.requestType).toBe('GET');
     expect(adhese.parameters.size).toBe(8);
-    expect(adhese.eagerRendering).toBe(true);
+    expect(adhese.options.eagerRendering).toBe(true);
   });
 
   it('should create an adhese instance with debug logging', () => {
@@ -202,7 +202,7 @@ describe('createAdhese', () => {
 
     document.body.appendChild(element);
 
-    await adhese.addSlot({
+    adhese.addSlot({
       format: 'foo',
       containingElement: 'foo',
     });
@@ -262,7 +262,7 @@ describe('createAdhese', () => {
     });
 
     const element = document.createElement('div');
-    await adhese.addSlot({
+    adhese.addSlot({
       format: 'foo',
       containingElement: element,
     });
@@ -289,7 +289,7 @@ describe('createAdhese', () => {
     });
 
     const element = document.createElement('div');
-    await adhese.addSlot({
+    adhese.addSlot({
       format: 'foo',
       containingElement: element,
     });

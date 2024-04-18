@@ -1,9 +1,10 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { awaitTimeout } from '@utils';
-import { type Ad, type AdheseContext, createSlot } from '@adhese/sdk';
+import type { Ad, AdheseContext } from '@adhese/sdk';
 import { testContext } from '../../testUtils';
 import { runOnInit } from '../../hooks/onInit';
+import { createSlot } from './createSlot';
 
 vi.mock('../logger/logger', () => ({
   logger: {

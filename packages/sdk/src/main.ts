@@ -9,7 +9,7 @@ import type { Adhese, AdheseContext, AdheseOptions, MergedOptions } from './main
 import { disposeOnInit, onInit, runOnInit } from './hooks/onInit';
 import { disposeOnDispose, runOnDispose } from './hooks/onDispose';
 import { logger } from './logger/logger';
-import { requestAd, requestAds } from './requestAds/requestAds';
+import { requestAds } from './requestAds/requestAds';
 import type { AdheseSlot, AdheseSlotOptions } from './slot/createSlot/createSlot.types';
 
 /**
@@ -137,20 +137,11 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       return slotManager.get(name);
     }
 
-    async function addSlot(slotOptions: AdheseSlotOptions): Promise<Readonly<AdheseSlot>> {
+    function addSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot> {
       if (!slotManager)
         throw new Error('Slot manager not initialized');
 
-      const slot = slotManager.add(slotOptions);
-
-      if (!slot.lazyLoading) {
-        slot.ad.value = await requestAd({
-          slot,
-          context,
-        });
-      }
-
-      return slot;
+      return slotManager.add(slotOptions);
     }
 
     async function findDomSlots(): Promise<ReadonlyArray<AdheseSlot>> {
@@ -261,8 +252,6 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
     runOnInit();
 
     return {
-      ...mergedOptions,
-      ...slotManager,
       parameters: context.parameters,
       events: context.events,
       getLocation,
@@ -273,7 +262,10 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       findDomSlots,
       dispose,
       toggleDebug,
+      get: slotManager.get,
+      getAll: slotManager.getAll,
       context,
+      options: mergedOptions,
     } satisfies Adhese;
   })!;
 }

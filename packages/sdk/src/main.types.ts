@@ -1,7 +1,7 @@
 /* v8 ignore start */
 import type { EventManager, Merge, UrlString } from '@utils';
 import type { SafeFrame } from '@safeframe';
-import type { SlotManager, SlotManagerOptions } from './slot/slotManager/slotManager';
+import type { SlotManagerOptions } from './slot/slotManager/slotManager';
 import type { AdheseSlot, AdheseSlotOptions } from './slot/createSlot/createSlot.types';
 import type { Ad } from './requestAds/requestAds.schema';
 import type { AdRequestOptions } from './requestAds/requestAds';
@@ -154,7 +154,7 @@ type AdheseEvents = {
   debugChange: boolean;
 };
 
-export type Adhese = Omit<AdheseOptions, 'location' | 'parameters' | 'consent'> & Merge<SlotManager, {
+export type Adhese = {
   /**
    * The parameters that are used for all ads.
    */
@@ -163,7 +163,23 @@ export type Adhese = Omit<AdheseOptions, 'location' | 'parameters' | 'consent'> 
    * The event manager for the Adhese instance.
    */
   events: EventManager<AdheseEvents>;
+  /**
+   * The Adhese context that is a reactive object that contains all the data of the Adhese instance.
+   */
   context: AdheseContext;
+  /**
+   * Options the Adhese instance was initialized with.
+   */
+  options: MergedOptions;
+  /**
+   * Get a slot by name.
+   * @param name The name of the slot.
+   */
+  get(name: string): AdheseSlot | undefined;
+  /**
+   * Get all slots in the Adhese instance.
+   */
+  getAll(): ReadonlyArray<AdheseSlot>;
   /**
    * Returns the current page location.
    */
@@ -183,7 +199,7 @@ export type Adhese = Omit<AdheseOptions, 'location' | 'parameters' | 'consent'> 
   /**
    * Adds a new slot to the Adhese instance and renders it.
    */
-  addSlot(slot: Omit<AdheseSlotOptions, 'location' | 'context'>): Promise<Readonly<AdheseSlot>>;
+  addSlot(slot: Omit<AdheseSlotOptions, 'location' | 'context'>): Readonly<AdheseSlot>;
   /**
    * Finds all slots in the DOM and adds them to the Adhese instance.
    */
@@ -198,7 +214,7 @@ export type Adhese = Omit<AdheseOptions, 'location' | 'parameters' | 'consent'> 
    * Toggles the debug mode of the Adhese instance.
    */
   toggleDebug(): Promise<boolean>;
-}>;
+};
 
 export type AdheseContext = Partial<Pick<Adhese, 'events' | 'getAll' | 'get' | 'parameters'>> & {
   location: string;

@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { type AdheseContext, type AdheseSlot, type AdheseSlotOptions, createSlotManager } from '@adhese/sdk';
+import type { AdheseContext, AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
 import { testContext } from '../../testUtils';
+import { createSlotManager } from './slotManager';
 
 describe('slotManager', () => {
   let context: AdheseContext;
