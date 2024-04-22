@@ -1,5 +1,18 @@
 # @adhese/sdk
 
+## 0.8.0
+
+### Minor Changes
+
+- 1cc8bff: Create hooks to write plugins
+- 10a18fd: Simplify exposed functions from sdk
+- 10a18fd: Make addSlot function syncronous and remove add function
+
+### Patch Changes
+
+- ee019fd: Update README files to match package specific instructions
+- 76566dc: Add jsdoc to AdheseOptions.safeframe
+
 ## 0.7.0
 
 ### Minor Changes

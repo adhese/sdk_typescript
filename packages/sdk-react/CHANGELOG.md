@@ -1,5 +1,21 @@
 # @adhese/sdk-react
 
+## 0.8.0
+
+### Minor Changes
+
+- 10a18fd: Make addSlot function syncronous and remove add function
+
+### Patch Changes
+
+- ee019fd: Update README files to match package specific instructions
+- Updated dependencies [ee019fd]
+- Updated dependencies [1cc8bff]
+- Updated dependencies [76566dc]
+- Updated dependencies [10a18fd]
+- Updated dependencies [10a18fd]
+  - @adhese/sdk@0.8.0
+
 ## 0.7.0
 
 ### Minor Changes

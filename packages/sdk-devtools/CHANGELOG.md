@@ -1,5 +1,18 @@
 # @adhese/sdk-devtools
 
+## 0.7.1
+
+### Patch Changes
+
+- ee019fd: Update README files to match package specific instructions
+- 5dd2e3d: Fix slots not showing up when using devtools in a React app
+- Updated dependencies [ee019fd]
+- Updated dependencies [1cc8bff]
+- Updated dependencies [76566dc]
+- Updated dependencies [10a18fd]
+- Updated dependencies [10a18fd]
+  - @adhese/sdk@0.8.0
+
 ## 0.7.0
 
 ### Minor Changes

@@ -1,5 +1,18 @@
 # @adhese/sdk-gambit
 
+## 0.2.2
+
+### Patch Changes
+
+- 852dbb3: Fix lazyLoading not working with Gambit
+- 852dbb3: Fix GambitData having required props that can be optional
+- Updated dependencies [ee019fd]
+- Updated dependencies [1cc8bff]
+- Updated dependencies [76566dc]
+- Updated dependencies [10a18fd]
+- Updated dependencies [10a18fd]
+  - @adhese/sdk@0.8.0
+
 ## 0.2.1
 
 ### Patch Changes
