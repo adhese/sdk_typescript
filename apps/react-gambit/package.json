@@ -9,7 +9,7 @@
   "dependencies": {
     "@adhese/sdk-devtools": "^0.7.0",
     "@adhese/sdk-gambit": "^0.2.1",
-    "@adhese/sdk-react": "^0.7.0",
+    "@adhese/sdk-react": "^0.8.0",
     "react": "18.2.0",
     "react-dom": "^18.2.0",
     "zod": "^3.23.0"
