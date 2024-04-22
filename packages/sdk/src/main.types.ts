@@ -9,6 +9,7 @@ import type { logger } from './logger/logger';
 
 export type AdhesePluginInformation = {
   index: number;
+  version: string;
 };
 
 export type AdhesePlugin = (context: AdheseContext, plugin: AdhesePluginInformation) => void;

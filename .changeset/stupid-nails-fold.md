@@ -1,0 +1,5 @@
+---
+"@adhese/sdk": minor
+---
+
+Add information about the current version in the package.json to plugins
