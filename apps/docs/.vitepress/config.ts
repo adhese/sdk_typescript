@@ -19,6 +19,7 @@ export default async (data: {
         { text: 'Getting Started', link: '/index' },
         { text: 'Slots', link: '/slots' },
         { text: 'Events', link: '/events' },
+        { text: 'Plugins', link: '/plugins' },
         { text: 'Gambit config', link: '/gambit' },
         { text: 'Consent', link: '/consent' },
         { text: 'Safeframe', link: '/safeframe' },

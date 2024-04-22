@@ -6,11 +6,12 @@ import { onTcfConsentChange } from './consent/tcfConsent';
 import { createQueryDetector } from './queryDetector/queryDetector';
 import { createParameters, isPreviewMode, setupLogging } from './main.utils';
 import type { Adhese, AdheseContext, AdheseOptions, MergedOptions } from './main.types';
-import { disposeOnInit, onInit, runOnInit } from './hooks/onInit';
-import { disposeOnDispose, runOnDispose } from './hooks/onDispose';
+import { onInit, runOnInit } from './hooks/onInit';
+import { runOnDispose } from './hooks/onDispose';
 import { logger } from './logger/logger';
 import { requestAds } from './requestAds/requestAds';
 import type { AdheseSlot, AdheseSlotOptions } from './slot/createSlot/createSlot.types';
+import { clearAllHooks } from './hooks/createHook';
 
 /**
  * Creates an Adhese instance. This instance is your main entry point to the Adhese API.
@@ -65,7 +66,14 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       get,
       options: mergedOptions,
       logger,
-    }) as AdheseContext;
+      addSlot,
+    } satisfies AdheseContext) as AdheseContext;
+
+    for (const [index, plugin] of mergedOptions.plugins.entries()) {
+      plugin(context, {
+        index,
+      });
+    }
 
     context.events = createEventManager();
 
@@ -225,15 +233,12 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       context.events?.dispose();
       logger.info('Adhese instance disposed');
 
-      runOnDispose();
+      runOnDispose().catch(logger.error);
 
-      disposeOnInit();
-      disposeOnDispose();
+      clearAllHooks();
 
       scope.stop();
     }
-    for (const plugin of mergedOptions.plugins)
-      plugin(context);
 
     onInit(async () => {
       if ((slotManager.getAll().length ?? 0) > 0)
@@ -249,7 +254,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
         dispose();
     });
 
-    runOnInit();
+    runOnInit().catch(logger.error);
 
     return {
       parameters: context.parameters,

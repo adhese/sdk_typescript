@@ -52,7 +52,8 @@ describe('slot', () => {
       },
     };
 
-    runOnInit();
+    // eslint-disable-next-line no-void
+    void runOnInit();
   });
 
   afterEach(() => {

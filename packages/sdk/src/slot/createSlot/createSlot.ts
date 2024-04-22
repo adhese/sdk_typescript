@@ -7,6 +7,7 @@ import { onInit, waitOnInit } from '../../hooks/onInit';
 import type { Ad } from '../../requestAds/requestAds.schema';
 import { requestAd as extRequestAd } from '../../requestAds/requestAds';
 import { logger } from '../../logger/logger';
+import { runOnRender } from '../../hooks/onRender';
 import type { AdheseSlot, AdheseSlotOptions, RenderMode } from './createSlot.types';
 import { generateName, renderIframe, renderInline } from './createSlot.utils';
 import { useViewabilityObserver } from './useViewabilityObserver';
@@ -131,12 +132,12 @@ export function createSlot(options: AdheseSlotOptions): Readonly<AdheseSlot> {
       await waitForDomLoad();
       await waitOnInit;
 
-      const renderAd = adToRender ?? ad.value ?? await requestAd();
+      let renderAd = adToRender ?? ad.value ?? originalAd.value ?? await requestAd();
 
-      if (originalAd.value) {
-        // eslint-disable-next-line require-atomic-updates
-        ad.value = options.onBeforeRender?.(adToRender ?? originalAd.value) ?? renderAd;
-      }
+      if (renderAd)
+        renderAd = options.onBeforeRender?.(renderAd) ?? renderAd;
+
+      renderAd = await runOnRender(renderAd);
 
       if (!element.value) {
         const error = `Could not create slot for format ${format.value}. No element found.`;
@@ -147,8 +148,8 @@ export function createSlot(options: AdheseSlotOptions): Readonly<AdheseSlot> {
       if (context.debug)
         element.value.style.position = 'relative';
 
-      if (context.safeFrame && ad.value && renderMode === 'iframe') {
-        const position = context.safeFrame.addPosition(ad.value, element.value);
+      if (context.safeFrame && renderAd && renderMode === 'iframe') {
+        const position = context.safeFrame.addPosition(renderAd, element.value);
 
         await context.safeFrame.render(position);
       }
