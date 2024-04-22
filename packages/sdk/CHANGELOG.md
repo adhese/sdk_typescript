@@ -1,5 +1,13 @@
 # @adhese/sdk
 
+## 0.8.1
+
+### Patch Changes
+
+- ed346cb: Remove hooks from general export and add pass them as an argument when calling a plugin so they are properly scoped to the Adhese instance
+- e8578f2: Add information about the current version in the package.json to plugins
+- bef61c2: Remove logs from onInit and onDispose
+
 ## 0.8.0
 
 ### Minor Changes
