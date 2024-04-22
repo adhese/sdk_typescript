@@ -1,6 +1,3 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 #ignore the husky pre-commit hook if running a ci
 if [ -n "$CI" ]; then
   exit 0

@@ -30,6 +30,6 @@
   },
   "dependencies": {
     "@adhese/sdk": "^0.7.0",
-    "remeda": "^1.59.0"
+    "remeda": "^1.61.0"
   }
 }
