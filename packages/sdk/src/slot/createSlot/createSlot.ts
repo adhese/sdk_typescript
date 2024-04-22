@@ -1,12 +1,11 @@
 import { waitForDomLoad } from '@utils';
 import { type Ref, computed, effectScope, reactive, ref, watch } from '@vue/runtime-core';
 import { isDeepEqual } from 'remeda';
+import { type Ad, logger } from '@adhese/sdk';
 import { addTrackingPixel } from '../../impressionTracking/impressionTracking';
 import { type QueryDetector, createQueryDetector } from '../../queryDetector/queryDetector';
 import { onInit, waitOnInit } from '../../hooks/onInit';
-import type { Ad } from '../../requestAds/requestAds.schema';
 import { requestAd as extRequestAd } from '../../requestAds/requestAds';
-import { logger } from '../../logger/logger';
 import { runOnRender } from '../../hooks/onRender';
 import type { AdheseSlot, AdheseSlotOptions, RenderMode } from './createSlot.types';
 import { generateName, renderIframe, renderInline } from './createSlot.utils';
@@ -171,6 +170,9 @@ export function createSlot(options: AdheseSlotOptions): Readonly<AdheseSlot> {
       });
 
       options.onRender?.(element.value);
+
+      // eslint-disable-next-line require-atomic-updates
+      ad.value = renderAd;
 
       disposeRenderIntersectionObserver();
 
