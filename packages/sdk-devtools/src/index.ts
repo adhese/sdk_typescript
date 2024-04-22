@@ -1,7 +1,10 @@
-import { type AdheseContext, type AdhesePlugin, onDispose, onInit } from '@adhese/sdk';
+import type { AdheseContext, AdhesePlugin } from '@adhese/sdk';
 import { lazy } from 'react';
 
-export const createDevtools: AdhesePlugin = (context: AdheseContext) => {
+export const createDevtools: AdhesePlugin = (context: AdheseContext, {
+  onInit,
+  onDispose,
+}) => {
   const wrapperElement = document.createElement('div');
   let unmount: (() => void) | undefined;
 

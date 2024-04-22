@@ -8,11 +8,14 @@ import { createQueryDetector } from './queryDetector/queryDetector';
 import { createParameters, isPreviewMode, setupLogging } from './main.utils';
 import type { Adhese, AdheseContext, AdheseOptions, MergedOptions } from './main.types';
 import { onInit, runOnInit } from './hooks/onInit';
-import { runOnDispose } from './hooks/onDispose';
+import { onDispose, runOnDispose } from './hooks/onDispose';
 import { logger } from './logger/logger';
 import { requestAds } from './requestAds/requestAds';
 import type { AdheseSlot, AdheseSlotOptions } from './slot/createSlot/createSlot.types';
 import { clearAllHooks } from './hooks/createHook';
+import { onResponse } from './hooks/onResponse';
+import { onRender } from './hooks/onRender';
+import { onRequest } from './hooks/onRequest';
 
 /**
  * Creates an Adhese instance. This instance is your main entry point to the Adhese API.
@@ -74,6 +77,11 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       plugin(context, {
         index,
         version: packageJson.version,
+        onInit,
+        onDispose,
+        onRender,
+        onRequest,
+        onResponse,
       });
     }
 

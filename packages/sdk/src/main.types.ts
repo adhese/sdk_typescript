@@ -6,10 +6,20 @@ import type { AdheseSlot, AdheseSlotOptions } from './slot/createSlot/createSlot
 import type { Ad } from './requestAds/requestAds.schema';
 import type { AdRequestOptions } from './requestAds/requestAds';
 import type { logger } from './logger/logger';
+import type { onInit } from './hooks/onInit';
+import type { onDispose } from './hooks/onDispose';
+import type { onRender } from './hooks/onRender';
+import type { onRequest } from './hooks/onRequest';
+import type { onResponse } from './hooks/onResponse';
 
 export type AdhesePluginInformation = {
   index: number;
   version: string;
+  onInit: typeof onInit;
+  onDispose: typeof onDispose;
+  onRender: typeof onRender;
+  onRequest: typeof onRequest;
+  onResponse: typeof onResponse;
 };
 
 export type AdhesePlugin = (context: AdheseContext, plugin: AdhesePluginInformation) => void;
