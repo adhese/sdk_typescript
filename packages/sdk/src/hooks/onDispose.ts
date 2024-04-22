@@ -1,32 +1,23 @@
 import { logger } from '../logger/logger';
 import { createHook } from './createHook';
 
-let resolveOnDisposePromise = (): void => {};
 let isDisposed = false;
 
-const waitOnDispose = new Promise<void>((resolve) => {
-  resolveOnDisposePromise = resolve;
-});
-
-const [runOnDispose, onDispose, disposeOnDispose] = createHook({
+const [runOnDispose, onDispose] = createHook('onDispose', {
   onRun(callbacks) {
     isDisposed = true;
 
-    resolveOnDisposePromise();
-
     logger.debug('Disposal completed');
 
-    callbacks.clear();
+    callbacks?.clear();
   },
   onAdd() {
     if (isDisposed)
-      runOnDispose();
+      runOnDispose().catch(logger.error);
   },
 });
 
 export {
   onDispose,
   runOnDispose,
-  waitOnDispose,
-  disposeOnDispose,
 };

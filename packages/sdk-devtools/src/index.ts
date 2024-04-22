@@ -1,7 +1,7 @@
-import { type AdheseContext, onDispose, onInit } from '@adhese/sdk';
+import { type AdheseContext, type AdhesePlugin, onDispose, onInit } from '@adhese/sdk';
 import { lazy } from 'react';
 
-export function createDevtools(context: AdheseContext): void {
+export const createDevtools: AdhesePlugin = (context: AdheseContext) => {
   const wrapperElement = document.createElement('div');
   let unmount: (() => void) | undefined;
 
@@ -35,7 +35,7 @@ export function createDevtools(context: AdheseContext): void {
   }
 
   onDispose(dispose);
-}
+};
 
 // eslint-disable-next-line ts/naming-convention
 export const Devtools = lazy(() => import('./Devtools').then(module => ({ default: module.Devtools })));

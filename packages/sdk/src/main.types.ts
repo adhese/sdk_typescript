@@ -7,6 +7,12 @@ import type { Ad } from './requestAds/requestAds.schema';
 import type { AdRequestOptions } from './requestAds/requestAds';
 import type { logger } from './logger/logger';
 
+export type AdhesePluginInformation = {
+  index: number;
+};
+
+export type AdhesePlugin = (context: AdheseContext, plugin: AdhesePluginInformation) => void;
+
 export type AdheseOptions = {
   /**
    * The Adhese account name.
@@ -94,7 +100,7 @@ export type AdheseOptions = {
    * The plugins that are used for the Adhese instance. These plugins are called with the Adhese context and run during
    * the initialization of the Adhese instance.
    */
-  plugins?: ReadonlyArray<(context: AdheseContext) => void>;
+  plugins?: ReadonlyArray<AdhesePlugin>;
 } & ({
   viewabilityTracking?: true;
   /**
@@ -216,7 +222,7 @@ export type Adhese = {
   toggleDebug(): Promise<boolean>;
 };
 
-export type AdheseContext = Partial<Pick<Adhese, 'events' | 'getAll' | 'get' | 'parameters'>> & {
+export type AdheseContext = Partial<Pick<Adhese, 'events' | 'getAll' | 'get' | 'parameters' | 'addSlot'>> & {
   location: string;
   consent: boolean;
   options: Readonly<MergedOptions>;

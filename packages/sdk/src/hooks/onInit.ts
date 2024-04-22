@@ -7,7 +7,7 @@ const waitOnInit = new Promise<void>((resolve) => {
   resolveOnInitPromise = resolve;
 });
 
-const [runOnInit, onInit, disposeOnInit] = createHook({
+const [runOnInit, onInit] = createHook('onInit', {
   onRun(callbacks) {
     isInit = true;
 
@@ -15,11 +15,11 @@ const [runOnInit, onInit, disposeOnInit] = createHook({
 
     logger.debug('Initialization completed');
 
-    callbacks.clear();
+    callbacks?.clear();
   },
   onAdd() {
     if (isInit)
-      runOnInit();
+      runOnInit().catch(logger.error);
   },
 });
 
@@ -27,5 +27,4 @@ export {
   onInit,
   runOnInit,
   waitOnInit,
-  disposeOnInit,
 };

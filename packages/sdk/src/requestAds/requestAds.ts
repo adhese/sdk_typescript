@@ -1,6 +1,8 @@
 import type { MaybeRef } from '@vue/runtime-core';
 import type { AdheseContext } from '../main.types';
 import { logger } from '../logger/logger';
+import { runOnRequest } from '../hooks/onRequest';
+import { runOnResponse } from '../hooks/onResponse';
 import { type Ad, parseResponse } from './requestAds.schema';
 import { requestPreviews } from './requestAds.preview';
 import { requestWithGet, requestWithPost } from './requestAds.utils';
@@ -19,7 +21,9 @@ export type AdRequestOptions = {
 /**
  * Request multiple ads at once from the API
  */
-export async function requestAds(options: AdRequestOptions): Promise<ReadonlyArray<Ad>> {
+export async function requestAds(requestOptions: AdRequestOptions): Promise<ReadonlyArray<Ad>> {
+  const options = await runOnRequest(requestOptions);
+
   const { context } = options;
 
   try {
@@ -55,10 +59,10 @@ export async function requestAds(options: AdRequestOptions): Promise<ReadonlyArr
     if (matchedPreviews.length > 0)
       context.events?.previewReceived.dispatch(matchedPreviews);
 
-    const mergedResult: ReadonlyArray<Ad> = [
+    const mergedResult = await runOnResponse([
       ...result.filter(ad => !previews.some(preview => preview.libId === ad.libId)),
       ...matchedPreviews,
-    ];
+    ]);
 
     if (mergedResult.length === 0)
       throw new Error('No ads found');
