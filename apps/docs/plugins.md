@@ -11,7 +11,19 @@ initialized.
 ## Hooks
 To allow plugins to interact with the SDK, the SDK provides a set of hooks that can be used to modify the SDK's behavior.
 Hooks are functions that are executed at specific points in the SDK's lifecycle. Depending on the hook, they pass an
-argument with data relevant to the hook that can be modified by returning a new value.
+argument with data relevant to the hook that can be modified by returning a new value. Hooks are passed as an object to
+the plugin function together with miscellaneous data.
+
+```js
+function myPlugin(context, plugin) {
+  plugin.onInit(() => {
+    console.log('SDK initialized');
+  });
+
+  plugin.onRender((ad) => {
+    console.log('Ad rendered', ad);
+  });
+```
 
 ### Available Hooks
 
@@ -58,7 +70,7 @@ Hooks can be asynchronous. This can be useful when you need to perform an asynch
 from a server, before the SDK is initialized. To make a hook asynchronous, you can return a `Promise` from the hook body.
 
 ```js
-function myPlugin(context) {
+function myPlugin(context, { onInit }) {
   onInit(async () => {
     const data = await fetchData();
 
