@@ -1,4 +1,3 @@
-import { logger } from '../logger/logger';
 import { createHook } from './createHook';
 
 let resolveOnInitPromise = (): void => {};
@@ -13,13 +12,11 @@ const [runOnInit, onInit] = createHook('onInit', {
 
     resolveOnInitPromise();
 
-    logger.debug('Initialization completed');
-
     callbacks?.clear();
   },
   onAdd() {
     if (isInit)
-      runOnInit().catch(logger.error);
+      runOnInit().catch(console.error);
   },
 });
 
