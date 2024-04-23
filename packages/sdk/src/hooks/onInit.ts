@@ -1,4 +1,4 @@
-import { createHook } from './createHook';
+import { createSyncHook } from './createHook';
 
 let resolveOnInitPromise = (): void => {};
 let isInit = false;
@@ -6,7 +6,7 @@ const waitOnInit = new Promise<void>((resolve) => {
   resolveOnInitPromise = resolve;
 });
 
-const [runOnInit, onInit] = createHook('onInit', {
+const [runOnInit, onInit] = createSyncHook('onInit', {
   onRun(callbacks) {
     isInit = true;
 
@@ -16,7 +16,7 @@ const [runOnInit, onInit] = createHook('onInit', {
   },
   onAdd() {
     if (isInit)
-      runOnInit().catch(console.error);
+      runOnInit();
   },
 });
 

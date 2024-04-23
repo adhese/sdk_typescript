@@ -16,6 +16,7 @@ import { clearAllHooks } from './hooks/createHook';
 import { onResponse } from './hooks/onResponse';
 import { onRender } from './hooks/onRender';
 import { onRequest } from './hooks/onRequest';
+import { onSlotCreate } from './hooks/onSlotCreate';
 
 /**
  * Creates an Adhese instance. This instance is your main entry point to the Adhese API.
@@ -82,6 +83,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
         onRender,
         onRequest,
         onResponse,
+        onSlotCreate,
       });
     }
 
@@ -243,7 +245,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       context.events?.dispose();
       logger.info('Adhese instance disposed');
 
-      runOnDispose().catch(logger.error);
+      runOnDispose();
 
       clearAllHooks();
 
@@ -264,7 +266,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
         dispose();
     });
 
-    runOnInit().catch(logger.error);
+    runOnInit();
 
     return {
       parameters: context.parameters,

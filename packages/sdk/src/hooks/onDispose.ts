@@ -1,8 +1,8 @@
-import { createHook } from './createHook';
+import { createSyncHook } from './createHook';
 
 let isDisposed = false;
 
-const [runOnDispose, onDispose] = createHook('onDispose', {
+const [runOnDispose, onDispose] = createSyncHook('onDispose', {
   onRun(callbacks) {
     isDisposed = true;
 
@@ -10,7 +10,7 @@ const [runOnDispose, onDispose] = createHook('onDispose', {
   },
   onAdd() {
     if (isDisposed)
-      runOnDispose().catch(console.error);
+      runOnDispose();
   },
 });
 

@@ -11,6 +11,7 @@ import type { onDispose } from './hooks/onDispose';
 import type { onRender } from './hooks/onRender';
 import type { onRequest } from './hooks/onRequest';
 import type { onResponse } from './hooks/onResponse';
+import type { onSlotCreate } from './hooks/onSlotCreate';
 
 export type AdhesePluginInformation = {
   index: number;
@@ -20,6 +21,7 @@ export type AdhesePluginInformation = {
   onRender: typeof onRender;
   onRequest: typeof onRequest;
   onResponse: typeof onResponse;
+  onSlotCreate: typeof onSlotCreate;
 };
 
 export type AdhesePlugin = (context: AdheseContext, plugin: AdhesePluginInformation) => void;

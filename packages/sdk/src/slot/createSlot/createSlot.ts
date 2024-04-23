@@ -7,6 +7,7 @@ import { type QueryDetector, createQueryDetector } from '../../queryDetector/que
 import { onInit, waitOnInit } from '../../hooks/onInit';
 import { requestAd as extRequestAd } from '../../requestAds/requestAds';
 import { runOnRender } from '../../hooks/onRender';
+import { runOnSlotCreate } from '../../hooks/onSlotCreate';
 import type { AdheseSlot, AdheseSlotOptions, RenderMode } from './createSlot.types';
 import { generateName, renderIframe, renderInline } from './createSlot.utils';
 import { useViewabilityObserver } from './useViewabilityObserver';
@@ -20,10 +21,12 @@ const renderFunctions: Record<RenderMode, (ad: Ad, element: HTMLElement) => void
 /**
  * Create a new slot instance.
  */
-export function createSlot(options: AdheseSlotOptions): Readonly<AdheseSlot> {
+export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot> {
   const scope = effectScope();
 
   return scope.run(() => {
+    const options = runOnSlotCreate(slotOptions);
+
     const {
       containingElement,
       slot,

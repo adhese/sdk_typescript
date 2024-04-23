@@ -27,13 +27,14 @@ function myPlugin(context, plugin) {
 
 ### Available Hooks
 
-| Hook         | Argument type      | Description                                                                                                                                        |
-|--------------|--------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| `onInit`     | `void`             | Hook is executed when the SDK initialisation is finished. Note that when this hook is added after initialisation the contents are run immediately. |
-| `onDispose`  | `void`             | Hook is executed when the SDK is disposed.                                                                                                         |
-| `onRender`   | `Ad`               | Hook is run before the ad is rendered. The hook passes an `Ad` object that you can modify.                                                         |
-| `onRequest`  | `AdRequestOptions` | Hook is run before a request is made to the server. The hook passes a `AdRequestOptions` object that you can modify.                               |
-| `onResponse` | `Ad`               | Hook is run after a response received. The hook passes an `Ad` object that you can modify.                                                         |
+| Hook           | Argument type       | Supports full async operation | Description                                                                                                                                        |
+|----------------|---------------------|-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| `onInit`       | `void`              | ❌                             | Hook is executed when the SDK initialisation is finished. Note that when this hook is added after initialisation the contents are run immediately. |
+| `onDispose`    | `void`              | ❌                             | Hook is executed when the SDK is disposed.                                                                                                         |
+| `onRender`     | `Ad`                | ✅                             | Hook is run before the ad is rendered. The hook passes an `Ad` object that you can modify.                                                         |
+| `onRequest`    | `AdRequestOptions`  | ✅                             | Hook is run before a request is made to the server. The hook passes a `AdRequestOptions` object that you can modify.                               |
+| `onResponse`   | `Ad`                | ✅                             | Hook is run after a response received. The hook passes an `Ad` object that you can modify.                                                         |
+| `onSlotCreate` | `AdheseSlotOptions` | ❌                             | Hook is run before a slot is created. The hook passes an `AdheseSlotOptions` object that you can modify                                            |
 
 ## Installing a Plugin
 To install a plugin you just need to pass it to the plugins array when initializing the SDK.
@@ -78,6 +79,10 @@ function myPlugin(context, { onInit }) {
   })
 }
 ```
+
+> [!NOTE]
+> Not all hooks support full asynchronous operations. Hooks that are marked with `❌` in the "Supports async" column
+> only support async operations that don't return a value.
 
 >[!WARNING]
 > When using async hooks you need to be aware that the execution of the hook will be blocked until the promise is

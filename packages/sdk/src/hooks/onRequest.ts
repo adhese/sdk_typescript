@@ -1,6 +1,6 @@
 import type { AdRequestOptions } from '@adhese/sdk';
-import { createHook } from './createHook';
+import { createAsyncHook } from './createHook';
 
-const [runOnRequest, onRequest] = createHook<AdRequestOptions>('onRequest');
+const [runOnRequest, onRequest] = createAsyncHook<AdRequestOptions>('onRequest');
 
 export { runOnRequest, onRequest };
