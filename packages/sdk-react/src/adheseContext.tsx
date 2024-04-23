@@ -27,7 +27,7 @@ export function AdheseProvider({ children, options }: PropsWithChildren<{ option
     const instance = createAdhese(options);
     setAdhese(instance);
 
-    return () => {
+    return (): void => {
       instance.dispose();
     };
   }, [options]);

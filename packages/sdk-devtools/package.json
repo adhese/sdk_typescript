@@ -25,11 +25,11 @@
     "prepareRelease": "npm run build"
   },
   "peerDependencies": {
+    "@adhese/sdk": "^0",
     "react": ">=16.13",
     "react-dom": ">=16.13"
   },
   "dependencies": {
-    "@adhese/sdk": "^0.8.0",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-icons": "^1.3.0",
     "@radix-ui/react-label": "^2.0.2",

@@ -6,23 +6,19 @@ import sdkReactPackage from '../../packages/sdk-react/package.json';
 
 For React developers, we provide a React SDK that allows you to easily integrate our services into your React application.
 
-> [!NOTE]
-> The React SDK is built on top of the [Adhese JavaScript SDK](/index.html) and doesn't need the Adhese
-> JavaScript SDK to be installed separately.
-
 ## Installation
 ::: code-group
 ```bash [npm]
-npm install @adhese/sdk-react
+npm install @adhese/sdk-react @adhese/sdk
 ```
 ```bash [pnpm]
-pnpm add @adhese/sdk-react
+pnpm add @adhese/sdk-react @adhese/sdk
 ```
 ```bash [yarn]
-yarn add @adhese/sdk-react
+yarn add @adhese/sdk-react @adhese/sdk
 ```
 ```bash [bun]
-bun add @adhese/sdk-react
+bun add @adhese/sdk-react @adhese/sdk
 ```
 :::
 

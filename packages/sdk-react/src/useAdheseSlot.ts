@@ -28,7 +28,7 @@ export function useAdheseSlot(elementRef: RefObject<HTMLElement>, options: Omit<
       setSlot(intermediate);
     }
 
-    return () => {
+    return (): void => {
       intermediate?.dispose();
     };
   }, [adhese, omit(options, Object.entries(options).filter(([, value]) => typeof value === 'function').map(([key]) => key as keyof typeof options)), elementRef.current]);
