@@ -1,5 +1,11 @@
 # @adhese/sdk-react
 
+## 0.8.1
+
+### Patch Changes
+
+- 59f07dd: Make packages peer dependant on @adhese/sdk to allow more flexibile dependency installations
+
 ## 0.8.0
 
 ### Minor Changes
