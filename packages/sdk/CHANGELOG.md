@@ -1,5 +1,15 @@
 # @adhese/sdk
 
+## 0.9.0
+
+### Minor Changes
+
+- 484bc66: Create onSlotCreate hook that is run when a new slot is created. It can be used to modify the passed slot options
+
+### Patch Changes
+
+- 12fe2a0: Fix ad not being asigned to the slot.ad value after lazy loading
+
 ## 0.8.1
 
 ### Patch Changes

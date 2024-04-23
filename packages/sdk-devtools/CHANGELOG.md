@@ -1,5 +1,11 @@
 # @adhese/sdk-devtools
 
+## 0.7.2
+
+### Patch Changes
+
+- 59f07dd: Make packages peer dependant on @adhese/sdk to allow more flexibile dependency installations
+
 ## 0.7.1
 
 ### Patch Changes
