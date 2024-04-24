@@ -1,5 +1,5 @@
 import { type ReactElement, useRef, useState } from 'react';
-import { useAdheseSlot } from '@adhese/sdk-react';
+import { AdheseSlot, useAdheseSlot } from '@adhese/sdk-react';
 import type { Ad } from '@adhese/sdk';
 import { renderToStaticMarkup } from 'react-dom/server';
 
@@ -91,18 +91,6 @@ export function Child(): ReactElement {
     },
   });
 
-  const leaderboardRef = useRef(null);
-  useAdheseSlot(leaderboardRef, {
-    format: 'leaderboard',
-    renderMode: 'inline',
-  });
-
-  const imuRef = useRef(null);
-  useAdheseSlot(imuRef, {
-    format: 'imu',
-    lazyLoading: true,
-  });
-
   return (
     <>
       <button onClick={() => { setIsSlotShown(value => !value); }}>Toggle slot</button>
@@ -112,8 +100,8 @@ export function Child(): ReactElement {
         )
       }
       <div ref={halfwidthsmallresponsiveRef} />
-      <div ref={leaderboardRef} />
-      <div ref={imuRef} />
+      <AdheseSlot format="leaderboard" renderMode="inline" />
+      <AdheseSlot format="imu" lazyLoading />
     </>
   );
 }

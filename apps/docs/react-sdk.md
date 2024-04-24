@@ -82,6 +82,20 @@ function YourComponent() {
 }
 ```
 
+## `AdheseSlot` component
+The `AdheseSlot` component is a wrapper around the `useAdheseSlot` hook. It accepts the same options as the
+`useAdheseSlot` hook as props and renders the slot in the DOM.
+
+```jsx
+import { AdheseSlot } from '@adhese/sdk-react';
+
+function YourComponent() {
+  return (
+    <AdheseSlot format="your-format" />
+  );
+}
+```
+
 ## `useAdheseSlot` with `onBeforeRender`
 Like described in the [slots documentation](/slots.html#hijacking-the-rendering-process), you can use the
 `onBeforeRender` callback to intercept the to be rendered ad. The example there is written in vanilla JavaScript. To use
