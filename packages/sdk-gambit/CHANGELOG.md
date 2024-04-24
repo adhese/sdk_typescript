@@ -1,5 +1,12 @@
 # @adhese/sdk-gambit
 
+## 0.2.4
+
+### Patch Changes
+
+- 866f1b3: Mark @adhese/sdk-gambit as a side effect free package
+- 47f3ab9: Remove unneeded default export
+
 ## 0.2.3
 
 ### Patch Changes
