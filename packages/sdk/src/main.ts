@@ -1,6 +1,7 @@
 import { createEventManager } from '@utils';
 import { effectScope, reactive, watch } from '@vue/runtime-core';
 import { createSafeFrame } from '@safeframe';
+import { debounce } from 'remeda';
 import packageJson from '../package.json';
 import { createSlotManager } from './slot/slotManager/slotManager';
 import { onTcfConsentChange } from './consent/tcfConsent';
@@ -17,6 +18,7 @@ import { onResponse } from './hooks/onResponse';
 import { onRender } from './hooks/onRender';
 import { onRequest } from './hooks/onRequest';
 import { onSlotCreate } from './hooks/onSlotCreate';
+import { onViewabilityChanged } from './hooks/onViewabilityChanged';
 
 /**
  * Creates an Adhese instance. This instance is your main entry point to the Adhese API.
@@ -84,6 +86,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
         onRequest,
         onResponse,
         onSlotCreate,
+        onViewabilityChanged,
       });
     }
 
@@ -126,12 +129,17 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
         context.events?.parametersChange.dispatch(context.parameters);
     }
 
+    const debouncedFetchAllUnrenderedSlots = debounce(fetchAllUnrenderedSlots, {
+      waitMs: 100,
+      timing: 'both',
+    });
+
     async function onQueryChange(): Promise<void> {
       const query = queryDetector.getQuery();
       context.parameters?.set('dt', query);
       context.parameters?.set('br', query);
 
-      await fetchAndRenderAllSlots();
+      await debouncedFetchAllUnrenderedSlots.call();
     }
 
     function getConsent(): typeof context.consent {
@@ -158,10 +166,11 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
     }
 
     function addSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot> {
-      if (!slotManager)
-        throw new Error('Slot manager not initialized');
+      const newSlot = slotManager.add(slotOptions);
 
-      return slotManager.add(slotOptions);
+      debouncedFetchAllUnrenderedSlots.call().catch(logger.error);
+
+      return newSlot;
     }
 
     async function findDomSlots(): Promise<ReadonlyArray<AdheseSlot>> {
@@ -202,8 +211,8 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       return context.debug;
     }
 
-    async function fetchAndRenderAllSlots(): Promise<void> {
-      const slots = (slotManager.getAll() ?? []).filter(slot => !slot.lazyLoading);
+    async function fetchAllUnrenderedSlots(): Promise<void> {
+      const slots = (slotManager.getAll() ?? []).filter(slot => !slot.lazyLoading && !slot.ad.value);
 
       if (slots.length === 0)
         return;
@@ -232,7 +241,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       context.parameters?.set('xt', data.tcString);
       context.parameters?.delete('tl');
 
-      await fetchAndRenderAllSlots();
+      await debouncedFetchAllUnrenderedSlots.call();
     });
 
     function dispose(): void {
@@ -254,7 +263,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
 
     onInit(async () => {
       if ((slotManager.getAll().length ?? 0) > 0)
-        await fetchAndRenderAllSlots().catch(logger.error);
+        await fetchAllUnrenderedSlots().catch(logger.error);
 
       if (mergedOptions.findDomSlotsOnLoad)
         await findDomSlots();

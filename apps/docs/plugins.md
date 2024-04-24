@@ -27,14 +27,20 @@ function myPlugin(context, plugin) {
 
 ### Available Hooks
 
-| Hook           | Argument type       | Supports full async operation | Description                                                                                                                                        |
-|----------------|---------------------|-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| `onInit`       | `void`              | ❌                             | Hook is executed when the SDK initialisation is finished. Note that when this hook is added after initialisation the contents are run immediately. |
-| `onDispose`    | `void`              | ❌                             | Hook is executed when the SDK is disposed.                                                                                                         |
-| `onRender`     | `Ad`                | ✅                             | Hook is run before the ad is rendered. The hook passes an `Ad` object that you can modify.                                                         |
-| `onRequest`    | `AdRequestOptions`  | ✅                             | Hook is run before a request is made to the server. The hook passes a `AdRequestOptions` object that you can modify.                               |
-| `onResponse`   | `Ad`                | ✅                             | Hook is run after a response received. The hook passes an `Ad` object that you can modify.                                                         |
-| `onSlotCreate` | `AdheseSlotOptions` | ❌                             | Hook is run before a slot is created. The hook passes an `AdheseSlotOptions` object that you can modify                                            |
+There are three types of hooks: _synchronous_, _asynchronous_, and _passive_. **Synchronous** hooks allow you to modify the passed
+argument and return a new value. **Asynchronous** hooks allow you to do the same but also support doing the transformation
+asynchronously. **Passive** hooks are read-only and don't support modifying the passed argument. If you don't need to modify
+the argument you can always pass a promise or async function to the hook, regardless of the hook type.
+
+| Hook                   | Argument type                             | Type         | Description                                                                                                                                        |
+|------------------------|-------------------------------------------|--------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| `onInit`               | `void`                                    | Synchronous  | Hook is executed when the SDK initialisation is finished. Note that when this hook is added after initialisation the contents are run immediately. |
+| `onDispose`            | `void`                                    | Synchronous  | Hook is executed when the SDK is disposed.                                                                                                         |
+| `onRender`             | `Ad`                                      | Asynchronous | Hook is run before the ad is rendered. The hook passes an `Ad` object that you can modify.                                                         |
+| `onRequest`            | `AdRequestOptions`                        | Asynchronous | Hook is run before a request is made to the server. The hook passes a `AdRequestOptions` object that you can modify.                               |
+| `onResponse`           | `Ad`                                      | Asynchronous | Hook is run after a response received. The hook passes an `Ad` object that you can modify.                                                         |
+| `onSlotCreate`         | `AdheseSlotOptions`                       | Synchronous  | Hook is run before a slot is created. The hook passes an `AdheseSlotOptions` object that you can modify                                            |
+| `onViewabilityChanged` | `{ name: string, isInViewport: boolean }` | Passive      | Hook is run when a slots visibility is changed.                                                                                                    |
 
 ## Installing a Plugin
 To install a plugin you just need to pass it to the plugins array when initializing the SDK.
@@ -66,25 +72,7 @@ important when you are doing modifications in for example the `onRender` hook, a
 executed can affect the final result. For example, if you have two plugins that modify the same property of the `Ad`
 object, the plugin that is executed last will receive the modified value of the previous plugin.
 
-## Async hook bodies
-Hooks can be asynchronous. This can be useful when you need to perform an asynchronous operation, like fetching data
-from a server, before the SDK is initialized. To make a hook asynchronous, you can return a `Promise` from the hook body.
-
-```js
-function myPlugin(context, { onInit }) {
-  onInit(async () => {
-    const data = await fetchData();
-
-    console.log(data);
-  })
-}
-```
-
-> [!NOTE]
-> Not all hooks support full asynchronous operations. Hooks that are marked with `❌` in the "Supports async" column
-> only support async operations that don't return a value.
-
 >[!WARNING]
-> When using async hooks you need to be aware that the execution of the hook will be blocked until the promise is
+> When using **asynchronous** hooks you need to be aware that the execution of the hook will be blocked until the promise is
 > resolved. This can cause the SDK to be blocked until the promise is resolved. Make sure that the promise resolves
 > quickly to prevent blocking the SDK.

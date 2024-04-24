@@ -80,6 +80,38 @@ export function createSyncHook<
   return [run, (callback): () => void => add<Callback>(callback, { name, onAdd })];
 }
 
+export function createPassiveHook<
+  Argument = void,
+  Callback extends (arg: Argument) => void | Promise<void> = (arg: Argument) => void | Promise<void>,
+>(
+  name: string,
+  {
+    onRun,
+    onAdd,
+  }: {
+    onRun?(callbacks?: Set<Callback>): void;
+    onAdd?(callbacks?: Set<Callback>): void;
+  } = {},
+): [
+  run: (arg: Argument) => void,
+  add: (callback: Callback) => () => void,
+  ] {
+  hookMap.set(name, new Set<Callback>());
+
+  function run(arg: Argument): void {
+    // eslint-disable-next-line no-console
+    Promise.allSettled(Array.from(hookMap.get(name) ?? []).map(callback => callback(arg) as Callback)).catch(console.trace);
+
+    onRun?.(hookMap.get(name) as Set<Callback>);
+  }
+
+  return [run, (callback): () => void => add<Callback>(callback, { name, onAdd })];
+}
+
+function isCallbackAsync(callback: Function): boolean {
+  return callback.constructor.name === 'AsyncFunction';
+}
+
 function add<Callback extends Function>(callback: Callback, {
   name,
   onAdd,
@@ -99,8 +131,4 @@ function add<Callback extends Function>(callback: Callback, {
   return () => {
     hookMap.get(name)?.delete(callback);
   };
-}
-
-function isCallbackAsync(callback: Function): boolean {
-  return callback.constructor.name === 'AsyncFunction';
 }

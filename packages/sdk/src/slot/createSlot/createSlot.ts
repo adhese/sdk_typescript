@@ -8,6 +8,7 @@ import { onInit, waitOnInit } from '../../hooks/onInit';
 import { requestAd as extRequestAd } from '../../requestAds/requestAds';
 import { runOnRender } from '../../hooks/onRender';
 import { runOnSlotCreate } from '../../hooks/onSlotCreate';
+import { runOnViewabilityChanged } from '../../hooks/onViewabilityChanged';
 import type { AdheseSlot, AdheseSlotOptions, RenderMode } from './createSlot.types';
 import { generateName, renderIframe, renderInline } from './createSlot.utils';
 import { useViewabilityObserver } from './useViewabilityObserver';
@@ -87,21 +88,27 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
     }
 
     const [isInViewport, disposeRenderIntersectionObserver] = useRenderIntersectionObserver({
-      ad,
       options,
       element,
-      render,
     });
 
+    const isRendered = ref(false);
     watch([ad, isInViewport], async ([newAd, newIsInViewport], [oldAd]) => {
-      if (!newAd || (oldAd && isDeepEqual(newAd, oldAd)))
+      if ((!newAd || (oldAd && isDeepEqual(newAd, oldAd))) && isRendered.value)
         return;
 
       if (newIsInViewport || context.options.eagerRendering)
-        await render(newAd);
+        await render(newAd ?? undefined);
 
       context.events?.changeSlots.dispatch(Array.from(context.getAll?.() ?? []));
     });
+
+    watch(isInViewport, (value) => {
+      runOnViewabilityChanged({
+        name: name.value,
+        isInViewport: value,
+      });
+    }, { immediate: true });
 
     const [
       isViewabilityTracked,
@@ -177,7 +184,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
       // eslint-disable-next-line require-atomic-updates
       ad.value = renderAd;
 
-      disposeRenderIntersectionObserver();
+      isRendered.value = true;
 
       return element.value;
     }
