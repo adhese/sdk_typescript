@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 0.10.0
+
+### Minor Changes
+
+- 5e8ecb2: Create onViewabilityChanged hook that is run when a slots visibility changes
+
 ## 0.9.0
 
 ### Minor Changes
