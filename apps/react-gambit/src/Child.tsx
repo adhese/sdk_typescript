@@ -85,7 +85,7 @@ export function Child(): ReactElement {
     slot: '_homepagetop_right',
     renderMode: 'inline',
     onBeforeRender: html
-  })
+  });
 
   const TopLeft = useRef(null);
   useAdheseSlot(TopLeft, {
@@ -93,7 +93,7 @@ export function Child(): ReactElement {
     slot: '_homepagetop_left',
     renderMode: 'inline',
     onBeforeRender: html
-  })
+  });
 
   const BottomRight = useRef(null);
   useAdheseSlot(BottomRight, {
@@ -101,7 +101,7 @@ export function Child(): ReactElement {
     slot: '_homepagebottom_right',
     renderMode: 'inline',
     onBeforeRender: html
-  })
+  });
 
   const BottomLeft = useRef(null);
   useAdheseSlot(BottomLeft, {
@@ -109,14 +109,19 @@ export function Child(): ReactElement {
     slot: '_homepagebottom_left',
     renderMode: 'inline',
     onBeforeRender: html
-  })
+  });
 
   return (
     <>
-      <div ref={TopRight} />
-      <div ref={TopLeft} />
-      <div ref={BottomRight} />
-      <div ref={BottomLeft} />
+      <div id="top" className="ads">
+        <div ref={TopRight} />
+        <div ref={TopLeft} />
+      </div>
+      <div id="spacer"></div>
+      <div id="bottom" className="ads">
+        <div ref={BottomRight} />
+        <div ref={BottomLeft} />
+      </div>
     </>
   );
 }
