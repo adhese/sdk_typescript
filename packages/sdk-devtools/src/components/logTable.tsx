@@ -3,8 +3,6 @@ import type { AdheseContext } from '@adhese/sdk';
 import type { Log } from '@logger';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Badge } from './badge';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './sheet';
-import { buttonVariants } from './button';
 
 const dateFormatter = new Intl.DateTimeFormat('en-US', {
   hour: 'numeric',
@@ -59,7 +57,6 @@ export function LogTable({
           <TableHead>Scope</TableHead>
           <TableHead>Level</TableHead>
           <TableHead>Message</TableHead>
-          <TableHead>Attributes</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -76,29 +73,6 @@ export function LogTable({
               </Badge>
             </TableCell>
             <TableCell>{log.message}</TableCell>
-            <TableCell>
-              {Boolean(log.attributes) && (
-                <Sheet>
-                  <SheetTrigger className={buttonVariants({
-                    variant: 'secondary',
-                    size: 'sm',
-                  })}
-                  >
-                    Show
-                  </SheetTrigger>
-                  <SheetContent className="bg-white flex flex-col gap-4">
-                    <SheetHeader>
-                      <SheetTitle>
-                        Attributes
-                      </SheetTitle>
-                    </SheetHeader>
-                    <pre className="p-4 bg-accent overflow-auto max-h-full text-sm rounded-md">
-                      {JSON.stringify(log.attributes, null, 2)}
-                    </pre>
-                  </SheetContent>
-                </Sheet>
-              )}
-            </TableCell>
           </TableRow>
         ))}
       </TableBody>
