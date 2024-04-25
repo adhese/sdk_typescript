@@ -1,5 +1,4 @@
 import type { ReactElement } from 'react';
-import { toOptions } from '@adhese/sdk-gambit';
 import { AdheseProvider } from '@adhese/sdk-react';
 import { createDevtools } from '@adhese/sdk-devtools';
 import { Child } from './Child';
@@ -8,18 +7,18 @@ import { Child } from './Child';
 export function App(): ReactElement {
   return (
     <AdheseProvider options={{
-      ...toOptions({
-        account: 'demo',
-        options: {
-          debug: true,
-        },
-        data: {
-          pagePath: '_sdk_example_',
-        },
-      }),
-      ...{
-        plugins: [createDevtools],
-      },
+      account: 'aholdtest',
+      debug: true,
+      location: 'ah.nl_homepage',
+      plugins: [createDevtools],
+      consent: true,
+      parameters: {
+        ab: "a",
+        om: "0",
+        um: "1",
+        mi: "", 
+        cu: "u"
+      }
     }}
     >
       <Child />
