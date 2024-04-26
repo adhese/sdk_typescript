@@ -13,12 +13,12 @@ export function App(): ReactElement {
       plugins: [createDevtools],
       consent: true,
       parameters: {
-        ab: "a",
-        om: "0",
-        um: "1",
-        mi: "", 
-        cu: "u"
-      }
+        ab: 'a',
+        om: '0',
+        um: '1',
+        mi: '',
+        cu: 'u',
+      },
     }}
     >
       <Child />

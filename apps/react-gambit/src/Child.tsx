@@ -1,13 +1,12 @@
-import { type ReactElement, useRef, useState } from 'react';
+import { type ReactElement, useRef } from 'react';
 import { useAdheseSlot } from '@adhese/sdk-react';
 import type { Ad } from '@adhese/sdk';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 // eslint-disable-next-line ts/naming-convention
 export function Child(): ReactElement {
-
-  const html =
-    (ad: Ad<{
+  const html
+    = (ad: Ad<{
       type: string;
       text: {
         title: string;
@@ -19,7 +18,7 @@ export function Child(): ReactElement {
         height: number;
         link: {
           href: string;
-        }
+        };
       }>;
       backgroundColor: string;
       color: string;
@@ -27,7 +26,7 @@ export function Child(): ReactElement {
         title: string;
         link: {
           href: string;
-        },
+        };
         appLink: string;
       };
     }>): Ad<string> | void => {
@@ -36,7 +35,7 @@ export function Child(): ReactElement {
 
       const heading = ad.tag.text?.title;
       const image = ad.tag.images?.[0];
-      const backgroundColor = ad.tag.backgroundColor;
+      const { backgroundColor } = ad.tag;
       const link = ad.tag.navItem?.link?.href;
       const linkText = ad.tag.images?.[0].title;
 
@@ -79,48 +78,48 @@ export function Child(): ReactElement {
       };
     };
 
-  const TopRight = useRef(null);
-  useAdheseSlot(TopRight, {
+  const topRight = useRef(null);
+  useAdheseSlot(topRight, {
     format: 'halfwidthsmallresponsive',
     slot: '_homepagetop_right',
     renderMode: 'inline',
-    onBeforeRender: html
+    onBeforeRender: html,
   });
 
-  const TopLeft = useRef(null);
-  useAdheseSlot(TopLeft, {
+  const topLeft = useRef(null);
+  useAdheseSlot(topLeft, {
     format: 'halfwidthsmallresponsive',
     slot: '_homepagetop_left',
     renderMode: 'inline',
-    onBeforeRender: html
+    onBeforeRender: html,
   });
 
-  const BottomRight = useRef(null);
-  useAdheseSlot(BottomRight, {
+  const bottomRight = useRef(null);
+  useAdheseSlot(bottomRight, {
     format: 'halfwidthsmallresponsive',
     slot: '_homepagebottom_right',
     renderMode: 'inline',
-    onBeforeRender: html
+    onBeforeRender: html,
   });
 
-  const BottomLeft = useRef(null);
-  useAdheseSlot(BottomLeft, {
+  const bottomLeft = useRef(null);
+  useAdheseSlot(bottomLeft, {
     format: 'halfwidthsmallresponsive',
     slot: '_homepagebottom_left',
     renderMode: 'inline',
-    onBeforeRender: html
+    onBeforeRender: html,
   });
 
   return (
     <>
       <div id="top" className="ads">
-        <div ref={TopRight} />
-        <div ref={TopLeft} />
+        <div ref={topRight} />
+        <div ref={topLeft} />
       </div>
       <div id="spacer"></div>
       <div id="bottom" className="ads">
-        <div ref={BottomRight} />
-        <div ref={BottomLeft} />
+        <div ref={bottomRight} />
+        <div ref={bottomLeft} />
       </div>
     </>
   );
