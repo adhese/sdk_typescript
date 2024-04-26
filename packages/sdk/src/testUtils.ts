@@ -7,6 +7,7 @@ export const testContext: AdheseContext = {
   consent: false,
   get: vi.fn(() => undefined),
   debug: true,
+  isDisposed: false,
   options: {
     account: 'test',
     host: 'https://ads-test.adhese.com',

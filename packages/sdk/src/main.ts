@@ -71,6 +71,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       debug: mergedOptions.debug,
       options: mergedOptions,
       logger,
+      isDisposed: false,
     } satisfies AdheseContext) as AdheseContext;
 
     for (const [index, plugin] of mergedOptions.plugins.entries()) {
@@ -245,6 +246,8 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
     });
 
     function dispose(): void {
+      context.isDisposed = true;
+
       queryDetector.dispose();
       slotManager.dispose();
       queryDetector.dispose();

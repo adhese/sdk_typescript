@@ -244,4 +244,5 @@ export type AdheseContext = Partial<Pick<Adhese, 'events' | 'getAll' | 'get' | '
   logger: typeof logger;
   debug: boolean;
   safeFrame?: SafeFrame;
+  isDisposed: boolean;
 };

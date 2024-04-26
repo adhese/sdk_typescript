@@ -19,8 +19,12 @@ export const createDevtools: AdhesePlugin = (context: AdheseContext, {
   }
 
   onInit(async () => {
-    if (context.debug)
+    if (context.debug) {
       await initDevtools();
+
+      if (context.isDisposed)
+        dispose();
+    }
 
     context.events?.debugChange.addListener(async (debug) => {
       if (debug)
