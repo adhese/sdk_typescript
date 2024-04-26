@@ -69,11 +69,8 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       location: mergedOptions.location,
       consent: mergedOptions.consent,
       debug: mergedOptions.debug,
-      getAll,
-      get,
       options: mergedOptions,
       logger,
-      addSlot,
     } satisfies AdheseContext) as AdheseContext;
 
     for (const [index, plugin] of mergedOptions.plugins.entries()) {
@@ -160,10 +157,12 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
     function getAll(): ReadonlyArray<AdheseSlot> {
       return slotManager.getAll() ?? [];
     }
+    context.getAll = getAll;
 
     function get(name: string): AdheseSlot | undefined {
       return slotManager.get(name);
     }
+    context.get = get;
 
     function addSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot> {
       const newSlot = slotManager.add(slotOptions);
@@ -172,6 +171,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
 
       return newSlot;
     }
+    context.addSlot = addSlot;
 
     async function findDomSlots(): Promise<ReadonlyArray<AdheseSlot>> {
       const domSlots = (await slotManager.findDomSlots() ?? []).filter(slot => !slot.lazyLoading);

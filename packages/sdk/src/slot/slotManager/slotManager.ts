@@ -63,6 +63,12 @@ export function createSlotManager({
         context,
       });
 
+      if (slots.has(slot.name.value)) {
+        slot.dispose();
+
+        throw new Error(`Slot with the name: ${slot.name.value} already exists. Create a new slot with a different format, slot, or the location.`);
+      }
+
       function onDispose(): void {
         slots.delete(slot.name.value);
         logger.debug('Slot removed', {

@@ -85,4 +85,21 @@ describe('slotManager', () => {
     slotManager.dispose();
     expect(slotManager.getAll().length).toBe(0);
   });
+
+  it('should throw an error if a slot with the same name is added', () => {
+    const slotManager = createSlotManager({
+      initialSlots: [{
+        format: 'leaderboard',
+        containingElement: 'leaderboard',
+      }],
+      context,
+    });
+
+    expect(() => {
+      slotManager.add({
+        format: 'leaderboard',
+        containingElement: 'leaderboard',
+      });
+    }).toThrow();
+  });
 });
