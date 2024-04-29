@@ -15,8 +15,6 @@ const adheseContext = createContext<Adhese | undefined>(undefined);
 /**
  * Provider to create an Adhese instance with the given options. Via the `useAdhese` hook, the Adhese instance can be
  * used in all child components.
- * @param children The children to render
- * @param options The options to create the Adhese instance with. When the options change, the Adhese instance will be recreated.
  * @constructor
  */
 // eslint-disable-next-line ts/naming-convention
