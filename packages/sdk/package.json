@@ -33,6 +33,6 @@
   "dependencies": {
     "@vue/runtime-core": "^3.4.21",
     "remeda": "^1.61.0",
-    "zod": "^3.23.0"
+    "zod": "^3.23.4"
   }
 }

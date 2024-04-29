@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "vitepress": "^1.1.3",
+    "vitepress": "^1.1.4",
     "vue": "^3.4.15"
   }
 }
