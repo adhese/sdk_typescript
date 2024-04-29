@@ -10,7 +10,8 @@ export function App(): ReactElement {
       account: 'aholdtest',
       debug: true,
       location: 'ah.nl_homepage',
-      plugins: [createDevtools],
+      // @ts-expect-error plugin is on cdn
+      plugins: [createDevtools, adhesePlugin ],
       consent: true,
       parameters: {
         ab: 'a',
