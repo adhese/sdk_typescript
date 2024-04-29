@@ -1,6 +1,8 @@
 name: On push
 
-on: [push]
+on:
+  push:
+  workflow_dispatch:
 
 jobs:
   lint:
