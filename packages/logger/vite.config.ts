@@ -6,7 +6,7 @@ export default defineConfig({
     alias: {
 
       /* eslint-disable ts/naming-convention */
-      '@utils': `${path.resolve()}/../utils/src`,
+      '@adhese/sdk-shared': `${path.resolve()}/../sdk-shared/src`,
       '@logger': `${path.resolve()}/../logger/src`,
       '@server-mocks': `${path.resolve()}/../server-mocks/src`,
       /* eslint-enable ts/naming-convention */

@@ -27,11 +27,11 @@ export default defineConfig({
   resolve: {
     alias: {
       /* eslint-disable ts/naming-convention */
-      '@utils': `${path.resolve()}/../utils/src`,
       '@logger': `${path.resolve()}/../logger/src`,
       '@server-mocks': `${path.resolve()}/../server-mocks/src`,
       '@safeframe': `${path.resolve()}/../safeframe/src`,
       '@adhese/sdk': `${path.resolve()}/src`,
+      '@adhese/sdk-shared': `${path.resolve()}/../sdk-shared/src`,
       /* eslint-enable ts/naming-convention */
     },
   },

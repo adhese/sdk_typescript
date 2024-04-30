@@ -1,6 +1,7 @@
 import type { AdheseContext } from '@adhese/sdk';
 import { type ChangeEventHandler, type HTMLAttributes, type ReactElement, useCallback, useId, useMemo, useState } from 'react';
-import { cn, deleteCookie, getCookie, hasCookie, setCooke } from '../utils';
+import { deleteCookie, getCookie, hasCookie, setCookie } from '@adhese/sdk-shared';
+import { cn } from '../utils';
 import { Switch } from './switch';
 import { Label } from './label';
 import { Input } from './input';
@@ -9,7 +10,7 @@ import { Button } from './button';
 const cookieKey = 'debugKey';
 
 function setDebugCookie(value: string): void {
-  setCooke({
+  setCookie({
     key: cookieKey,
     value,
     expires: new Date(Date.now() + 24 * 60 * 60 * 1000),

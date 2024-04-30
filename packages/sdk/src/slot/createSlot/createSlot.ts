@@ -1,4 +1,4 @@
-import { waitForDomLoad } from '@utils';
+import { waitForDomLoad } from '@adhese/sdk-shared';
 import { type Ref, computed, effectScope, reactive, ref, watch } from '@vue/runtime-core';
 import { isDeepEqual } from 'remeda';
 import { type Ad, logger } from '@adhese/sdk';

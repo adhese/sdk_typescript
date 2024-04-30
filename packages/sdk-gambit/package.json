@@ -33,6 +33,7 @@
     "@adhese/sdk": "^0"
   },
   "dependencies": {
+    "@adhese/sdk-shared": "^0.0.0",
     "remeda": "^1.61.0"
   }
 }

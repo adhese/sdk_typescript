@@ -1,5 +1,5 @@
 /* v8 ignore start */
-import type { EventManager, Merge, UrlString } from '@utils';
+import type { EventManager, Merge, UrlString } from '@adhese/sdk-shared';
 import type { SafeFrame } from '@safeframe';
 import type { SlotManagerOptions } from './slot/slotManager/slotManager';
 import type { AdheseSlot, AdheseSlotOptions } from './slot/createSlot/createSlot.types';

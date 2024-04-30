@@ -1,4 +1,4 @@
-import type { Merge } from '@utils';
+import type { Merge } from '@adhese/sdk-shared';
 import { effectScope, shallowReactive, watch, watchEffect } from '@vue/runtime-core';
 import { findDomSlots as extFindDomSlots } from '../findDomSlots/findDomSlots';
 import type { AdheseSlot, AdheseSlotOptions } from '../createSlot/createSlot.types';

@@ -1,5 +1,5 @@
 import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { UrlString } from '@utils';
+import type { UrlString } from '@adhese/sdk-shared';
 import { type AdheseContext, logger } from '@adhese/sdk';
 import { testContext } from '../testUtils';
 import { createSlot } from '../slot/createSlot/createSlot';
