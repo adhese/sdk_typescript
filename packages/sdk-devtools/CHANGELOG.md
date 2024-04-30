@@ -1,5 +1,12 @@
 # @adhese/sdk-devtools
 
+## 0.7.3
+
+### Patch Changes
+
+- 1de2be6: Fix issue where the SDK would be disposed before the devtools was done loading. This is especially an issue in React strict mode where the sdk is immediately disposed and recreated creating a duplicate instance of the devtools that would be useless.
+- e60a716: Remove attributes dialog from log table, if more detailed data is needed for debugging users need to use the browsers console instead
+
 ## 0.7.2
 
 ### Patch Changes
