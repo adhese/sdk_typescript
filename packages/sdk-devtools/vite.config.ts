@@ -1,10 +1,17 @@
 import path from 'node:path';
 import { defineConfig } from 'vite';
 import { flat } from 'remeda';
+import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 import packageJson from './package.json';
 
 export default defineConfig({
-  plugins: [],
+  plugins: [
+    cssInjectedByJsPlugin({
+      jsAssetsFilterFunction(chunk) {
+        return chunk.name === 'devtools';
+      },
+    }),
+  ],
   build: {
     emptyOutDir: true,
     minify: false,
