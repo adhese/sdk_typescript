@@ -1,5 +1,16 @@
 # @adhese/sdk
 
+## 0.11.0
+
+### Minor Changes
+
+- 1de2be6: Add isDisposed value to the AdheseContext
+- dd01918: Change how requests are handled internally. Requests for slots from the API are now batched to limit the ammount of API calls
+
+### Patch Changes
+
+- b0a0c25: Throw an error when a slot with a duplicate name is added
+
 ## 0.10.0
 
 ### Minor Changes
