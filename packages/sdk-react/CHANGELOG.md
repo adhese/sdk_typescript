@@ -1,5 +1,11 @@
 # @adhese/sdk-react
 
+## 0.9.2
+
+### Patch Changes
+
+- dbc1db3: Fix NPM files not pointing to dist folder
+
 ## 0.9.1
 
 ### Patch Changes
