@@ -1,5 +1,13 @@
 # @adhese/sdk
 
+## 0.11.1
+
+### Patch Changes
+
+- eebcd88: Release @adhese/sdk-shared
+- Updated dependencies [eebcd88]
+  - @adhese/sdk-shared@0.1.0
+
 ## 0.11.0
 
 ### Minor Changes
