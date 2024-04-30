@@ -1,5 +1,11 @@
 # @adhese/sdk-devtools
 
+## 0.7.4
+
+### Patch Changes
+
+- ab07f11: Fix devtools not getting CSS automatically
+
 ## 0.7.3
 
 ### Patch Changes
