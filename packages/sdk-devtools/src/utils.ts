@@ -14,7 +14,7 @@ type CookieOptions = {
   secure?: boolean;
 };
 
-export function setCooke({
+export function setCookie({
   key,
   value,
   expires,
