@@ -8,13 +8,13 @@
     "moduleResolution": "bundler",
     "paths": {
       "@logger": ["packages/logger/src/index.ts"],
-      "@utils": ["packages/utils/src/index.ts"],
       "@server-mocks": ["packages/server-mocks/src/index.ts"],
       "@safeframe": ["packages/safeframe/src/index.ts"],
       "@adhese/sdk": ["packages/sdk/src/index.ts"],
       "@adhese/sdk-react": ["packages/sdk-react/src/index.ts"],
       "@adhese/sdk-devtools": ["packages/sdk-devtools/src/index.ts"],
-      "@adhese/sdk-gambit": ["packages/sdk-gambit/src/index.ts"]
+      "@adhese/sdk-gambit": ["packages/sdk-gambit/src/index.ts"],
+      "@adhese/sdk-shared": ["packages/sdk-shared/src/index.ts"]
     },
     "resolveJsonModule": true,
     "types": [

@@ -30,6 +30,7 @@
     "react-dom": ">=16.13"
   },
   "dependencies": {
+    "@adhese/sdk-shared": "^0.0.0",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-icons": "^1.3.0",
     "@radix-ui/react-label": "^2.0.2",

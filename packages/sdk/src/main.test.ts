@@ -1,5 +1,5 @@
 import { type MockInstance, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { awaitTimeout, waitForDomLoad } from '@utils';
+import { awaitTimeout, waitForDomLoad } from '@adhese/sdk-shared';
 import { createAdhese } from './main';
 import { logger } from './logger/logger';
 import type { Adhese } from './main.types';

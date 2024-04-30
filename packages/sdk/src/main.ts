@@ -1,4 +1,4 @@
-import { createEventManager } from '@utils';
+import { createEventManager } from '@adhese/sdk-shared';
 import { effectScope, reactive, watch } from '@vue/runtime-core';
 import { createSafeFrame } from '@safeframe';
 import { debounce } from 'remeda';

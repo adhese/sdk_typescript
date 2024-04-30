@@ -1,4 +1,4 @@
-import { createEventManager, uniqueId } from '@utils';
+import { createEventManager, uniqueId } from '@adhese/sdk-shared';
 
 /**
  * A log entry saved by the logger

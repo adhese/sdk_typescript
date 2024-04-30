@@ -1,5 +1,5 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
-import { awaitTimeout } from '@utils';
+import { awaitTimeout } from '@adhese/sdk-shared';
 import { createQueryDetector } from './queryDetector';
 
 describe('queryDetector', () => {

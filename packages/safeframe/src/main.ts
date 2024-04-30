@@ -1,4 +1,4 @@
-import { uniqueId } from '@utils';
+import { uniqueId } from '@adhese/sdk-shared';
 import type { Ad, AdheseContext } from '@adhese/sdk';
 import type { Config, Position } from './main.types';
 

@@ -1,5 +1,5 @@
 /* v8 ignore start */
-import type { Merge } from '@utils';
+import type { Merge } from '@adhese/sdk-shared';
 import type { ComputedRef, Ref } from '@vue/runtime-core';
 import type { Ad } from '../../requestAds/requestAds.schema';
 import type { AdheseContext } from '../../main.types';
