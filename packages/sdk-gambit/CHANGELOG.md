@@ -1,5 +1,11 @@
 # @adhese/sdk-gambit
 
+## 0.2.6
+
+### Patch Changes
+
+- dbc1db3: Fix NPM files not pointing to dist folder
+
 ## 0.2.5
 
 ### Patch Changes

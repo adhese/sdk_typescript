@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 0.11.2
+
+### Patch Changes
+
+- dbc1db3: Fix NPM files not pointing to dist folder
+
 ## 0.11.1
 
 ### Patch Changes
