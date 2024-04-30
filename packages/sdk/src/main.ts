@@ -11,7 +11,7 @@ import type { Adhese, AdheseContext, AdheseOptions, MergedOptions } from './main
 import { onInit, runOnInit } from './hooks/onInit';
 import { onDispose, runOnDispose } from './hooks/onDispose';
 import { logger } from './logger/logger';
-import { requestAds } from './requestAds/requestAds';
+import { requestAd } from './requestAds/requestAds';
 import type { AdheseSlot, AdheseSlotOptions } from './slot/createSlot/createSlot.types';
 import { clearAllHooks } from './hooks/createHook';
 import { onResponse } from './hooks/onResponse';
@@ -180,10 +180,10 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       if (domSlots.length <= 0)
         return [];
 
-      const ads = await requestAds({
-        slots: domSlots,
+      const ads = await Promise.all(domSlots.map(slot => requestAd({
+        slot,
         context,
-      });
+      })));
 
       for (const ad of ads) {
         const slot = slotManager.get(ad.slotName);
@@ -218,10 +218,10 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       if (slots.length === 0)
         return;
 
-      const ads = await requestAds({
-        slots,
+      const ads = await Promise.all(slots.map(slot => requestAd({
+        slot,
         context,
-      });
+      })));
 
       for (const ad of ads) {
         const slot = slotManager.get(ad.slotName);

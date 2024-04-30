@@ -1,5 +1,6 @@
 import { toValue } from '@vue/runtime-core';
-import { type AdRequestOptions, logger } from '@adhese/sdk';
+import { logger } from '@adhese/sdk';
+import type { AdMultiRequestOptions } from './requestAds';
 
 type AdPostPayload = {
   slots: ReadonlyArray<{
@@ -12,7 +13,7 @@ type AdPostPayload = {
 export function requestWithPost({
   context: { options: { host }, parameters },
   ...options
-}: Omit<AdRequestOptions, 'method'>): Promise<Response> {
+}: Omit<AdMultiRequestOptions, 'method'>): Promise<Response> {
   const payload = {
     ...options,
     slots: options.slots.map(slot => ({
@@ -32,7 +33,7 @@ export function requestWithPost({
   });
 }
 
-export async function requestWithGet({ context, slots }: Omit<AdRequestOptions, 'method'>): Promise<Response> {
+export async function requestWithGet({ context, slots }: Omit<AdMultiRequestOptions, 'method'>): Promise<Response> {
   return fetch(new URL(`${context.options.host}/json/sl${slots.map(slot => toValue(slot.name)).join('/sl')}`), {
     method: 'GET',
     headers: {

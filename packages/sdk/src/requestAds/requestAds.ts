@@ -1,4 +1,5 @@
-import type { MaybeRef } from '@vue/runtime-core';
+import { type MaybeRef, toValue } from '@vue/runtime-core';
+import { debounce } from 'remeda';
 import type { AdheseContext } from '../main.types';
 import { logger } from '../logger/logger';
 import { runOnRequest } from '../hooks/onRequest';
@@ -9,19 +10,66 @@ import { requestWithGet, requestWithPost } from './requestAds.utils';
 
 export type AdRequestOptions = {
   /**
-   * List of slots you want to fetch the ad for
+   * Slot you want to fetch the ad for
    */
-  slots: ReadonlyArray<{
+  slot: {
     name: MaybeRef<string>;
     parameters: Map<string, ReadonlyArray<string> | string>;
-  }>;
+  };
   context: AdheseContext;
 };
 
+export type AdMultiRequestOptions = Omit<AdRequestOptions, 'slot'> & {
+  slots: ReadonlyArray<AdRequestOptions['slot']>;
+};
+
+const batch = new Map<string, {
+  options: AdRequestOptions;
+  resolve(ad: Ad): void;
+  reject(error: Error): void;
+}>();
+
+const debouncedRequestAds = debounce(async (context: AdheseContext) => {
+  if (batch.size === 0)
+    return [];
+
+  const ads = await requestAds({
+    slots: Array.from(batch.values()).map(({ options }) => options.slot),
+    context,
+  });
+
+  for (const { options, resolve, reject } of batch.values()) {
+    const ad = ads.find(({ slotName }) => toValue(slotName) === toValue(options.slot.name));
+
+    if (ad)
+      resolve(ad);
+    else
+      reject(new Error(`Ad: ${toValue(options.slot.name)} not found`));
+  }
+
+  batch.clear();
+
+  return ads;
+}, {
+  waitMs: 20,
+  timing: 'trailing',
+});
+
 /**
- * Request multiple ads at once from the API
+ * Request a single ad from the API. If you need to fetch multiple ads at once use the `requestAds` function.
  */
-export async function requestAds(requestOptions: AdRequestOptions): Promise<ReadonlyArray<Ad>> {
+export async function requestAd(options: AdRequestOptions): Promise<Ad> {
+  const promise = new Promise<Ad>((resolve, reject) => {
+    batch.set(toValue(options.slot.name), { options, resolve, reject });
+  },
+  );
+
+  await debouncedRequestAds.call(options.context);
+
+  return promise;
+}
+
+export async function requestAds(requestOptions: AdMultiRequestOptions): Promise<ReadonlyArray<Ad>> {
   const options = await runOnRequest(requestOptions);
 
   const { context } = options;
@@ -77,21 +125,4 @@ export async function requestAds(requestOptions: AdRequestOptions): Promise<Read
 
     throw error;
   }
-}
-
-/**
- * Request a single ad from the API. If you need to fetch multiple ads at once use the `requestAds` function.
- */
-export async function requestAd({
-  slot,
-  ...options
-}: Omit<AdRequestOptions, 'slots'> & {
-  slot: AdRequestOptions['slots'][number];
-}): Promise<Ad> {
-  const [ad] = await requestAds({
-    slots: [slot],
-    ...options,
-  });
-
-  return ad;
 }

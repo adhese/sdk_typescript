@@ -4,7 +4,7 @@ import type { SafeFrame } from '@safeframe';
 import type { SlotManagerOptions } from './slot/slotManager/slotManager';
 import type { AdheseSlot, AdheseSlotOptions } from './slot/createSlot/createSlot.types';
 import type { Ad } from './requestAds/requestAds.schema';
-import type { AdRequestOptions } from './requestAds/requestAds';
+import type { AdMultiRequestOptions } from './requestAds/requestAds';
 import type { logger } from './logger/logger';
 import type { onInit } from './hooks/onInit';
 import type { onDispose } from './hooks/onDispose';
@@ -168,7 +168,7 @@ type AdheseEvents = {
   removeSlot: AdheseSlot;
   changeSlots: ReadonlyArray<AdheseSlot>;
   responseReceived: ReadonlyArray<Ad>;
-  requestAd: AdRequestOptions;
+  requestAd: AdMultiRequestOptions;
   requestError: Error;
   previewReceived: ReadonlyArray<Ad>;
   parametersChange: Map<string, ReadonlyArray<string> | string>;
