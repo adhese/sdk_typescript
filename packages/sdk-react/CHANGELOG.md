@@ -1,5 +1,13 @@
 # @adhese/sdk-react
 
+## 0.9.1
+
+### Patch Changes
+
+- eebcd88: Release @adhese/sdk-shared
+- Updated dependencies [eebcd88]
+  - @adhese/sdk-shared@0.1.0
+
 ## 0.9.0
 
 ### Minor Changes
