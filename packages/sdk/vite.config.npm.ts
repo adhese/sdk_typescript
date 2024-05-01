@@ -27,7 +27,6 @@ export default defineConfig({
   resolve: {
     alias: {
       /* eslint-disable ts/naming-convention */
-      '@logger': `${path.resolve()}/../logger/src`,
       '@server-mocks': `${path.resolve()}/../server-mocks/src`,
       '@safeframe': `${path.resolve()}/../safeframe/src`,
       '@adhese/sdk': `${path.resolve()}/src`,

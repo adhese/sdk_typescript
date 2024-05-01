@@ -10,7 +10,6 @@ export default defineConfig({
   resolve: {
     alias: {
       /* eslint-disable ts/naming-convention */
-      '@logger': `${path.resolve()}/../../packages/logger/src`,
       '@server-mocks': `${path.resolve()}/../../packages/server-mocks/src`,
       '@safeframe': `${path.resolve()}/../../packages/safeframe/src`,
       '@adhese/sdk': `${path.resolve()}/../../packages/sdk/src`,

@@ -1,6 +1,6 @@
 import { type ReactElement, useEffect, useState } from 'react';
 import type { AdheseContext } from '@adhese/sdk';
-import type { Log } from '@logger';
+import type { Log } from '@adhese/sdk-shared';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Badge } from './badge';
 

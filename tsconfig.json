@@ -7,7 +7,6 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "paths": {
-      "@logger": ["packages/logger/src/index.ts"],
       "@server-mocks": ["packages/server-mocks/src/index.ts"],
       "@safeframe": ["packages/safeframe/src/index.ts"],
       "@adhese/sdk": ["packages/sdk/src/index.ts"],

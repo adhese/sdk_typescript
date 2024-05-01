@@ -31,9 +31,9 @@
     "prepareRelease": "npm run build"
   },
   "dependencies": {
-    "@adhese/sdk-shared": "^0.1.0",
+    "@adhese/sdk-shared": "^0.1.1",
     "@vue/runtime-core": "^3.4.21",
     "remeda": "^1.61.0",
-    "zod": "^3.23.4"
+    "zod": "^3.23.5"
   }
 }
