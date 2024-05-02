@@ -1,7 +1,7 @@
 {
   "name": "@adhese/sdk",
   "type": "module",
-  "version": "0.11.2",
+  "version": "0.12.0",
   "description": "Adhese SDK",
   "license": "GPL-3.0",
   "repository": {
@@ -31,7 +31,7 @@
     "prepareRelease": "npm run build"
   },
   "dependencies": {
-    "@adhese/sdk-shared": "^0.1.1",
+    "@adhese/sdk-shared": "^0.2.0",
     "@vue/runtime-core": "^3.4.21",
     "remeda": "^1.61.0",
     "zod": "^3.23.5"
