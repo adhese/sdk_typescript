@@ -7,6 +7,6 @@ export { awaitTimeout } from './awaitTimeout/awaitTimeout';
 export type { EventManager } from './eventManager/eventManager';
 export { createEventManager } from './eventManager/eventManager';
 export { uniqueId } from './uniqueId/uniqueId';
-export { setCookie, getCookie, hasCookie, deleteCookie, type CookieOptions } from './cookie';
+export { setCookie, getCookie, hasCookie, deleteCookie, type CookieOptions } from './cookie/cookie';
 export type { Logger, Log, LogFunction, LoggerOptions } from './createLogger/createLogger';
 export { createLogger } from './createLogger/createLogger';
