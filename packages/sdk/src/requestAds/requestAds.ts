@@ -75,7 +75,7 @@ export async function requestAds(requestOptions: AdMultiRequestOptions): Promise
   const { context } = options;
 
   try {
-    context.events?.requestAd.dispatch({
+    context?.events?.requestAd.dispatch({
       ...options,
       context,
     });
@@ -121,7 +121,7 @@ export async function requestAds(requestOptions: AdMultiRequestOptions): Promise
   }
   catch (error) {
     logger.error(String(error));
-    context.events?.requestError.dispatch(error as Error);
+    context?.events?.requestError.dispatch(error as Error);
 
     throw error;
   }

@@ -34,18 +34,18 @@ export function LogTable({
   useEffect(() => {
     function onLogsChange(): void {
       setLogs(
-        adheseContext.logger.getLogs().toSorted(
+        adheseContext?.logger?.getLogs().toSorted(
           (a, b) => b.timestamp - a.timestamp,
-        ),
+        ) ?? [],
       );
     }
 
-    adheseContext.logger.events.log.addListener(onLogsChange);
+    adheseContext?.logger?.events.log.addListener(onLogsChange);
 
     onLogsChange();
 
     return (): void => {
-      adheseContext.logger.events.log.removeListener(onLogsChange);
+      adheseContext?.logger?.events.log.removeListener(onLogsChange);
     };
   }, []);
 

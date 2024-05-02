@@ -217,7 +217,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
     }
 
     return {
-      location: context.location,
+      location: context.location ?? '',
       lazyLoading: options.lazyLoading ?? false,
       slot,
       parameters,

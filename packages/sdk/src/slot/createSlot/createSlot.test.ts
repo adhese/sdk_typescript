@@ -330,7 +330,7 @@ describe('slot', () => {
           time: 0,
         }], intersectionObserver);
 
-        await awaitTimeout(testContext.options.viewabilityTrackingOptions?.duration ?? 1000);
+        await awaitTimeout(testContext.options?.viewabilityTrackingOptions?.duration ?? 1000);
 
         expect(callback).toBeCalledTimes(1);
       }));
