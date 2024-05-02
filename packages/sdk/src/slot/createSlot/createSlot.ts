@@ -8,7 +8,6 @@ import { onInit, waitOnInit } from '../../hooks/onInit';
 import { requestAd as extRequestAd } from '../../requestAds/requestAds';
 import { runOnRender } from '../../hooks/onRender';
 import { runOnSlotCreate } from '../../hooks/onSlotCreate';
-import { runOnViewabilityChanged } from '../../hooks/onViewabilityChanged';
 import type { AdheseSlot, AdheseSlotOptions, RenderMode } from './createSlot.types';
 import { generateName, renderIframe, renderInline } from './createSlot.utils';
 import { useViewabilityObserver } from './useViewabilityObserver';
@@ -104,11 +103,8 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
     });
 
     watch(isInViewport, (value) => {
-      runOnViewabilityChanged({
-        name: name.value,
-        isInViewport: value,
-      });
-    }, { immediate: true });
+      options.onViewabilityChanged?.(value);
+    });
 
     const [
       isViewabilityTracked,

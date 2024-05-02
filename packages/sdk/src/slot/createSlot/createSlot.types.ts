@@ -58,6 +58,10 @@ export type AdheseSlotOptions = {
    * Particularly useful for rendering ads with custom HTML if the ad tag contains a JSON object.
    */
   onBeforeRender?(ad: Ad): Ad | void;
+  /**
+   * Callback that is called when the viewability of the slot changes.
+   */
+  onViewabilityChanged?(isViewable: boolean): void;
 } & ({
   /**
    * If the slot should be lazy loaded. This means that the ad will only be requested when the slot is in the viewport.

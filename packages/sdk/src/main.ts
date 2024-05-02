@@ -18,7 +18,6 @@ import { onResponse } from './hooks/onResponse';
 import { onRender } from './hooks/onRender';
 import { onRequest } from './hooks/onRequest';
 import { onSlotCreate } from './hooks/onSlotCreate';
-import { onViewabilityChanged } from './hooks/onViewabilityChanged';
 
 /**
  * Creates an Adhese instance. This instance is your main entry point to the Adhese API.
@@ -91,7 +90,6 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
         onRequest,
         onResponse,
         onSlotCreate,
-        onViewabilityChanged,
       });
     }
 

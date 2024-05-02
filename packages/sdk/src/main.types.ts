@@ -12,7 +12,6 @@ import type { onRender } from './hooks/onRender';
 import type { onRequest } from './hooks/onRequest';
 import type { onResponse } from './hooks/onResponse';
 import type { onSlotCreate } from './hooks/onSlotCreate';
-import type { onViewabilityChanged } from './hooks/onViewabilityChanged';
 
 export type AdhesePluginInformation = {
   index: number;
@@ -23,7 +22,6 @@ export type AdhesePluginInformation = {
   onRequest: typeof onRequest;
   onResponse: typeof onResponse;
   onSlotCreate: typeof onSlotCreate;
-  onViewabilityChanged: typeof onViewabilityChanged;
 };
 
 export type AdhesePlugin = (context: AdheseContext, plugin: AdhesePluginInformation) => void;

@@ -40,7 +40,6 @@ the argument you can always pass a promise or async function to the hook, regard
 | `onRequest`            | `AdRequestOptions`                        | Asynchronous | Hook is run before a request is made to the server. The hook passes a `AdRequestOptions` object that you can modify.                               |
 | `onResponse`           | `Ad`                                      | Asynchronous | Hook is run after a response received. The hook passes an `Ad` object that you can modify.                                                         |
 | `onSlotCreate`         | `AdheseSlotOptions`                       | Synchronous  | Hook is run before a slot is created. The hook passes an `AdheseSlotOptions` object that you can modify                                            |
-| `onViewabilityChanged` | `{ name: string, isInViewport: boolean }` | Passive      | Hook is run when a slots visibility is changed.                                                                                                    |
 
 ## Installing a Plugin
 To install a plugin you just need to pass it to the plugins array when initializing the SDK.
