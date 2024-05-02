@@ -111,7 +111,7 @@ describe('createAdhese', () => {
     expect(adhese.options.account).toBe('test');
     expect(adhese.options.host).toBe('https://ads.example.com');
     expect(adhese.options.poolHost).toBe('https://pool.example.com');
-    expect(adhese.getConsent()).toBe(true);
+    expect(adhese.consent).toBe(true);
     expect(adhese.options.requestType).toBe('GET');
     expect(adhese.parameters.size).toBe(8);
     expect(adhese.options.eagerRendering).toBe(true);
@@ -177,16 +177,16 @@ describe('createAdhese', () => {
       account: 'test',
     });
 
-    expect(adhese.getLocation()).toBe('homepage');
+    expect(adhese.location).toBe('homepage');
   });
   it('should be able to set the current page location', () => {
     adhese = createAdhese({
       account: 'test',
     });
 
-    adhese.setLocation('/foo');
+    adhese.location = '/foo';
 
-    expect(adhese.getLocation()).toBe('/foo');
+    expect(adhese.location).toBe('/foo');
   });
 
   it('should be able to add a slot', async () => {
@@ -227,17 +227,20 @@ describe('createAdhese', () => {
     expect(slots.length).toBe(1);
   });
 
-  it('should be able to change the consent', () => {
+  it('should be able to change the consent', async () => {
     adhese = createAdhese({
       account: 'test',
     });
 
-    expect(adhese.getConsent()).toBe(false);
+    expect(adhese.consent).toBe(false);
     expect(adhese.parameters.get('tl')).toBe('none');
 
-    adhese.setConsent(true);
+    adhese.consent = true;
 
-    expect(adhese.getConsent()).toBe(true);
+    expect(adhese.consent).toBe(true);
+
+    await awaitTimeout(10);
+
     expect(adhese.parameters.get('tl')).toBe('all');
   });
 

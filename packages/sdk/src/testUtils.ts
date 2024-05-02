@@ -1,11 +1,10 @@
-import { vi } from 'vitest';
-import { logger } from './logger/logger';
+import { createEventManager } from '@adhese/sdk-shared';
 import type { AdheseContext } from './main.types';
+import { logger } from './logger/logger';
 
 export const testContext: AdheseContext = {
   location: 'foo',
   consent: false,
-  get: vi.fn(() => undefined),
   debug: true,
   isDisposed: false,
   options: {
@@ -27,4 +26,6 @@ export const testContext: AdheseContext = {
     },
   },
   logger,
+  events: createEventManager(),
+  parameters: new Map(),
 };

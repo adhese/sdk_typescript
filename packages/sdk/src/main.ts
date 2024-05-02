@@ -7,7 +7,7 @@ import { createSlotManager } from './slot/slotManager/slotManager';
 import { onTcfConsentChange } from './consent/tcfConsent';
 import { createQueryDetector } from './queryDetector/queryDetector';
 import { createParameters, isPreviewMode, setupLogging } from './main.utils';
-import type { Adhese, AdheseContext, AdheseOptions, MergedOptions } from './main.types';
+import type { Adhese, AdheseContextState, AdheseOptions, MergedOptions } from './main.types';
 import { onInit, runOnInit } from './hooks/onInit';
 import { onDispose, runOnDispose } from './hooks/onDispose';
 import { logger } from './logger/logger';
@@ -65,14 +65,21 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
     } satisfies MergedOptions;
     setupLogging(mergedOptions);
 
-    const context = reactive({
+    const context = reactive<AdheseContextState>({
       location: mergedOptions.location,
       consent: mergedOptions.consent,
       debug: mergedOptions.debug,
       options: mergedOptions,
       logger,
       isDisposed: false,
-    } satisfies AdheseContext) as AdheseContext;
+      parameters: new Map(),
+      events: createEventManager(),
+      dispose,
+      findDomSlots,
+      getAll,
+      get,
+      addSlot,
+    });
 
     for (const [index, plugin] of mergedOptions.plugins.entries()) {
       plugin(context, {
@@ -97,14 +104,9 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       })
       : undefined;
 
-    function getLocation(): typeof context.location {
-      return context.location;
-    }
-
-    function setLocation(newLocation: string): void {
-      context.location = newLocation;
+    watch(() => context.location, (newLocation) => {
       context.events?.locationChange.dispatch(newLocation);
-    }
+    });
 
     const queryDetector = createQueryDetector({
       onChange: onQueryChange,
@@ -114,18 +116,14 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
     context.parameters = createParameters(mergedOptions, queryDetector);
 
     watch(
-      context.parameters,
-      onParametersChange,
+      () => context.parameters,
+      (newParameters) => {
+        context.events?.parametersChange.dispatch(newParameters);
+      },
       {
         deep: true,
-        immediate: true,
       },
     );
-
-    function onParametersChange(): void {
-      if (context.parameters)
-        context.events?.parametersChange.dispatch(context.parameters);
-    }
 
     const debouncedFetchAllUnrenderedSlots = debounce(fetchAllUnrenderedSlots, {
       waitMs: 100,
@@ -140,21 +138,19 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       await debouncedFetchAllUnrenderedSlots.call();
     }
 
-    function getConsent(): typeof context.consent {
-      return context.consent;
-    }
-
-    function setConsent(newConsent: boolean): void {
+    watch(() => context.consent, (newConsent) => {
       context.parameters?.set('tl', newConsent ? 'all' : 'none');
-      context.consent = newConsent;
 
       context.events?.consentChange.dispatch(newConsent);
-    }
+    }, {
+      immediate: true,
+    });
 
     const slotManager = createSlotManager({
       initialSlots: mergedOptions.initialSlots,
       context,
     });
+
     function getAll(): ReadonlyArray<AdheseSlot> {
       return slotManager.getAll() ?? [];
     }
@@ -166,11 +162,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
     context.get = get;
 
     function addSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot> {
-      const newSlot = slotManager.add(slotOptions);
-
-      debouncedFetchAllUnrenderedSlots.call().catch(logger.error);
-
-      return newSlot;
+      return slotManager.add(slotOptions);
     }
     context.addSlot = addSlot;
 
@@ -194,11 +186,10 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
 
       return domSlots;
     }
+    context.findDomSlots = findDomSlots;
 
-    async function toggleDebug(): Promise<boolean> {
-      context.debug = !context.debug;
-
-      if (context.debug) {
+    watch(() => context.debug, async (newDebug) => {
+      if (newDebug) {
         logger.setMinLogLevelThreshold('debug');
         logger.debug('Debug mode enabled');
         context.events?.debugChange.dispatch(true);
@@ -208,9 +199,9 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
         logger.setMinLogLevelThreshold('info');
         context.events?.debugChange.dispatch(false);
       }
-
-      return context.debug;
-    }
+    }, {
+      immediate: true,
+    });
 
     async function fetchAllUnrenderedSlots(): Promise<void> {
       const slots = (slotManager.getAll() ?? []).filter(slot => !slot.lazyLoading && !slot.ad.value);
@@ -263,13 +254,14 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
 
       scope.stop();
     }
+    context.dispose = dispose;
 
     onInit(async () => {
       if ((slotManager.getAll().length ?? 0) > 0)
         await fetchAllUnrenderedSlots().catch(logger.error);
 
       if (mergedOptions.findDomSlotsOnLoad)
-        await findDomSlots();
+        await context?.findDomSlots();
 
       if (mergedOptions.debug || window.location.search.includes('adhese_debug=true') || isPreviewMode())
         context.events?.debugChange.dispatch(true);
@@ -280,21 +272,6 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
 
     runOnInit();
 
-    return {
-      parameters: context.parameters,
-      events: context.events,
-      getLocation,
-      setLocation,
-      getConsent,
-      setConsent,
-      addSlot,
-      findDomSlots,
-      dispose,
-      toggleDebug,
-      get: slotManager.get,
-      getAll: slotManager.getAll,
-      context,
-      options: mergedOptions,
-    } satisfies Adhese;
+    return context;
   })!;
 }

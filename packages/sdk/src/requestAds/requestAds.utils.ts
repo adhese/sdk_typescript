@@ -11,7 +11,7 @@ type AdPostPayload = {
 };
 
 export function requestWithPost({
-  context: { options: { host }, parameters },
+  context,
   ...options
 }: Omit<AdMultiRequestOptions, 'method'>): Promise<Response> {
   const payload = {
@@ -20,10 +20,10 @@ export function requestWithPost({
       slotname: toValue(slot.name),
       parameters: parseParameters(slot.parameters),
     })),
-    parameters: parameters && parseParameters(parameters),
+    parameters: context.parameters && parseParameters(context.parameters),
   } satisfies AdPostPayload;
 
-  return fetch(`${new URL(host).href}json`, {
+  return fetch(`${new URL(context.options.host).href}json`, {
     method: 'POST',
     body: JSON.stringify(payload),
     headers: {

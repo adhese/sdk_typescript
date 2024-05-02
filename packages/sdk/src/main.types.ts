@@ -49,8 +49,6 @@ export type AdheseOptions = {
   poolHost?: UrlString;
   /**
    * The page location. This is used to determine the current page location identifier.
-   *
-   * @default location.pathname
    */
   location?: string;
   /**
@@ -175,7 +173,24 @@ type AdheseEvents = {
   debugChange: boolean;
 };
 
-export type Adhese = {
+type BaseAdhese = {
+  /**
+   * The page location. This is used to determine the current page location identifier.
+   */
+  location: string;
+  /**
+   * The consent type to use for the Adhese API requests. This can be either `true` or `false`. `false` is the default and
+   * will send all consent data to the Adhese API. `false` will send no consent data to the Adhese API.
+   */
+  consent: boolean;
+  /**
+   * The logger instance that is used for multi level console logging
+   */
+  logger: typeof logger;
+  /**
+   * Debug mode of the Adhese instance. When set to true will log verbose logs to the console and will load the Devtools.
+   */
+  debug: boolean;
   /**
    * The parameters that are used for all ads.
    */
@@ -185,13 +200,17 @@ export type Adhese = {
    */
   events: EventManager<AdheseEvents>;
   /**
-   * The Adhese context that is a reactive object that contains all the data of the Adhese instance.
+   * Options passed to the Adhese instance.
    */
-  context: AdheseContext;
+  options: Readonly<MergedOptions>;
   /**
-   * Options the Adhese instance was initialized with.
+   * The SafeFrame instance that is used for rendering ads in a SafeFrame.
    */
-  options: MergedOptions;
+  safeFrame?: SafeFrame;
+  /**
+   * Is the instance disposed
+   */
+  isDisposed: boolean;
   /**
    * Get a slot by name.
    * @param name The name of the slot.
@@ -201,22 +220,6 @@ export type Adhese = {
    * Get all slots in the Adhese instance.
    */
   getAll(): ReadonlyArray<AdheseSlot>;
-  /**
-   * Returns the current page location.
-   */
-  getLocation(): string;
-  /**
-   * Sets the current page location.
-   */
-  setLocation(location: string): void;
-  /**
-   * Returns the current consent type.
-   */
-  getConsent(): boolean;
-  /**
-   * Sets the current consent type.
-   */
-  setConsent(consent: boolean): void;
   /**
    * Adds a new slot to the Adhese instance and renders it.
    */
@@ -231,18 +234,14 @@ export type Adhese = {
    * After calling this method, the Adhese instance is no longer usable.
    */
   dispose(): void;
-  /**
-   * Toggles the debug mode of the Adhese instance.
-   */
-  toggleDebug(): Promise<boolean>;
 };
 
-export type AdheseContext = Partial<Pick<Adhese, 'events' | 'getAll' | 'get' | 'parameters' | 'addSlot'>> & {
-  location: string;
-  consent: boolean;
-  options: Readonly<MergedOptions>;
-  logger: typeof logger;
-  debug: boolean;
-  safeFrame?: SafeFrame;
-  isDisposed: boolean;
+type ReadonlyProps = 'options' | 'safeFrame' | 'isDisposed' | 'logger' | 'events' | 'get' | 'getAll' | 'addSlot' | 'findDomSlots' | 'dispose';
+export type Adhese = Omit<BaseAdhese, ReadonlyProps> & Readonly<Pick<BaseAdhese, ReadonlyProps>>;
+
+export type AdheseContextState = Omit<BaseAdhese, 'options'> & {
+  readonly options: MergedOptions;
 };
+
+type NonPartialProps = 'options' | 'logger' | 'events' | 'isDisposed' | 'location' | 'consent' | 'debug' | 'parameters';
+export type AdheseContext = Omit<Partial<AdheseContextState>, NonPartialProps> & Pick<AdheseContextState, NonPartialProps>;
