@@ -22,24 +22,9 @@ import { onSlotCreate } from './hooks/onSlotCreate';
 /**
  * Creates an Adhese instance. This instance is your main entry point to the Adhese API.
  *
- * @param options
- * @param options.account The Adhese account name.
- * @param options.host The url that is used to connect to the Adhese ad server. Pass a custom URL if you want to use
- * your own domain for the connection.
- * @param options.poolHost The url that is used to connect to the Adhese pool server. Pass a custom URL if you want to
- * use your own domain for the connection.
- * @param options.location The page location. This is used to determine the current page location identifier.
- * @param options.requestType The requestAds type to use for the Adhese API requests. This can be either `GET` or
- * `POST`. `POST` is the default and offers the most options. `GET` is more limited as it needs pass its data as search
- * parameters but can be used in environments where `POST` requests are not allowed.
- * @param options.debug Enable debug logging.
- * @param options.initialSlots The initial slots to add to the Adhese instance.
- * @param options.findDomSlotsOnLoad Find all slots in the DOM and add them to the Adhese instance during
- * initialization.
- * @param options.parameters Base parameters that are used for all ads.
- * @param options.consent The consent type to use for the Adhese API requests. This can be either `all` or `none`.
+ * @param options {AdheseOptions} The options to create the Adhese instance with. See the {@link AdheseOptions} type for more information.
  *
- * @return Promise<Adhese> The Adhese instance.
+ * @return Adhese The Adhese instance.
  */
 export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
   const scope = effectScope();

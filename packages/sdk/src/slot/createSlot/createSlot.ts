@@ -19,7 +19,11 @@ const renderFunctions: Record<RenderMode, (ad: Ad, element: HTMLElement) => void
 };
 
 /**
- * Create a new slot instance.
+ * Create a new slot instance. This slot instance can be used to request and render ads.
+ *
+ * @param slotOptions {AdheseSlotOptions} The options to create the slot with.
+ *
+ * @return AdheseSlot The created slot instance.
  */
 export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot> {
   const scope = effectScope();
