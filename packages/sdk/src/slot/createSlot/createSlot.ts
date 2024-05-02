@@ -100,7 +100,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
       if ((!newAd || (oldAd && isDeepEqual(newAd, oldAd))) && isRendered.value)
         return;
 
-      if (newIsInViewport || context.options.eagerRendering)
+      if (newIsInViewport)
         await render(newAd ?? undefined);
 
       context.events?.changeSlots.dispatch(Array.from(context.getAll?.() ?? []));
@@ -220,7 +220,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
       if (options.lazyLoading)
         return;
 
-      await requestAd();
+      ad.value = await requestAd();
     });
 
     return {
