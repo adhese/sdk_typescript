@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 import { cn } from '../utils';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Badge } from './badge';
-import { Button, buttonVariants } from './button';
+import { buttonVariants } from './button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './sheet';
 
 const slotStatus = {
@@ -66,6 +66,7 @@ export function SlotsTable({ adheseContext }: {
 
   const slotParametersExist = formattedSlots.some(formattedSlot => formattedSlot.parameters.length > 0);
   const previewExist = formattedSlots.some(formattedSlot => formattedSlot.ad?.preview);
+  const slotCodeExists = formattedSlots.some(formattedSlot => formattedSlot.slot);
 
   const origins: ReadonlyArray<string> = useMemo(() => {
     const set = new Set<string>();
@@ -87,18 +88,18 @@ export function SlotsTable({ adheseContext }: {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
+              <TableHead>Location</TableHead>
+              {slotCodeExists && <TableHead>Slot</TableHead>}
               <TableHead>Format</TableHead>
               {origins.length > 1 && <TableHead>Origin</TableHead>}
-              <TableHead>Location</TableHead>
               <TableHead>Render Status</TableHead>
               <TableHead>Campaign ID</TableHead>
               <TableHead>Booking ID</TableHead>
               <TableHead>Creative ID</TableHead>
               <TableHead>Traffic ID</TableHead>
               <TableHead>Creative type</TableHead>
-              <TableHead>Viewability tracked</TableHead>
               <TableHead>Impression tracked</TableHead>
-              <TableHead>Element</TableHead>
+              <TableHead>Viewability tracked</TableHead>
               {
                 slotParametersExist && <TableHead>Parameters</TableHead>
               }
@@ -118,12 +119,27 @@ export function SlotsTable({ adheseContext }: {
               isImpressionTracked,
               iframe,
               parameters,
+              slot,
             }, index) => (
               <Fragment key={name}>
                 <TableRow id={name}>
                   <TableCell className="font-medium">
-                    <Badge className={cn(slotIndexBadgeClasses[index % slotIndexBadgeClasses.length], 'text-white')}>{name}</Badge>
+                    <button onClick={() => {
+                      if (iframe) {
+                        iframe.scrollIntoView();
+                        iframe.style.outline = 'solid 5px red';
+
+                        setTimeout(() => {
+                          iframe.style.outline = '';
+                        }, 1000);
+                      }
+                    }}
+                    >
+                      <Badge className={cn(slotIndexBadgeClasses[index % slotIndexBadgeClasses.length], 'text-white')}>{name}</Badge>
+                    </button>
                   </TableCell>
+                  <TableCell>{location}</TableCell>
+                  {slotCodeExists && <TableCell>{slot ?? ''}</TableCell>}
                   <TableCell>
                     {!ad?.adFormat || ad?.adFormat === format
                       ? format
@@ -139,7 +155,6 @@ export function SlotsTable({ adheseContext }: {
                       {ad?.origin && <Badge className={cn(slotIndexBadgeClasses[origins.indexOf(ad.origin) % slotIndexBadgeClasses.length], 'text-white')}>{ad.origin.toLowerCase()}</Badge>}
                     </TableCell>
                   )}
-                  <TableCell>{location}</TableCell>
                   <TableCell>
                     <Badge className={cn({
                       unloaded: 'bg-secondary text-secondary-foreground hover:bg-secondary',
@@ -204,33 +219,14 @@ export function SlotsTable({ adheseContext }: {
                   <TableCell>{ad?.id ?? '-'}</TableCell>
                   <TableCell>{ad?.ext ? <Badge variant="outline">{ad.ext}</Badge> : '-'}</TableCell>
                   <TableCell>
-                    {isViewabilityTracked.value
-                      ? <Badge className="bg-green-100 text-green-900 hover:bg-green-100">Yes</Badge>
-                      : <Badge variant="secondary">No</Badge>}
-                  </TableCell>
-                  <TableCell>
                     {isImpressionTracked.value
                       ? <Badge className="bg-green-100 text-green-900 hover:bg-green-100">Yes</Badge>
                       : <Badge variant="secondary">No</Badge>}
                   </TableCell>
                   <TableCell>
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      disabled={!iframe}
-                      onClick={() => {
-                        if (iframe) {
-                          iframe.scrollIntoView();
-                          iframe.style.outline = 'solid 5px red';
-
-                          setTimeout(() => {
-                            iframe.style.outline = '';
-                          }, 1000);
-                        }
-                      }}
-                    >
-                      Go to element
-                    </Button>
+                    {isViewabilityTracked.value
+                      ? <Badge className="bg-green-100 text-green-900 hover:bg-green-100">Yes</Badge>
+                      : <Badge variant="secondary">No</Badge>}
                   </TableCell>
                   {
                     slotParametersExist && (
