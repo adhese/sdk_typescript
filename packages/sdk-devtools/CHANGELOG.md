@@ -1,5 +1,13 @@
 # @adhese/sdk-devtools
 
+## 0.7.7
+
+### Patch Changes
+
+- a26839b: Refactor the Adhese instance to be reactive object
+- Updated dependencies [44130f4]
+  - @adhese/sdk-shared@0.2.0
+
 ## 0.7.6
 
 ### Patch Changes

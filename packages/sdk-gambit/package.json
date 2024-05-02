@@ -1,7 +1,7 @@
 {
   "name": "@adhese/sdk-gambit",
   "type": "module",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Adhese SDK",
   "license": "GPL-3.0",
   "repository": {
@@ -33,7 +33,7 @@
     "@adhese/sdk": "^0"
   },
   "dependencies": {
-    "@adhese/sdk-shared": "^0.1.1",
+    "@adhese/sdk-shared": "^0.2.0",
     "remeda": "^1.61.0"
   }
 }

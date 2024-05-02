@@ -1,5 +1,18 @@
 # @adhese/sdk
 
+## 0.12.0
+
+### Minor Changes
+
+- f66cd71: Remove onViewabilityChanged hook and move the implementation to a callback on the createSlot instead
+- a26839b: Refactor the Adhese instance to be reactive object
+
+### Patch Changes
+
+- 44130f4: Move createLogger to @adhese/sdk-shared
+- Updated dependencies [44130f4]
+  - @adhese/sdk-shared@0.2.0
+
 ## 0.11.2
 
 ### Patch Changes
