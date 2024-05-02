@@ -216,6 +216,13 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
       scope.stop();
     }
 
+    onInit(async () => {
+      if (options.lazyLoading)
+        return;
+
+      await requestAd();
+    });
+
     return {
       location: context.location ?? '',
       lazyLoading: options.lazyLoading ?? false,
@@ -228,6 +235,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
       isImpressionTracked,
       render,
       getElement,
+      request: requestAd,
       dispose,
     };
   })!;

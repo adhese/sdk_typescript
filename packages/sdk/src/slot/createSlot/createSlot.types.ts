@@ -124,6 +124,10 @@ export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' |
    */
   getElement(): HTMLElement | null;
   /**
+   * Requests a new ad from the API and returns the ad object.
+   */
+  request(): Promise<Ad>;
+  /**
    * Removes the slot from the DOM and cleans up the slot instance.
    */
   dispose(): void;
