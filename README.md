@@ -1,4 +1,12 @@
 # Adhese SDK
+[![Release](https://github.com/adhese/sdk_typescript/actions/workflows/release.yaml/badge.svg?branch=main)](https://github.com/adhese/sdk_typescript/actions/workflows/release.yaml)
+[![On push](https://github.com/adhese/sdk_typescript/actions/workflows/push.yaml/badge.svg?branch=main)](https://github.com/adhese/sdk_typescript/actions/workflows/push.yaml)
+[![License: GPL-3](https://img.shields.io/badge/license-GPLv3-blue)](/LICENSE)
+[![@adhese/sdk version](https://img.shields.io/npm/v/%40adhese%2Fsdk?label=%40adhese%2Fsdk)](https://www.npmjs.com/package/@adhese/sdk)
+[![@adhese/sdk-react version](https://img.shields.io/npm/v/%40adhese%2Fsdk-react?label=%40adhese%2Fsdk-react)](https://www.npmjs.com/package/@adhese/sdk-react)
+[![@adhese/sdk-devtools version](https://img.shields.io/npm/v/%40adhese%2Fsdk-devtools?label=%40adhese%2Fsdk-devtools)](https://www.npmjs.com/package/@adhese/sdk-devtools)
+[![@adhese/sdk-gambit version](https://img.shields.io/npm/v/%40adhese%2Fsdk-gambit?label=%40adhese%2Fsdk-gambit)](https://www.npmjs.com/package/@adhese/sdk-gambit)
+[![@adhese/sdk-shared version](https://img.shields.io/npm/v/%40adhese%2Fsdk-shared?label=%40adhese%2Fsdk-shared)](https://www.npmjs.com/package/@adhese/sdk-shared)
 
 ## Introduction
 This monorepo contains the Adhese SDK for web. The project uses Turborepo to manage the monorepo. Make sure to run
