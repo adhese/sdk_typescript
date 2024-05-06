@@ -236,12 +236,12 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
     }
 
     onInit(async () => {
+      status.value = 'initialized';
+
       if (options.lazyLoading)
         return;
 
       ad.value = await requestAd();
-
-      status.value = 'initialized';
     });
 
     return {
