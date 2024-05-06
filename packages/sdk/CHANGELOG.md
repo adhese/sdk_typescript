@@ -1,5 +1,16 @@
 # @adhese/sdk
 
+## 0.13.0
+
+### Minor Changes
+
+- 66c3715: Add onEmpty callback to slots that is called whenever a slots remains empty after being requested from the API
+
+### Patch Changes
+
+- 7710851: Make sure non-lazy slots are requested when created
+- 31723ae: Fix when requesting slots on creation that the ad value is not set
+
 ## 0.12.0
 
 ### Minor Changes
