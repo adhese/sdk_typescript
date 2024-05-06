@@ -123,7 +123,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
     const impressionTrackingPixelElement = ref<HTMLImageElement | null>(null);
     const isImpressionTracked = computed(() => Boolean(impressionTrackingPixelElement.value));
 
-    async function requestAd(): Promise<Ad> {
+    async function requestAd(): Promise<Ad | null> {
       const response = await extRequestAd({
         slot: {
           name: name.value,
@@ -132,19 +132,28 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
         context,
       });
 
-      originalAd.value = response;
+      if (response) {
+        ad.value = response;
+
+        if (!originalAd.value)
+          originalAd.value = response;
+      }
 
       return response;
     }
 
-    async function render(adToRender?: Ad): Promise<HTMLElement> {
+    async function render(adToRender?: Ad): Promise<HTMLElement | null> {
       await waitForDomLoad();
       await waitOnInit;
 
       let renderAd = adToRender ?? ad.value ?? originalAd.value ?? await requestAd();
 
-      if (renderAd)
-        renderAd = options.onBeforeRender?.(renderAd) ?? renderAd;
+      if (!renderAd) {
+        logger.debug(`No ad to render for slot ${name.value}`);
+        return null;
+      }
+
+      renderAd = options.onBeforeRender?.(renderAd) ?? renderAd;
 
       renderAd = await runOnRender(renderAd);
 

@@ -209,16 +209,17 @@ describe('createAdhese', () => {
 
     expect(adhese.getAll().length).toBe(1);
   });
-
   it('should be able to find all slots in the DOM', async () => {
     adhese = createAdhese({
       account: 'test',
     });
 
+    await awaitTimeout(0);
+
     const element = document.createElement('div');
-    element.id = 'billboard';
+    element.id = 'leaderboard';
     element.classList.add('adunit');
-    element.dataset.format = 'billboard';
+    element.dataset.format = 'leaderboard';
 
     document.body.appendChild(element);
 

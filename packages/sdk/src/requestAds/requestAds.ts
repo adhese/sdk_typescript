@@ -25,8 +25,7 @@ export type AdMultiRequestOptions = Omit<AdRequestOptions, 'slot'> & {
 
 const batch = new Map<string, {
   options: AdRequestOptions;
-  resolve(ad: Ad): void;
-  reject(error: Error): void;
+  resolve(ad: Ad | null): void;
 }>();
 
 const debouncedRequestAds = debounce(async (context: AdheseContext) => {
@@ -38,13 +37,13 @@ const debouncedRequestAds = debounce(async (context: AdheseContext) => {
     context,
   });
 
-  for (const { options, resolve, reject } of batch.values()) {
+  for (const { options, resolve } of batch.values()) {
     const ad = ads.find(({ slotName }) => toValue(slotName) === toValue(options.slot.name));
 
     if (ad)
       resolve(ad);
     else
-      reject(new Error(`Ad: ${toValue(options.slot.name)} not found`));
+      resolve(null);
   }
 
   batch.clear();
@@ -58,9 +57,9 @@ const debouncedRequestAds = debounce(async (context: AdheseContext) => {
 /**
  * Request a single ad from the API. If you need to fetch multiple ads at once use the `requestAds` function.
  */
-export async function requestAd(options: AdRequestOptions): Promise<Ad> {
-  const promise = new Promise<Ad>((resolve, reject) => {
-    batch.set(toValue(options.slot.name), { options, resolve, reject });
+export async function requestAd(options: AdRequestOptions): Promise<Ad | null> {
+  const promise = new Promise<Ad | null>((resolve) => {
+    batch.set(toValue(options.slot.name), { options, resolve });
   },
   );
 
