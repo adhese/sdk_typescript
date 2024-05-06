@@ -1,5 +1,12 @@
 # @adhese/sdk-devtools
 
+## 0.8.0
+
+### Minor Changes
+
+- 4bf3147: Remove 'Go to element' button and move the function to the name label
+- 4bf3147: Move order of columns in the slots table
+
 ## 0.7.7
 
 ### Patch Changes
