@@ -121,6 +121,19 @@ export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' |
    */
   ad: Ref<Ad | null>;
   /**
+   * The state of the slot is currently in.
+   *
+   * - `initializing`: The slot is initializing.
+   * - `initialized`: The slot is initialized.
+   * - `loading`: The slot is loading data from the API
+   * - `loaded`: The slot has loaded data from the API and is ready to render
+   * - `empty`: The slot has loaded data from the API but the response was empty
+   * - `rendering`: The slot is rendering the ad
+   * - `rendered`: The slot has rendered the ad
+   * - `error`: The slot has encountered an error
+   */
+  status: Ref<'initializing' | 'initialized' | 'loading' | 'loaded' | 'empty' | 'rendering' | 'rendered' | 'error'>;
+  /**
    * Renders the slot in the containing element. If no ad is provided, a new ad will be requested from the API.
    */
   render(ad?: Ad): Promise<HTMLElement | null>;

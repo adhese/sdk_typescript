@@ -1,17 +1,12 @@
 import { Fragment, type ReactElement, useEffect, useMemo, useState } from 'react';
 import type { AdheseContext, AdheseSlot } from '@adhese/sdk';
 import { createPortal } from 'react-dom';
+import type { UnwrapRef } from '@vue/runtime-core';
 import { cn } from '../utils';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Badge } from './badge';
 import { buttonVariants } from './button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './sheet';
-
-const slotStatus = {
-  unloaded: 'Waiting to load',
-  loaded: 'Ready to render',
-  rendered: 'Rendered',
-} as const;
 
 const slotIndexBadgeClasses = [
   'bg-blue-500 hover:bg-blue-500',
@@ -22,6 +17,17 @@ const slotIndexBadgeClasses = [
   'bg-cyan-500 hover:bg-cyan-500',
   'bg-pink-500 hover:bg-pink-500',
 ] as const;
+
+const renderStatusMap = {
+  initializing: 'Initializing',
+  initialized: 'Initialized',
+  loading: 'Loading',
+  loaded: 'Loaded',
+  rendering: 'Rendering',
+  rendered: 'Rendered',
+  empty: 'Empty',
+  error: 'Error',
+} as const satisfies Record<UnwrapRef<AdheseSlot['status']>, string>;
 
 // eslint-disable-next-line ts/naming-convention
 export function SlotsTable({ adheseContext }: {
@@ -46,18 +52,10 @@ export function SlotsTable({ adheseContext }: {
     const ad = slot.ad.value;
     const iframe = slot.getElement();
 
-    let status: keyof typeof slotStatus = 'unloaded';
-
-    if (iframe)
-      status = 'rendered';
-    else if (ad)
-      status = 'loaded';
-
     return ({
       ...slot,
       name: slot.name.value,
       ad,
-      status,
       format: slot.format.value,
       iframe,
       parameters: Array.from(slot.parameters.entries()),
@@ -156,13 +154,8 @@ export function SlotsTable({ adheseContext }: {
                     </TableCell>
                   )}
                   <TableCell>
-                    <Badge className={cn({
-                      unloaded: 'bg-secondary text-secondary-foreground hover:bg-secondary',
-                      loaded: 'bg-blue-100 text-blue-900 hover:bg-blue-100',
-                      rendered: 'bg-green-100 text-green-900 hover:bg-green-100',
-                    }[status])}
-                    >
-                      {slotStatus[status]}
+                    <Badge variant="outline" className={cn(status.value === 'error' ? 'bg-red-500 text-red-50' : '')}>
+                      {renderStatusMap[status.value]}
                     </Badge>
                   </TableCell>
                   <TableCell>

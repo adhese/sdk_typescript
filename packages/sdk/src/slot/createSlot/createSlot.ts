@@ -1,5 +1,5 @@
 import { waitForDomLoad } from '@adhese/sdk-shared';
-import { type Ref, computed, effectScope, reactive, ref, watch } from '@vue/runtime-core';
+import { type Ref, type UnwrapRef, computed, effectScope, reactive, ref, watch } from '@vue/runtime-core';
 import { isDeepEqual } from 'remeda';
 import { type Ad, logger } from '@adhese/sdk';
 import { addTrackingPixel } from '../../impressionTracking/impressionTracking';
@@ -95,9 +95,12 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
       element,
     });
 
-    const isRendered = ref(false);
+    const status = ref<UnwrapRef<AdheseSlot>['status']>('initializing');
+    watch(status, () => {
+      context.events.changeSlots.dispatch(Array.from(context.getAll?.() ?? []));
+    });
     watch([ad, isInViewport], async ([newAd, newIsInViewport], [oldAd]) => {
-      if ((!newAd || (oldAd && isDeepEqual(newAd, oldAd))) && isRendered.value)
+      if ((!newAd || (oldAd && isDeepEqual(newAd, oldAd))) && status.value === 'rendered')
         return;
 
       if (newIsInViewport)
@@ -124,6 +127,8 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
     const isImpressionTracked = computed(() => Boolean(impressionTrackingPixelElement.value));
 
     async function requestAd(): Promise<Ad | null> {
+      status.value = 'loading';
+
       const response = await extRequestAd({
         slot: {
           name: name.value,
@@ -137,18 +142,23 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
 
         if (!originalAd.value)
           originalAd.value = response;
+
+        status.value = response ? 'loaded' : 'empty';
       }
 
       return response;
     }
 
     async function render(adToRender?: Ad): Promise<HTMLElement | null> {
+      status.value = 'rendering';
+
       await waitForDomLoad();
       await waitOnInit;
 
       let renderAd = adToRender ?? ad.value ?? originalAd.value ?? await requestAd();
 
       if (!renderAd) {
+        status.value = 'empty';
         logger.debug(`No ad to render for slot ${name.value}`);
         return null;
       }
@@ -193,7 +203,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
       // eslint-disable-next-line require-atomic-updates
       ad.value = renderAd;
 
-      isRendered.value = true;
+      status.value = 'rendered';
 
       return element.value;
     }
@@ -226,6 +236,8 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
     }
 
     onInit(async () => {
+      status.value = 'initialized';
+
       if (options.lazyLoading)
         return;
 
@@ -242,6 +254,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
       ad,
       isViewabilityTracked,
       isImpressionTracked,
+      status,
       render,
       getElement,
       request: requestAd,
