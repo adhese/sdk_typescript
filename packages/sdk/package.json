@@ -34,6 +34,6 @@
     "@adhese/sdk-shared": "^0.2.0",
     "@vue/runtime-core": "^3.4.21",
     "remeda": "^1.61.0",
-    "zod": "^3.23.5"
+    "zod": "^3.23.6"
   }
 }
