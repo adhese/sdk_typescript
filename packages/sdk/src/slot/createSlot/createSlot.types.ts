@@ -62,6 +62,11 @@ export type AdheseSlotOptions = {
    * Callback that is called when the viewability of the slot changes.
    */
   onViewabilityChanged?(isViewable: boolean): void;
+  /**
+   * Callback that is called when the request for the slot returns an empty response. This can happen for multiple
+   * reasons, for example when the slot is not sold to a buyer.
+   */
+  onEmpty?(): void;
 } & ({
   /**
    * If the slot should be lazy loaded. This means that the ad will only be requested when the slot is in the viewport.
@@ -118,7 +123,7 @@ export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' |
   /**
    * Renders the slot in the containing element. If no ad is provided, a new ad will be requested from the API.
    */
-  render(ad?: Ad): Promise<HTMLElement>;
+  render(ad?: Ad): Promise<HTMLElement | null>;
   /**
    * Returns the rendered element.
    */
@@ -126,7 +131,7 @@ export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' |
   /**
    * Requests a new ad from the API and returns the ad object.
    */
-  request(): Promise<Ad>;
+  request(): Promise<Ad | null>;
   /**
    * Removes the slot from the DOM and cleans up the slot instance.
    */

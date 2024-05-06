@@ -1,7 +1,6 @@
-import { createEventManager } from '@adhese/sdk-shared';
+import { awaitTimeout, createEventManager } from '@adhese/sdk-shared';
 import { effectScope, reactive, watch } from '@vue/runtime-core';
 import { createSafeFrame } from '@safeframe';
-import { debounce } from 'remeda';
 import packageJson from '../package.json';
 import { createSlotManager } from './slot/slotManager/slotManager';
 import { onTcfConsentChange } from './consent/tcfConsent';
@@ -11,7 +10,6 @@ import type { Adhese, AdheseContextState, AdheseOptions, MergedOptions } from '.
 import { onInit, runOnInit } from './hooks/onInit';
 import { onDispose, runOnDispose } from './hooks/onDispose';
 import { logger } from './logger/logger';
-import { requestAd } from './requestAds/requestAds';
 import type { AdheseSlot, AdheseSlotOptions } from './slot/createSlot/createSlot.types';
 import { clearAllHooks } from './hooks/createHook';
 import { onResponse } from './hooks/onResponse';
@@ -108,17 +106,12 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       },
     );
 
-    const debouncedFetchAllUnrenderedSlots = debounce(fetchAllUnrenderedSlots, {
-      waitMs: 100,
-      timing: 'both',
-    });
-
     async function onQueryChange(): Promise<void> {
       const query = queryDetector.getQuery();
       context.parameters?.set('dt', query);
       context.parameters?.set('br', query);
 
-      await debouncedFetchAllUnrenderedSlots.call();
+      await fetchAllUnrenderedSlots();
     }
 
     watch(() => context.consent, (newConsent) => {
@@ -155,17 +148,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       if (domSlots.length <= 0)
         return [];
 
-      const ads = await Promise.all(domSlots.map(slot => requestAd({
-        slot,
-        context,
-      })));
-
-      for (const ad of ads) {
-        const slot = slotManager.get(ad.slotName);
-
-        if (slot)
-          slot.ad.value = ad;
-      }
+      await fetchAllUnrenderedSlots();
 
       return domSlots;
     }
@@ -192,17 +175,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       if (slots.length === 0)
         return;
 
-      const ads = await Promise.all(slots.map(slot => requestAd({
-        slot,
-        context,
-      })));
-
-      for (const ad of ads) {
-        const slot = slotManager.get(ad.slotName);
-
-        if (slot)
-          slot.ad.value = ad;
-      }
+      await Promise.allSettled(slots.map(slot => slot.request()));
     }
 
     const disposeOnTcfConsentChange = onTcfConsentChange(async (data) => {
@@ -216,7 +189,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       context.parameters?.set('xt', data.tcString);
       context.parameters?.delete('tl');
 
-      await debouncedFetchAllUnrenderedSlots.call();
+      await fetchAllUnrenderedSlots();
     });
 
     function dispose(): void {
@@ -240,6 +213,8 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
     context.dispose = dispose;
 
     onInit(async () => {
+      await awaitTimeout(0);
+
       if ((slotManager.getAll().length ?? 0) > 0)
         await fetchAllUnrenderedSlots().catch(logger.error);
 
