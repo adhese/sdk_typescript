@@ -1,7 +1,7 @@
 import { awaitTimeout, createEventManager } from '@adhese/sdk-shared';
 import { effectScope, reactive, watch } from '@vue/runtime-core';
 import { createSafeFrame } from '@safeframe';
-import packageJson from '../package.json';
+import { version } from '../package.json';
 import { createSlotManager } from './slot/slotManager/slotManager';
 import { onTcfConsentChange } from './consent/tcfConsent';
 import { createQueryDetector } from './queryDetector/queryDetector';
@@ -66,7 +66,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
     for (const [index, plugin] of mergedOptions.plugins.entries()) {
       plugin(context, {
         index,
-        version: packageJson.version,
+        version,
         onInit,
         onDispose,
         onRender,

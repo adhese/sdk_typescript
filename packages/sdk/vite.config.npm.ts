@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { defineConfig } from 'vite';
 import { flat } from 'remeda';
-import packageJson from './package.json';
+import { dependencies } from './package.json';
 
 export default defineConfig({
   plugins: [],
@@ -17,7 +17,7 @@ export default defineConfig({
     sourcemap: true,
     rollupOptions: {
       external: flat([
-        ...(packageJson.dependencies ? Object.keys(packageJson.dependencies) : []),
+        ...(dependencies ? Object.keys(dependencies) : []),
       ].map(dep => [dep, new RegExp(`^${dep}(/.*)?`)])),
       output: {
         inlineDynamicImports: false,
