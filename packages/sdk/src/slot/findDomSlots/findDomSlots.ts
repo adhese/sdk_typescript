@@ -23,7 +23,7 @@ export async function findDomSlots(
         element.dataset.slot,
       );
 
-      return !context.getAll?.().some(activeSlot => activeSlot.name.value === name);
+      return !context.getAll?.().some(activeSlot => activeSlot.name === name);
     })
     .map(element => createSlot({
       format: element.dataset.format as string,
@@ -31,5 +31,5 @@ export async function findDomSlots(
       slot: element.dataset.slot,
       context,
     }))
-    .filter(slot => !context.getAll?.().some(activeSlot => activeSlot.name.value === slot.name.value));
+    .filter(slot => !context.getAll?.().some(activeSlot => activeSlot.name === slot.name));
 }

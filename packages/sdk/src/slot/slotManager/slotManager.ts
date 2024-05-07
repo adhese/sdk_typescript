@@ -67,19 +67,19 @@ export function createSlotManager({
         context,
       });
 
-      if (slots.has(slot.name.value)) {
+      if (slots.has(slot.name)) {
         slot.dispose();
 
-        throw new Error(`Slot with the name: ${slot.name.value} already exists. Create a new slot with a different format, slot, or the location.`);
+        throw new Error(`Slot with the name: ${slot.name} already exists. Create a new slot with a different format, slot, or the location.`);
       }
 
-      const disposeSlotWatch = watch(slot.name, (newName, previousName) => {
+      const disposeSlotWatch = watch(() => slot.name, (newName, previousName) => {
         slots.set(newName, slot);
         slots.delete(previousName);
       });
 
       function onDispose(): void {
-        slots.delete(slot.name.value);
+        slots.delete(slot.name);
         logger.debug('Slot removed', {
           slot,
           slots: Array.from(slots),
@@ -89,7 +89,7 @@ export function createSlotManager({
         disposeSlotWatch();
       }
 
-      slots.set(slot.name.value, slot);
+      slots.set(slot.name, slot);
 
       logger.debug('Slot added', {
         slot,
@@ -107,7 +107,7 @@ export function createSlotManager({
       );
 
       for (const slot of domSlots)
-        slots.set(slot.name.value, slot);
+        slots.set(slot.name, slot);
 
       return domSlots;
     }

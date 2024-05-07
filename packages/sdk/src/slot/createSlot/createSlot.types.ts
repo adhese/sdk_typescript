@@ -1,6 +1,5 @@
 /* v8 ignore start */
 import type { Merge } from '@adhese/sdk-shared';
-import type { ComputedRef, Ref } from '@vue/runtime-core';
 import type { AdheseAd } from '../../requestAds/requestAds.schema';
 import type { AdheseContext } from '../../main.types';
 
@@ -90,7 +89,7 @@ export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' |
    *
    * The name is generated based on the location, format, and slot of the slot.
    */
-  name: ComputedRef<string>;
+  name: string;
   /**
    * The format code of the slot. Used to find the correct element on the page to render the ad in.
    *
@@ -99,7 +98,7 @@ export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' |
    *
    * When you change the format, the slot will request a new ad from the API automatically.
    */
-  format: Ref<string>;
+  format: string;
   /**
    * The location of the slot. This is the location that is used to determine the current page URL.
    */
@@ -111,15 +110,15 @@ export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' |
   /**
    * Whether the viewability tracking pixel has been fired.
    */
-  isViewabilityTracked: ComputedRef<boolean>;
+  isViewabilityTracked: boolean;
   /**
    * Whether the impression tracking pixel has been fired.
    */
-  isImpressionTracked: ComputedRef<boolean>;
+  isImpressionTracked: boolean;
   /**
    * Ad object that is fetched from the API.
    */
-  ad: Ref<AdheseAd | null>;
+  ad: AdheseAd | null;
   /**
    * The state of the slot is currently in.
    *
@@ -132,7 +131,7 @@ export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' |
    * - `rendered`: The slot has rendered the ad
    * - `error`: The slot has encountered an error
    */
-  status: Ref<'initializing' | 'initialized' | 'loading' | 'loaded' | 'empty' | 'rendering' | 'rendered' | 'error'>;
+  status: 'initializing' | 'initialized' | 'loading' | 'loaded' | 'empty' | 'rendering' | 'rendered' | 'error';
   /**
    * Renders the slot in the containing element. If no ad is provided, a new ad will be requested from the API.
    */

@@ -26,7 +26,7 @@ const renderFunctions: Record<RenderMode, (ad: AdheseAd, element: HTMLElement) =
  *
  * @return AdheseSlot The created slot instance.
  */
-export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot> {
+export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
   const scope = effectScope();
 
   return scope.run(() => {
@@ -245,7 +245,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
       ad.value = await requestAd();
     });
 
-    return {
+    return reactive({
       location: context.location ?? '',
       lazyLoading: options.lazyLoading ?? false,
       slot,
@@ -260,7 +260,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
       getElement,
       request: requestAd,
       dispose,
-    };
+    });
   })!;
 }
 

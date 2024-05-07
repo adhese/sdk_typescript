@@ -170,7 +170,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
     });
 
     async function fetchAllUnrenderedSlots(): Promise<void> {
-      const slots = (slotManager.getAll() ?? []).filter(slot => !slot.lazyLoading && !slot.ad.value);
+      const slots = (slotManager.getAll() ?? []).filter(slot => !slot.lazyLoading && !slot.ad);
 
       if (slots.length === 0)
         return;

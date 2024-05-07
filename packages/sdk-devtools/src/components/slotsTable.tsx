@@ -49,14 +49,10 @@ export function SlotsTable({ adheseContext }: {
   }, [adheseContext]);
 
   const formattedSlots = useMemo(() => slots.map((slot) => {
-    const ad = slot.ad.value;
     const iframe = slot.getElement();
 
     return ({
       ...slot,
-      name: slot.name.value,
-      ad,
-      format: slot.format.value,
       iframe,
       parameters: Array.from(slot.parameters.entries()),
     });
@@ -154,8 +150,8 @@ export function SlotsTable({ adheseContext }: {
                     </TableCell>
                   )}
                   <TableCell>
-                    <Badge variant="outline" className={cn(status.value === 'error' ? 'bg-red-500 text-red-50' : '')}>
-                      {renderStatusMap[status.value]}
+                    <Badge variant="outline" className={cn(status === 'error' ? 'bg-red-500 text-red-50' : '')}>
+                      {renderStatusMap[status]}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -212,12 +208,12 @@ export function SlotsTable({ adheseContext }: {
                   <TableCell>{ad?.id ?? '-'}</TableCell>
                   <TableCell>{ad?.ext ? <Badge variant="outline">{ad.ext}</Badge> : '-'}</TableCell>
                   <TableCell>
-                    {isImpressionTracked.value
+                    {isImpressionTracked
                       ? <Badge className="bg-green-100 text-green-900 hover:bg-green-100">Yes</Badge>
                       : <Badge variant="secondary">No</Badge>}
                   </TableCell>
                   <TableCell>
-                    {isViewabilityTracked.value
+                    {isViewabilityTracked
                       ? <Badge className="bg-green-100 text-green-900 hover:bg-green-100">Yes</Badge>
                       : <Badge variant="secondary">No</Badge>}
                   </TableCell>
