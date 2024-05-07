@@ -1,7 +1,7 @@
 import { waitForDomLoad } from '@adhese/sdk-shared';
 import { type Ref, type UnwrapRef, computed, effectScope, reactive, ref, watch } from '@vue/runtime-core';
 import { isDeepEqual } from 'remeda';
-import type { Ad } from '@adhese/sdk';
+import type { AdheseAd } from '@adhese/sdk';
 import { addTrackingPixel } from '../../impressionTracking/impressionTracking';
 import { type QueryDetector, createQueryDetector } from '../../queryDetector/queryDetector';
 import { onInit, waitOnInit } from '../../hooks/onInit';
@@ -11,10 +11,10 @@ import { runOnSlotCreate } from '../../hooks/onSlotCreate';
 import { logger } from '../../logger/logger';
 import type { AdheseSlot, AdheseSlotOptions, RenderMode } from './createSlot.types';
 import { generateName, renderIframe, renderInline } from './createSlot.utils';
-import { useViewabilityObserver } from './useViewabilityObserver';
-import { useRenderIntersectionObserver } from './useRenderIntersectionObserver';
+import { createViewabilityObserver } from './createViewabilityObserver';
+import { createRenderIntersectionObserver } from './createRenderIntersectionObserver';
 
-const renderFunctions: Record<RenderMode, (ad: Ad, element: HTMLElement) => void> = {
+const renderFunctions: Record<RenderMode, (ad: AdheseAd, element: HTMLElement) => void> = {
   iframe: renderIframe,
   inline: renderInline,
 };
@@ -53,7 +53,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
       format.value = newFormat;
     }
 
-    const ad = ref<Ad | null>(null);
+    const ad = ref<AdheseAd | null>(null);
     const originalAd = ref(ad.value);
 
     const name = computed(() => generateName(context.location, format.value, slot));
@@ -91,7 +91,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
       return element.value?.innerHTML ? (element.value.firstElementChild as HTMLElement) : null;
     }
 
-    const [isInViewport, disposeRenderIntersectionObserver] = useRenderIntersectionObserver({
+    const [isInViewport, disposeRenderIntersectionObserver] = createRenderIntersectionObserver({
       options,
       element,
     });
@@ -117,7 +117,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
     const [
       isViewabilityTracked,
       disposeViewabilityObserver,
-    ] = useViewabilityObserver({
+    ] = createViewabilityObserver({
       context,
       ad,
       name,
@@ -127,7 +127,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
     const impressionTrackingPixelElement = ref<HTMLImageElement | null>(null);
     const isImpressionTracked = computed(() => Boolean(impressionTrackingPixelElement.value));
 
-    async function requestAd(): Promise<Ad | null> {
+    async function requestAd(): Promise<AdheseAd | null> {
       status.value = 'loading';
 
       const response = await extRequestAd({
@@ -150,7 +150,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): Readonly<AdheseSlot>
       return response;
     }
 
-    async function render(adToRender?: Ad): Promise<HTMLElement | null> {
+    async function render(adToRender?: AdheseAd): Promise<HTMLElement | null> {
       status.value = 'rendering';
 
       await waitForDomLoad();

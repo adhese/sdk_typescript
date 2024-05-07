@@ -8,7 +8,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { type Adhese, type AdheseOptions, createAdhese } from '@adhese/sdk';
+import type { Adhese, AdheseOptions } from '@adhese/sdk';
 
 const adheseContext = createContext<Adhese | undefined>(undefined);
 
@@ -22,11 +22,16 @@ export function AdheseProvider({ children, options }: PropsWithChildren<{ option
   const [adhese, setAdhese] = useState<Adhese | undefined>(undefined);
 
   useEffect(() => {
-    const instance = createAdhese(options);
-    setAdhese(instance);
+    let instance: Adhese | null = null;
+
+    import('@adhese/sdk').then(({ createAdhese }) => {
+      instance = createAdhese(options);
+
+      setAdhese(instance);
+    }).catch(console.error);
 
     return (): void => {
-      instance.dispose();
+      instance?.dispose();
     };
   }, [options]);
 

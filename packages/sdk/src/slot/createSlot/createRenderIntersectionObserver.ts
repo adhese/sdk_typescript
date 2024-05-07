@@ -1,7 +1,7 @@
 import { type Ref, ref, watch } from '@vue/runtime-core';
 import type { AdheseSlotOptions } from '@adhese/sdk';
 
-export function useRenderIntersectionObserver({ options, element }: {
+export function createRenderIntersectionObserver({ options, element }: {
   options: AdheseSlotOptions;
   element: Ref<HTMLElement | null>;
 }): [

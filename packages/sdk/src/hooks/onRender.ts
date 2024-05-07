@@ -1,6 +1,6 @@
-import type { Ad } from '@adhese/sdk';
+import type { AdheseAd } from '@adhese/sdk';
 import { createAsyncHook } from './createHook';
 
-const [runOnRender, onRender] = createAsyncHook<Ad>('onRender');
+const [runOnRender, onRender] = createAsyncHook<AdheseAd>('onRender');
 
 export { runOnRender, onRender };

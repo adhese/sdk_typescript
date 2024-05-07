@@ -1,12 +1,12 @@
 import { type ReactElement, useRef } from 'react';
 import { useAdheseSlot } from '@adhese/sdk-react';
-import type { Ad } from '@adhese/sdk';
+import type { AdheseAd } from '@adhese/sdk';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 // eslint-disable-next-line ts/naming-convention
 export function Child(): ReactElement {
   const html
-    = (ad: Ad<{
+    = (ad: AdheseAd<{
       type: string;
       text: {
         title: string;
@@ -29,9 +29,9 @@ export function Child(): ReactElement {
         };
         appLink: string;
       };
-    }>): Ad<string> | void => {
+    }>): AdheseAd<string> | void => {
       if (typeof ad.tag === 'string')
-        return ad as Ad<string>;
+        return ad as AdheseAd<string>;
 
       const heading = ad.tag.text?.title;
       const image = ad.tag.images?.[0];

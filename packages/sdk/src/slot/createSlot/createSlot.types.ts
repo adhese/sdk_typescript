@@ -1,7 +1,7 @@
 /* v8 ignore start */
 import type { Merge } from '@adhese/sdk-shared';
 import type { ComputedRef, Ref } from '@vue/runtime-core';
-import type { Ad } from '../../requestAds/requestAds.schema';
+import type { AdheseAd } from '../../requestAds/requestAds.schema';
 import type { AdheseContext } from '../../main.types';
 
 export type RenderMode = 'iframe' | 'inline';
@@ -57,7 +57,7 @@ export type AdheseSlotOptions = {
    * Callback that is called before the ad is rendered. This can be used to modify the ad before it is rendered.
    * Particularly useful for rendering ads with custom HTML if the ad tag contains a JSON object.
    */
-  onBeforeRender?(ad: Ad): Ad | void;
+  onBeforeRender?(ad: AdheseAd): AdheseAd | void;
   /**
    * Callback that is called when the viewability of the slot changes.
    */
@@ -119,7 +119,7 @@ export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' |
   /**
    * Ad object that is fetched from the API.
    */
-  ad: Ref<Ad | null>;
+  ad: Ref<AdheseAd | null>;
   /**
    * The state of the slot is currently in.
    *
@@ -136,7 +136,7 @@ export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' |
   /**
    * Renders the slot in the containing element. If no ad is provided, a new ad will be requested from the API.
    */
-  render(ad?: Ad): Promise<HTMLElement | null>;
+  render(ad?: AdheseAd): Promise<HTMLElement | null>;
   /**
    * Returns the rendered element.
    */
@@ -144,7 +144,7 @@ export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' |
   /**
    * Requests a new ad from the API and returns the ad object.
    */
-  request(): Promise<Ad | null>;
+  request(): Promise<AdheseAd | null>;
   /**
    * Removes the slot from the DOM and cleans up the slot instance.
    */

@@ -1,13 +1,13 @@
 import { type ComputedRef, type Ref, computed, ref, watch } from '@vue/runtime-core';
 import { round } from 'remeda';
-import type { Ad, AdheseContext } from '@adhese/sdk';
+import type { AdheseAd, AdheseContext } from '@adhese/sdk';
 import { addTrackingPixel } from '../../impressionTracking/impressionTracking';
 import { logger } from '../../logger/logger';
 
-export function useViewabilityObserver(
+export function createViewabilityObserver(
   { context, ad, name, element }: {
     context: AdheseContext;
-    ad: Ref<Ad | null>;
+    ad: Ref<AdheseAd | null>;
     name: ComputedRef<string>;
     element: ComputedRef<HTMLElement | null>;
   },

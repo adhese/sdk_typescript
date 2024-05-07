@@ -170,7 +170,7 @@ export type PreParsedAd = TypeOf<typeof adResponseSchema> & {
   additionalCreatives?: ReadonlyArray<PreParsedAd> | string;
 };
 
-export type Ad<T = string | Record<string, unknown> | ReadonlyArray<unknown>> = Omit<PreParsedAd, 'tag'> & {
+export type AdheseAd<T = string | Record<string, unknown> | ReadonlyArray<unknown>> = Omit<PreParsedAd, 'tag'> & {
   tag: T | string;
 };
 
@@ -192,7 +192,7 @@ export const adSchema: ZodType<PreParsedAd> = adResponseSchema.transform(({
   });
 });
 
-export function parseResponse(response: unknown): ReadonlyArray<Ad> {
+export function parseResponse(response: unknown): ReadonlyArray<AdheseAd> {
   const schemaMap = {
     /* eslint-disable ts/naming-convention */
     JERLICIA: jerliciaSchema,
@@ -209,5 +209,5 @@ export function parseResponse(response: unknown): ReadonlyArray<Ad> {
       return adSchema.parse(item);
 
     return schema.parse(item);
-  }) as ReadonlyArray<Ad>;
+  }) as ReadonlyArray<AdheseAd>;
 }

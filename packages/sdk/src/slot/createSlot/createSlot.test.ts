@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { awaitTimeout } from '@adhese/sdk-shared';
-import type { Ad, AdheseContext } from '@adhese/sdk';
+import type { AdheseAd, AdheseContext } from '@adhese/sdk';
 import { testContext } from '../../testUtils';
 import { runOnInit } from '../../hooks/onInit';
 import { createSlot } from './createSlot';
@@ -421,7 +421,7 @@ describe('slot', () => {
       format: 'leaderboard',
       containingElement: 'leaderboard',
       context,
-      onBeforeRender(ad: Ad): Ad | void {
+      onBeforeRender(ad: AdheseAd): AdheseAd | void {
         return {
           ...ad,
           tag: '<div>foo</div>',

@@ -1,6 +1,6 @@
-import type { Ad } from '@adhese/sdk';
+import type { AdheseAd } from '@adhese/sdk';
 
-export function renderIframe(ad: Ad, element: HTMLElement): void {
+export function renderIframe(ad: AdheseAd, element: HTMLElement): void {
   const iframe = document.createElement('iframe');
 
   iframe.srcdoc = `
@@ -26,7 +26,7 @@ export function renderIframe(ad: Ad, element: HTMLElement): void {
   element.replaceChildren(iframe);
 }
 
-export function renderInline(ad: Ad, element: HTMLElement): void {
+export function renderInline(ad: AdheseAd, element: HTMLElement): void {
   element.innerHTML = String(ad.tag);
 }
 

@@ -6,7 +6,7 @@ import type { AdheseContext } from '../../main.types';
 import { createSlot } from '../createSlot/createSlot';
 import { logger } from '../../logger/logger';
 
-export type SlotManager = {
+export type AdheseSlotManager = {
   /**
    * Returns all slots that are currently registered and rendered.
    */
@@ -39,10 +39,14 @@ export type SlotManagerOptions = {
   context: AdheseContext;
 };
 
+/**
+ * Creates a new slot manager instance. This slot manager instance can be used to manage all slots in the Adhese
+ * instance. It will automatically add all slots that are passed in the `initialSlots` array.
+ */
 export function createSlotManager({
   initialSlots = [],
   context,
-}: SlotManagerOptions): Readonly<SlotManager> {
+}: SlotManagerOptions): AdheseSlotManager {
   const scope = effectScope();
 
   return scope.run(() => {

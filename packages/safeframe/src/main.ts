@@ -1,10 +1,10 @@
 import { uniqueId } from '@adhese/sdk-shared';
-import type { Ad, AdheseContext } from '@adhese/sdk';
+import type { AdheseAd, AdheseContext } from '@adhese/sdk';
 import type { Config, Position } from './main.types';
 
 export type SafeFrame = {
   config: Config;
-  addPosition(positions: Ad, element: HTMLElement): Position;
+  addPosition(positions: AdheseAd, element: HTMLElement): Position;
   render(position: Position): Promise<void>;
   dispose(): void;
 };
@@ -31,7 +31,7 @@ export function createSafeFrame({
     renderFile,
   });
 
-  function addPosition(ad: Ad, element: HTMLElement): Position {
+  function addPosition(ad: AdheseAd, element: HTMLElement): Position {
     if (!safeFrame)
       throw new Error('SafeFrame not found');
 

@@ -1,4 +1,4 @@
-import { type Ad, createAdhese } from '@adhese/sdk';
+import { type AdheseAd, createAdhese } from '@adhese/sdk';
 import { createDevtools } from '@adhese/sdk-devtools';
 
 const adhese = createAdhese({
@@ -13,7 +13,7 @@ const adhese = createAdhese({
       format: 'halfwidthsmallresponsive',
       containingElement: 'halfwidthsmallresponsive',
       renderMode: 'inline',
-      onBeforeRender(ad: Ad<{
+      onBeforeRender(ad: AdheseAd<{
         type: string;
         native: {
           ver: string;
@@ -37,9 +37,9 @@ const adhese = createAdhese({
             fallback: string;
           };
         };
-      }>): Ad<string> {
+      }>): AdheseAd<string> {
         if (typeof ad.tag === 'string')
-          return ad as Ad<string>;
+          return ad as AdheseAd<string>;
 
         const heading = ad.tag.native.assets.find(asset => asset.id === 1)?.title?.text;
         const image = ad.tag.native.assets.find(asset => asset.id === 3)?.img;

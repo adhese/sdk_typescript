@@ -1,6 +1,6 @@
 import { type ReactElement, useRef, useState } from 'react';
 import { AdheseSlot, useAdheseSlot } from '@adhese/sdk-react';
-import type { Ad } from '@adhese/sdk';
+import type { AdheseAd } from '@adhese/sdk';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 // eslint-disable-next-line ts/naming-convention
@@ -16,7 +16,7 @@ export function Child(): ReactElement {
   useAdheseSlot(halfwidthsmallresponsiveRef, {
     format: 'halfwidthsmallresponsive',
     renderMode: 'inline',
-    onBeforeRender: (ad: Ad<{
+    onBeforeRender: (ad: AdheseAd<{
       type: string;
       native: {
         ver: string;
@@ -41,9 +41,9 @@ export function Child(): ReactElement {
         };
       };
 
-    }>): Ad<string> | void => {
+    }>): AdheseAd<string> | void => {
       if (typeof ad.tag === 'string')
-        return ad as Ad<string>;
+        return ad as AdheseAd<string>;
 
       const heading = ad.tag.native.assets.find(asset => asset.id === 1)?.title?.text;
       const image = ad.tag.native.assets.find(asset => asset.id === 3)?.img;

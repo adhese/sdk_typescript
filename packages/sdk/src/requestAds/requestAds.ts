@@ -4,7 +4,7 @@ import type { AdheseContext } from '../main.types';
 import { logger } from '../logger/logger';
 import { runOnRequest } from '../hooks/onRequest';
 import { runOnResponse } from '../hooks/onResponse';
-import type { Ad } from './requestAds.schema';
+import type { AdheseAd } from './requestAds.schema';
 import { requestPreviews } from './requestAds.preview';
 import { requestWithGet, requestWithPost } from './requestAds.utils';
 
@@ -25,10 +25,13 @@ export type AdMultiRequestOptions = Omit<AdRequestOptions, 'slot'> & {
 
 const batch = new Map<string, {
   options: AdRequestOptions;
-  resolve(ad: Ad | null): void;
+  resolve(ad: AdheseAd | null): void;
 }>();
 
-const debouncedRequestAds = debounce(async (context: AdheseContext) => {
+/**
+ * Debounced function to request ads in batches. This function is debounced to prevent multiple requests for the same ad.
+ */
+const runRequestAdsBatch = debounce(async (context: AdheseContext) => {
   if (batch.size === 0)
     return [];
 
@@ -57,18 +60,21 @@ const debouncedRequestAds = debounce(async (context: AdheseContext) => {
 /**
  * Request a single ad from the API. If you need to fetch multiple ads at once use the `requestAds` function.
  */
-export async function requestAd(options: AdRequestOptions): Promise<Ad | null> {
-  const promise = new Promise<Ad | null>((resolve) => {
+export async function requestAd(options: AdRequestOptions): Promise<AdheseAd | null> {
+  const promise = new Promise<AdheseAd | null>((resolve) => {
     batch.set(toValue(options.slot.name), { options, resolve });
   },
   );
 
-  await debouncedRequestAds.call(options.context);
+  await runRequestAdsBatch.call(options.context);
 
   return promise;
 }
 
-export async function requestAds(requestOptions: AdMultiRequestOptions): Promise<ReadonlyArray<Ad>> {
+/**
+ * Request multiple ads from the API. If you need to fetch a single ad use the `requestAd` function.
+ */
+export async function requestAds(requestOptions: AdMultiRequestOptions): Promise<ReadonlyArray<AdheseAd>> {
   const options = await runOnRequest(requestOptions);
 
   const { context } = options;
@@ -79,9 +85,13 @@ export async function requestAds(requestOptions: AdMultiRequestOptions): Promise
       context,
     });
 
-    const [response, previews, parseResponse] = await Promise.all([context.options.requestType?.toUpperCase() === 'POST'
-      ? requestWithPost(options)
-      : requestWithGet(options), requestPreviews(context.options.account), import('./requestAds.schema').then(module => module.parseResponse)]);
+    const [response, previews, parseResponse] = await Promise.all([
+      context.options.requestType?.toUpperCase() === 'POST'
+        ? requestWithPost(options)
+        : requestWithGet(options),
+      requestPreviews(context.options.account),
+      import('./requestAds.schema').then(module => module.parseResponse),
+    ]);
 
     logger.debug('Received response', response);
 

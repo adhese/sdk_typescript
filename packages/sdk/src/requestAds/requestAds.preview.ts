@@ -1,7 +1,11 @@
 import { logger } from '../logger/logger';
-import type { Ad } from './requestAds.schema';
+import type { AdheseAd } from './requestAds.schema';
 
-export async function requestPreviews(account: string): Promise<ReadonlyArray<Ad>> {
+/**
+ * Request preview ads for the given account. This function will only return items when there are preview objects in the
+ * URL detected.
+ */
+export async function requestPreviews(account: string): Promise<ReadonlyArray<AdheseAd>> {
   const previewObjects = getPreviewObjects();
 
   const [list, adSchema] = await Promise.all([
@@ -40,7 +44,7 @@ export async function requestPreviews(account: string): Promise<ReadonlyArray<Ad
     .flatMap(response => response.value.map(item => ({
       ...item,
       preview: true,
-    })))) as ReadonlyArray<Ad>;
+    })))) as ReadonlyArray<AdheseAd>;
 }
 
 function getPreviewObjects(): ReadonlyArray<Record<string, string>> {

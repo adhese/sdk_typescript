@@ -3,6 +3,9 @@ import type { QueryDetector } from './queryDetector/queryDetector';
 
 import type { AdheseContext, AdheseOptions } from './main.types';
 
+/**
+ * Creates the parameters map with a set of default parameters.
+ */
 export function createParameters(
   options: Pick<AdheseOptions, 'parameters' | 'consent' | 'logUrl' | 'logReferrer'>,
   queryDetector: QueryDetector,
@@ -27,6 +30,9 @@ export function createParameters(
   return parameters;
 }
 
+/**
+ * Sets up logging based on the provided options. If debug is enabled, the log level threshold is set to debug.
+ */
 export function setupLogging(mergedOptions: AdheseContext['options']): void {
   if (mergedOptions.debug || window.location.search.includes('adhese_debug=true')) {
     logger.setMinLogLevelThreshold('debug');
@@ -38,6 +44,9 @@ export function setupLogging(mergedOptions: AdheseContext['options']): void {
   });
 }
 
+/**
+ * Checks if the current page is in preview mode.
+ */
 export function isPreviewMode(): boolean {
   return window.location.search.includes('adhesePreviewCreativeId');
 }
