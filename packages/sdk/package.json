@@ -12,6 +12,7 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
+    "CHANGELOG.md",
     "LICENSE",
     "README.md",
     "dist"
