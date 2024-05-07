@@ -12,7 +12,7 @@ export default defineConfig({
       entry: 'src/index.ts',
       name: '@adhese/sdk',
       formats: ['es', 'cjs'],
-      fileName: format => `index.${format === 'cjs' ? 'cjs' : 'js'}`,
+      fileName: format => `[name].${format === 'cjs' ? 'cjs' : 'js'}`,
     },
     sourcemap: true,
     rollupOptions: {

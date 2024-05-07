@@ -1,5 +1,5 @@
 import { toValue } from '@vue/runtime-core';
-import { logger } from '@adhese/sdk';
+import { logger } from '../logger/logger';
 import type { AdMultiRequestOptions } from './requestAds';
 
 type AdPostPayload = {

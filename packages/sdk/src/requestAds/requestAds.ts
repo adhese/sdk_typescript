@@ -4,7 +4,7 @@ import type { AdheseContext } from '../main.types';
 import { logger } from '../logger/logger';
 import { runOnRequest } from '../hooks/onRequest';
 import { runOnResponse } from '../hooks/onResponse';
-import { type Ad, parseResponse } from './requestAds.schema';
+import type { Ad } from './requestAds.schema';
 import { requestPreviews } from './requestAds.preview';
 import { requestWithGet, requestWithPost } from './requestAds.utils';
 
@@ -79,9 +79,9 @@ export async function requestAds(requestOptions: AdMultiRequestOptions): Promise
       context,
     });
 
-    const [response, previews] = await Promise.all([context.options.requestType?.toUpperCase() === 'POST'
+    const [response, previews, parseResponse] = await Promise.all([context.options.requestType?.toUpperCase() === 'POST'
       ? requestWithPost(options)
-      : requestWithGet(options), requestPreviews(context.options.account)]);
+      : requestWithGet(options), requestPreviews(context.options.account), import('./requestAds.schema').then(module => module.parseResponse)]);
 
     logger.debug('Received response', response);
 
