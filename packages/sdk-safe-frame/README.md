@@ -1,8 +1,4 @@
-<script setup>
-import sdkSafeFramePackage from '../../packages/sdk-safe-frame/package.json';
-</script>
-
-# Safe Frame <Badge>{{sdkSafeFramePackage.version}}</Badge>
+# @adhese/sdk-safe-frame
 
 SafeFrame is a technology that allows you to serve ads in a secure and controlled environment. It is a standard
 developed by the IAB (Interactive Advertising Bureau) that allows publishers to control the content of the ads that are
@@ -23,20 +19,9 @@ script to your HTML file:
 > with a script tag as the library unfortunately does not adhere to strict mode and cannot be imported as a module.
 
 ### Install the SafeFrame plugin
-::: code-group
-```bash [npm]
+```bash
 npm install @adhese/sdk-safe-frame
 ```
-```bash [pnpm]
-pnpm add @adhese/sdk-safe-frame
-```
-```bash [yarn]
-yarn add @adhese/sdk-safe-frame
-```
-```bash [bun]
-bun add @adhese/sdk-safe-frame
-```
-:::
 
 ### Initialize the SafeFrame plugin
 ```javascript
