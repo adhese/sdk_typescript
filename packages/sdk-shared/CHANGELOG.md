@@ -1,5 +1,11 @@
 # @adhese/sdk-shared
 
+## 0.3.0
+
+### Minor Changes
+
+- 242cfa3: Replace uniqueId functionality with the nanoid package
+
 ## 0.2.0
 
 ### Minor Changes

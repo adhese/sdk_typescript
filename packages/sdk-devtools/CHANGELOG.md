@@ -1,5 +1,18 @@
 # @adhese/sdk-devtools
 
+## 0.9.0
+
+### Minor Changes
+
+- 242cfa3: Make all slots reactive objects to make interaction with them much more streamlined
+- 242cfa3: Create an ID that is generated on slot creation to keep track of the slot. This ID will stay the same even if the name of the slots changes.
+- 9ebb4fd: Connect slot status field to slot status value
+
+### Patch Changes
+
+- Updated dependencies [242cfa3]
+  - @adhese/sdk-shared@0.3.0
+
 ## 0.8.0
 
 ### Minor Changes
