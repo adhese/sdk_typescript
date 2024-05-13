@@ -1,5 +1,11 @@
 # @adhese/sdk-shared
 
+## 0.3.1
+
+### Patch Changes
+
+- 2619416: Fix externals being inclued in output js
+
 ## 0.3.0
 
 ### Minor Changes
