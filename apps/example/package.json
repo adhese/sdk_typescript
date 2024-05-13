@@ -13,6 +13,6 @@
   },
   "dependencies": {
     "@adhese/sdk": "^0.15.0",
-    "@adhese/sdk-devtools": "^0.9.0"
+    "@adhese/sdk-devtools": "^0.10.0"
   }
 }
