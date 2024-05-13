@@ -58,7 +58,9 @@ jobs:
 
   deploy_docs:
     name: Deploy docs
+    needs: [release]
     runs-on: ubuntu-latest
+    if: ${{ needs.release.outputs.published == 'true' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
