@@ -7,11 +7,6 @@ import { renderToStaticMarkup } from 'react-dom/server';
 export function Child(): ReactElement {
   const [isSlotShown, setIsSlotShown] = useState(true);
 
-  const skyscraperRef = useRef(null);
-  useAdheseSlot(skyscraperRef, {
-    format: 'skyscraper',
-  });
-
   const halfwidthsmallresponsiveRef = useRef(null);
   useAdheseSlot(halfwidthsmallresponsiveRef, {
     format: 'halfwidthsmallresponsive',
@@ -96,7 +91,7 @@ export function Child(): ReactElement {
       <button onClick={() => { setIsSlotShown(value => !value); }}>Toggle slot</button>
       {
         isSlotShown && (
-          <div ref={skyscraperRef} />
+          <AdheseSlot format="skyscraper" />
         )
       }
       <div ref={halfwidthsmallresponsiveRef} />

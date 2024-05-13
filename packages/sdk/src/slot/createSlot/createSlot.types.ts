@@ -47,10 +47,6 @@ export type AdheseSlotOptions = {
    */
   onDispose?(): void;
   /**
-   * Callback that is called when the format of the slot changes.
-   */
-  onNameChange?(newName: string, oldName: string): void;
-  /**
    * Callback that is called when the slot is rendered.
    */
   onRender?(element: HTMLElement): void;
@@ -159,6 +155,10 @@ export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' |
    * The element that contains the slot.
    */
   readonly element: HTMLElement | null;
+  /**
+   * Unique identifier of the slot. ID is generated on initialization and will never change.
+   */
+  readonly id: string;
   /**
    * Renders the slot in the containing element. If no ad is provided, a new ad will be requested from the API.
    */

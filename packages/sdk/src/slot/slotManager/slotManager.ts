@@ -1,5 +1,4 @@
 import type { Merge } from '@adhese/sdk-shared';
-import { reactive, watch } from '@vue/runtime-core';
 import { findDomSlots as extFindDomSlots } from '../findDomSlots/findDomSlots';
 import type { AdheseSlot, AdheseSlotOptions } from '../createSlot/createSlot.types';
 import type { AdheseContext } from '../../main.types';
@@ -47,42 +46,35 @@ export function createSlotManager({
   initialSlots = [],
   context,
 }: SlotManagerOptions): AdheseSlotManager {
-  context.slots = reactive<Map<string, AdheseSlot>>(new Map<string, AdheseSlot>());
+  context.slots = new Map<string, AdheseSlot>();
 
   function getAll(): ReadonlyArray<AdheseSlot> {
     return Array.from(context.slots).map(([, slot]) => slot);
   }
 
-  function add(options: Omit<AdheseSlotOptions, 'context' | 'onDispose' | 'onNameChange'>): Readonly<AdheseSlot> {
+  function add(options: Omit<AdheseSlotOptions, 'context' | 'onDispose'>): Readonly<AdheseSlot> {
+    // console.log(options, context.slots, names.value);
     const slot = createSlot({
       ...options as AdheseSlotOptions,
       onDispose,
       context,
     });
 
-    if (context.slots.has(slot.name)) {
+    if (get(slot.name)) {
       slot.dispose();
 
       throw new Error(`Slot with the name: ${slot.name} already exists. Create a new slot with a different format, slot, or the location.`);
     }
 
-    const disposeSlotWatch = watch(() => slot.name, (newName, previousName) => {
-      context.slots.set(newName, slot);
-      context.slots.delete(previousName);
-    });
-
     function onDispose(): void {
-      context.slots.delete(slot.name);
+      context.slots.delete(slot.id);
       logger.debug('Slot removed', {
         slot,
-        slots: Array.from(context.slots),
       });
       context.events?.removeSlot.dispatch(slot);
-
-      disposeSlotWatch();
     }
 
-    context.slots.set(slot.name, slot);
+    context.slots.set(slot.id, slot);
 
     logger.debug('Slot added', {
       slot,
@@ -100,13 +92,13 @@ export function createSlotManager({
     );
 
     for (const slot of domSlots)
-      context.slots.set(slot.name, slot);
+      context.slots.set(slot.id, slot);
 
     return domSlots;
   }
 
   function get(name: string): AdheseSlot | undefined {
-    return context.slots.get(name);
+    return getAll().find(slot => slot.name === name);
   }
 
   function dispose(): void {
