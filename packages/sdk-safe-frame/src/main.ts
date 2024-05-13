@@ -1,6 +1,6 @@
-import { uniqueId } from '@adhese/sdk-shared';
-import type { AdheseAd, AdheseContext } from '@adhese/sdk';
-import type { Config, Position } from './main.types';
+import { ref, uniqueId } from '@adhese/sdk-shared';
+import type { AdheseAd, AdheseContext, AdhesePlugin } from '@adhese/sdk';
+import type { Config, Position, SafeFrameImplementation } from './main.types';
 
 export type SafeFrame = {
   config: Config;
@@ -14,11 +14,48 @@ export type SafeFrameOptions = {
   context: AdheseContext;
 };
 
-export function createSafeFrame({
+export const safeFramePlugin: AdhesePlugin = (context, {
+  onInit,
+  onSlotCreate,
+}) => {
+  const safeFrame = ref<SafeFrame | null>(null);
+
+  onInit(() => {
+    safeFrame.value = createSafeFrame({
+      renderFile: `${context.options.poolHost}/sf/r.html`,
+      context,
+    });
+  });
+
+  onSlotCreate((slot) => {
+    if (slot.renderMode !== 'iframe')
+      return slot;
+
+    return ({
+      ...slot,
+      renderMode: 'none',
+      setup(slotContext, slotPlugin): void {
+        slot.setup?.(slotContext, slotPlugin);
+
+        slotPlugin.onRender(async (ad) => {
+          if (safeFrame.value && slotContext.value?.element) {
+            const position = safeFrame.value.addPosition(ad, slotContext.value.element);
+
+            await safeFrame.value.render(position);
+
+            context.logger.debug('Rendered slot using safe frame', slotContext);
+          }
+        });
+      },
+    });
+  });
+};
+
+function createSafeFrame({
   renderFile,
   context,
 }: SafeFrameOptions): SafeFrame {
-  const safeFrame = window.$sf;
+  const safeFrame = window.$sf as SafeFrameImplementation | undefined;
 
   if (!safeFrame)
     throw new Error('SafeFrame not found');

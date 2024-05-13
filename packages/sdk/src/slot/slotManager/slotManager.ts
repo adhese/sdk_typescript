@@ -53,7 +53,6 @@ export function createSlotManager({
   }
 
   function add(options: Omit<AdheseSlotOptions, 'context' | 'onDispose'>): Readonly<AdheseSlot> {
-    // console.log(options, context.slots, names.value);
     const slot = createSlot({
       ...options as AdheseSlotOptions,
       onDispose,

@@ -28,7 +28,6 @@ export default defineConfig({
     alias: {
       /* eslint-disable ts/naming-convention */
       '@server-mocks': `${path.resolve()}/../server-mocks/src`,
-      '@safeframe': `${path.resolve()}/../safeframe/src`,
       '@adhese/sdk': `${path.resolve()}/src`,
       '@adhese/sdk-shared': `${path.resolve()}/../sdk-shared/src`,
       /* eslint-enable ts/naming-convention */

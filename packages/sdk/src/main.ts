@@ -1,5 +1,4 @@
 import { awaitTimeout, createEventManager, effectScope, reactive, watch } from '@adhese/sdk-shared';
-import { createSafeFrame } from '@safeframe';
 import { version } from '../package.json';
 import { createSlotManager } from './slot/slotManager/slotManager';
 import { onTcfConsentChange } from './consent/tcfConsent';
@@ -37,7 +36,6 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       consent: false,
       logReferrer: true,
       logUrl: true,
-      safeFrame: false,
       eagerRendering: false,
       viewabilityTracking: true,
       plugins: [],
@@ -75,13 +73,6 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
     }
 
     context.events = createEventManager();
-
-    context.safeFrame = options.safeFrame
-      ? createSafeFrame({
-        renderFile: `${mergedOptions.poolHost}/sf/r.html`,
-        context,
-      })
-      : undefined;
 
     watch(() => context.location, (newLocation) => {
       context.events?.locationChange.dispatch(newLocation);

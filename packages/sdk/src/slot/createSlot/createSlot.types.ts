@@ -4,7 +4,7 @@ import type { AdheseAd } from '../../requestAds/requestAds.schema';
 import type { AdheseContext } from '../../main.types';
 import type { createAsyncHook, createPassiveHook } from '../../hooks/createHook';
 
-export type RenderMode = 'iframe' | 'inline';
+export type RenderMode = 'iframe' | 'inline' | 'none';
 
 export type AdheseSlotOptions = {
   /**

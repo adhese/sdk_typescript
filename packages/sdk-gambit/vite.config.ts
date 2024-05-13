@@ -30,7 +30,6 @@ export default defineConfig({
       /* eslint-disable ts/naming-convention */
       '@adhese/sdk-shared': `${path.resolve()}/../sdk-shared/src`,
       '@server-mocks': `${path.resolve()}/../server-mocks/src`,
-      '@safeframe': `${path.resolve()}/../safeframe/src`,
       /* eslint-enable ts/naming-convention */
     },
   },

@@ -22,7 +22,7 @@ export default async (data: {
         { text: 'Plugins', link: '/plugins' },
         { text: 'Gambit config', link: '/gambit' },
         { text: 'Consent', link: '/consent' },
-        { text: 'Safeframe', link: '/safeframe' },
+        { text: 'Safe Frame', link: '/safe-frame' },
         { text: 'Devtools', link: '/devtools' },
         { text: 'React SDK', link: '/react-sdk' },
         {

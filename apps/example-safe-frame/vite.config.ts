@@ -11,11 +11,11 @@ export default defineConfig({
     alias: {
       /* eslint-disable ts/naming-convention */
       '@server-mocks': `${path.resolve()}/../../packages/server-mocks/src`,
-      '@safeframe': `${path.resolve()}/../../packages/safeframe/src`,
       '@adhese/sdk': `${path.resolve()}/../../packages/sdk/src`,
       '@adhese/sdk-react': `${path.resolve()}/../../packages/sdk-react/src`,
       '@adhese/sdk-devtools': `${path.resolve()}/../../packages/sdk-devtools/src`,
       '@adhese/sdk-shared': `${path.resolve()}/../../packages/sdk-shared/src`,
+      '@adhese/sdk-safe-frame': `${path.resolve()}/../../packages/sdk-safe-frame/src`,
       /* eslint-enable ts/naming-convention */
     },
   },

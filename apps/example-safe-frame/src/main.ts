@@ -1,4 +1,6 @@
 import { type AdheseAd, createAdhese } from '@adhese/sdk';
+import { createDevtools } from '@adhese/sdk-devtools';
+import { safeFramePlugin } from '@adhese/sdk-safe-frame';
 
 const adhese = createAdhese({
   account: 'demo',
@@ -74,7 +76,7 @@ const adhese = createAdhese({
     },
   ],
   location: '_sdk_example_',
-  safeFrame: true,
+  plugins: [createDevtools, safeFramePlugin],
 });
 
 window.adhese = adhese;

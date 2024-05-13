@@ -1,6 +1,5 @@
 /* v8 ignore start */
 import type { EventManager, Merge, UrlString } from '@adhese/sdk-shared';
-import type { SafeFrame } from '@safeframe';
 import type { SlotManagerOptions } from './slot/slotManager/slotManager';
 import type { AdheseSlot, AdheseSlotOptions } from './slot/createSlot/createSlot.types';
 import type { AdheseAd } from './requestAds/requestAds.schema';
@@ -102,10 +101,6 @@ export type AdheseOptions = {
    */
   queries?: Record<string, string>;
   /**
-   * Enable rendering ads in a SafeFrame.
-   */
-  safeFrame?: boolean;
-  /**
    * The plugins that are used for the Adhese instance. These plugins are called with the Adhese context and run during
    * the initialization of the Adhese instance.
    */
@@ -203,10 +198,6 @@ type BaseAdhese = {
    */
   options: Readonly<MergedOptions>;
   /**
-   * The SafeFrame instance that is used for rendering ads in a SafeFrame.
-   */
-  safeFrame?: SafeFrame;
-  /**
    * Is the instance disposed
    */
   isDisposed: boolean;
@@ -235,7 +226,7 @@ type BaseAdhese = {
   dispose(): void;
 };
 
-type ReadonlyProps = 'options' | 'safeFrame' | 'isDisposed' | 'logger' | 'events' | 'get' | 'getAll' | 'addSlot' | 'findDomSlots' | 'dispose' | 'slots';
+type ReadonlyProps = 'options' | 'isDisposed' | 'logger' | 'events' | 'get' | 'getAll' | 'addSlot' | 'findDomSlots' | 'dispose' | 'slots';
 export type Adhese = Omit<BaseAdhese, ReadonlyProps> & Readonly<Pick<BaseAdhese, ReadonlyProps>>;
 
 export type AdheseContextState = Omit<BaseAdhese, 'options'> & {
