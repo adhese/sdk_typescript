@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import { createDevtools } from '@adhese/sdk-devtools';
+import { devtoolsPlugin } from '@adhese/sdk-devtools';
 import { AdheseProvider } from '@adhese/sdk-react';
 import { Child } from './Child';
 
@@ -10,7 +10,7 @@ export function App(): ReactElement {
       account: 'demo',
       debug: true,
       location: '_sdk_example_',
-      plugins: [createDevtools],
+      plugins: [devtoolsPlugin],
     }}
     >
       <Child />

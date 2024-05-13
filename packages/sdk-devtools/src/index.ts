@@ -1,8 +1,8 @@
 import type { AdheseContext, AdhesePlugin } from '@adhese/sdk';
+import { watch } from '@adhese/sdk-shared';
 import { lazy } from 'react';
 
-export const createDevtools: AdhesePlugin = (context: AdheseContext, {
-  onInit,
+export const devtoolsPlugin: AdhesePlugin = (context: AdheseContext, {
   onDispose,
 }) => {
   const wrapperElement = document.createElement('div');
@@ -18,20 +18,13 @@ export const createDevtools: AdhesePlugin = (context: AdheseContext, {
     }
   }
 
-  onInit(async () => {
-    if (context.debug) {
+  watch(() => [context.debug, context.isDisposed], async ([debug, isDisposed]) => {
+    if (debug && !isDisposed)
       await initDevtools();
-
-      if (context.isDisposed)
-        dispose();
-    }
-
-    context.events?.debugChange.addListener(async (debug) => {
-      if (debug)
-        await initDevtools();
-      else
-        dispose();
-    });
+    else
+      dispose();
+  }, {
+    immediate: true,
   });
 
   function dispose(): void {

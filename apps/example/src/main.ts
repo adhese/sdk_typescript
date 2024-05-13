@@ -1,5 +1,5 @@
 import { type AdheseAd, createAdhese } from '@adhese/sdk';
-import { createDevtools } from '@adhese/sdk-devtools';
+import { devtoolsPlugin } from '@adhese/sdk-devtools';
 
 const adhese = createAdhese({
   account: 'demo',
@@ -75,7 +75,7 @@ const adhese = createAdhese({
     },
   ],
   location: '_sdk_example_',
-  plugins: [createDevtools],
+  plugins: [devtoolsPlugin],
 });
 
 window.adhese = adhese;

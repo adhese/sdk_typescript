@@ -21,15 +21,15 @@ bun add @adhese/sdk-devtools
 ```
 :::
 
-Add the `createDevtools` function to your Adhese config plugins field:
+Add the `devtoolsPlugin` function to your Adhese config plugins field:
 
 ```js
-import { createDevtools } from '@adhese/sdk-devtools';
+import { devtoolsPlugin } from '@adhese/sdk-devtools';
 import { createAdhese } from '@adhese/sdk';
 
 const adhese = createAdhese({
   account: 'your-account-id',
-  plugins: [createDevtools],
+  plugins: [devtoolsPlugin],
 });
 ```
 
