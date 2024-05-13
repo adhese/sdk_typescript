@@ -45,19 +45,19 @@ export function SlotsTable({ adheseContext }: {
     };
   }, [adheseContext]);
 
-  const formattedSlots = useMemo(() => slots.map((slot) => {
-    const iframe = slot.element;
+  const formattedSlots = useMemo(() => slots.map(slot => ({
+    ...slot,
+    parameters: Array.from(slot.parameters.entries()),
+  })).toSorted((a, b) => {
+    const offsetA = a.element?.getBoundingClientRect().top ?? 0;
+    const offsetB = b.element?.getBoundingClientRect().top ?? 0;
 
-    return ({
-      ...slot,
-      iframe,
-      parameters: Array.from(slot.parameters.entries()),
-    });
+    return offsetA - offsetB;
   }), [slots]);
 
-  const slotParametersExist = formattedSlots.some(formattedSlot => formattedSlot.parameters.length > 0);
-  const previewExist = formattedSlots.some(formattedSlot => formattedSlot.ad?.preview);
-  const slotCodeExists = formattedSlots.some(formattedSlot => formattedSlot.slot);
+  const slotParametersExist = useMemo(() => formattedSlots.some(formattedSlot => formattedSlot.parameters.length > 0), [formattedSlots]);
+  const previewExist = useMemo(() => formattedSlots.some(formattedSlot => formattedSlot.ad?.preview), [formattedSlots]);
+  const slotCodeExists = useMemo(() => formattedSlots.some(formattedSlot => formattedSlot.slot), [formattedSlots]);
 
   const origins: ReadonlyArray<string> = useMemo(() => {
     const set = new Set<string>();
@@ -284,7 +284,7 @@ export function SlotsTable({ adheseContext }: {
                     </TableCell>
                   )}
                 </TableRow>
-                {element && createPortal(
+                {element && status === 'rendered' && createPortal(
                   <div className="absolute inset-1 flex gap-2 items-start">
                     <Badge className={cn(slotIndexBadgeClasses[index % slotIndexBadgeClasses.length], 'text-white')}>
                       {name}
