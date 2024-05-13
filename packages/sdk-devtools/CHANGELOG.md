@@ -1,5 +1,16 @@
 # @adhese/sdk-devtools
 
+## 0.10.0
+
+### Minor Changes
+
+- 0f1b268: Rename createDevtools to devtoolsPlugin
+
+### Patch Changes
+
+- 1819375: Fix Adhese not being properly disposed in React instances
+- 0f1b268: Use watcher to listen to changes of the debug property instead of an event
+
 ## 0.9.1
 
 ### Patch Changes

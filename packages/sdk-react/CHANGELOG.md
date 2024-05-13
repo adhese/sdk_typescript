@@ -1,5 +1,11 @@
 # @adhese/sdk-react
 
+## 0.9.6
+
+### Patch Changes
+
+- 1819375: Fix Adhese not being properly disposed in React instances
+
 ## 0.9.5
 
 ### Patch Changes
