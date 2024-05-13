@@ -65,19 +65,20 @@ export type AdheseSlotOptions = {
    */
   onEmpty?(): void;
   /**
-   * Callback that is called when the slot is initialized. This can be used to set up the slot before it is rendered.
+   * Special callback that is run when the slot is initialized. It passes the slot context ref object and a special
+   * plugin object that contains a set of hooks you can use to hook into different moments of the slots lifecycle.
    */
   setup?(context: Ref<AdheseSlot | null>, plugin: {
     /**
-     * Callback that is called when the slot is rendered.
+     * Hook that is called when the slot is rendered.
      */
     onRender: ReturnType<typeof createAsyncHook<AdheseAd>>[1];
     /**
-     * Callback that is called when the slot is requested from the server.
+     * Hook that is called when the slot is requested from the server.
      */
     onRequest: ReturnType<typeof createAsyncHook<void>>[1];
     /**
-     * Callback that is called when the slot is disposed.
+     * Hook that is called when the slot is disposed.
      */
     onDispose: ReturnType<typeof createPassiveHook>[1];
   }): void;
