@@ -3,6 +3,7 @@ import { watch } from '@adhese/sdk-shared';
 import { lazy } from 'react';
 
 export const devtoolsPlugin: AdhesePlugin = (context: AdheseContext, {
+  onInit,
   onDispose,
 }) => {
   const wrapperElement = document.createElement('div');
@@ -18,13 +19,20 @@ export const devtoolsPlugin: AdhesePlugin = (context: AdheseContext, {
     }
   }
 
-  watch(() => [context.debug, context.isDisposed], async ([debug, isDisposed]) => {
-    if (debug && !isDisposed)
-      await initDevtools();
-    else
-      dispose();
-  }, {
-    immediate: true,
+  onInit(() => {
+    watch(() => [context.debug, context.isDisposed], async ([debug, isDisposed]) => {
+      if (debug && !isDisposed) {
+        await initDevtools();
+
+        if (context.isDisposed)
+          dispose();
+      }
+      else {
+        dispose();
+      }
+    }, {
+      immediate: true,
+    });
   });
 
   function dispose(): void {

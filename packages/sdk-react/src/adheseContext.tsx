@@ -22,12 +22,16 @@ export function AdheseProvider({ children, options }: PropsWithChildren<{ option
   const [adhese, setAdhese] = useState<Adhese | undefined>(undefined);
 
   useEffect(() => {
-    let instance: Adhese | null = null;
+    let instance: Adhese | undefined;
 
     import('@adhese/sdk').then(({ createAdhese }) => {
       instance = createAdhese(options);
 
-      setAdhese(instance);
+      setAdhese((current) => {
+        current?.dispose();
+
+        return instance;
+      });
     }).catch(console.error);
 
     return (): void => {
