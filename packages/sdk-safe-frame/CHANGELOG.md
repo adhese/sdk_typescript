@@ -1,5 +1,11 @@
 # @adhese/sdk-safe-frame
 
+## 0.1.1
+
+### Patch Changes
+
+- 4b1c4cd: Add README and LICENSE
+
 ## 0.1.0
 
 ### Minor Changes
