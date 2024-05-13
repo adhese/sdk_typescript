@@ -1,5 +1,19 @@
 # @adhese/sdk
 
+## 0.14.0
+
+### Minor Changes
+
+- 242cfa3: Make all slots reactive objects to make interaction with them much more streamlined
+- 242cfa3: Create an ID that is generated on slot creation to keep track of the slot. This ID will stay the same even if the name of the slots changes.
+- 9ebb4fd: Add status value to slots
+
+### Patch Changes
+
+- b38e189: Make schema export load dynamically when it's needed
+- Updated dependencies [242cfa3]
+  - @adhese/sdk-shared@0.3.0
+
 ## 0.13.0
 
 ### Minor Changes
