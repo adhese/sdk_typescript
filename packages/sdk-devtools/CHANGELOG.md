@@ -1,5 +1,13 @@
 # @adhese/sdk-devtools
 
+## 0.9.1
+
+### Patch Changes
+
+- eca8056: Move all vue-runtime-core exports to @adhese/sdk-shared
+- Updated dependencies [eca8056]
+  - @adhese/sdk-shared@0.4.0
+
 ## 0.9.0
 
 ### Minor Changes

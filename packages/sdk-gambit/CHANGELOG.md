@@ -1,5 +1,12 @@
 # @adhese/sdk-gambit
 
+## 0.2.9
+
+### Patch Changes
+
+- Updated dependencies [eca8056]
+  - @adhese/sdk-shared@0.4.0
+
 ## 0.2.8
 
 ### Patch Changes
