@@ -1,7 +1,7 @@
 {
   "name": "@adhese/sdk-devtools",
   "type": "module",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Adhese SDK Devtools",
   "license": "GPL-3.0",
   "repository": {
@@ -31,7 +31,7 @@
     "react-dom": ">=16.13"
   },
   "dependencies": {
-    "@adhese/sdk-shared": "^0.3.0",
+    "@adhese/sdk-shared": "^0.4.0",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-icons": "^1.3.0",
     "@radix-ui/react-label": "^2.0.2",
