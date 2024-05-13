@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 0.15.0
+
+### Minor Changes
+
+- 467d857: Move SafeFrame code to a seperate plugin instead of including it
+
 ## 0.14.1
 
 ### Patch Changes
