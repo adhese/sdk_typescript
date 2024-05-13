@@ -1,4 +1,6 @@
 import { defineConfig } from 'vite';
+import { flat } from 'remeda';
+import { dependencies } from './package.json';
 
 export default defineConfig({
   build: {
@@ -11,6 +13,14 @@ export default defineConfig({
       fileName: format => `index.${format === 'cjs' ? 'cjs' : 'js'}`,
     },
     sourcemap: true,
+    rollupOptions: {
+      external: flat([
+        ...(dependencies ? Object.keys(dependencies) : []),
+      ].map(dep => [dep, new RegExp(`^${dep}(/.*)?`)])),
+      output: {
+        inlineDynamicImports: false,
+      },
+    },
   },
   test: {
     environment: 'jsdom',
