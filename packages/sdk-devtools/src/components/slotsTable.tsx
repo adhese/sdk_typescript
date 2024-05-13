@@ -1,7 +1,6 @@
 import { Fragment, type ReactElement, useEffect, useMemo, useState } from 'react';
-import type { AdheseContext, AdheseSlot } from '@adhese/sdk';
+import { type AdheseContext, type AdheseSlot, type UnwrapRef, watch } from '@adhese/sdk';
 import { createPortal } from 'react-dom';
-import type { UnwrapRef } from '@vue/runtime-core';
 import { cn } from '../utils';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Badge } from './badge';
@@ -36,20 +35,17 @@ export function SlotsTable({ adheseContext }: {
   const [slots, setSlots] = useState<ReadonlyArray<AdheseSlot>>([]);
 
   useEffect(() => {
-    function onSlotsChange(newSlots: ReadonlyArray<AdheseSlot>): void {
-      setSlots(newSlots);
-    }
-
-    adheseContext.events?.changeSlots.addListener(onSlotsChange);
-    onSlotsChange(adheseContext.getAll?.() ?? []);
+    const disposeWatcher = watch(() => adheseContext.slots, (newSlots) => {
+      setSlots(Array.from(newSlots.values()));
+    }, { immediate: true, deep: true });
 
     return (): void => {
-      adheseContext.events?.changeSlots.removeListener(onSlotsChange);
+      disposeWatcher();
     };
   }, [adheseContext]);
 
   const formattedSlots = useMemo(() => slots.map((slot) => {
-    const iframe = slot.getElement();
+    const iframe = slot.element;
 
     return ({
       ...slot,

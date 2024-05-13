@@ -6,7 +6,7 @@ export default defineConfig({
     outDir: 'lib',
     emptyOutDir: true,
     lib: {
-      entry: `src/index.ts`,
+      entry: `src/main.ts`,
       name: 'Adhese',
       formats: ['iife'],
       fileName: () => `adhese.js`,

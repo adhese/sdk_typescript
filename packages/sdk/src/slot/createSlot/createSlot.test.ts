@@ -87,7 +87,7 @@ describe('slot', () => {
       origin: 'JERLICIA',
     });
 
-    expect(slot.getElement()).not.toBe(null);
+    expect(slot.element).not.toBe(null);
   });
 
   it('should create a slot with the slot option set', async () => {
@@ -116,7 +116,7 @@ describe('slot', () => {
       id: 'baz',
       origin: 'JERLICIA',
     });
-    expect(slot.getElement()).not.toBe(null);
+    expect(slot.element).not.toBe(null);
     expect(slot.ad).toBeDefined();
   });
 
@@ -218,7 +218,7 @@ describe('slot', () => {
       origin: 'JERLICIA',
     });
 
-    expect(slot.getElement()).not.toBe(null);
+    expect(slot.element).not.toBe(null);
   });
 
   it('should be able generate a slot name', async () => {
@@ -262,7 +262,7 @@ describe('slot', () => {
 
     slot.dispose();
 
-    expect(slot.getElement()).toBeNull();
+    expect(slot.element).toBeNull();
   });
 
   it('should be able to lazy load a slot', async () => {
@@ -405,7 +405,7 @@ describe('slot', () => {
 
     await slot.render();
 
-    expect(slot.getElement()).not.toBe(null);
+    expect(slot.element).not.toBe(null);
   });
 
   it('should be able to intercept and modify the ad before rendering', async () => {
@@ -439,6 +439,6 @@ describe('slot', () => {
       id: 'baz',
     });
 
-    expect(slot.getElement()).not.toBe(null);
+    expect(slot.element).not.toBe(null);
   });
 });

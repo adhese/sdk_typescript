@@ -4,7 +4,7 @@ import type { AdheseAd, AdheseContext } from '@adhese/sdk';
 import { addTrackingPixel } from '../../impressionTracking/impressionTracking';
 import { logger } from '../../logger/logger';
 
-export function createViewabilityObserver(
+export function useViewabilityObserver(
   { context, ad, name, element }: {
     context: AdheseContext;
     ad: Ref<AdheseAd | null>;
@@ -44,8 +44,6 @@ export function createViewabilityObserver(
             trackingPixel.value = addTrackingPixel(ad.value.viewableImpressionCounter);
 
             logger.debug(`Viewability tracking pixel fired for ${name.value}`);
-
-            context.events?.changeSlots.dispatch(Array.from(context.getAll?.() ?? []));
           }
         }, duration);
       }

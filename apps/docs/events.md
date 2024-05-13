@@ -38,7 +38,6 @@ adhese.events.locationChange.removeEventListener(listener);
 | `consentChange`    | When the consent settings change                                                                                                  | `boolean`                                       |
 | `addSlot`          | When a slot is added to the page                                                                                                  | `Slot`                                          |
 | `removeSlot`       | When a slot is removed from the page                                                                                              | `Slot`                                          |
-| `changeSlots`      | When a slot is changed in general, for example, when a new slot is added or removed or when it's rendered or loading is complete. | `ReadonlyArray<Slot>`                           |
 | `responseReceived` | When the request sent to the Adhese API returns with ads                                                                          | `ReadonlyArray<Ad>`                             |
 | `requestAd`        | When the request is sent out to the API                                                                                           | `AdRequestOptions`                              |
 | `requestError`     | When somewhere in the request pipeline an error pops up                                                                           | `Error`                                         |

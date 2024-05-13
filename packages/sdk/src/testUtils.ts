@@ -7,6 +7,7 @@ export const testContext: AdheseContext = {
   consent: false,
   debug: true,
   isDisposed: false,
+  slots: new Map(),
   options: {
     account: 'test',
     host: 'https://ads-test.adhese.com',

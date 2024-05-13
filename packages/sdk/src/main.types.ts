@@ -8,7 +8,6 @@ import type { AdMultiRequestOptions } from './requestAds/requestAds';
 import type { logger } from './logger/logger';
 import type { onInit } from './hooks/onInit';
 import type { onDispose } from './hooks/onDispose';
-import type { onRender } from './hooks/onRender';
 import type { onRequest } from './hooks/onRequest';
 import type { onResponse } from './hooks/onResponse';
 import type { onSlotCreate } from './hooks/onSlotCreate';
@@ -18,7 +17,6 @@ export type AdhesePluginInformation = {
   version: string;
   onInit: typeof onInit;
   onDispose: typeof onDispose;
-  onRender: typeof onRender;
   onRequest: typeof onRequest;
   onResponse: typeof onResponse;
   onSlotCreate: typeof onSlotCreate;
@@ -162,7 +160,6 @@ type AdheseEvents = {
   consentChange: boolean;
   addSlot: AdheseSlot;
   removeSlot: AdheseSlot;
-  changeSlots: ReadonlyArray<AdheseSlot>;
   responseReceived: ReadonlyArray<AdheseAd>;
   requestAd: AdMultiRequestOptions;
   requestError: Error;
@@ -172,6 +169,10 @@ type AdheseEvents = {
 };
 
 type BaseAdhese = {
+  /**
+   * The slots that are in the Adhese instance.
+   */
+  slots: Map<string, AdheseSlot>;
   /**
    * The page location. This is used to determine the current page location identifier.
    */
@@ -234,12 +235,12 @@ type BaseAdhese = {
   dispose(): void;
 };
 
-type ReadonlyProps = 'options' | 'safeFrame' | 'isDisposed' | 'logger' | 'events' | 'get' | 'getAll' | 'addSlot' | 'findDomSlots' | 'dispose';
+type ReadonlyProps = 'options' | 'safeFrame' | 'isDisposed' | 'logger' | 'events' | 'get' | 'getAll' | 'addSlot' | 'findDomSlots' | 'dispose' | 'slots';
 export type Adhese = Omit<BaseAdhese, ReadonlyProps> & Readonly<Pick<BaseAdhese, ReadonlyProps>>;
 
 export type AdheseContextState = Omit<BaseAdhese, 'options'> & {
   readonly options: MergedOptions;
 };
 
-type NonPartialProps = 'options' | 'logger' | 'events' | 'isDisposed' | 'location' | 'consent' | 'debug' | 'parameters';
+type NonPartialProps = 'options' | 'logger' | 'events' | 'isDisposed' | 'location' | 'consent' | 'debug' | 'parameters' | 'slots';
 export type AdheseContext = Omit<Partial<AdheseContextState>, NonPartialProps> & Pick<AdheseContextState, NonPartialProps>;
