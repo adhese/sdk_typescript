@@ -21,6 +21,7 @@ export function createAsyncHook<
 ): [
   run: Argument extends void ? () => Promise<void> : (arg: Argument) => Promise<Argument>,
   add: (callback: Callback) => () => void,
+  dispose: () => void,
   ] {
   hookMap.set(name, new Set<Callback>());
 
@@ -36,7 +37,11 @@ export function createAsyncHook<
     return latestResult;
   }) as Argument extends void ? () => Promise<void> : (arg: Argument) => Promise<Argument>;
 
-  return [run, (callback): () => void => add<Callback>(callback, { name, onAdd })];
+  function dispose(): void {
+    hookMap.delete(name);
+  }
+
+  return [run, (callback): () => void => add<Callback>(callback, { name, onAdd }), dispose];
 }
 
 export function createSyncHook<
@@ -54,6 +59,7 @@ export function createSyncHook<
 ): [
   run: (arg: Argument) => Argument,
   add: (callback: Callback) => () => void,
+  dispose: () => void,
   ] {
   hookMap.set(name, new Set<Callback>());
 
@@ -77,7 +83,11 @@ export function createSyncHook<
     return latestResult;
   }) as (arg: Argument) => Argument;
 
-  return [run, (callback): () => void => add<Callback>(callback, { name, onAdd })];
+  function dispose(): void {
+    hookMap.delete(name);
+  }
+
+  return [run, (callback): () => void => add<Callback>(callback, { name, onAdd }), dispose];
 }
 
 export function createPassiveHook<
@@ -95,6 +105,7 @@ export function createPassiveHook<
 ): [
   run: (arg: Argument) => void,
   add: (callback: Callback) => () => void,
+  dispose: () => void,
   ] {
   hookMap.set(name, new Set<Callback>());
 
@@ -105,7 +116,11 @@ export function createPassiveHook<
     onRun?.(hookMap.get(name) as Set<Callback>);
   }
 
-  return [run, (callback): () => void => add<Callback>(callback, { name, onAdd })];
+  function dispose(): void {
+    hookMap.delete(name);
+  }
+
+  return [run, (callback): () => void => add<Callback>(callback, { name, onAdd }), dispose];
 }
 
 function isCallbackAsync(callback: Function): boolean {

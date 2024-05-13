@@ -1,17 +1,22 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { AdheseContext, AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
 import { testContext } from '../../testUtils';
 import { createSlotManager } from './slotManager';
 
 describe('slotManager', () => {
   let context: AdheseContext;
+  let slotManager: ReturnType<typeof createSlotManager> | undefined;
 
   beforeEach(() => {
     context = testContext;
   });
 
+  afterEach(() => {
+    slotManager?.dispose();
+  });
+
   it('should create a slot manager', () => {
-    const slotManager = createSlotManager({
+    slotManager = createSlotManager({
       initialSlots: [],
       context,
     });
@@ -26,7 +31,7 @@ describe('slotManager', () => {
   });
 
   it('should be able to get all slots', () => {
-    const slotManager = createSlotManager({
+    slotManager = createSlotManager({
       initialSlots: [{
         format: 'leaderboard',
         containingElement: 'leaderboard',
@@ -37,7 +42,7 @@ describe('slotManager', () => {
   });
 
   it('should be able to add a slot', () => {
-    const slotManager = createSlotManager({
+    slotManager = createSlotManager({
       initialSlots: [],
       context,
     });
@@ -53,7 +58,7 @@ describe('slotManager', () => {
       <div class="adunit" data-format="leaderboard" id="leaderboard"></div>
       <div class="adunit" data-format="billboard" id="billboard"></div>
     `;
-    const slotManager = createSlotManager({
+    slotManager = createSlotManager({
       initialSlots: [],
       context,
     });
@@ -63,7 +68,7 @@ describe('slotManager', () => {
   });
 
   it('should be able to get a slot by name', () => {
-    const slotManager = createSlotManager({
+    slotManager = createSlotManager({
       initialSlots: [{
         format: 'leaderboard',
         containingElement: 'leaderboard',
@@ -75,7 +80,7 @@ describe('slotManager', () => {
   });
 
   it('should be able to dispose of all slots', () => {
-    const slotManager = createSlotManager({
+    slotManager = createSlotManager({
       initialSlots: [{
         format: 'leaderboard',
         containingElement: 'leaderboard',
@@ -87,7 +92,7 @@ describe('slotManager', () => {
   });
 
   it('should throw an error if a slot with the same name is added', () => {
-    const slotManager = createSlotManager({
+    slotManager = createSlotManager({
       initialSlots: [{
         format: 'leaderboard',
         containingElement: 'leaderboard',
@@ -96,7 +101,7 @@ describe('slotManager', () => {
     });
 
     expect(() => {
-      slotManager.add({
+      slotManager?.add({
         format: 'leaderboard',
         containingElement: 'leaderboard',
       });

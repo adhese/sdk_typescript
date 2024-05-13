@@ -13,7 +13,6 @@ import { logger } from './logger/logger';
 import type { AdheseSlot, AdheseSlotOptions } from './slot/createSlot/createSlot.types';
 import { clearAllHooks } from './hooks/createHook';
 import { onResponse } from './hooks/onResponse';
-import { onRender } from './hooks/onRender';
 import { onRequest } from './hooks/onRequest';
 import { onSlotCreate } from './hooks/onSlotCreate';
 
@@ -56,6 +55,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       isDisposed: false,
       parameters: new Map(),
       events: createEventManager(),
+      slots: new Map(),
       dispose,
       findDomSlots,
       getAll,
@@ -69,7 +69,6 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
         version,
         onInit,
         onDispose,
-        onRender,
         onRequest,
         onResponse,
         onSlotCreate,
@@ -170,7 +169,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
     });
 
     async function fetchAllUnrenderedSlots(): Promise<void> {
-      const slots = (slotManager.getAll() ?? []).filter(slot => !slot.lazyLoading && !slot.ad.value);
+      const slots = (slotManager.getAll() ?? []).filter(slot => !slot.lazyLoading && !slot.ad);
 
       if (slots.length === 0)
         return;

@@ -1,8 +1,9 @@
 /* v8 ignore start */
 import type { Merge } from '@adhese/sdk-shared';
-import type { ComputedRef, Ref } from '@vue/runtime-core';
+import type { Ref } from '@vue/runtime-core';
 import type { AdheseAd } from '../../requestAds/requestAds.schema';
 import type { AdheseContext } from '../../main.types';
+import type { createAsyncHook, createPassiveHook } from '../../hooks/createHook';
 
 export type RenderMode = 'iframe' | 'inline';
 
@@ -46,10 +47,6 @@ export type AdheseSlotOptions = {
    */
   onDispose?(): void;
   /**
-   * Callback that is called when the format of the slot changes.
-   */
-  onNameChange?(newName: string, oldName: string): void;
-  /**
    * Callback that is called when the slot is rendered.
    */
   onRender?(element: HTMLElement): void;
@@ -67,6 +64,24 @@ export type AdheseSlotOptions = {
    * reasons, for example when the slot is not sold to a buyer.
    */
   onEmpty?(): void;
+  /**
+   * Special callback that is run when the slot is initialized. It passes the slot context ref object and a special
+   * plugin object that contains a set of hooks you can use to hook into different moments of the slots lifecycle.
+   */
+  setup?(context: Ref<AdheseSlot | null>, plugin: {
+    /**
+     * Hook that is called when the slot is rendered.
+     */
+    onRender: ReturnType<typeof createAsyncHook<AdheseAd>>[1];
+    /**
+     * Hook that is called when the slot is requested from the server.
+     */
+    onRequest: ReturnType<typeof createAsyncHook<void>>[1];
+    /**
+     * Hook that is called when the slot is disposed.
+     */
+    onDispose: ReturnType<typeof createPassiveHook>[1];
+  }): void;
 } & ({
   /**
    * If the slot should be lazy loaded. This means that the ad will only be requested when the slot is in the viewport.
@@ -84,13 +99,13 @@ export type AdheseSlotOptions = {
   lazyLoadingOptions?: never;
 });
 
-export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' | 'onFormatChange' | 'format'>, {
+export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' | 'onFormatChange' | 'format' | 'setup'>, {
   /**
    * The name of the slot. This is used to identify the slot in the Adhese instance.
    *
    * The name is generated based on the location, format, and slot of the slot.
    */
-  name: ComputedRef<string>;
+  readonly name: string;
   /**
    * The format code of the slot. Used to find the correct element on the page to render the ad in.
    *
@@ -99,11 +114,11 @@ export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' |
    *
    * When you change the format, the slot will request a new ad from the API automatically.
    */
-  format: Ref<string>;
+  readonly format: string;
   /**
    * The location of the slot. This is the location that is used to determine the current page URL.
    */
-  location: string;
+  readonly location: string;
   /**
    * The parameters that are used to render the ad.
    */
@@ -111,15 +126,15 @@ export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' |
   /**
    * Whether the viewability tracking pixel has been fired.
    */
-  isViewabilityTracked: ComputedRef<boolean>;
+  readonly isViewabilityTracked: boolean;
   /**
    * Whether the impression tracking pixel has been fired.
    */
-  isImpressionTracked: ComputedRef<boolean>;
+  readonly isImpressionTracked: boolean;
   /**
    * Ad object that is fetched from the API.
    */
-  ad: Ref<AdheseAd | null>;
+  ad: AdheseAd | null;
   /**
    * The state of the slot is currently in.
    *
@@ -132,15 +147,23 @@ export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' |
    * - `rendered`: The slot has rendered the ad
    * - `error`: The slot has encountered an error
    */
-  status: Ref<'initializing' | 'initialized' | 'loading' | 'loaded' | 'empty' | 'rendering' | 'rendered' | 'error'>;
+  readonly status: 'initializing' | 'initialized' | 'loading' | 'loaded' | 'empty' | 'rendering' | 'rendered' | 'error';
+  /**
+   * Is the slot disposed.
+   */
+  readonly isDisposed: boolean;
+  /**
+   * The element that contains the slot.
+   */
+  readonly element: HTMLElement | null;
+  /**
+   * Unique identifier of the slot. ID is generated on initialization and will never change.
+   */
+  readonly id: string;
   /**
    * Renders the slot in the containing element. If no ad is provided, a new ad will be requested from the API.
    */
   render(ad?: AdheseAd): Promise<HTMLElement | null>;
-  /**
-   * Returns the rendered element.
-   */
-  getElement(): HTMLElement | null;
   /**
    * Requests a new ad from the API and returns the ad object.
    */

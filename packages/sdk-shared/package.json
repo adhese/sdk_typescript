@@ -27,5 +27,8 @@
     "lint:fix": "eslint --fix .",
     "typecheck": "tsc --noEmit",
     "prepareRelease": "npm run build"
+  },
+  "dependencies": {
+    "nanoid": "^5.0.7"
   }
 }

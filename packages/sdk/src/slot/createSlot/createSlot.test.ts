@@ -87,7 +87,7 @@ describe('slot', () => {
       origin: 'JERLICIA',
     });
 
-    expect(slot.getElement()).not.toBe(null);
+    expect(slot.element).not.toBe(null);
   });
 
   it('should create a slot with the slot option set', async () => {
@@ -116,8 +116,8 @@ describe('slot', () => {
       id: 'baz',
       origin: 'JERLICIA',
     });
-    expect(slot.getElement()).not.toBe(null);
-    expect(slot.ad.value).toBeDefined();
+    expect(slot.element).not.toBe(null);
+    expect(slot.ad).toBeDefined();
   });
 
   it('should create a slot with parameters', async () => {
@@ -218,20 +218,20 @@ describe('slot', () => {
       origin: 'JERLICIA',
     });
 
-    expect(slot.getElement()).not.toBe(null);
+    expect(slot.element).not.toBe(null);
   });
 
   it('should be able generate a slot name', async () => {
     expect((createSlot({
       format: 'bar',
       context,
-    })).name.value).toBe('foo-bar');
+    })).name).toBe('foo-bar');
 
     expect((createSlot({
       format: 'bar',
       slot: 'baz',
       context,
-    })).name.value).toBe('foobaz-bar');
+    })).name).toBe('foobaz-bar');
   });
 
   it('should be able to dispose a slot', async () => {
@@ -262,7 +262,7 @@ describe('slot', () => {
 
     slot.dispose();
 
-    expect(slot.getElement()).toBeNull();
+    expect(slot.element).toBeNull();
   });
 
   it('should be able to lazy load a slot', async () => {
@@ -300,7 +300,7 @@ describe('slot', () => {
       lazyLoading: true,
     });
 
-    slot.ad.value = {
+    slot.ad = {
       tag: '<div>foo</div>',
       // eslint-disable-next-line ts/naming-convention
       slotID: 'bar',
@@ -375,7 +375,7 @@ describe('slot', () => {
       context,
     });
 
-    expect(slot.format.value).toBe('skyscraper');
+    expect(slot.format).toBe('skyscraper');
 
     validQuery = '(min-width: 768px)';
 
@@ -384,7 +384,7 @@ describe('slot', () => {
 
     await awaitTimeout(70);
 
-    expect(slot.format.value).toBe('leaderboard');
+    expect(slot.format).toBe('leaderboard');
   });
 
   it('should be able to render a slot with the render mode set to inline', async () => {
@@ -405,7 +405,7 @@ describe('slot', () => {
 
     await slot.render();
 
-    expect(slot.getElement()).not.toBe(null);
+    expect(slot.element).not.toBe(null);
   });
 
   it('should be able to intercept and modify the ad before rendering', async () => {
@@ -439,6 +439,6 @@ describe('slot', () => {
       id: 'baz',
     });
 
-    expect(slot.getElement()).not.toBe(null);
+    expect(slot.element).not.toBe(null);
   });
 });

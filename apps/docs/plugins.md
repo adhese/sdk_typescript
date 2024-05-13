@@ -20,8 +20,8 @@ function myPlugin(context, plugin) {
     console.log('SDK initialized');
   });
 
-  plugin.onRender((ad) => {
-    console.log('Ad rendered', ad);
+  plugin.onSlotCreate((slotOptions) => {
+    console.log('Slot options', slotOptions);
   });
 ```
 
@@ -36,7 +36,6 @@ the argument you can always pass a promise or async function to the hook, regard
 |------------------------|-------------------------------------------|--------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
 | `onInit`               | `void`                                    | Synchronous  | Hook is executed when the SDK initialisation is finished. Note that when this hook is added after initialisation the contents are run immediately. |
 | `onDispose`            | `void`                                    | Synchronous  | Hook is executed when the SDK is disposed.                                                                                                         |
-| `onRender`             | `Ad`                                      | Asynchronous | Hook is run before the ad is rendered. The hook passes an `Ad` object that you can modify.                                                         |
 | `onRequest`            | `AdRequestOptions`                        | Asynchronous | Hook is run before a request is made to the server. The hook passes a `AdRequestOptions` object that you can modify.                               |
 | `onResponse`           | `Ad`                                      | Asynchronous | Hook is run after a response received. The hook passes an `Ad` object that you can modify.                                                         |
 | `onSlotCreate`         | `AdheseSlotOptions`                       | Synchronous  | Hook is run before a slot is created. The hook passes an `AdheseSlotOptions` object that you can modify                                            |

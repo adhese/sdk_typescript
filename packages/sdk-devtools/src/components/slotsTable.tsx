@@ -1,7 +1,6 @@
 import { Fragment, type ReactElement, useEffect, useMemo, useState } from 'react';
-import type { AdheseContext, AdheseSlot } from '@adhese/sdk';
+import { type AdheseContext, type AdheseSlot, type UnwrapRef, watch } from '@adhese/sdk';
 import { createPortal } from 'react-dom';
-import type { UnwrapRef } from '@vue/runtime-core';
 import { cn } from '../utils';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Badge } from './badge';
@@ -36,27 +35,20 @@ export function SlotsTable({ adheseContext }: {
   const [slots, setSlots] = useState<ReadonlyArray<AdheseSlot>>([]);
 
   useEffect(() => {
-    function onSlotsChange(newSlots: ReadonlyArray<AdheseSlot>): void {
-      setSlots(newSlots);
-    }
-
-    adheseContext.events?.changeSlots.addListener(onSlotsChange);
-    onSlotsChange(adheseContext.getAll?.() ?? []);
+    const disposeWatcher = watch(() => adheseContext.slots, (newSlots) => {
+      setSlots(Array.from(newSlots.values()));
+    }, { immediate: true, deep: true });
 
     return (): void => {
-      adheseContext.events?.changeSlots.removeListener(onSlotsChange);
+      disposeWatcher();
     };
   }, [adheseContext]);
 
   const formattedSlots = useMemo(() => slots.map((slot) => {
-    const ad = slot.ad.value;
-    const iframe = slot.getElement();
+    const iframe = slot.element;
 
     return ({
       ...slot,
-      name: slot.name.value,
-      ad,
-      format: slot.format.value,
       iframe,
       parameters: Array.from(slot.parameters.entries()),
     });
@@ -115,20 +107,21 @@ export function SlotsTable({ adheseContext }: {
               status,
               isViewabilityTracked,
               isImpressionTracked,
-              iframe,
+              element,
               parameters,
               slot,
+              id,
             }, index) => (
-              <Fragment key={name}>
+              <Fragment key={id}>
                 <TableRow id={name}>
                   <TableCell className="font-medium">
                     <button onClick={() => {
-                      if (iframe) {
-                        iframe.scrollIntoView();
-                        iframe.style.outline = 'solid 5px red';
+                      if (element) {
+                        element.scrollIntoView();
+                        element.style.outline = 'solid 5px red';
 
                         setTimeout(() => {
-                          iframe.style.outline = '';
+                          element.style.outline = '';
                         }, 1000);
                       }
                     }}
@@ -154,8 +147,8 @@ export function SlotsTable({ adheseContext }: {
                     </TableCell>
                   )}
                   <TableCell>
-                    <Badge variant="outline" className={cn(status.value === 'error' ? 'bg-red-500 text-red-50' : '')}>
-                      {renderStatusMap[status.value]}
+                    <Badge variant="outline" className={cn(status === 'error' ? 'bg-red-500 text-red-50' : '')}>
+                      {renderStatusMap[status]}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -212,12 +205,12 @@ export function SlotsTable({ adheseContext }: {
                   <TableCell>{ad?.id ?? '-'}</TableCell>
                   <TableCell>{ad?.ext ? <Badge variant="outline">{ad.ext}</Badge> : '-'}</TableCell>
                   <TableCell>
-                    {isImpressionTracked.value
+                    {isImpressionTracked
                       ? <Badge className="bg-green-100 text-green-900 hover:bg-green-100">Yes</Badge>
                       : <Badge variant="secondary">No</Badge>}
                   </TableCell>
                   <TableCell>
-                    {isViewabilityTracked.value
+                    {isViewabilityTracked
                       ? <Badge className="bg-green-100 text-green-900 hover:bg-green-100">Yes</Badge>
                       : <Badge variant="secondary">No</Badge>}
                   </TableCell>
@@ -290,7 +283,7 @@ export function SlotsTable({ adheseContext }: {
                     </TableCell>
                   )}
                 </TableRow>
-                {iframe?.parentElement && createPortal(
+                {element && createPortal(
                   <div className="absolute inset-1 flex gap-2 items-start">
                     <Badge className={cn(slotIndexBadgeClasses[index % slotIndexBadgeClasses.length], 'text-white')}>
                       {name}
@@ -299,7 +292,7 @@ export function SlotsTable({ adheseContext }: {
                       ad?.preview && <Badge className="bg-amber-400 text-amber-950 hover:bg-amber-400">PREVIEW</Badge>
                     }
                   </div>,
-                  iframe.parentElement,
+                  element,
                 )}
               </Fragment>
             ))}
