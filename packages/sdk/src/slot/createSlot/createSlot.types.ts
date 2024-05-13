@@ -1,6 +1,5 @@
 /* v8 ignore start */
-import type { Merge } from '@adhese/sdk-shared';
-import type { Ref } from '@vue/runtime-core';
+import type { Merge, Ref } from '@adhese/sdk-shared';
 import type { AdheseAd } from '../../requestAds/requestAds.schema';
 import type { AdheseContext } from '../../main.types';
 import type { createAsyncHook, createPassiveHook } from '../../hooks/createHook';

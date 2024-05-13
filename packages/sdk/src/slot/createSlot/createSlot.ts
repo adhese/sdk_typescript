@@ -1,5 +1,4 @@
-import { uniqueId, waitForDomLoad } from '@adhese/sdk-shared';
-import { type Ref, type UnwrapRef, computed, effectScope, reactive, ref, watch } from '@vue/runtime-core';
+import { type Ref, type UnwrapRef, computed, effectScope, reactive, ref, uniqueId, waitForDomLoad, watch } from '@adhese/sdk-shared';
 import { isDeepEqual } from 'remeda';
 import type { AdheseAd } from '@adhese/sdk';
 import { addTrackingPixel } from '../../impressionTracking/impressionTracking';

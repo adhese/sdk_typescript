@@ -1,5 +1,5 @@
 import type { AdheseAd, AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
-import type { Ref, UnwrapRef } from '@vue/runtime-core';
+import type { Ref, UnwrapRef } from '@adhese/sdk-shared';
 import { createAsyncHook, createPassiveHook } from '../../hooks/createHook';
 
 export function useSlotHooks({ setup }: AdheseSlotOptions, slotContext: Ref<UnwrapRef<AdheseSlot | null>>, id: string): {

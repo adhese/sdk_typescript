@@ -1,4 +1,4 @@
-import { type Ref, ref, watch } from '@vue/runtime-core';
+import { type Ref, ref, watch } from '@adhese/sdk-shared';
 import type { AdheseSlotOptions } from '@adhese/sdk';
 
 export function useRenderIntersectionObserver({ options, element }: {

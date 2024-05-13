@@ -1,6 +1,7 @@
 import { Fragment, type ReactElement, useEffect, useMemo, useState } from 'react';
-import { type AdheseContext, type AdheseSlot, type UnwrapRef, watch } from '@adhese/sdk';
+import type { AdheseContext, AdheseSlot } from '@adhese/sdk';
 import { createPortal } from 'react-dom';
+import { type UnwrapRef, watch } from '@adhese/sdk-shared';
 import { cn } from '../utils';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Badge } from './badge';

@@ -1,4 +1,4 @@
-import { toValue } from '@vue/runtime-core';
+import { toValue } from '@adhese/sdk-shared';
 import { logger } from '../logger/logger';
 import type { AdMultiRequestOptions } from './requestAds';
 

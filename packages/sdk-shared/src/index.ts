@@ -10,3 +10,6 @@ export { uniqueId } from './uniqueId/uniqueId';
 export { setCookie, getCookie, hasCookie, deleteCookie, type CookieOptions } from './cookie/cookie';
 export type { Logger, Log, LogFunction, LoggerOptions } from './createLogger/createLogger';
 export { createLogger } from './createLogger/createLogger';
+
+export type { ComputedRef, Ref, UnwrapRef, UnwrapNestedRefs, ShallowReactive, ShallowRef, ShallowUnwrapRef, MaybeRef } from '@vue/runtime-core';
+export { watch, watchEffect, effectScope, reactive, ref, toValue, toRefs, toRaw, computed, isProxy, isRef, isReactive, isReadonly, readonly, markRaw, shallowReactive, shallowReadonly, shallowRef, unref, customRef, isShallow, watchPostEffect, watchSyncEffect } from '@vue/runtime-core';

@@ -1,4 +1,4 @@
-import { type ComputedRef, type Ref, computed, ref, watch } from '@vue/runtime-core';
+import { type ComputedRef, type Ref, computed, ref, watch } from '@adhese/sdk-shared';
 import { round } from 'remeda';
 import type { AdheseAd, AdheseContext } from '@adhese/sdk';
 import { addTrackingPixel } from '../../impressionTracking/impressionTracking';

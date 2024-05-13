@@ -1,5 +1,4 @@
-import { awaitTimeout, createEventManager } from '@adhese/sdk-shared';
-import { effectScope, reactive, watch } from '@vue/runtime-core';
+import { awaitTimeout, createEventManager, effectScope, reactive, watch } from '@adhese/sdk-shared';
 import { createSafeFrame } from '@safeframe';
 import { version } from '../package.json';
 import { createSlotManager } from './slot/slotManager/slotManager';

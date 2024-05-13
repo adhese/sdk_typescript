@@ -33,7 +33,6 @@
   },
   "dependencies": {
     "@adhese/sdk-shared": "^0.3.0",
-    "@vue/runtime-core": "^3.4.21",
     "remeda": "^1.61.0",
     "zod": "^3.23.6"
   }

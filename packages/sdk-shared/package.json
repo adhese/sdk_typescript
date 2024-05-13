@@ -29,6 +29,7 @@
     "prepareRelease": "npm run build"
   },
   "dependencies": {
+    "@vue/runtime-core": "^3.2.29",
     "nanoid": "^5.0.7"
   }
 }
