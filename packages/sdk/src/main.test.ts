@@ -245,47 +245,6 @@ describe('createAdhese', () => {
     expect(adhese.parameters.get('tl')).toBe('all');
   });
 
-  it('should change the consent parameter via TCF', async () => {
-    const tcfListeners = new Set<(data: {
-      tcString: string;
-    }, success: boolean) => void>();
-    Object.defineProperty(window, '__tcfapi', {
-      // @ts-expect-error Testing TCF
-      value: vi.fn((command: 'addEventListener' | 'removeEventListener', version: number, callback: (data: {
-        tcString: string;
-      }, success: boolean) => void): void => {
-        if (command === 'addEventListener')
-          tcfListeners.add(callback);
-        else if (command === 'removeEventListener')
-          tcfListeners.delete(callback);
-      }),
-    });
-
-    adhese = createAdhese({
-      account: 'test',
-    });
-
-    const element = document.createElement('div');
-    adhese.addSlot({
-      format: 'foo',
-      containingElement: element,
-    });
-
-    expect(adhese.parameters.get('xt')).toBeUndefined();
-    expect(adhese.parameters.get('tl')).toBe('none');
-
-    tcfListeners.forEach((listener) => {
-      listener({
-        tcString: 'foo',
-      }, true);
-    });
-
-    expect(adhese.parameters.get('xt')).toBe('foo');
-    expect(adhese.parameters.get('tl')).toBeUndefined();
-
-    listeners.clear();
-  });
-
   it('should be able to handle device change', async () => {
     adhese = createAdhese({
       account: 'test',

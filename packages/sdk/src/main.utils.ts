@@ -2,6 +2,7 @@ import { logger } from './logger/logger';
 import type { QueryDetector } from './queryDetector/queryDetector';
 
 import type { AdheseContext, AdheseOptions } from './main.types';
+import type { AdheseSlot } from './slot/createSlot/createSlot.types';
 
 /**
  * Creates the parameters map with a set of default parameters.
@@ -49,4 +50,13 @@ export function setupLogging(mergedOptions: AdheseContext['options']): void {
  */
 export function isPreviewMode(): boolean {
   return window.location.search.includes('adhesePreviewCreativeId');
+}
+
+export async function fetchAllUnrenderedSlots(slots: ReadonlyArray<AdheseSlot>): Promise<void> {
+  const filteredSlots = slots.filter(slot => !slot.lazyLoading && !slot.ad);
+
+  if (filteredSlots.length === 0)
+    return;
+
+  await Promise.allSettled(slots.map(slot => slot.request()));
 }
