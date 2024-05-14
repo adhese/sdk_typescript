@@ -2,7 +2,7 @@ import { awaitTimeout, createEventManager, effectScope, reactive, watch } from '
 import { version } from '../package.json';
 import { createSlotManager } from './slot/slotManager/slotManager';
 import { useConsent } from './consent/consent';
-import { createParameters, fetchAllUnrenderedSlots, isPreviewMode, setupLogging } from './main.utils';
+import { fetchAllUnrenderedSlots, isPreviewMode, setupLogging } from './main.utils';
 import type { Adhese, AdheseContextState, AdheseOptions, MergedOptions } from './main.types';
 import { onInit, runOnInit } from './hooks/onInit';
 import { onDispose, runOnDispose } from './hooks/onDispose';
@@ -12,7 +12,7 @@ import { clearAllHooks } from './hooks/createHook';
 import { onResponse } from './hooks/onResponse';
 import { onRequest } from './hooks/onRequest';
 import { onSlotCreate } from './hooks/onSlotCreate';
-import { useMainQueryDetector } from './main.hooks';
+import { useMainDebugMode, useMainParameters, useMainQueryDetector } from './main.hooks';
 
 /**
  * Creates an Adhese instance. This instance is your main entry point to the Adhese API.
@@ -73,23 +73,11 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       });
     }
 
-    context.events = createEventManager();
-
     watch(() => context.location, (newLocation) => {
       context.events?.locationChange.dispatch(newLocation);
     });
 
-    context.parameters = createParameters(mergedOptions);
-
-    watch(
-      () => context.parameters,
-      (newParameters) => {
-        context.events?.parametersChange.dispatch(newParameters);
-      },
-      {
-        deep: true,
-      },
-    );
+    useMainParameters(context, mergedOptions);
 
     const slotManager = createSlotManager({
       initialSlots: mergedOptions.initialSlots,
@@ -123,20 +111,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
     }
     context.findDomSlots = findDomSlots;
 
-    watch(() => context.debug, async (newDebug) => {
-      if (newDebug) {
-        logger.setMinLogLevelThreshold('debug');
-        logger.debug('Debug mode enabled');
-        context.events?.debugChange.dispatch(true);
-      }
-      else {
-        logger.debug('Debug mode disabled');
-        logger.setMinLogLevelThreshold('info');
-        context.events?.debugChange.dispatch(false);
-      }
-    }, {
-      immediate: true,
-    });
+    useMainDebugMode(context);
 
     useMainQueryDetector(mergedOptions, context);
 
@@ -147,9 +122,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
 
       slotManager.dispose();
       context.parameters?.clear();
-      logger.resetLogs();
       context.events?.dispose();
-      logger.info('Adhese instance disposed');
 
       runOnDispose();
 
