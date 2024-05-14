@@ -55,7 +55,8 @@
     "vite": "^5.2.11",
     "vite-plugin-css-injected-by-js": "^3.5.1",
     "vite-plugin-dts": "^3.9.1",
-    "vitest": "^1.2.2"
+    "vitest": "^1.2.2",
+    "vitest-matchmedia-mock": "^1.0.5"
   },
   "config": {
     "commitizen": {

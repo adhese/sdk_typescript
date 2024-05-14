@@ -1,9 +1,8 @@
 import { awaitTimeout, createEventManager, effectScope, reactive, watch } from '@adhese/sdk-shared';
 import { version } from '../package.json';
 import { createSlotManager } from './slot/slotManager/slotManager';
-import { onTcfConsentChange } from './consent/tcfConsent';
-import { createQueryDetector } from './queryDetector/queryDetector';
-import { createParameters, isPreviewMode, setupLogging } from './main.utils';
+import { useConsent } from './consent/consent';
+import { fetchAllUnrenderedSlots, isPreviewMode, setupLogging } from './main.utils';
 import type { Adhese, AdheseContextState, AdheseOptions, MergedOptions } from './main.types';
 import { onInit, runOnInit } from './hooks/onInit';
 import { onDispose, runOnDispose } from './hooks/onDispose';
@@ -13,6 +12,7 @@ import { clearAllHooks } from './hooks/createHook';
 import { onResponse } from './hooks/onResponse';
 import { onRequest } from './hooks/onRequest';
 import { onSlotCreate } from './hooks/onSlotCreate';
+import { useMainDebugMode, useMainParameters, useMainQueryDetector } from './main.hooks';
 
 /**
  * Creates an Adhese instance. This instance is your main entry point to the Adhese API.
@@ -53,6 +53,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       parameters: new Map(),
       events: createEventManager(),
       slots: new Map(),
+      device: 'unknown',
       dispose,
       findDomSlots,
       getAll,
@@ -72,44 +73,11 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       });
     }
 
-    context.events = createEventManager();
-
     watch(() => context.location, (newLocation) => {
       context.events?.locationChange.dispatch(newLocation);
     });
 
-    const queryDetector = createQueryDetector({
-      onChange: onQueryChange,
-      queries: mergedOptions.queries,
-    });
-
-    context.parameters = createParameters(mergedOptions, queryDetector);
-
-    watch(
-      () => context.parameters,
-      (newParameters) => {
-        context.events?.parametersChange.dispatch(newParameters);
-      },
-      {
-        deep: true,
-      },
-    );
-
-    async function onQueryChange(): Promise<void> {
-      const query = queryDetector.getQuery();
-      context.parameters?.set('dt', query);
-      context.parameters?.set('br', query);
-
-      await fetchAllUnrenderedSlots();
-    }
-
-    watch(() => context.consent, (newConsent) => {
-      context.parameters?.set('tl', newConsent ? 'all' : 'none');
-
-      context.events?.consentChange.dispatch(newConsent);
-    }, {
-      immediate: true,
-    });
+    useMainParameters(context, mergedOptions);
 
     const slotManager = createSlotManager({
       initialSlots: mergedOptions.initialSlots,
@@ -137,61 +105,24 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       if (domSlots.length <= 0)
         return [];
 
-      await fetchAllUnrenderedSlots();
+      await fetchAllUnrenderedSlots(context.getAll());
 
       return domSlots;
     }
     context.findDomSlots = findDomSlots;
 
-    watch(() => context.debug, async (newDebug) => {
-      if (newDebug) {
-        logger.setMinLogLevelThreshold('debug');
-        logger.debug('Debug mode enabled');
-        context.events?.debugChange.dispatch(true);
-      }
-      else {
-        logger.debug('Debug mode disabled');
-        logger.setMinLogLevelThreshold('info');
-        context.events?.debugChange.dispatch(false);
-      }
-    }, {
-      immediate: true,
-    });
+    useMainDebugMode(context);
 
-    async function fetchAllUnrenderedSlots(): Promise<void> {
-      const slots = (slotManager.getAll() ?? []).filter(slot => !slot.lazyLoading && !slot.ad);
+    useMainQueryDetector(mergedOptions, context);
 
-      if (slots.length === 0)
-        return;
-
-      await Promise.allSettled(slots.map(slot => slot.request()));
-    }
-
-    const disposeOnTcfConsentChange = onTcfConsentChange(async (data) => {
-      if (!data.tcString)
-        return;
-
-      logger.debug('TCF v2 consent data received', {
-        data,
-      });
-
-      context.parameters?.set('xt', data.tcString);
-      context.parameters?.delete('tl');
-
-      await fetchAllUnrenderedSlots();
-    });
+    useConsent(context);
 
     function dispose(): void {
       context.isDisposed = true;
 
-      queryDetector.dispose();
       slotManager.dispose();
-      queryDetector.dispose();
-      disposeOnTcfConsentChange();
       context.parameters?.clear();
-      logger.resetLogs();
       context.events?.dispose();
-      logger.info('Adhese instance disposed');
 
       runOnDispose();
 
@@ -205,7 +136,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       await awaitTimeout(0);
 
       if ((slotManager.getAll().length ?? 0) > 0)
-        await fetchAllUnrenderedSlots().catch(logger.error);
+        await fetchAllUnrenderedSlots(context.getAll()).catch(logger.error);
 
       if (mergedOptions.findDomSlotsOnLoad)
         await context?.findDomSlots();

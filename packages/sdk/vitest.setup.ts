@@ -1,5 +1,7 @@
 import { afterAll, afterEach, beforeAll, beforeEach, vi } from 'vitest';
 import { mockServer } from 'server-mocking';
+// eslint-disable-next-line ts/naming-convention
+import MatchMediaMock from 'vitest-matchmedia-mock';
 
 beforeAll(() => {
   mockServer.listen();
@@ -28,4 +30,18 @@ afterEach(() => {
 });
 afterAll(() => {
   mockServer.close();
+});
+
+const mediaQueryMock = new MatchMediaMock();
+
+beforeEach(() => {
+  mediaQueryMock.useMediaQuery('(max-width: 1025px)');
+});
+
+afterEach(() => {
+  mediaQueryMock.clear();
+});
+
+afterAll(() => {
+  mediaQueryMock.destroy();
 });

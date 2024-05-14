@@ -1,34 +1,7 @@
 import { logger } from './logger/logger';
-import type { QueryDetector } from './queryDetector/queryDetector';
 
-import type { AdheseContext, AdheseOptions } from './main.types';
-
-/**
- * Creates the parameters map with a set of default parameters.
- */
-export function createParameters(
-  options: Pick<AdheseOptions, 'parameters' | 'consent' | 'logUrl' | 'logReferrer'>,
-  queryDetector: QueryDetector,
-): Map<string, string | ReadonlyArray<string>> {
-  const parameters = new Map<string, string | ReadonlyArray<string>>();
-
-  if (options.logReferrer)
-    parameters.set('re', btoa(document.referrer));
-
-  if (options.logUrl)
-    parameters.set('ur', btoa(window.location.href));
-
-  for (const [key, value] of Object.entries({
-    ...options.parameters ?? {},
-    tl: options.consent ? 'all' : 'none',
-    dt: queryDetector.getQuery(),
-    br: queryDetector.getQuery(),
-    rn: Math.round(Math.random() * 10_000).toString(),
-  }))
-    parameters.set(key, value);
-
-  return parameters;
-}
+import type { AdheseContext } from './main.types';
+import type { AdheseSlot } from './slot/createSlot/createSlot.types';
 
 /**
  * Sets up logging based on the provided options. If debug is enabled, the log level threshold is set to debug.
@@ -49,4 +22,13 @@ export function setupLogging(mergedOptions: AdheseContext['options']): void {
  */
 export function isPreviewMode(): boolean {
   return window.location.search.includes('adhesePreviewCreativeId');
+}
+
+export async function fetchAllUnrenderedSlots(slots: ReadonlyArray<AdheseSlot>): Promise<void> {
+  const filteredSlots = slots.filter(slot => !slot.lazyLoading && !slot.ad);
+
+  if (filteredSlots.length === 0)
+    return;
+
+  await Promise.allSettled(filteredSlots.map(slot => slot.request()));
 }

@@ -1,7 +1,8 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-
+import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { awaitTimeout } from '@adhese/sdk-shared';
 import type { AdheseAd, AdheseContext } from '@adhese/sdk';
+// eslint-disable-next-line ts/naming-convention
+import MatchMediaMock from 'vitest-matchmedia-mock';
 import { testContext } from '../../testUtils';
 import { runOnInit } from '../../hooks/onInit';
 import { createSlot } from './createSlot';
@@ -14,36 +15,12 @@ vi.mock('../logger/logger', () => ({
 }));
 
 describe('slot', () => {
-  const mediaListeners = new Map<string, Set<() => void>>();
-  let validQuery = '(max-width: 767px)';
-
-  beforeAll(() => {
-    Object.defineProperty(window, 'matchMedia', {
-      value: vi.fn((
-        query: string,
-      ) => ({
-        media: query,
-        onchange: null,
-        dispatchEvent: null,
-        matches: query === validQuery,
-        addEventListener: vi.fn((type: string, listener: () => void) => {
-          if (mediaListeners.has(type))
-            mediaListeners.get(type)?.add(listener);
-          else
-            mediaListeners.set(type, new Set([listener]));
-        }),
-        removeEventListener: vi.fn(
-          (type: string, listener: () => void) => {
-            mediaListeners.get(type)?.delete(listener);
-          },
-        ),
-      })),
-    });
-  });
+  const mediaQueryMock = new MatchMediaMock();
 
   let context: AdheseContext;
 
   beforeEach(() => {
+    mediaQueryMock.useMediaQuery('(min-width: 1025px) and (pointer: fine)');
     context = {
       ...testContext,
       options: {
@@ -56,10 +33,14 @@ describe('slot', () => {
   });
 
   afterEach(() => {
-    mediaListeners.clear();
+    mediaQueryMock.clear();
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
     document.body.innerHTML = '';
+  });
+
+  afterAll(() => {
+    mediaQueryMock.destroy();
   });
 
   it('should create a slot', async () => {
@@ -360,6 +341,8 @@ describe('slot', () => {
   it('should be able to accept format with different media queries', async () => {
     const element = document.createElement('div');
 
+    mediaQueryMock.useMediaQuery('(max-width: 767px)');
+
     const slot = createSlot({
       format: [
         {
@@ -377,10 +360,8 @@ describe('slot', () => {
 
     expect(slot.format).toBe('skyscraper');
 
-    validQuery = '(min-width: 768px)';
-
-    for (const listener of mediaListeners.get('change') ?? [])
-      listener();
+    mediaQueryMock.clear();
+    mediaQueryMock.useMediaQuery('(min-width: 768px)');
 
     await awaitTimeout(70);
 
