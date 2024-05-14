@@ -1,5 +1,7 @@
-import { type MockInstance, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { type MockInstance, afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { awaitTimeout, waitForDomLoad } from '@adhese/sdk-shared';
+// eslint-disable-next-line ts/naming-convention
+import MatchMediaMock from 'vitest-matchmedia-mock';
 import { createAdhese } from './main';
 import { logger } from './logger/logger';
 import type { Adhese } from './main.types';
@@ -22,38 +24,13 @@ vi.mock('./logger/logger', async (importOriginal) => {
 });
 
 describe('createAdhese', () => {
-  const listeners = new Map<string, Set<() => void>>();
-  let validQuery = '(max-width: 768px) and (pointer: coarse)';
+  const mediaQueryMock = new MatchMediaMock();
 
   let adhese: Adhese | undefined;
-
-  beforeAll(() => {
-    Object.defineProperty(window, 'matchMedia', {
-      value: vi.fn((
-        query: string,
-      ) => ({
-        media: query,
-        onchange: null,
-        dispatchEvent: null,
-        matches: query === validQuery,
-        addEventListener: vi.fn((type: string, listener: () => void) => {
-          if (listeners.has(type))
-            listeners.get(type)?.add(listener);
-          else
-            listeners.set(type, new Set([listener]));
-        }),
-        removeEventListener: vi.fn(
-          (type: string, listener: () => void) => {
-            listeners.get(type)?.delete(listener);
-          },
-        ),
-      })),
-    });
-  });
-
   let debugLoggerSpy: MockInstance<[msg: string, ...args: Array<any>], void>;
 
   beforeEach(() => {
+    mediaQueryMock.useMediaQuery('(max-width: 768px)');
     debugLoggerSpy = vi.spyOn(logger, 'debug');
 
     adhese?.dispose();
@@ -64,11 +41,14 @@ describe('createAdhese', () => {
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
     document.body.innerHTML = '';
-    listeners.clear();
-    validQuery = '(max-width: 768px) and (pointer: coarse)';
+    mediaQueryMock.clear();
 
     adhese?.dispose();
     adhese = undefined;
+  });
+
+  afterAll(() => {
+    mediaQueryMock.destroy();
   });
 
   it('should create an adhese instance', () => {
@@ -260,10 +240,7 @@ describe('createAdhese', () => {
     expect(adhese.parameters.get('dt')).toBe('mobile');
     expect(adhese.parameters.get('br')).toBe('mobile');
 
-    validQuery = '(min-width: 769px) and (max-width: 1024px) and (pointer: coarse)';
-
-    for (const listener of listeners.get('change') ?? [])
-      listener();
+    mediaQueryMock.useMediaQuery('(min-width: 769px) and (max-width: 1024px)');
 
     await awaitTimeout(70);
 

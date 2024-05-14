@@ -202,6 +202,10 @@ type BaseAdhese = {
    */
   isDisposed: boolean;
   /**
+   * Active media query device
+   */
+  device: string;
+  /**
    * Get a slot by name.
    * @param name The name of the slot.
    */
@@ -226,7 +230,7 @@ type BaseAdhese = {
   dispose(): void;
 };
 
-type ReadonlyProps = 'options' | 'isDisposed' | 'logger' | 'events' | 'get' | 'getAll' | 'addSlot' | 'findDomSlots' | 'dispose' | 'slots';
+type ReadonlyProps = 'options' | 'isDisposed' | 'logger' | 'events' | 'get' | 'getAll' | 'addSlot' | 'findDomSlots' | 'dispose' | 'slots' | 'device';
 export type Adhese = Omit<BaseAdhese, ReadonlyProps> & Readonly<Pick<BaseAdhese, ReadonlyProps>>;
 
 export type AdheseContextState = Omit<BaseAdhese, 'options'> & {

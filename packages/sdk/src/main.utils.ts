@@ -1,5 +1,4 @@
 import { logger } from './logger/logger';
-import type { QueryDetector } from './queryDetector/queryDetector';
 
 import type { AdheseContext, AdheseOptions } from './main.types';
 import type { AdheseSlot } from './slot/createSlot/createSlot.types';
@@ -9,7 +8,6 @@ import type { AdheseSlot } from './slot/createSlot/createSlot.types';
  */
 export function createParameters(
   options: Pick<AdheseOptions, 'parameters' | 'consent' | 'logUrl' | 'logReferrer'>,
-  queryDetector: QueryDetector,
 ): Map<string, string | ReadonlyArray<string>> {
   const parameters = new Map<string, string | ReadonlyArray<string>>();
 
@@ -22,8 +20,6 @@ export function createParameters(
   for (const [key, value] of Object.entries({
     ...options.parameters ?? {},
     tl: options.consent ? 'all' : 'none',
-    dt: queryDetector.getQuery(),
-    br: queryDetector.getQuery(),
     rn: Math.round(Math.random() * 10_000).toString(),
   }))
     parameters.set(key, value);
@@ -58,5 +54,5 @@ export async function fetchAllUnrenderedSlots(slots: ReadonlyArray<AdheseSlot>):
   if (filteredSlots.length === 0)
     return;
 
-  await Promise.allSettled(slots.map(slot => slot.request()));
+  await Promise.allSettled(filteredSlots.map(slot => slot.request()));
 }

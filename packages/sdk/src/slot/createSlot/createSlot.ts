@@ -2,7 +2,7 @@ import { type Ref, type UnwrapRef, computed, effectScope, reactive, ref, uniqueI
 import { doNothing, isDeepEqual } from 'remeda';
 import type { AdheseAd } from '@adhese/sdk';
 import { addTrackingPixel } from '../../impressionTracking/impressionTracking';
-import { type QueryDetector, createQueryDetector } from '../../queryDetector/queryDetector';
+import { useQueryDetector } from '../../queryDetector/queryDetector';
 import { onInit, waitOnInit } from '../../hooks/onInit';
 import { requestAd as extRequestAd } from '../../requestAds/requestAds';
 import { runOnSlotCreate } from '../../hooks/onSlotCreate';
@@ -49,19 +49,14 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       renderMode,
     } = mergedOptions;
     const parameters = reactive(new Map(Object.entries(options.parameters ?? {})));
-    let queryDetector: QueryDetector | null = null;
 
-    if (typeof options.format !== 'string') {
-      queryDetector = createQueryDetector({
-        onChange: onQueryChange,
-        queries: Object.fromEntries(options.format.map(item => [item.format, item.query])),
-      });
-    }
+    const [device, disposeQueryDetector] = useQueryDetector(typeof options.format === 'string'
+      ? {
+          [options.format]: '(min-width: 0px)',
+        }
+      : Object.fromEntries(options.format.map(item => [item.format, item.query])));
 
-    const format = ref(queryDetector ? queryDetector.getQuery() : options.format as string);
-    function onQueryChange(newFormat: string): void {
-      format.value = newFormat;
-    }
+    const format = computed(() => typeof options.format === 'string' ? options.format : device.value);
 
     const ad = ref<AdheseAd | null>(null);
     const originalAd = ref(ad.value);
@@ -71,7 +66,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       if (newName === oldName)
         return;
 
-      const newAd = await requestAd();
+      const newAd = await request();
 
       cleanElement();
 
@@ -124,7 +119,10 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     const impressionTrackingPixelElement = ref<HTMLImageElement | null>(null);
     const isImpressionTracked = computed(() => Boolean(impressionTrackingPixelElement.value));
 
-    async function requestAd(): Promise<AdheseAd | null> {
+    async function request(): Promise<AdheseAd | null> {
+      if (options.lazyLoading && !isInViewport.value)
+        return null;
+
       status.value = 'loading';
 
       await runOnRequest();
@@ -137,14 +135,15 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         context,
       });
 
-      if (response) {
-        ad.value = response;
+      ad.value = response;
 
-        if (!originalAd.value)
-          originalAd.value = response;
+      if (!originalAd.value)
+        originalAd.value = response;
 
-        status.value = response ? 'loaded' : 'empty';
-      }
+      status.value = response ? 'loaded' : 'empty';
+
+      if (!response)
+        cleanElement();
 
       return response;
     }
@@ -155,11 +154,12 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       await waitForDomLoad();
       await waitOnInit;
 
-      let renderAd = adToRender ?? ad.value ?? originalAd.value ?? await requestAd();
+      let renderAd = adToRender ?? ad.value ?? originalAd.value ?? await request();
 
       if (!renderAd) {
         status.value = 'empty';
         logger.debug(`No ad to render for slot ${name.value}`);
+
         return null;
       }
 
@@ -209,6 +209,9 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       element.value.style.position = '';
       element.value.style.width = '';
       element.value.style.height = '';
+
+      ad.value = null;
+      originalAd.value = null;
     }
 
     function dispose(): void {
@@ -220,10 +223,9 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
       disposeRenderIntersectionObserver();
       disposeViewabilityObserver();
+      disposeQueryDetector();
 
       options.onDispose?.();
-
-      queryDetector?.dispose();
 
       runOnDispose();
 
@@ -238,7 +240,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       if (options.lazyLoading)
         return;
 
-      ad.value = await requestAd();
+      ad.value = await request();
     });
 
     const state = reactive({
@@ -256,7 +258,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       isDisposed,
       id,
       render,
-      request: requestAd,
+      request,
       dispose,
     });
 

@@ -1,78 +1,49 @@
 import { debounce } from 'remeda';
-import { logger } from '../logger/logger';
-
-export type DeviceDetectorOptions = {
-  queries?: Record<string, string>;
-  onChange?(device: string): void | Promise<void>;
-};
-
-export type QueryDetector = {
-  /**
-   * Map of passed media queries
-   */
-  queries: Map<string, MediaQueryList>;
-  /**
-   * Get the current active query
-   */
-  getQuery(): string;
-  /**
-   * Clean up all event listeners. After this the instance will no longer react to changes
-   */
-  dispose(): void;
-};
+import { type ComputedRef, computed, ref } from '@adhese/sdk-shared';
+import { onInit } from '../hooks/onInit';
+import { onDispose } from '../hooks/onDispose';
 
 /**
  * Create a query detector that will match a list of media queries and keeps track of the current matching query
- *
- * @param options
- * @param options.onChange - Callback to fire when the device changes
- * @param options.queries Map of devices, and it's media query to match
  */
-export function createQueryDetector(
-  {
-    onChange,
-    queries = {
-      mobile: '(max-width: 768px) and (pointer: coarse)',
-      tablet: '(min-width: 769px) and (max-width: 1024px) and (pointer: coarse)',
-      desktop: '(min-width: 1025px) and (pointer: fine)',
-    },
-  }: DeviceDetectorOptions = {},
-): QueryDetector {
-  const mediaMap = new Map(
-    Object.entries(queries).map(([key, query]) => [key, window.matchMedia(query)]),
-  );
+export function useQueryDetector(queries: Record<string, string> = {
+  mobile: '(max-width: 768px)',
+  tablet: '(min-width: 769px) and (max-width: 1024px)',
+  desktop: '(min-width: 1025px)',
+}): [ComputedRef<string>, () => void] {
+  const entries = Object.entries(queries);
 
-  function getQuery(): string {
-    for (const [device, query] of Object.entries(queries)) {
-      if (window.matchMedia(query).matches)
-        return device;
-    }
-
-    return 'unknown';
-  }
+  const active = ref(getQuery(entries));
+  const queryList = entries.map(([, query]) => window.matchMedia(query));
 
   const handleOnChange = debounce((): void => {
-    // eslint-disable-next-line no-void
-    void onChange?.(getQuery());
-
-    logger.debug(`Change device ${getQuery()}`);
+    active.value = getQuery(entries);
   }, {
     waitMs: 50,
   });
 
-  if (onChange) {
-    for (const query of mediaMap.values())
+  onInit(() => {
+    for (const query of queryList)
       query.addEventListener('change', handleOnChange.call);
-  }
+
+    handleOnChange.call();
+  });
 
   function dispose(): void {
-    for (const query of mediaMap.values())
+    for (const query of queryList)
       query.removeEventListener('change', handleOnChange.call);
   }
 
-  return {
-    queries: mediaMap,
-    getQuery,
-    dispose,
-  };
+  onDispose(dispose);
+
+  return [computed(() => active.value), dispose];
+}
+
+function getQuery(entries: ReadonlyArray<[string, string]>): string {
+  for (const [device, query] of entries) {
+    if (window.matchMedia(query).matches)
+      return device;
+  }
+
+  return 'unknown';
 }

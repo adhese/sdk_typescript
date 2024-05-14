@@ -2,7 +2,6 @@ import { awaitTimeout, createEventManager, effectScope, reactive, watch } from '
 import { version } from '../package.json';
 import { createSlotManager } from './slot/slotManager/slotManager';
 import { useConsent } from './consent/consent';
-import { createQueryDetector } from './queryDetector/queryDetector';
 import { createParameters, fetchAllUnrenderedSlots, isPreviewMode, setupLogging } from './main.utils';
 import type { Adhese, AdheseContextState, AdheseOptions, MergedOptions } from './main.types';
 import { onInit, runOnInit } from './hooks/onInit';
@@ -13,6 +12,7 @@ import { clearAllHooks } from './hooks/createHook';
 import { onResponse } from './hooks/onResponse';
 import { onRequest } from './hooks/onRequest';
 import { onSlotCreate } from './hooks/onSlotCreate';
+import { useMainQueryDetector } from './main.hooks';
 
 /**
  * Creates an Adhese instance. This instance is your main entry point to the Adhese API.
@@ -53,6 +53,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       parameters: new Map(),
       events: createEventManager(),
       slots: new Map(),
+      device: 'unknown',
       dispose,
       findDomSlots,
       getAll,
@@ -78,12 +79,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       context.events?.locationChange.dispatch(newLocation);
     });
 
-    const queryDetector = createQueryDetector({
-      onChange: onQueryChange,
-      queries: mergedOptions.queries,
-    });
-
-    context.parameters = createParameters(mergedOptions, queryDetector);
+    context.parameters = createParameters(mergedOptions);
 
     watch(
       () => context.parameters,
@@ -94,14 +90,6 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
         deep: true,
       },
     );
-
-    async function onQueryChange(): Promise<void> {
-      const query = queryDetector.getQuery();
-      context.parameters?.set('dt', query);
-      context.parameters?.set('br', query);
-
-      await fetchAllUnrenderedSlots(context.getAll());
-    }
 
     const slotManager = createSlotManager({
       initialSlots: mergedOptions.initialSlots,
@@ -150,14 +138,14 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       immediate: true,
     });
 
+    useMainQueryDetector(mergedOptions, context);
+
     useConsent(context);
 
     function dispose(): void {
       context.isDisposed = true;
 
-      queryDetector.dispose();
       slotManager.dispose();
-      queryDetector.dispose();
       context.parameters?.clear();
       logger.resetLogs();
       context.events?.dispose();
