@@ -11,11 +11,11 @@ import {
 } from '@adhese/sdk-shared';
 import type { AdheseContext, AdheseSlot } from '@adhese/sdk';
 import { isDeepEqual, round } from 'remeda';
-import { onInit } from '../../hooks/onInit';
-import { createAsyncHook, createPassiveHook } from '../../hooks/createHook';
-import { useQueryDetector } from '../../queryDetector/queryDetector';
-import type { BaseSlot, BaseSlotOptions, BaseSlotOptionsWithSetup, SlotHooks } from '../slot.types';
-import { generateName } from './createSlot.utils';
+import { onInit } from '../hooks/onInit';
+import { createAsyncHook, createPassiveHook } from '../hooks/createHook';
+import { useQueryDetector } from '../queryDetector/queryDetector';
+import type { BaseSlot, BaseSlotOptions, BaseSlotOptionsWithSetup, SlotHooks } from './slot.types';
+import { generateName } from './slot.utils';
 
 export function useDomLoaded(): Readonly<Ref<boolean>> {
   const isDomLoaded = ref(false);

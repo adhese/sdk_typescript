@@ -1,7 +1,8 @@
 import { logger } from './logger/logger';
 
 import type { AdheseContext } from './main.types';
-import type { AdheseSlot } from './slot/createSlot/createSlot.types';
+
+import type { AdheseSlot } from './slot/singleSlot';
 
 /**
  * Sets up logging based on the provided options. If debug is enabled, the log level threshold is set to debug.

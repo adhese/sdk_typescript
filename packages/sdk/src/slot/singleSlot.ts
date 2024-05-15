@@ -1,30 +1,23 @@
-import {
-  computed,
-  effectScope,
-  reactive,
-  ref,
-  waitForDomLoad,
-  watch,
-} from '@adhese/sdk-shared';
+import { computed, effectScope, reactive, ref, waitForDomLoad, watch } from '@adhese/sdk-shared';
 import { doNothing } from 'remeda';
-import type { AdheseAd, AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
-import { addTrackingPixel } from '../../impressionTracking/impressionTracking';
-import { onInit, waitOnInit } from '../../hooks/onInit';
-import { requestAd as extRequestAd } from '../../requestAds/requestAds';
-import { runOnSlotCreate } from '../../hooks/onSlotCreate';
-import { logger } from '../../logger/logger';
-import type { BaseSlot, BaseSlotOptionsWithSetup, RenderMode } from '../slot.types';
-import { renderIframe, renderInline } from './createSlot.utils';
-import {
-  useBaseSlot,
-  useViewabilityObserver,
-} from './createSlot.hooks';
+import type { AdheseAd } from '@adhese/sdk';
+import { addTrackingPixel } from '../impressionTracking/impressionTracking';
+import { onInit, waitOnInit } from '../hooks/onInit';
+import { requestAd as extRequestAd } from '../requestAds/requestAds';
+import { runOnSlotCreate } from '../hooks/onSlotCreate';
+import { logger } from '../logger/logger';
+import type { BaseSlot, BaseSlotOptionsWithSetup, RenderMode } from './slot.types';
+import { renderIframe, renderInline } from './slot.utils';
+import { useBaseSlot, useViewabilityObserver } from './slot.composables';
 
 const renderFunctions: Record<RenderMode, (ad: AdheseAd, element: HTMLElement) => void> = {
   iframe: renderIframe,
   inline: renderInline,
   none: doNothing,
 };
+
+export type AdheseSlotOptions = BaseSlotOptionsWithSetup<AdheseSlot, AdheseAd>;
+export type AdheseSlot = BaseSlot<AdheseAd>;
 
 /**
  * Create a new slot instance. This slot instance can be used to request and render ads.

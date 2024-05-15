@@ -3,9 +3,9 @@ import { awaitTimeout } from '@adhese/sdk-shared';
 import type { AdheseContext } from '@adhese/sdk';
 // eslint-disable-next-line ts/naming-convention
 import MatchMediaMock from 'vitest-matchmedia-mock';
-import { testContext } from '../../testUtils';
-import { runOnInit } from '../../hooks/onInit';
-import { createSlot } from './createSlot';
+import { testContext } from '../testUtils';
+import { runOnInit } from '../hooks/onInit';
+import { createSlot } from './singleSlot';
 
 vi.mock('../logger/logger', () => ({
   logger: {
