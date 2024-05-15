@@ -14,43 +14,46 @@ const adhese = createAdhese({
       format: 'halfwidthsmallresponsive',
       containingElement: 'halfwidthsmallresponsive',
       renderMode: 'inline',
-      onBeforeRender(ad: AdheseAd<{
-        type: string;
-        native: {
-          ver: string;
-          assets: ReadonlyArray<{
-            id: number;
-            title?: {
-              text: string;
-            };
-            data?: {
-              type: number;
-              value: string;
-            };
-            img?: {
-              url: string;
-              w: string;
-              h: string;
+      setup(_, { onBeforeRender }): void {
+        onBeforeRender((data) => {
+          const ad = data as AdheseAd<{
+            type: string;
+            native: {
+              ver: string;
+              assets: ReadonlyArray<{
+                id: number;
+                title?: {
+                  text: string;
+                };
+                data?: {
+                  type: number;
+                  value: string;
+                };
+                img?: {
+                  url: string;
+                  w: string;
+                  h: string;
+                };
+              }>;
+              link: {
+                url: string;
+                fallback: string;
+              };
             };
           }>;
-          link: {
-            url: string;
-            fallback: string;
-          };
-        };
-      }>): AdheseAd<string> {
-        if (typeof ad.tag === 'string')
-          return ad as AdheseAd<string>;
 
-        const heading = ad.tag.native.assets.find(asset => asset.id === 1)?.title?.text;
-        const image = ad.tag.native.assets.find(asset => asset.id === 3)?.img;
-        const backgroundColor = ad.tag.native.assets.find(asset => asset.id === 6)?.data?.value;
-        const link = ad.tag.native.link.url;
-        const linkText = ad.tag.native.assets.find(asset => asset.id === 2)?.data?.value;
+          if (typeof ad.tag === 'string')
+            return ad as AdheseAd<string>;
 
-        return {
-          ...ad,
-          tag: `
+          const heading = ad.tag.native.assets.find(asset => asset.id === 1)?.title?.text;
+          const image = ad.tag.native.assets.find(asset => asset.id === 3)?.img;
+          const backgroundColor = ad.tag.native.assets.find(asset => asset.id === 6)?.data?.value;
+          const link = ad.tag.native.link.url;
+          const linkText = ad.tag.native.assets.find(asset => asset.id === 2)?.data?.value;
+
+          return {
+            ...ad,
+            tag: `
             <a href="${link}" style="
               background-image: url(${image?.url});
               height: ${image?.h}px;
@@ -71,7 +74,8 @@ const adhese = createAdhese({
                 <p>${linkText}</p>
               </div>
             </a>`,
-        };
+          };
+        });
       },
     },
   ],

@@ -1,9 +1,13 @@
 import type { Merge, Ref } from '@adhese/sdk-shared';
-import type { AdheseAd, AdheseContext } from '@adhese/sdk';
+import type { AdheseContext } from '@adhese/sdk';
 import type { createAsyncHook, createPassiveHook } from '../hooks/createHook';
 
 export type RenderMode = 'iframe' | 'inline' | 'none';
 export type SlotHooks<T> = {
+  /**
+   * Hook that is called when the format of the slot changes.
+   */
+  onBeforeRender: ReturnType<typeof createAsyncHook<T>>[1];
   /**
    * Hook that is called when the slot is rendered.
    */
@@ -53,11 +57,6 @@ export type BaseSlotOptions = {
    * @default 'iframe'
    */
   renderMode?: RenderMode;
-  /**
-   * Callback that is called before the ad is rendered. This can be used to modify the ad before it is rendered.
-   * Particularly useful for rendering ads with custom HTML if the ad tag contains a JSON object.
-   */
-  onBeforeRender?(ad: AdheseAd): AdheseAd | void;
 } & ({
   /**
    * If the slot should be lazy loaded. This means that the ad will only be requested when the slot is in the viewport.

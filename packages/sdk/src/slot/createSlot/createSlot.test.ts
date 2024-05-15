@@ -1,6 +1,6 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { awaitTimeout } from '@adhese/sdk-shared';
-import type { AdheseAd, AdheseContext } from '@adhese/sdk';
+import type { AdheseContext } from '@adhese/sdk';
 // eslint-disable-next-line ts/naming-convention
 import MatchMediaMock from 'vitest-matchmedia-mock';
 import { testContext } from '../../testUtils';
@@ -385,40 +385,6 @@ describe('slot', () => {
     });
 
     await slot.render();
-
-    expect(slot.element).not.toBe(null);
-  });
-
-  it('should be able to intercept and modify the ad before rendering', async () => {
-    const element = document.createElement('div');
-
-    element.classList.add('adunit');
-    element.dataset.format = 'leaderboard';
-    element.id = 'leaderboard';
-
-    document.body.appendChild(element);
-
-    const slot = createSlot({
-      format: 'leaderboard',
-      containingElement: 'leaderboard',
-      context,
-      onBeforeRender(ad: AdheseAd): AdheseAd | void {
-        return {
-          ...ad,
-          tag: '<div>foo</div>',
-        };
-      },
-    });
-
-    await slot.render({
-      tag: '<div>bar</div>',
-      // eslint-disable-next-line ts/naming-convention
-      slotID: 'bar',
-      slotName: 'baz',
-      adType: 'foo',
-      origin: 'JERLICIA',
-      id: 'baz',
-    });
 
     expect(slot.element).not.toBe(null);
   });

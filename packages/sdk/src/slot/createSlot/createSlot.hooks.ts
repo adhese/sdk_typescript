@@ -146,27 +146,31 @@ export function useViewabilityObserver<
 }
 
 export function useSlotHooks<T extends BaseSlot<U>, U>({ setup }: BaseSlotOptionsWithSetup<T, U>, slotContext: Ref<T | null>, id: string): {
+  runOnBeforeRender: ReturnType<typeof createAsyncHook<U>>[0];
   runOnSlotRender: ReturnType<typeof createAsyncHook<U>>[0];
   runOnRequest: ReturnType<typeof createAsyncHook<void>>[0];
   runOnDispose: ReturnType<typeof createPassiveHook<void>>[0];
 } & SlotHooks<U> {
+  const [runOnBeforeRender, onBeforeRender, disposeOnBeforeRender] = createAsyncHook<U>(`onBeforeRender:${id}`);
   const [runOnSlotRender, onRender, disposeOnRender] = createAsyncHook<U>(`onRender:${id}`);
   const [runOnRequest, onRequest, disposeOnRequest] = createAsyncHook(`onRequest:${id}`);
   const [runOnDispose, onDispose, disposeOnDispose] = createPassiveHook(`onDispose:${id}`);
 
   setup?.(slotContext, {
+    onBeforeRender,
     onRender,
     onDispose,
     onRequest,
   });
 
   onDispose(() => {
+    disposeOnBeforeRender();
     disposeOnRender();
     disposeOnRequest();
     disposeOnDispose();
   });
 
-  return { runOnSlotRender, runOnRequest, runOnDispose, onDispose, onRequest, onRender };
+  return { runOnBeforeRender, runOnSlotRender, runOnRequest, runOnDispose, onDispose, onRequest, onBeforeRender, onRender };
 }
 
 export function useBaseSlot<

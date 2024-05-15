@@ -56,6 +56,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       runOnSlotRender,
       runOnDispose,
       runOnRequest,
+      runOnBeforeRender,
       id,
       isDisposed,
       data,
@@ -126,7 +127,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         return null;
       }
 
-      renderAd = options.onBeforeRender?.(renderAd) ?? renderAd;
+      renderAd = await runOnBeforeRender(renderAd) ?? renderAd;
 
       renderAd = await runOnSlotRender(renderAd);
 
