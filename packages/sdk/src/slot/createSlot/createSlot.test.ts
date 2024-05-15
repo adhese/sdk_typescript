@@ -293,7 +293,7 @@ describe('slot', () => {
       id: 'baz',
     };
 
-    expect(observe).toBeCalledTimes(2);
+    expect(observe).toBeCalledTimes(1);
     expect(intersectionObserverMock).toBeCalledTimes(2);
 
     if (intersectionCallbacks.length > 0 && intersectionObserver) {

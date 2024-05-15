@@ -1,6 +1,6 @@
-import type { AdheseSlotOptions } from '@adhese/sdk';
+import type { BaseSlot, BaseSlotOptionsWithSetup } from '../slot/slot.types';
 import { createSyncHook } from './createHook';
 
-const [runOnSlotCreate, onSlotCreate] = createSyncHook<AdheseSlotOptions>('onSlotCreate');
+const [runOnSlotCreate, onSlotCreate] = createSyncHook<BaseSlotOptionsWithSetup<BaseSlot>>('onSlotCreate');
 
 export { runOnSlotCreate, onSlotCreate };

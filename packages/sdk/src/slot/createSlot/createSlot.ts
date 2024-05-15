@@ -1,17 +1,24 @@
-import { type Ref, type UnwrapRef, computed, effectScope, reactive, ref, uniqueId, waitForDomLoad, watch } from '@adhese/sdk-shared';
+import {
+  computed,
+  effectScope,
+  reactive,
+  ref,
+  waitForDomLoad,
+  watch,
+} from '@adhese/sdk-shared';
 import { doNothing, isDeepEqual } from 'remeda';
-import type { AdheseAd } from '@adhese/sdk';
+import type { AdheseAd, AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
 import { addTrackingPixel } from '../../impressionTracking/impressionTracking';
-import { useQueryDetector } from '../../queryDetector/queryDetector';
 import { onInit, waitOnInit } from '../../hooks/onInit';
 import { requestAd as extRequestAd } from '../../requestAds/requestAds';
 import { runOnSlotCreate } from '../../hooks/onSlotCreate';
 import { logger } from '../../logger/logger';
-import type { AdheseSlot, AdheseSlotOptions, RenderMode } from './createSlot.types';
-import { generateName, renderIframe, renderInline } from './createSlot.utils';
-import { useViewabilityObserver } from './useViewabilityObserver';
-import { useRenderIntersectionObserver } from './useRenderIntersectionObserver';
-import { useSlotHooks } from './useSlotHooks';
+import type { BaseSlot, BaseSlotOptionsWithSetup, RenderMode } from '../slot.types';
+import { renderIframe, renderInline } from './createSlot.utils';
+import {
+  useBaseSlot,
+  useViewabilityObserver,
+} from './createSlot.hooks';
 
 const renderFunctions: Record<RenderMode, (ad: AdheseAd, element: HTMLElement) => void> = {
   iframe: renderIframe,
@@ -29,39 +36,37 @@ const renderFunctions: Record<RenderMode, (ad: AdheseAd, element: HTMLElement) =
 export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
   const scope = effectScope();
 
-  const mergedOptions = {
-    renderMode: 'iframe',
-    ...slotOptions,
-  } satisfies AdheseSlotOptions;
-
   return scope.run(() => {
     const slotContext = ref<AdheseSlot | null>(null);
-    const options = runOnSlotCreate(mergedOptions);
-
-    const id = uniqueId();
-
-    const { runOnSlotRender, runOnDispose, runOnRequest } = useSlotHooks(options, slotContext, id);
+    const options = runOnSlotCreate(slotOptions as BaseSlotOptionsWithSetup<BaseSlot>);
 
     const {
       containingElement,
       slot,
       context,
-      renderMode,
-    } = mergedOptions;
-    const parameters = reactive(new Map(Object.entries(options.parameters ?? {})));
-
-    const [device, disposeQueryDetector] = useQueryDetector(typeof options.format === 'string'
-      ? {
-          [options.format]: '(min-width: 0px)',
-        }
-      : Object.fromEntries(options.format.map(item => [item.format, item.query])));
-
-    const format = computed(() => typeof options.format === 'string' ? options.format : device.value);
+      renderMode = 'iframe',
+    } = options;
+    const {
+      name,
+      format,
+      element,
+      parameters,
+      isInViewport,
+      status,
+      runOnSlotRender,
+      runOnDispose,
+      runOnRequest,
+      id,
+      isDisposed,
+      ...hooks
+    } = useBaseSlot<AdheseSlot, AdheseAd>({
+      options,
+      slotContext,
+    });
 
     const ad = ref<AdheseAd | null>(null);
     const originalAd = ref(ad.value);
 
-    const name = computed(() => generateName(context.location, format.value, slot));
     watch(name, async (newName, oldName) => {
       if (newName === oldName)
         return;
@@ -74,26 +79,6 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       originalAd.value = newAd;
     });
 
-    const isDomLoaded = useDomLoaded();
-
-    const isDisposed = ref(false);
-    const element = computed(() => {
-      if (!(typeof containingElement === 'string' || !containingElement))
-        return containingElement;
-
-      if (!isDomLoaded.value || isDisposed.value)
-        return null;
-
-      return document.querySelector<HTMLElement>(`.adunit[data-format="${format.value}"]#${containingElement}${slot ? `[data-slot="${slot}"]` : ''}`);
-    },
-    );
-
-    const [isInViewport, disposeRenderIntersectionObserver] = useRenderIntersectionObserver({
-      options,
-      element,
-    });
-
-    const status = ref<UnwrapRef<AdheseSlot>['status']>('initializing');
     watch([ad, isInViewport], async ([newAd, newIsInViewport], [oldAd]) => {
       if ((!newAd || (oldAd && isDeepEqual(newAd, oldAd))) && status.value === 'rendered')
         return;
@@ -102,18 +87,17 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         await render(newAd ?? undefined);
     });
 
-    watch(isInViewport, (value) => {
-      options.onViewabilityChanged?.(value);
-    });
-
-    const [
-      isViewabilityTracked,
-      disposeViewabilityObserver,
-    ] = useViewabilityObserver({
+    const isViewabilityTracked = useViewabilityObserver({
       context,
-      ad,
-      name,
-      element,
+      slotContext,
+      hooks,
+      onTracked(trackingPixel) {
+        if (slotContext.value?.ad?.viewableImpressionCounter) {
+          trackingPixel.value = addTrackingPixel(slotContext.value?.ad?.viewableImpressionCounter);
+
+          context.logger.debug(`Viewability tracking pixel fired for ${slotContext.value?.name}`);
+        }
+      },
     });
 
     const impressionTrackingPixelElement = ref<HTMLImageElement | null>(null);
@@ -221,12 +205,6 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
       ad.value = null;
 
-      disposeRenderIntersectionObserver();
-      disposeViewabilityObserver();
-      disposeQueryDetector();
-
-      options.onDispose?.();
-
       runOnDispose();
 
       isDisposed.value = true;
@@ -260,6 +238,8 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       render,
       request,
       dispose,
+      cleanElement,
+      ...hooks,
     });
 
     watch(state, (newState) => {
@@ -271,15 +251,4 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
     return state;
   })!;
-}
-
-function useDomLoaded(): Readonly<Ref<boolean>> {
-  const isDomLoaded = ref(false);
-
-  onInit(async () => {
-    await waitForDomLoad();
-
-    isDomLoaded.value = true;
-  });
-  return isDomLoaded;
 }
