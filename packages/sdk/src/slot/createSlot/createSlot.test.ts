@@ -98,7 +98,7 @@ describe('slot', () => {
       origin: 'JERLICIA',
     });
     expect(slot.element).not.toBe(null);
-    expect(slot.ad).toBeDefined();
+    expect(slot.data).toBeDefined();
   });
 
   it('should create a slot with parameters', async () => {
@@ -281,7 +281,7 @@ describe('slot', () => {
       lazyLoading: true,
     });
 
-    slot.ad = {
+    slot.data = {
       tag: '<div>foo</div>',
       // eslint-disable-next-line ts/naming-convention
       slotID: 'bar',

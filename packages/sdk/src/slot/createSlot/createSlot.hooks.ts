@@ -10,7 +10,7 @@ import {
   watch,
 } from '@adhese/sdk-shared';
 import type { AdheseContext, AdheseSlot } from '@adhese/sdk';
-import { round } from 'remeda';
+import { isDeepEqual, round } from 'remeda';
 import { onInit } from '../../hooks/onInit';
 import { createAsyncHook, createPassiveHook } from '../../hooks/createHook';
 import { useQueryDetector } from '../../queryDetector/queryDetector';
@@ -145,12 +145,12 @@ export function useViewabilityObserver<
   return isTracked;
 }
 
-export function useSlotHooks<Slot extends BaseSlot<Ad>, Ad>({ setup }: BaseSlotOptionsWithSetup<Slot, Ad>, slotContext: Ref<Slot | null>, id: string): {
-  runOnSlotRender: ReturnType<typeof createAsyncHook<Ad>>[0];
+export function useSlotHooks<T extends BaseSlot<U>, U>({ setup }: BaseSlotOptionsWithSetup<T, U>, slotContext: Ref<T | null>, id: string): {
+  runOnSlotRender: ReturnType<typeof createAsyncHook<U>>[0];
   runOnRequest: ReturnType<typeof createAsyncHook<void>>[0];
   runOnDispose: ReturnType<typeof createPassiveHook<void>>[0];
-} & SlotHooks<Ad> {
-  const [runOnSlotRender, onRender, disposeOnRender] = createAsyncHook<Ad>(`onRender:${id}`);
+} & SlotHooks<U> {
+  const [runOnSlotRender, onRender, disposeOnRender] = createAsyncHook<U>(`onRender:${id}`);
   const [runOnRequest, onRequest, disposeOnRequest] = createAsyncHook(`onRequest:${id}`);
   const [runOnDispose, onDispose, disposeOnDispose] = createPassiveHook(`onDispose:${id}`);
 
@@ -170,15 +170,15 @@ export function useSlotHooks<Slot extends BaseSlot<Ad>, Ad>({ setup }: BaseSlotO
 }
 
 export function useBaseSlot<
-  Slot extends BaseSlot<Ad>,
-  Ad,
+  T extends BaseSlot<U>,
+  U,
 >(
   {
     options,
     slotContext,
   }: {
     options: BaseSlotOptions;
-    slotContext: Ref<Slot | null>;
+    slotContext: Ref<T | null>;
   },
 ): {
   name: ComputedRef<string>;
@@ -186,12 +186,14 @@ export function useBaseSlot<
   element: ComputedRef<HTMLElement | null>;
   parameters: Map<string, ReadonlyArray<string> | string>;
   isInViewport: Ref<boolean>;
-  status: Ref<UnwrapRef<Slot>['status']>;
+  status: Ref<UnwrapRef<T>['status']>;
   id: string;
   isDisposed: Ref<boolean>;
-} & ReturnType<typeof useSlotHooks<Slot, Ad>> {
+  data: Ref<U | null>;
+  originalData: Ref<U | null>;
+} & ReturnType<typeof useSlotHooks<T, U>> {
   const id = uniqueId();
-  const hooks = useSlotHooks<Slot, Ad>(options, slotContext, id);
+  const hooks = useSlotHooks<T, U>(options, slotContext, id);
 
   const isDisposed = ref(false);
   const parameters = reactive(new Map(Object.entries(options.parameters ?? {})));
@@ -203,7 +205,25 @@ export function useBaseSlot<
     : Object.fromEntries(options.format.map(item => [item.format, item.query])));
 
   const format = computed(() => typeof options.format === 'string' ? options.format : device.value);
+
+  const data = ref<T | null>(null) as Ref<U | null>;
+  const originalData = ref(data.value) as Ref<U | null>;
   const name = computed(() => generateName(options.context.location, format.value, options.slot));
+
+  watch(name, async (newName, oldName) => {
+    if (newName === oldName)
+      return;
+
+    const newAd = await slotContext.value?.request();
+
+    if (!newAd)
+      return;
+
+    slotContext.value?.cleanElement();
+
+    data.value = newAd;
+    originalData.value = newAd;
+  });
 
   const isDomLoaded = useDomLoaded();
 
@@ -226,13 +246,16 @@ export function useBaseSlot<
 
   const status = ref<UnwrapRef<AdheseSlot>['status']>('initializing');
 
-  watch(isInViewport, (value) => {
-    options.onViewabilityChanged?.(value);
+  watch([data, isInViewport], async ([newData, newIsInViewport], [oldData]) => {
+    if ((!newData || (oldData && isDeepEqual(newData, oldData))) && status.value === 'rendered')
+      return;
+
+    if (newIsInViewport)
+      await slotContext.value?.render(newData ?? undefined);
   });
 
   hooks.onDispose(() => {
     disposeQueryDetector();
-    options.onDispose?.();
   });
 
   return {
@@ -245,5 +268,7 @@ export function useBaseSlot<
     isInViewport,
     status,
     isDisposed,
+    data,
+    originalData,
   };
 }

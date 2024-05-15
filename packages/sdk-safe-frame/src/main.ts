@@ -37,9 +37,9 @@ export const safeFramePlugin: AdhesePlugin = (context, {
       setup(slotContext, slotPlugin): void {
         slot.setup?.(slotContext, slotPlugin);
 
-        slotPlugin.onRender(async (ad) => {
-          if (safeFrame.value && slotContext.value?.element) {
-            const position = safeFrame.value.addPosition(ad, slotContext.value.element);
+        slotPlugin.onRender(async (data) => {
+          if (safeFrame.value && slotContext.value?.element && slotContext.value.type === 'single') {
+            const position = safeFrame.value.addPosition(data as AdheseAd, slotContext.value.element);
 
             await safeFrame.value.render(position);
 

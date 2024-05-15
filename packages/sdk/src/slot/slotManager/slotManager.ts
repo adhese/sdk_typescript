@@ -55,22 +55,24 @@ export function createSlotManager({
   function add(options: Omit<AdheseSlotOptions, 'context' | 'onDispose'>): Readonly<AdheseSlot> {
     const slot = createSlot({
       ...options as AdheseSlotOptions,
-      onDispose,
       context,
+      setup(slotContext, slotPlugin) {
+        options.setup?.(slotContext, slotPlugin);
+
+        slotPlugin.onDispose(() => {
+          context.slots.delete(slot.id);
+          logger.debug('Slot removed', {
+            slot,
+          });
+          context.events?.removeSlot.dispatch(slot);
+        });
+      },
     });
 
     if (get(slot.name)) {
       slot.dispose();
 
       throw new Error(`Slot with the name: ${slot.name} already exists. Create a new slot with a different format, slot, or the location.`);
-    }
-
-    function onDispose(): void {
-      context.slots.delete(slot.id);
-      logger.debug('Slot removed', {
-        slot,
-      });
-      context.events?.removeSlot.dispatch(slot);
     }
 
     context.slots.set(slot.id, slot);

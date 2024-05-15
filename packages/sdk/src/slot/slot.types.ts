@@ -54,27 +54,10 @@ export type BaseSlotOptions = {
    */
   renderMode?: RenderMode;
   /**
-   * Callback that is called when the slot is disposed.
-   */
-  onDispose?(): void;
-  /**
-   * Callback that is called when the slot is rendered.
-   */
-  onRender?(element: HTMLElement): void;
-  /**
    * Callback that is called before the ad is rendered. This can be used to modify the ad before it is rendered.
    * Particularly useful for rendering ads with custom HTML if the ad tag contains a JSON object.
    */
   onBeforeRender?(ad: AdheseAd): AdheseAd | void;
-  /**
-   * Callback that is called when the viewability of the slot changes.
-   */
-  onViewabilityChanged?(isViewable: boolean): void;
-  /**
-   * Callback that is called when the request for the slot returns an empty response. This can happen for multiple
-   * reasons, for example when the slot is not sold to a buyer.
-   */
-  onEmpty?(): void;
 } & ({
   /**
    * If the slot should be lazy loaded. This means that the ad will only be requested when the slot is in the viewport.
@@ -101,7 +84,11 @@ export type BaseSlotOptionsWithSetup<T extends BaseSlot<U>, U = unknown> = BaseS
 };
 
 export type BaseSlot<T = unknown> = Merge<Omit<BaseSlotOptions, 'onDispose' | 'context' | 'onFormatChange' | 'format'>, SlotHooks<T> & {
-
+  /**
+   * The type of the slot. This is useful if you want to differentiate between different types of slots which can have
+   * different behavior and data types.
+   */
+  readonly type: string;
   /**
    * The name of the slot. This is used to identify the slot in the Adhese instance.
    *
@@ -159,9 +146,13 @@ export type BaseSlot<T = unknown> = Merge<Omit<BaseSlotOptions, 'onDispose' | 'c
    */
   readonly id: string;
   /**
-   * Renders the slot in the containing element. If no ad is provided, a new ad will be requested from the API.
+   * Slot related data fetched from the API.
    */
-  render(ad?: T): Promise<HTMLElement | null>;
+  data: T | null;
+  /**
+   * Renders the slot in the containing element. If no data is provided, new data will be requested from the API.
+   */
+  render(data?: T): Promise<HTMLElement | null>;
   /**
    * Requests a new ad from the API and returns the ad object.
    */

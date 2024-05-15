@@ -6,7 +6,7 @@ import {
   waitForDomLoad,
   watch,
 } from '@adhese/sdk-shared';
-import { doNothing, isDeepEqual } from 'remeda';
+import { doNothing } from 'remeda';
 import type { AdheseAd, AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
 import { addTrackingPixel } from '../../impressionTracking/impressionTracking';
 import { onInit, waitOnInit } from '../../hooks/onInit';
@@ -58,42 +58,21 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       runOnRequest,
       id,
       isDisposed,
+      data,
+      originalData,
       ...hooks
     } = useBaseSlot<AdheseSlot, AdheseAd>({
       options,
       slotContext,
     });
 
-    const ad = ref<AdheseAd | null>(null);
-    const originalAd = ref(ad.value);
-
-    watch(name, async (newName, oldName) => {
-      if (newName === oldName)
-        return;
-
-      const newAd = await request();
-
-      cleanElement();
-
-      ad.value = newAd;
-      originalAd.value = newAd;
-    });
-
-    watch([ad, isInViewport], async ([newAd, newIsInViewport], [oldAd]) => {
-      if ((!newAd || (oldAd && isDeepEqual(newAd, oldAd))) && status.value === 'rendered')
-        return;
-
-      if (newIsInViewport)
-        await render(newAd ?? undefined);
-    });
-
-    const isViewabilityTracked = useViewabilityObserver({
+    const isViewabilityTracked = useViewabilityObserver<AdheseSlot, AdheseAd>({
       context,
       slotContext,
       hooks,
       onTracked(trackingPixel) {
-        if (slotContext.value?.ad?.viewableImpressionCounter) {
-          trackingPixel.value = addTrackingPixel(slotContext.value?.ad?.viewableImpressionCounter);
+        if (slotContext.value?.data?.viewableImpressionCounter) {
+          trackingPixel.value = addTrackingPixel(slotContext.value?.data?.viewableImpressionCounter);
 
           context.logger.debug(`Viewability tracking pixel fired for ${slotContext.value?.name}`);
         }
@@ -119,10 +98,10 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         context,
       });
 
-      ad.value = response;
+      data.value = response;
 
-      if (!originalAd.value)
-        originalAd.value = response;
+      if (!originalData.value)
+        originalData.value = response;
 
       status.value = response ? 'loaded' : 'empty';
 
@@ -138,7 +117,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       await waitForDomLoad();
       await waitOnInit;
 
-      let renderAd = adToRender ?? ad.value ?? originalAd.value ?? await request();
+      let renderAd = adToRender ?? data.value ?? originalData.value ?? await request();
 
       if (!renderAd) {
         status.value = 'empty';
@@ -175,10 +154,8 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         containingElement,
       });
 
-      options.onRender?.(element.value);
-
       // eslint-disable-next-line require-atomic-updates
-      ad.value = renderAd;
+      data.value = renderAd;
 
       status.value = 'rendered';
 
@@ -194,8 +171,8 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       element.value.style.width = '';
       element.value.style.height = '';
 
-      ad.value = null;
-      originalAd.value = null;
+      data.value = null;
+      originalData.value = null;
     }
 
     function dispose(): void {
@@ -203,7 +180,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
       impressionTrackingPixelElement.value?.remove();
 
-      ad.value = null;
+      data.value = null;
 
       runOnDispose();
 
@@ -218,17 +195,18 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       if (options.lazyLoading)
         return;
 
-      ad.value = await request();
+      data.value = await request();
     });
 
     const state = reactive({
+      type: 'single' as const,
       location: context.location ?? '',
       lazyLoading: options.lazyLoading ?? false,
       slot,
       parameters,
       format,
       name,
-      ad,
+      data,
       isViewabilityTracked,
       isImpressionTracked,
       status,

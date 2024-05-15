@@ -25,7 +25,7 @@ export function isPreviewMode(): boolean {
 }
 
 export async function fetchAllUnrenderedSlots(slots: ReadonlyArray<AdheseSlot>): Promise<void> {
-  const filteredSlots = slots.filter(slot => !slot.lazyLoading && !slot.ad);
+  const filteredSlots = slots.filter(slot => !slot.lazyLoading && !slot.data);
 
   if (filteredSlots.length === 0)
     return;
