@@ -147,12 +147,12 @@ export function useViewabilityObserver<
 
 export function useSlotHooks<T extends BaseSlot<U>, U>({ setup }: BaseSlotOptionsWithSetup<T, U>, slotContext: Ref<T | null>, id: string): {
   runOnBeforeRender: ReturnType<typeof createAsyncHook<U>>[0];
-  runOnSlotRender: ReturnType<typeof createAsyncHook<U>>[0];
+  runOnRender: ReturnType<typeof createAsyncHook<U>>[0];
   runOnRequest: ReturnType<typeof createAsyncHook<void>>[0];
   runOnDispose: ReturnType<typeof createPassiveHook<void>>[0];
 } & SlotHooks<U> {
   const [runOnBeforeRender, onBeforeRender, disposeOnBeforeRender] = createAsyncHook<U>(`onBeforeRender:${id}`);
-  const [runOnSlotRender, onRender, disposeOnRender] = createAsyncHook<U>(`onRender:${id}`);
+  const [runOnRender, onRender, disposeOnRender] = createAsyncHook<U>(`onRender:${id}`);
   const [runOnRequest, onRequest, disposeOnRequest] = createAsyncHook(`onRequest:${id}`);
   const [runOnDispose, onDispose, disposeOnDispose] = createPassiveHook(`onDispose:${id}`);
 
@@ -170,7 +170,7 @@ export function useSlotHooks<T extends BaseSlot<U>, U>({ setup }: BaseSlotOption
     disposeOnDispose();
   });
 
-  return { runOnBeforeRender, runOnSlotRender, runOnRequest, runOnDispose, onDispose, onRequest, onBeforeRender, onRender };
+  return { runOnBeforeRender, runOnRender, runOnRequest, runOnDispose, onDispose, onRequest, onBeforeRender, onRender };
 }
 
 export function useBaseSlot<
@@ -260,6 +260,15 @@ export function useBaseSlot<
 
   hooks.onDispose(() => {
     disposeQueryDetector();
+  });
+
+  onInit(async () => {
+    status.value = 'initialized';
+
+    if (options.lazyLoading)
+      return;
+
+    data.value = await slotContext.value?.request() ?? null;
   });
 
   return {

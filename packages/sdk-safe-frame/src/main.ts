@@ -6,7 +6,6 @@ export type SafeFrame = {
   config: Config;
   addPosition(positions: AdheseAd, element: HTMLElement): Position;
   render(position: Position): Promise<void>;
-  dispose(): void;
 };
 
 export type SafeFrameOptions = {
@@ -34,10 +33,10 @@ export const safeFramePlugin: AdhesePlugin = (context, {
     return ({
       ...slot,
       renderMode: 'none',
-      setup(slotContext, slotPlugin): void {
-        slot.setup?.(slotContext, slotPlugin);
+      setup(slotContext, slotHooks): void {
+        slot.setup?.(slotContext, slotHooks);
 
-        slotPlugin.onRender(async (data) => {
+        slotHooks.onRender(async (data) => {
           if (safeFrame.value && slotContext.value?.element && slotContext.value.type === 'single') {
             const position = safeFrame.value.addPosition(data as AdheseAd, slotContext.value.element);
 
@@ -107,13 +106,9 @@ function createSafeFrame({
     safeFrame.host.render(position);
   }
 
-  function dispose(): void {
-  }
-
   return {
     config,
     addPosition,
     render,
-    dispose,
   };
 }

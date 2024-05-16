@@ -79,7 +79,7 @@ export type BaseSlotOptionsWithSetup<T extends BaseSlot<U>, U = unknown> = BaseS
    * Special callback that is run when the slot is initialized. It passes the slot context ref object and a special
    * plugin object that contains a set of hooks you can use to hook into different moments of the slots lifecycle.
    */
-  setup?(context: Ref<T | null>, plugin: SlotHooks<U>): void;
+  setup?(context: Ref<T | null>, hooks: SlotHooks<U>): void;
 };
 
 export type BaseSlot<T = unknown> = Merge<Omit<BaseSlotOptions, 'onDispose' | 'context' | 'onFormatChange' | 'format'>, SlotHooks<T> & {

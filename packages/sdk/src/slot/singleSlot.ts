@@ -2,7 +2,7 @@ import { computed, effectScope, reactive, ref, waitForDomLoad, watch } from '@ad
 import { doNothing } from 'remeda';
 import type { AdheseAd } from '@adhese/sdk';
 import { addTrackingPixel } from '../impressionTracking/impressionTracking';
-import { onInit, waitOnInit } from '../hooks/onInit';
+import { waitOnInit } from '../hooks/onInit';
 import { requestAd as extRequestAd } from '../requestAds/requestAds';
 import { runOnSlotCreate } from '../hooks/onSlotCreate';
 import { logger } from '../logger/logger';
@@ -46,7 +46,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       parameters,
       isInViewport,
       status,
-      runOnSlotRender,
+      runOnRender,
       runOnDispose,
       runOnRequest,
       runOnBeforeRender,
@@ -113,6 +113,8 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
       let renderAd = adToRender ?? data.value ?? originalData.value ?? await request();
 
+      renderAd = renderAd && await runOnBeforeRender(renderAd);
+
       if (!renderAd) {
         status.value = 'empty';
         logger.debug(`No ad to render for slot ${name.value}`);
@@ -120,9 +122,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         return null;
       }
 
-      renderAd = await runOnBeforeRender(renderAd) ?? renderAd;
-
-      renderAd = await runOnSlotRender(renderAd);
+      renderAd = await runOnRender(renderAd);
 
       if (!element.value) {
         const error = `Could not create slot for format ${format.value}. No element found.`;
@@ -182,15 +182,6 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
       scope.stop();
     }
-
-    onInit(async () => {
-      status.value = 'initialized';
-
-      if (options.lazyLoading)
-        return;
-
-      data.value = await request();
-    });
 
     const state = reactive({
       type: 'single' as const,

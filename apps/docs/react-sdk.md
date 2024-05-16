@@ -111,21 +111,23 @@ function YourComponent() {
 
   const slot = useAdheseSlot(elementRef, {
     format: 'your-format',
-    onBeforeRender: (ad) => {
-      if (typeof ad.tag !== 'object') {
-        // If the tag is not an object, return the ad as is
-        return ad;
-      }
+    setup(_, { onBeforeRender }) {
+      onBeforeRender((ad) => {
+        if (typeof ad.tag !== 'object') {
+          // If the tag is not an object, return the ad as is
+          return ad;
+        }
 
-      return {
-        ...ad,
-        tag: renderToStaticMarkup((
-          <div>
-            <h1>{ad.tag.title}</h1>
-            <p>{ad.tag.description}</p>
-          </div>
-        )),
-      }
+        return {
+          ...ad,
+          tag: renderToStaticMarkup((
+            <div>
+              <h1>{ad.tag.title}</h1>
+              <p>{ad.tag.description}</p>
+            </div>
+          )),
+        }
+      })
     },
   });
 

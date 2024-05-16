@@ -55,10 +55,10 @@ export function createSlotManager({
     const slot = createSlot({
       ...options as AdheseSlotOptions,
       context,
-      setup(slotContext, slotPlugin) {
-        options.setup?.(slotContext, slotPlugin);
+      setup(slotContext, slotHooks) {
+        options.setup?.(slotContext, slotHooks);
 
-        slotPlugin.onDispose(() => {
+        slotHooks.onDispose(() => {
           context.slots.delete(slot.id);
           logger.debug('Slot removed', {
             slot,
