@@ -1,5 +1,16 @@
 # @adhese/sdk-shared
 
+## 0.6.0
+
+### Minor Changes
+
+- 2c01e34: Replace nanoid with own code
+- ef68972: Move hook create functions to @adhese/sdk-shared
+
+### Patch Changes
+
+- ad9b38f: Fix types not being declared for other exports
+
 ## 0.5.1
 
 ### Patch Changes

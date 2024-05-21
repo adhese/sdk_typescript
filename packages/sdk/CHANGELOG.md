@@ -1,5 +1,19 @@
 # @adhese/sdk
 
+## 0.17.0
+
+### Minor Changes
+
+- ef68972: Add hooks to context instead of global variable which could break when adhese was disposed
+- ef68972: Move hook create functions to @adhese/sdk-shared
+
+### Patch Changes
+
+- Updated dependencies [2c01e34]
+- Updated dependencies [ad9b38f]
+- Updated dependencies [ef68972]
+  - @adhese/sdk-shared@0.6.0
+
 ## 0.16.2
 
 ### Patch Changes
