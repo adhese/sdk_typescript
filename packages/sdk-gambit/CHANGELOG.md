@@ -1,5 +1,11 @@
 # @adhese/sdk-gambit
 
+## 0.2.10
+
+### Patch Changes
+
+- ff477f5: Remove @adhese/sdk-shared from @adhese/sdk-gambit package
+
 ## 0.2.9
 
 ### Patch Changes

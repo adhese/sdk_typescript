@@ -1,5 +1,20 @@
 # @adhese/sdk
 
+## 0.16.0
+
+### Minor Changes
+
+- 4cb01f8: Move all slot callbacks to the setup function
+- 4cb01f8: Expose cleanElement function to slot
+- dfe44af: Add device field to Adhese instance that shows the current active device that is selected in by the query detector
+- 4cb01f8: Add onBeforeRequest hook to slots
+- 4cb01f8: Rename ad property to data to allow more generic data in slots
+
+### Patch Changes
+
+- Updated dependencies [4cb01f8]
+  - @adhese/sdk-shared@0.5.0
+
 ## 0.15.0
 
 ### Minor Changes

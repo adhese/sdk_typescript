@@ -1,5 +1,16 @@
 # @adhese/sdk-devtools
 
+## 0.11.0
+
+### Minor Changes
+
+- 254aeb3: Sort slots in devtools by the order they appear on the page
+
+### Patch Changes
+
+- Updated dependencies [4cb01f8]
+  - @adhese/sdk-shared@0.5.0
+
 ## 0.10.0
 
 ### Minor Changes

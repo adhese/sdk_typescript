@@ -1,5 +1,11 @@
 # @adhese/sdk-shared
 
+## 0.5.0
+
+### Minor Changes
+
+- 4cb01f8: Reexport extra useful types from @vue/runtime-core
+
 ## 0.4.0
 
 ### Minor Changes
