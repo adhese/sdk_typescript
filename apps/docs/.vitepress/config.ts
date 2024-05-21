@@ -24,6 +24,7 @@ export default async (data: {
         { text: 'Consent', link: '/consent' },
         { text: 'Safe Frame', link: '/safe-frame' },
         { text: 'Devtools', link: '/devtools' },
+        { text: 'Stack Slots', link: '/stack-slots' },
         { text: 'React SDK', link: '/react-sdk' },
         {
           text: 'Contributing',

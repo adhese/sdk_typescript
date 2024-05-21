@@ -1,12 +1,12 @@
-import { ref, uniqueId } from '@adhese/sdk-shared';
+import { createLogger, ref, uniqueId, watch } from '@adhese/sdk-shared';
 import type { AdheseAd, AdheseContext, AdhesePlugin } from '@adhese/sdk';
+import { name, version } from '../package.json';
 import type { Config, Position, SafeFrameImplementation } from './main.types';
 
 export type SafeFrame = {
   config: Config;
   addPosition(positions: AdheseAd, element: HTMLElement): Position;
   render(position: Position): Promise<void>;
-  dispose(): void;
 };
 
 export type SafeFrameOptions = {
@@ -17,7 +17,23 @@ export type SafeFrameOptions = {
 export const safeFramePlugin: AdhesePlugin = (context, {
   onInit,
   onSlotCreate,
+  onDispose,
 }) => {
+  const logger = createLogger({
+    scope: `${name}@${version}`,
+  });
+
+  watch(() => context.debug, (debug) => {
+    if (debug)
+      logger.setMinLogLevelThreshold('debug');
+    else
+      logger.setMinLogLevelThreshold('info');
+  }, { immediate: true });
+
+  onDispose(() => {
+    logger.resetLogs();
+  });
+
   const safeFrame = ref<SafeFrame | null>(null);
 
   onInit(() => {
@@ -34,16 +50,16 @@ export const safeFramePlugin: AdhesePlugin = (context, {
     return ({
       ...slot,
       renderMode: 'none',
-      setup(slotContext, slotPlugin): void {
-        slot.setup?.(slotContext, slotPlugin);
+      setup(slotContext, slotHooks): void {
+        slot.setup?.(slotContext, slotHooks);
 
-        slotPlugin.onRender(async (ad) => {
+        slotHooks.onRender(async (data) => {
           if (safeFrame.value && slotContext.value?.element) {
-            const position = safeFrame.value.addPosition(ad, slotContext.value.element);
+            const position = safeFrame.value.addPosition(data, slotContext.value.element);
 
             await safeFrame.value.render(position);
 
-            context.logger.debug('Rendered slot using safe frame', slotContext);
+            logger.debug('Rendered slot using safe frame', slotContext);
           }
         });
       },
@@ -107,13 +123,9 @@ function createSafeFrame({
     safeFrame.host.render(position);
   }
 
-  function dispose(): void {
-  }
-
   return {
     config,
     addPosition,
     render,
-    dispose,
   };
 }

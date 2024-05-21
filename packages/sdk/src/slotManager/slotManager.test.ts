@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { AdheseContext, AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
-import { testContext } from '../../testUtils';
+import { testContext } from '../testUtils';
 import { createSlotManager } from './slotManager';
 
 describe('slotManager', () => {

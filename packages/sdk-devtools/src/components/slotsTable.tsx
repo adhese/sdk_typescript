@@ -56,17 +56,17 @@ export function SlotsTable({ adheseContext }: {
   }), [slots]);
 
   const slotParametersExist = useMemo(() => formattedSlots.some(formattedSlot => formattedSlot.parameters.length > 0), [formattedSlots]);
-  const previewExist = useMemo(() => formattedSlots.some(formattedSlot => formattedSlot.ad?.preview), [formattedSlots]);
+  const previewExist = useMemo(() => formattedSlots.some(formattedSlot => formattedSlot.data?.preview), [formattedSlots]);
   const slotCodeExists = useMemo(() => formattedSlots.some(formattedSlot => formattedSlot.slot), [formattedSlots]);
 
   const origins: ReadonlyArray<string> = useMemo(() => {
     const set = new Set<string>();
 
     for (const slot of formattedSlots) {
-      const { ad } = slot;
+      const { data } = slot;
 
-      if (ad)
-        set.add(ad.origin);
+      if (data)
+        set.add(data.origin);
     }
 
     return Array.from(set);
@@ -101,7 +101,7 @@ export function SlotsTable({ adheseContext }: {
           </TableHeader>
           <TableBody>
             {formattedSlots.map(({
-              ad,
+              data,
               name,
               format,
               location,
@@ -133,18 +133,18 @@ export function SlotsTable({ adheseContext }: {
                   <TableCell>{location}</TableCell>
                   {slotCodeExists && <TableCell>{slot ?? ''}</TableCell>}
                   <TableCell>
-                    {!ad?.adFormat || ad?.adFormat === format
+                    {!data?.adFormat || data?.adFormat === format
                       ? format
                       : (
                         <>
                           <del className="text-red-300 italic">{format}</del>
-                          <ins className="no-underline text-green-700">{ad?.adFormat}</ins>
+                          <ins className="no-underline text-green-700">{data?.adFormat}</ins>
                         </>
                         )}
                   </TableCell>
                   {origins.length > 1 && (
                     <TableCell>
-                      {ad?.origin && <Badge className={cn(slotIndexBadgeClasses[origins.indexOf(ad.origin) % slotIndexBadgeClasses.length], 'text-white')}>{ad.origin.toLowerCase()}</Badge>}
+                      {data?.origin && <Badge className={cn(slotIndexBadgeClasses[origins.indexOf(data.origin) % slotIndexBadgeClasses.length], 'text-white')}>{data.origin.toLowerCase()}</Badge>}
                     </TableCell>
                   )}
                   <TableCell>
@@ -153,10 +153,10 @@ export function SlotsTable({ adheseContext }: {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {ad?.orderId && ad?.orderId !== '0'
+                    {data?.orderId && data?.orderId !== '0'
                       ? (
                         <a
-                          href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/editCampaign/${ad.orderId}`}
+                          href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/editCampaign/${data.orderId}`}
                           target="_blank"
                           referrerPolicy="no-referrer"
                           className={cn(buttonVariants({
@@ -164,16 +164,16 @@ export function SlotsTable({ adheseContext }: {
                             size: 'sm',
                           }))}
                         >
-                          {ad.orderId}
+                          {data.orderId}
                         </a>
                         )
                       : '-'}
                   </TableCell>
                   <TableCell>
-                    {ad?.adspaceId && ad?.adspaceId !== '0'
+                    {data?.adspaceId && data?.adspaceId !== '0'
                       ? (
                         <a
-                          href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/bookingDetail/${ad.adspaceId}/${ad.orderId}`}
+                          href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/bookingDetail/${data.adspaceId}/${data.orderId}`}
                           target="_blank"
                           referrerPolicy="no-referrer"
                           className={cn(buttonVariants({
@@ -181,16 +181,16 @@ export function SlotsTable({ adheseContext }: {
                             size: 'sm',
                           }))}
                         >
-                          {ad.adspaceId}
+                          {data.adspaceId}
                         </a>
                         )
                       : '-'}
                   </TableCell>
                   <TableCell>
-                    {ad?.libId && ad?.orderId !== '0'
+                    {data?.libId && data?.orderId !== '0'
                       ? (
                         <a
-                          href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/creativeDetail/${ad.libId}/${ad.orderId}`}
+                          href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/creativeDetail/${data.libId}/${data.orderId}`}
                           target="_blank"
                           referrerPolicy="no-referrer"
                           className={cn(buttonVariants({
@@ -198,13 +198,13 @@ export function SlotsTable({ adheseContext }: {
                             size: 'sm',
                           }))}
                         >
-                          {ad.libId}
+                          {data.libId}
                         </a>
                         )
                       : '-'}
                   </TableCell>
-                  <TableCell>{ad?.id ?? '-'}</TableCell>
-                  <TableCell>{ad?.ext ? <Badge variant="outline">{ad.ext}</Badge> : '-'}</TableCell>
+                  <TableCell>{data?.id ?? '-'}</TableCell>
+                  <TableCell>{data?.ext ? <Badge variant="outline">{data.ext}</Badge> : '-'}</TableCell>
                   <TableCell>
                     {isImpressionTracked
                       ? <Badge className="bg-green-100 text-green-900 hover:bg-green-100">Yes</Badge>
@@ -275,7 +275,7 @@ export function SlotsTable({ adheseContext }: {
                   }
                   {previewExist && (
                     <TableCell>
-                      {ad?.preview
+                      {data?.preview
                       && (
                         <Badge className="bg-amber-400 text-amber-950 hover:bg-amber-400">
                           PREVIEW
@@ -290,7 +290,7 @@ export function SlotsTable({ adheseContext }: {
                       {name}
                     </Badge>
                     {
-                      ad?.preview && <Badge className="bg-amber-400 text-amber-950 hover:bg-amber-400">PREVIEW</Badge>
+                      data?.preview && <Badge className="bg-amber-400 text-amber-950 hover:bg-amber-400">PREVIEW</Badge>
                     }
                   </div>,
                   element,

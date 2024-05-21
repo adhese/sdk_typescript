@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import { flat } from 'remeda';
-import { dependencies, peerDependencies } from './package.json';
+import { dependencies, name, peerDependencies } from './package.json';
 
 export default defineConfig({
   build: {
@@ -8,7 +8,7 @@ export default defineConfig({
     minify: false,
     lib: {
       entry: 'src/index.ts',
-      name: '@adhese/sdk-shared',
+      name,
       formats: ['es', 'cjs'],
       fileName: format => `index.${format === 'cjs' ? 'cjs' : 'js'}`,
     },
@@ -21,14 +21,6 @@ export default defineConfig({
       output: {
         inlineDynamicImports: false,
       },
-    },
-  },
-  test: {
-    environment: 'jsdom',
-    coverage: {
-      provider: 'v8',
-      include: ['src/**/*.ts'],
-      exclude: ['src/types/*.ts'],
     },
   },
 });

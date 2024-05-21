@@ -1,7 +1,7 @@
 import { logger } from './logger/logger';
 
 import type { AdheseContext } from './main.types';
-import type { AdheseSlot } from './slot/createSlot/createSlot.types';
+import type { AdheseSlot } from './slot/slot.types';
 
 /**
  * Sets up logging based on the provided options. If debug is enabled, the log level threshold is set to debug.
@@ -25,7 +25,7 @@ export function isPreviewMode(): boolean {
 }
 
 export async function fetchAllUnrenderedSlots(slots: ReadonlyArray<AdheseSlot>): Promise<void> {
-  const filteredSlots = slots.filter(slot => !slot.lazyLoading && !slot.ad);
+  const filteredSlots = slots.filter(slot => !slot.lazyLoading && !slot.data);
 
   if (filteredSlots.length === 0)
     return;

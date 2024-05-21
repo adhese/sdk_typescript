@@ -6,30 +6,32 @@ import { renderToStaticMarkup } from 'react-dom/server';
 // eslint-disable-next-line ts/naming-convention
 export function Child(): ReactElement {
   const html
-    = (ad: AdheseAd<{
-      type: string;
-      text: {
-        title: string;
-      };
-      images?: Array<{
+    = (data: AdheseAd): AdheseAd<string> | void => {
+      const ad = data as AdheseAd<{
         type: string;
-        title: string;
-        width: number;
-        height: number;
-        link: {
-          href: string;
+        text: {
+          title: string;
+        };
+        images?: Array<{
+          type: string;
+          title: string;
+          width: number;
+          height: number;
+          link: {
+            href: string;
+          };
+        }>;
+        backgroundColor: string;
+        color: string;
+        navItem: {
+          title: string;
+          link: {
+            href: string;
+          };
+          appLink: string;
         };
       }>;
-      backgroundColor: string;
-      color: string;
-      navItem: {
-        title: string;
-        link: {
-          href: string;
-        };
-        appLink: string;
-      };
-    }>): AdheseAd<string> | void => {
+
       if (typeof ad.tag === 'string')
         return ad as AdheseAd<string>;
 
@@ -83,7 +85,11 @@ export function Child(): ReactElement {
     format: 'halfwidthsmallresponsive',
     slot: '_homepagetop_right',
     renderMode: 'inline',
-    onBeforeRender: html,
+    setup(_, {
+      onBeforeRender,
+    }) {
+      onBeforeRender(html);
+    },
   });
 
   const topLeft = useRef(null);
@@ -91,7 +97,11 @@ export function Child(): ReactElement {
     format: 'halfwidthsmallresponsive',
     slot: '_homepagetop_left',
     renderMode: 'inline',
-    onBeforeRender: html,
+    setup(_, {
+      onBeforeRender,
+    }) {
+      onBeforeRender(html);
+    },
   });
 
   const bottomRight = useRef(null);
@@ -99,7 +109,11 @@ export function Child(): ReactElement {
     format: 'halfwidthsmallresponsive',
     slot: '_homepagebottom_right',
     renderMode: 'inline',
-    onBeforeRender: html,
+    setup(_, {
+      onBeforeRender,
+    }) {
+      onBeforeRender(html);
+    },
   });
 
   const bottomLeft = useRef(null);
@@ -107,7 +121,11 @@ export function Child(): ReactElement {
     format: 'halfwidthsmallresponsive',
     slot: '_homepagebottom_left',
     renderMode: 'inline',
-    onBeforeRender: html,
+    setup(_, {
+      onBeforeRender,
+    }) {
+      onBeforeRender(html);
+    },
   });
 
   return (

@@ -1,7 +1,6 @@
 /* v8 ignore start */
 import type { EventManager, Merge, UrlString } from '@adhese/sdk-shared';
-import type { SlotManagerOptions } from './slot/slotManager/slotManager';
-import type { AdheseSlot, AdheseSlotOptions } from './slot/createSlot/createSlot.types';
+import type { SlotManagerOptions } from './slotManager/slotManager';
 import type { AdheseAd } from './requestAds/requestAds.schema';
 import type { AdMultiRequestOptions } from './requestAds/requestAds';
 import type { logger } from './logger/logger';
@@ -10,6 +9,8 @@ import type { onDispose } from './hooks/onDispose';
 import type { onRequest } from './hooks/onRequest';
 import type { onResponse } from './hooks/onResponse';
 import type { onSlotCreate } from './hooks/onSlotCreate';
+
+import type { AdheseSlot, AdheseSlotOptions } from './slot/slot.types';
 
 export type AdhesePluginInformation = {
   index: number;

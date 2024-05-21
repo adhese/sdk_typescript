@@ -1,13 +1,12 @@
 {
-  "name": "@adhese/sdk-shared",
+  "name": "@adhese/sdk-stack-slots",
   "type": "module",
-  "version": "0.4.0",
+  "version": "0.0.0",
   "description": "Adhese SDK",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/adhese/sdk_typescript.git"
   },
-  "sideEffects": false,
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -19,21 +18,17 @@
   ],
   "scripts": {
     "build": "vite build && tsup src/index.ts --dts-only --minify --format esm",
-    "dev": "vitest --silent",
-    "dev:verbose": "vitest",
-    "test": "vitest --run --coverage --silent",
-    "test:verbose": "vitest --run --coverage",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
+    "lint": "eslint . --ignore-pattern **/*.md/**/*",
+    "lint:fix": "eslint --fix . --ignore-pattern **/*.md/**/*",
+    "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
     "prepareRelease": "npm run build"
   },
   "peerDependencies": {
-    "@adhese/sdk": "^0"
+    "@adhese/sdk": "^0",
+    "zod": "^3.23.6"
   },
   "dependencies": {
-    "@vue/runtime-core": "^3.2.29",
-    "nanoid": "^5.0.7",
-    "zod": "^3.23.6"
+    "@adhese/sdk-shared": "^0.4.0"
   }
 }

@@ -1,9 +1,9 @@
 import type { Merge } from '@adhese/sdk-shared';
 import { findDomSlots as extFindDomSlots } from '../findDomSlots/findDomSlots';
-import type { AdheseSlot, AdheseSlotOptions } from '../createSlot/createSlot.types';
-import type { AdheseContext } from '../../main.types';
-import { createSlot } from '../createSlot/createSlot';
-import { logger } from '../../logger/logger';
+import type { AdheseContext } from '../main.types';
+import { createSlot } from '../slot/slot';
+import { logger } from '../logger/logger';
+import type { AdheseSlot, AdheseSlotOptions } from '../slot/slot.types';
 
 export type AdheseSlotManager = {
   /**
@@ -55,22 +55,24 @@ export function createSlotManager({
   function add(options: Omit<AdheseSlotOptions, 'context' | 'onDispose'>): Readonly<AdheseSlot> {
     const slot = createSlot({
       ...options as AdheseSlotOptions,
-      onDispose,
       context,
+      setup(slotContext, slotHooks) {
+        options.setup?.(slotContext, slotHooks);
+
+        slotHooks.onDispose(() => {
+          context.slots.delete(slot.id);
+          logger.debug('Slot removed', {
+            slot,
+          });
+          context.events?.removeSlot.dispatch(slot);
+        });
+      },
     });
 
     if (get(slot.name)) {
       slot.dispose();
 
       throw new Error(`Slot with the name: ${slot.name} already exists. Create a new slot with a different format, slot, or the location.`);
-    }
-
-    function onDispose(): void {
-      context.slots.delete(slot.id);
-      logger.debug('Slot removed', {
-        slot,
-      });
-      context.events?.removeSlot.dispatch(slot);
     }
 
     context.slots.set(slot.id, slot);
