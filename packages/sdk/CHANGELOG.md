@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 0.16.2
+
+### Patch Changes
+
+- 2763181: Force @adhese/sdk to use @adhese/sdk-shared@0.5.1
+
 ## 0.16.1
 
 ### Patch Changes
