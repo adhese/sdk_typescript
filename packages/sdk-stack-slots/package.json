@@ -25,10 +25,10 @@
     "prepareRelease": "npm run build"
   },
   "peerDependencies": {
-    "@adhese/sdk": "^0",
-    "zod": "^3.23.6"
+    "@adhese/sdk": "^0"
   },
   "dependencies": {
-    "@adhese/sdk-shared": "^0.5.0"
+    "@adhese/sdk-shared": "^0.5.0",
+    "zod": "^3.23.6"
   }
 }
