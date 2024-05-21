@@ -6,9 +6,7 @@ export function clearAllHooks(): void {
 
 export function createAsyncHook<
   Argument = void,
-  Callback extends (() => void | Promise<void>) | ((arg: Argument) => Argument | void | Promise<Argument | void>) = Argument extends void ?
-      () => void | Promise<void> :
-      (arg: Argument) => Argument | void | Promise<Argument | void>,
+  Callback extends (arg: Argument) => Argument | void | Promise<Argument | void> = (arg: Argument) => Argument | void | Promise<Argument | void>,
 >(
   name: string,
   {
@@ -19,7 +17,7 @@ export function createAsyncHook<
     onAdd?(callbacks?: Set<Callback>): void;
   } = {},
 ): [
-  run: Argument extends void ? () => Promise<void> : (arg: Argument) => Promise<Argument>,
+  run: (arg: Argument) => Promise<Argument>,
   add: (callback: Callback) => () => void,
   dispose: () => void,
   ] {
@@ -35,7 +33,7 @@ export function createAsyncHook<
     onRun?.(hookMap.get(name) as Set<Callback>);
 
     return latestResult;
-  }) as Argument extends void ? () => Promise<void> : (arg: Argument) => Promise<Argument>;
+  }) as (arg: Argument) => Promise<Argument>;
 
   function dispose(): void {
     hookMap.delete(name);

@@ -1,8 +1,9 @@
 import type { Merge } from '@adhese/sdk-shared';
 import { findDomSlots as extFindDomSlots } from '../findDomSlots/findDomSlots';
 import type { AdheseContext } from '../main.types';
-import { type AdheseSlot, type AdheseSlotOptions, createSlot } from '../slot/singleSlot';
+import { createSlot } from '../slot/slot';
 import { logger } from '../logger/logger';
+import type { AdheseSlot, AdheseSlotOptions } from '../slot/slot.types';
 
 export type AdheseSlotManager = {
   /**

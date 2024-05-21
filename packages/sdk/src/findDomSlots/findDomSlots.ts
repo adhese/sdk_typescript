@@ -1,6 +1,6 @@
 import { waitForDomLoad } from '@adhese/sdk-shared';
-import type { AdheseContext } from '@adhese/sdk';
-import { type AdheseSlot, createSlot } from '../slot/singleSlot';
+import type { AdheseContext, AdheseSlot } from '@adhese/sdk';
+import { createSlot } from '../slot/slot';
 import { generateName } from '../slot/slot.utils';
 
 /**

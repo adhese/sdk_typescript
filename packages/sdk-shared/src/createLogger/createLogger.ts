@@ -1,3 +1,5 @@
+import { type Ref, ref, watch } from '@vue/runtime-core';
+import type { AdheseContext, AdhesePlugin } from '@adhese/sdk';
 import { createEventManager } from '../eventManager/eventManager';
 import { uniqueId } from '../uniqueId/uniqueId';
 
@@ -170,4 +172,26 @@ export function createLogger<T extends string = typeof defaultLogLevels[number],
       logs.clear();
     },
   };
+}
+
+export function useLogger(options: Omit<LoggerOptions<typeof defaultLogLevels[number]>, 'levels'>, {
+  context,
+  plugin: {
+    onDispose,
+  },
+}: {
+  context: AdheseContext;
+  plugin: Parameters<AdhesePlugin>[1];
+}): Ref<ReturnType<typeof createLogger<typeof defaultLogLevels[number]>>> {
+  const logger = ref(createLogger<typeof defaultLogLevels[number]>(options));
+
+  watch(() => context.debug, (debug) => {
+    logger.value.setMinLogLevelThreshold(debug ? 'debug' : 'info');
+  }, { immediate: true });
+
+  onDispose(() => {
+    logger.value.resetLogs();
+  });
+
+  return logger;
 }

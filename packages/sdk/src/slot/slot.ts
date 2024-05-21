@@ -1,14 +1,30 @@
-import { computed, effectScope, reactive, ref, waitForDomLoad, watch } from '@adhese/sdk-shared';
-import { doNothing } from 'remeda';
+import {
+  type Ref,
+  type UnwrapRef,
+  computed,
+  effectScope,
+  reactive,
+  ref,
+  uniqueId,
+  waitForDomLoad,
+  watch,
+} from '@adhese/sdk-shared';
+import { doNothing, isDeepEqual } from 'remeda';
 import type { AdheseAd } from '@adhese/sdk';
 import { addTrackingPixel } from '../impressionTracking/impressionTracking';
-import { waitOnInit } from '../hooks/onInit';
+import { onInit, waitOnInit } from '../hooks/onInit';
 import { requestAd as extRequestAd } from '../requestAds/requestAds';
 import { runOnSlotCreate } from '../hooks/onSlotCreate';
 import { logger } from '../logger/logger';
-import type { BaseSlot, BaseSlotOptionsWithSetup, RenderMode } from './slot.types';
-import { renderIframe, renderInline } from './slot.utils';
-import { useBaseSlot, useViewabilityObserver } from './slot.composables';
+import { useQueryDetector } from '../queryDetector/queryDetector';
+import type { AdheseSlot, AdheseSlotOptions, RenderMode } from './slot.types';
+import { generateName, renderIframe, renderInline } from './slot.utils';
+import {
+  useDomLoaded,
+  useRenderIntersectionObserver,
+  useSlotHooks,
+  useViewabilityObserver,
+} from './slot.composables';
 
 const renderFunctions: Record<RenderMode, (ad: AdheseAd, element: HTMLElement) => void> = {
   iframe: renderIframe,
@@ -16,8 +32,10 @@ const renderFunctions: Record<RenderMode, (ad: AdheseAd, element: HTMLElement) =
   none: doNothing,
 };
 
-export type AdheseSlotOptions = BaseSlotOptionsWithSetup<AdheseSlot, AdheseAd>;
-export type AdheseSlot = BaseSlot<AdheseAd>;
+const defaultOptions = {
+  renderMode: 'iframe',
+  type: 'normal',
+} satisfies Partial<AdheseSlotOptions>;
 
 /**
  * Create a new slot instance. This slot instance can be used to request and render ads.
@@ -31,36 +49,102 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
   return scope.run(() => {
     const slotContext = ref<AdheseSlot | null>(null);
-    const options = runOnSlotCreate(slotOptions as BaseSlotOptionsWithSetup<BaseSlot>);
+    const options = runOnSlotCreate({
+      ...defaultOptions,
+      ...slotOptions,
+    });
 
     const {
       containingElement,
       slot,
       context,
       renderMode = 'iframe',
+      type = 'normal',
     } = options;
+
+    const id = uniqueId();
     const {
-      name,
-      format,
-      element,
-      parameters,
-      isInViewport,
-      status,
-      runOnRender,
-      runOnDispose,
-      runOnRequest,
       runOnBeforeRender,
-      id,
-      isDisposed,
-      data,
-      originalData,
+      runOnRender,
+      runOnBeforeRequest,
+      runOnRequest,
+      runOnDispose,
       ...hooks
-    } = useBaseSlot<AdheseSlot, AdheseAd>({
-      options,
-      slotContext,
+    } = useSlotHooks(options, slotContext, id);
+
+    const isDisposed = ref(false);
+    const parameters = reactive(new Map(Object.entries(options.parameters ?? {})));
+
+    const [device, disposeQueryDetector] = useQueryDetector(typeof options.format === 'string'
+      ? {
+          [options.format]: '(min-width: 0px)',
+        }
+      : Object.fromEntries(options.format.map(item => [item.format, item.query])));
+
+    const format = computed(() => typeof options.format === 'string' ? options.format : device.value);
+
+    const data = ref<AdheseAd | null>(null) as Ref<AdheseAd | null>;
+    const originalData = ref(data.value) as Ref<AdheseAd | null>;
+    const name = computed(() => generateName(options.context.location, format.value, options.slot));
+
+    watch(name, async (newName, oldName) => {
+      if (newName === oldName)
+        return;
+
+      const newAd = await slotContext.value?.request();
+
+      if (!newAd)
+        return;
+
+      slotContext.value?.cleanElement();
+
+      data.value = newAd;
+      originalData.value = newAd;
     });
 
-    const isViewabilityTracked = useViewabilityObserver<AdheseSlot, AdheseAd>({
+    const isDomLoaded = useDomLoaded();
+
+    const element = computed(() => {
+      if (!(typeof options.containingElement === 'string' || !options.containingElement))
+        return options.containingElement;
+
+      if (!isDomLoaded.value || slotContext.value?.isDisposed)
+        return null;
+
+      return document.querySelector<HTMLElement>(`.adunit[data-format="${format.value}"]#${options.containingElement}${options.slot ? `[data-slot="${options.slot}"]` : ''}`);
+    },
+    );
+
+    const isInViewport = useRenderIntersectionObserver({
+      options,
+      element,
+      hooks,
+    });
+
+    const status = ref<UnwrapRef<AdheseSlot>['status']>('initializing');
+
+    watch([data, isInViewport], async ([newData, newIsInViewport], [oldData]) => {
+      if ((!newData || (oldData && isDeepEqual(newData, oldData))) && status.value === 'rendered')
+        return;
+
+      if (newIsInViewport)
+        await slotContext.value?.render(newData ?? undefined);
+    });
+
+    hooks.onDispose(() => {
+      disposeQueryDetector();
+    });
+
+    onInit(async () => {
+      status.value = 'initialized';
+
+      if (options.lazyLoading)
+        return;
+
+      data.value = await slotContext.value?.request() ?? null;
+    });
+
+    const isViewabilityTracked = useViewabilityObserver({
       context,
       slotContext,
       hooks,
@@ -82,15 +166,20 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
       status.value = 'loading';
 
-      await runOnRequest();
+      let response = await runOnBeforeRequest(null);
 
-      const response = await extRequestAd({
-        slot: {
-          name: name.value,
-          parameters,
-        },
-        context,
-      });
+      if (!response) {
+        response = await extRequestAd({
+          slot: {
+            name: name.value,
+            parameters,
+          },
+          context,
+        });
+      }
+
+      if (response)
+        response = await runOnRequest(response);
 
       data.value = response;
 
@@ -132,6 +221,14 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
       if (context.debug)
         element.value.style.position = 'relative';
+
+      if (typeof renderAd?.tag !== 'string') {
+        const error = `Could not render slot for slot ${name.value}. A valid tag doesn't exist or is not HTML string.`;
+        logger.error(error, options);
+
+        status.value = 'error';
+        throw new Error(error);
+      }
 
       renderFunctions[renderMode](renderAd, element.value);
 
@@ -184,9 +281,9 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     }
 
     const state = reactive({
-      type: 'single' as const,
       location: context.location ?? '',
       lazyLoading: options.lazyLoading ?? false,
+      type,
       slot,
       parameters,
       format,

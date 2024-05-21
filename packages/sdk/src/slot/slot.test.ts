@@ -5,7 +5,7 @@ import type { AdheseContext } from '@adhese/sdk';
 import MatchMediaMock from 'vitest-matchmedia-mock';
 import { testContext } from '../testUtils';
 import { runOnInit } from '../hooks/onInit';
-import { createSlot } from './singleSlot';
+import { createSlot } from './slot';
 
 vi.mock('../logger/logger', () => ({
   logger: {

@@ -1,28 +1,31 @@
+import type { AdheseAd, AdheseContext } from '@adhese/sdk';
 import type { Merge, Ref } from '@adhese/sdk-shared';
-import type { AdheseContext } from '@adhese/sdk';
 import type { createAsyncHook, createPassiveHook } from '../hooks/createHook';
 
 export type RenderMode = 'iframe' | 'inline' | 'none';
-export type SlotHooks<T> = {
+export type SlotHooks = {
   /**
    * Hook that is called when the format of the slot changes.
    */
-  onBeforeRender: ReturnType<typeof createAsyncHook<T>>[1];
+  onBeforeRender: ReturnType<typeof createAsyncHook<AdheseAd>>[1];
   /**
    * Hook that is called when the slot is rendered.
    */
-  onRender: ReturnType<typeof createAsyncHook<T>>[1];
+  onRender: ReturnType<typeof createAsyncHook<AdheseAd>>[1];
+  /**
+   * Hook that is called before the slot is requested from the server.
+   */
+  onBeforeRequest: ReturnType<typeof createAsyncHook<AdheseAd | null>>[1];
   /**
    * Hook that is called when the slot is requested from the server.
    */
-  onRequest: ReturnType<typeof createAsyncHook<void>>[1];
+  onRequest: ReturnType<typeof createAsyncHook<AdheseAd>>[1];
   /**
    * Hook that is called when the slot is disposed.
    */
   onDispose: ReturnType<typeof createPassiveHook>[1];
 };
-
-export type BaseSlotOptions = {
+export type AdheseSlotOptions = {
   /**
    * The format code of the slot. Used to find the correct element on the page to render the ad in. If the format is a
    * string, it is used as the format code. If the format is an array, the format code is determined by the query
@@ -32,6 +35,11 @@ export type BaseSlotOptions = {
     format: string;
     query: string;
   }>;
+  /**
+   * Type of the slot. On its own has no effect, but can be used by plugins to create different behavior for different
+   * types of slots.
+   */
+  type?: string;
   /**
    * If we have multiple slots with the same format, we can use this to differentiate between them.
    */
@@ -57,6 +65,11 @@ export type BaseSlotOptions = {
    * @default 'iframe'
    */
   renderMode?: RenderMode;
+  /**
+   * Special callback that is run when the slot is initialized. It passes the slot context ref object and a special
+   * plugin object that contains a set of hooks you can use to hook into different moments of the slots lifecycle.
+   */
+  setup?(context: Ref<AdheseSlot | null>, hooks: SlotHooks): void;
 } & ({
   /**
    * If the slot should be lazy loaded. This means that the ad will only be requested when the slot is in the viewport.
@@ -74,20 +87,12 @@ export type BaseSlotOptions = {
   lazyLoadingOptions?: never;
 });
 
-export type BaseSlotOptionsWithSetup<T extends BaseSlot<U>, U = unknown> = BaseSlotOptions & {
+export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' | 'onFormatChange' | 'format'>, SlotHooks & {
   /**
-   * Special callback that is run when the slot is initialized. It passes the slot context ref object and a special
-   * plugin object that contains a set of hooks you can use to hook into different moments of the slots lifecycle.
+   * Type of the slot. On its own has no effect, but can be used by plugins to create different behavior for different
+   * types of slots.
    */
-  setup?(context: Ref<T | null>, hooks: SlotHooks<U>): void;
-};
-
-export type BaseSlot<T = unknown> = Merge<Omit<BaseSlotOptions, 'onDispose' | 'context' | 'onFormatChange' | 'format'>, SlotHooks<T> & {
-  /**
-   * The type of the slot. This is useful if you want to differentiate between different types of slots which can have
-   * different behavior and data types.
-   */
-  readonly type: string;
+  readonly type?: string;
   /**
    * The name of the slot. This is used to identify the slot in the Adhese instance.
    *
@@ -147,15 +152,15 @@ export type BaseSlot<T = unknown> = Merge<Omit<BaseSlotOptions, 'onDispose' | 'c
   /**
    * Slot related data fetched from the API.
    */
-  data: T | null;
+  data: AdheseAd | null;
   /**
    * Renders the slot in the containing element. If no data is provided, new data will be requested from the API.
    */
-  render(data?: T): Promise<HTMLElement | null>;
+  render(data?: AdheseAd): Promise<HTMLElement | null>;
   /**
    * Requests a new ad from the API and returns the ad object.
    */
-  request(): Promise<T | null>;
+  request(): Promise<AdheseAd | null>;
   /**
    * Remove the HTML element contents from the dom.
    */

@@ -16,6 +16,7 @@ export default defineConfig({
       '@adhese/sdk-devtools': `${path.resolve()}/../../packages/sdk-devtools/src`,
       '@adhese/sdk-shared': `${path.resolve()}/../../packages/sdk-shared/src`,
       '@adhese/sdk-safe-frame': `${path.resolve()}/../../packages/sdk-safe-frame/src`,
+      '@adhese/sdk-stack-slots': `${path.resolve()}/../../packages/sdk-stack-slots/src`,
       /* eslint-enable ts/naming-convention */
     },
   },

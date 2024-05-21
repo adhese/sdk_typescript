@@ -9,7 +9,8 @@ import type { onDispose } from './hooks/onDispose';
 import type { onRequest } from './hooks/onRequest';
 import type { onResponse } from './hooks/onResponse';
 import type { onSlotCreate } from './hooks/onSlotCreate';
-import type { AdheseSlot, AdheseSlotOptions } from './slot/singleSlot';
+
+import type { AdheseSlot, AdheseSlotOptions } from './slot/slot.types';
 
 export type AdhesePluginInformation = {
   index: number;

@@ -1,5 +1,6 @@
-import { ref, uniqueId } from '@adhese/sdk-shared';
+import { createLogger, ref, uniqueId, watch } from '@adhese/sdk-shared';
 import type { AdheseAd, AdheseContext, AdhesePlugin } from '@adhese/sdk';
+import { name, version } from '../package.json';
 import type { Config, Position, SafeFrameImplementation } from './main.types';
 
 export type SafeFrame = {
@@ -16,7 +17,23 @@ export type SafeFrameOptions = {
 export const safeFramePlugin: AdhesePlugin = (context, {
   onInit,
   onSlotCreate,
+  onDispose,
 }) => {
+  const logger = createLogger({
+    scope: `${name}@${version}`,
+  });
+
+  watch(() => context.debug, (debug) => {
+    if (debug)
+      logger.setMinLogLevelThreshold('debug');
+    else
+      logger.setMinLogLevelThreshold('info');
+  }, { immediate: true });
+
+  onDispose(() => {
+    logger.resetLogs();
+  });
+
   const safeFrame = ref<SafeFrame | null>(null);
 
   onInit(() => {
@@ -37,12 +54,12 @@ export const safeFramePlugin: AdhesePlugin = (context, {
         slot.setup?.(slotContext, slotHooks);
 
         slotHooks.onRender(async (data) => {
-          if (safeFrame.value && slotContext.value?.element && slotContext.value.type === 'single') {
-            const position = safeFrame.value.addPosition(data as AdheseAd, slotContext.value.element);
+          if (safeFrame.value && slotContext.value?.element) {
+            const position = safeFrame.value.addPosition(data, slotContext.value.element);
 
             await safeFrame.value.render(position);
 
-            context.logger.debug('Rendered slot using safe frame', slotContext);
+            logger.debug('Rendered slot using safe frame', slotContext);
           }
         });
       },

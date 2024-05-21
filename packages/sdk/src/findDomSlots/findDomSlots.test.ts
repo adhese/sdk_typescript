@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { testContext } from '../testUtils';
-import { createSlot } from '../slot/singleSlot';
+import { createSlot } from '../slot/slot';
 import type { AdheseContext } from '../main.types';
 import { findDomSlots } from './findDomSlots';
 

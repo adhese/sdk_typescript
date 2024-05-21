@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
 
-export function uniqueId(): string {
-  return nanoid();
+export function uniqueId(size?: number): string {
+  return nanoid(size);
 }

@@ -1,21 +1,16 @@
 import {
   type ComputedRef,
   type Ref,
-  type UnwrapRef,
   computed,
-  reactive,
   ref,
-  uniqueId,
   waitForDomLoad,
   watch,
 } from '@adhese/sdk-shared';
-import type { AdheseContext, AdheseSlot } from '@adhese/sdk';
-import { isDeepEqual, round } from 'remeda';
+import type { AdheseAd, AdheseContext, AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
+import { round } from 'remeda';
 import { onInit } from '../hooks/onInit';
 import { createAsyncHook, createPassiveHook } from '../hooks/createHook';
-import { useQueryDetector } from '../queryDetector/queryDetector';
-import type { BaseSlot, BaseSlotOptions, BaseSlotOptionsWithSetup, SlotHooks } from './slot.types';
-import { generateName } from './slot.utils';
+import type { SlotHooks } from './slot.types';
 
 export function useDomLoaded(): Readonly<Ref<boolean>> {
   const isDomLoaded = ref(false);
@@ -28,10 +23,10 @@ export function useDomLoaded(): Readonly<Ref<boolean>> {
   return isDomLoaded;
 }
 
-export function useRenderIntersectionObserver<T>({ options, element, hooks }: {
-  options: BaseSlotOptions;
+export function useRenderIntersectionObserver({ options, element, hooks }: {
+  options: AdheseSlotOptions;
   element: Ref<HTMLElement | null>;
-  hooks: SlotHooks<T>;
+  hooks: SlotHooks;
 }): Ref<boolean> {
   const isInViewport = ref(false);
 
@@ -65,14 +60,11 @@ export function useRenderIntersectionObserver<T>({ options, element, hooks }: {
   return isInViewport;
 }
 
-export function useViewabilityObserver<
-  T extends BaseSlot<U>,
-  U
-,>(
+export function useViewabilityObserver(
   { context, slotContext, hooks, onTracked }: {
     context: AdheseContext;
-    slotContext: Ref<T | null>;
-    hooks: SlotHooks<U>;
+    slotContext: Ref<AdheseSlot | null>;
+    hooks: SlotHooks;
     onTracked?(trackingPixel: Ref<HTMLImageElement | null>): void;
   },
 ): ComputedRef<boolean> {
@@ -145,20 +137,23 @@ export function useViewabilityObserver<
   return isTracked;
 }
 
-export function useSlotHooks<T extends BaseSlot<U>, U>({ setup }: BaseSlotOptionsWithSetup<T, U>, slotContext: Ref<T | null>, id: string): {
-  runOnBeforeRender: ReturnType<typeof createAsyncHook<U>>[0];
-  runOnRender: ReturnType<typeof createAsyncHook<U>>[0];
-  runOnRequest: ReturnType<typeof createAsyncHook<void>>[0];
+export function useSlotHooks({ setup }: AdheseSlotOptions, slotContext: Ref<AdheseSlot | null>, id: string): {
+  runOnBeforeRender: ReturnType<typeof createAsyncHook<AdheseAd>>[0];
+  runOnRender: ReturnType<typeof createAsyncHook<AdheseAd>>[0];
+  runOnBeforeRequest: ReturnType<typeof createAsyncHook<AdheseAd | null>>[0];
+  runOnRequest: ReturnType<typeof createAsyncHook<AdheseAd>>[0];
   runOnDispose: ReturnType<typeof createPassiveHook<void>>[0];
-} & SlotHooks<U> {
-  const [runOnBeforeRender, onBeforeRender, disposeOnBeforeRender] = createAsyncHook<U>(`onBeforeRender:${id}`);
-  const [runOnRender, onRender, disposeOnRender] = createAsyncHook<U>(`onRender:${id}`);
-  const [runOnRequest, onRequest, disposeOnRequest] = createAsyncHook(`onRequest:${id}`);
+} & SlotHooks {
+  const [runOnBeforeRender, onBeforeRender, disposeOnBeforeRender] = createAsyncHook<AdheseAd>(`onBeforeRender:${id}`);
+  const [runOnRender, onRender, disposeOnRender] = createAsyncHook<AdheseAd>(`onRender:${id}`);
+  const [runOnBeforeRequest, onBeforeRequest, disposeOnBeforeRequest] = createAsyncHook<AdheseAd | null>(`onBeforeRequest:${id}`);
+  const [runOnRequest, onRequest, disposeOnRequest] = createAsyncHook<AdheseAd>(`onRequest:${id}`);
   const [runOnDispose, onDispose, disposeOnDispose] = createPassiveHook(`onDispose:${id}`);
 
   setup?.(slotContext, {
     onBeforeRender,
     onRender,
+    onBeforeRequest,
     onDispose,
     onRequest,
   });
@@ -166,122 +161,10 @@ export function useSlotHooks<T extends BaseSlot<U>, U>({ setup }: BaseSlotOption
   onDispose(() => {
     disposeOnBeforeRender();
     disposeOnRender();
+    disposeOnBeforeRequest();
     disposeOnRequest();
     disposeOnDispose();
   });
 
-  return { runOnBeforeRender, runOnRender, runOnRequest, runOnDispose, onDispose, onRequest, onBeforeRender, onRender };
-}
-
-export function useBaseSlot<
-  T extends BaseSlot<U>,
-  U,
->(
-  {
-    options,
-    slotContext,
-  }: {
-    options: BaseSlotOptions;
-    slotContext: Ref<T | null>;
-  },
-): {
-  name: ComputedRef<string>;
-  format: ComputedRef<string>;
-  element: ComputedRef<HTMLElement | null>;
-  parameters: Map<string, ReadonlyArray<string> | string>;
-  isInViewport: Ref<boolean>;
-  status: Ref<UnwrapRef<T>['status']>;
-  id: string;
-  isDisposed: Ref<boolean>;
-  data: Ref<U | null>;
-  originalData: Ref<U | null>;
-} & ReturnType<typeof useSlotHooks<T, U>> {
-  const id = uniqueId();
-  const hooks = useSlotHooks<T, U>(options, slotContext, id);
-
-  const isDisposed = ref(false);
-  const parameters = reactive(new Map(Object.entries(options.parameters ?? {})));
-
-  const [device, disposeQueryDetector] = useQueryDetector(typeof options.format === 'string'
-    ? {
-        [options.format]: '(min-width: 0px)',
-      }
-    : Object.fromEntries(options.format.map(item => [item.format, item.query])));
-
-  const format = computed(() => typeof options.format === 'string' ? options.format : device.value);
-
-  const data = ref<T | null>(null) as Ref<U | null>;
-  const originalData = ref(data.value) as Ref<U | null>;
-  const name = computed(() => generateName(options.context.location, format.value, options.slot));
-
-  watch(name, async (newName, oldName) => {
-    if (newName === oldName)
-      return;
-
-    const newAd = await slotContext.value?.request();
-
-    if (!newAd)
-      return;
-
-    slotContext.value?.cleanElement();
-
-    data.value = newAd;
-    originalData.value = newAd;
-  });
-
-  const isDomLoaded = useDomLoaded();
-
-  const element = computed(() => {
-    if (!(typeof options.containingElement === 'string' || !options.containingElement))
-      return options.containingElement;
-
-    if (!isDomLoaded.value || slotContext.value?.isDisposed)
-      return null;
-
-    return document.querySelector<HTMLElement>(`.adunit[data-format="${format.value}"]#${options.containingElement}${options.slot ? `[data-slot="${options.slot}"]` : ''}`);
-  },
-  );
-
-  const isInViewport = useRenderIntersectionObserver({
-    options,
-    element,
-    hooks,
-  });
-
-  const status = ref<UnwrapRef<AdheseSlot>['status']>('initializing');
-
-  watch([data, isInViewport], async ([newData, newIsInViewport], [oldData]) => {
-    if ((!newData || (oldData && isDeepEqual(newData, oldData))) && status.value === 'rendered')
-      return;
-
-    if (newIsInViewport)
-      await slotContext.value?.render(newData ?? undefined);
-  });
-
-  hooks.onDispose(() => {
-    disposeQueryDetector();
-  });
-
-  onInit(async () => {
-    status.value = 'initialized';
-
-    if (options.lazyLoading)
-      return;
-
-    data.value = await slotContext.value?.request() ?? null;
-  });
-
-  return {
-    ...hooks,
-    id,
-    name,
-    format,
-    element,
-    parameters,
-    isInViewport,
-    status,
-    isDisposed,
-    data,
-    originalData,
-  };
+  return { runOnBeforeRender, runOnRender, runOnBeforeRequest, runOnRequest, runOnDispose, onDispose, onBeforeRequest, onRequest, onBeforeRender, onRender };
 }

@@ -12,7 +12,8 @@ import { onResponse } from './hooks/onResponse';
 import { onRequest } from './hooks/onRequest';
 import { onSlotCreate } from './hooks/onSlotCreate';
 import { useMainDebugMode, useMainParameters, useMainQueryDetector } from './main.composables';
-import type { AdheseSlot, AdheseSlotOptions } from './slot/singleSlot';
+
+import type { AdheseSlot, AdheseSlotOptions } from './slot/slot.types';
 
 /**
  * Creates an Adhese instance. This instance is your main entry point to the Adhese API.
