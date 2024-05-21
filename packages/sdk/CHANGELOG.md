@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 0.16.1
+
+### Patch Changes
+
+- 1164c2b: Move Zod validators to seperate exports
+
 ## 0.16.0
 
 ### Minor Changes
