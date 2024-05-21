@@ -1,5 +1,15 @@
 # @adhese/sdk-devtools
 
+## 0.11.1
+
+### Patch Changes
+
+- ef68972: Add hooks to context instead of global variable which could break when adhese was disposed
+- Updated dependencies [2c01e34]
+- Updated dependencies [ad9b38f]
+- Updated dependencies [ef68972]
+  - @adhese/sdk-shared@0.6.0
+
 ## 0.11.0
 
 ### Minor Changes
