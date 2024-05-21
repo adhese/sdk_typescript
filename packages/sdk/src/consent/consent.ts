@@ -1,8 +1,6 @@
 import { type ComputedRef, type Ref, computed, ref, watch } from '@adhese/sdk-shared';
 import type { AdheseContext } from '@adhese/sdk';
 import type { ConsentData } from '../types';
-import { onInit } from '../hooks/onInit';
-import { onDispose } from '../hooks/onDispose';
 
 export function useConsent(context: AdheseContext): [
   value: Ref<string>,
@@ -16,11 +14,11 @@ export function useConsent(context: AdheseContext): [
       consent.value = data.tcString;
   }
 
-  onInit(() => {
+  context.hooks.onInit(() => {
     window.__tcfapi?.('addEventListener', 2, onTcfConsentChange);
   });
 
-  onDispose(() => {
+  context.hooks.onDispose(() => {
     window.__tcfapi?.('removeEventListener', 2, onTcfConsentChange);
   });
 

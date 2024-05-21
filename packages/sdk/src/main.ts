@@ -4,14 +4,9 @@ import { createSlotManager } from './slotManager/slotManager';
 import { useConsent } from './consent/consent';
 import { fetchAllUnrenderedSlots, isPreviewMode, setupLogging } from './main.utils';
 import type { Adhese, AdheseContextState, AdheseOptions, MergedOptions } from './main.types';
-import { onInit, runOnInit } from './hooks/onInit';
-import { onDispose, runOnDispose } from './hooks/onDispose';
 import { logger } from './logger/logger';
-import { clearAllHooks } from './hooks/createHook';
-import { onResponse } from './hooks/onResponse';
-import { onRequest } from './hooks/onRequest';
-import { onSlotCreate } from './hooks/onSlotCreate';
 import { useMainDebugMode, useMainParameters, useMainQueryDetector } from './main.composables';
+import { createGlobalHooks } from './hooks';
 
 import type { AdheseSlot, AdheseSlotOptions } from './slot/slot.types';
 
@@ -44,6 +39,8 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
     } satisfies MergedOptions;
     setupLogging(mergedOptions);
 
+    const hooks = createGlobalHooks();
+
     const context = reactive<AdheseContextState>({
       location: mergedOptions.location,
       consent: mergedOptions.consent,
@@ -55,6 +52,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       events: createEventManager(),
       slots: new Map(),
       device: 'unknown',
+      hooks,
       dispose,
       findDomSlots,
       getAll,
@@ -66,11 +64,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       plugin(context, {
         index,
         version,
-        onInit,
-        onDispose,
-        onRequest,
-        onResponse,
-        onSlotCreate,
+        hooks,
       });
     }
 
@@ -125,15 +119,14 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       context.parameters?.clear();
       context.events?.dispose();
 
-      runOnDispose();
-
-      clearAllHooks();
+      hooks.runOnDispose();
+      hooks.clearAll();
 
       scope.stop();
     }
     context.dispose = dispose;
 
-    onInit(async () => {
+    hooks.onInit(async () => {
       await awaitTimeout(0);
 
       if ((slotManager.getAll().length ?? 0) > 0)
@@ -149,7 +142,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
         dispose();
     });
 
-    runOnInit();
+    hooks.runOnInit();
 
     return context;
   })!;

@@ -1,6 +1,7 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it } from 'vitest';
 // eslint-disable-next-line ts/naming-convention
 import MatchMediaMock from 'vitest-matchmedia-mock';
+import { testContext } from '../testUtils';
 import { useQueryDetector } from './queryDetector';
 
 describe('queryDetector', () => {
@@ -21,7 +22,7 @@ describe('queryDetector', () => {
   it('should create a queryDetector', async () => {
     mediaQueryMock.useMediaQuery('(max-width: 768px)');
 
-    const [device, dispose] = useQueryDetector();
+    const [device, dispose] = useQueryDetector(testContext);
 
     expect(device.value).toBe('mobile');
 
@@ -32,7 +33,7 @@ describe('queryDetector', () => {
     // validQuery = '(min-width: 1280px) and (pointer: fine)';
     mediaQueryMock.useMediaQuery('(min-width: 1280px) and (pointer: fine)');
 
-    const [device, dispose] = useQueryDetector();
+    const [device, dispose] = useQueryDetector(testContext);
 
     expect(device.value).toBe('unknown');
 
@@ -40,7 +41,7 @@ describe('queryDetector', () => {
   });
 
   it('should create a queryDetector with custom queries', () => {
-    const [device, dispose] = useQueryDetector({
+    const [device, dispose] = useQueryDetector(testContext, {
       mobile: '(max-width: 768px) and (pointer: coarse)',
       tablet: '(min-width: 769px) and (max-width: 1024px) and (pointer: coarse)',
       desktop: '(min-width: 1025px) and (pointer: fine)',

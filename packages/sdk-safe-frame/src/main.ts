@@ -15,9 +15,11 @@ export type SafeFrameOptions = {
 };
 
 export const safeFramePlugin: AdhesePlugin = (context, {
-  onInit,
-  onSlotCreate,
-  onDispose,
+  hooks: {
+    onInit,
+    onDispose,
+    onSlotCreate,
+  },
 }) => {
   const logger = createLogger({
     scope: `${name}@${version}`,

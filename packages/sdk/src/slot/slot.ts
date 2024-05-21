@@ -12,9 +12,7 @@ import {
 import { doNothing, isDeepEqual } from 'remeda';
 import type { AdheseAd } from '@adhese/sdk';
 import { addTrackingPixel } from '../impressionTracking/impressionTracking';
-import { onInit, waitOnInit } from '../hooks/onInit';
 import { requestAd as extRequestAd } from '../requestAds/requestAds';
-import { runOnSlotCreate } from '../hooks/onSlotCreate';
 import { logger } from '../logger/logger';
 import { useQueryDetector } from '../queryDetector/queryDetector';
 import type { AdheseSlot, AdheseSlotOptions, RenderMode } from './slot.types';
@@ -49,7 +47,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
   return scope.run(() => {
     const slotContext = ref<AdheseSlot | null>(null);
-    const options = runOnSlotCreate({
+    const options = slotOptions.context.hooks.runOnSlotCreate({
       ...defaultOptions,
       ...slotOptions,
     });
@@ -70,12 +68,12 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       runOnRequest,
       runOnDispose,
       ...hooks
-    } = useSlotHooks(options, slotContext, id);
+    } = useSlotHooks(options, slotContext);
 
     const isDisposed = ref(false);
     const parameters = reactive(new Map(Object.entries(options.parameters ?? {})));
 
-    const [device, disposeQueryDetector] = useQueryDetector(typeof options.format === 'string'
+    const [device, disposeQueryDetector] = useQueryDetector(context, typeof options.format === 'string'
       ? {
           [options.format]: '(min-width: 0px)',
         }
@@ -102,7 +100,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       originalData.value = newAd;
     });
 
-    const isDomLoaded = useDomLoaded();
+    const isDomLoaded = useDomLoaded(context);
 
     const element = computed(() => {
       if (!(typeof options.containingElement === 'string' || !options.containingElement))
@@ -135,7 +133,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       disposeQueryDetector();
     });
 
-    onInit(async () => {
+    context.hooks.onInit(async () => {
       status.value = 'initialized';
 
       if (options.lazyLoading)
@@ -198,7 +196,6 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       status.value = 'rendering';
 
       await waitForDomLoad();
-      await waitOnInit;
 
       let renderAd = adToRender ?? data.value ?? originalData.value ?? await request();
 

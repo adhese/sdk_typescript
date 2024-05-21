@@ -1,12 +1,11 @@
 import { debounce } from 'remeda';
 import { type ComputedRef, computed, ref } from '@adhese/sdk-shared';
-import { onInit } from '../hooks/onInit';
-import { onDispose } from '../hooks/onDispose';
+import type { AdheseContext } from '@adhese/sdk';
 
 /**
  * Create a query detector that will match a list of media queries and keeps track of the current matching query
  */
-export function useQueryDetector(queries: Record<string, string> = {
+export function useQueryDetector(context: AdheseContext, queries: Record<string, string> = {
   mobile: '(max-width: 768px)',
   tablet: '(min-width: 769px) and (max-width: 1024px)',
   desktop: '(min-width: 1025px)',
@@ -22,7 +21,7 @@ export function useQueryDetector(queries: Record<string, string> = {
     waitMs: 50,
   });
 
-  onInit(() => {
+  context.hooks.onInit(() => {
     for (const query of queryList)
       query.addEventListener('change', handleOnChange.call);
 
@@ -34,7 +33,7 @@ export function useQueryDetector(queries: Record<string, string> = {
       query.removeEventListener('change', handleOnChange.call);
   }
 
-  onDispose(dispose);
+  context.hooks.onDispose(dispose);
 
   return [computed(() => active.value), dispose];
 }

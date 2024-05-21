@@ -1,10 +1,9 @@
 import { watch } from '@adhese/sdk-shared';
 import type { AdheseContextState, MergedOptions } from './main.types';
 import { useQueryDetector } from './queryDetector/queryDetector';
-import { onDispose } from './hooks/onDispose';
 
 export function useMainQueryDetector(mergedOptions: MergedOptions, context: AdheseContextState): void {
-  const [device] = useQueryDetector(mergedOptions.queries);
+  const [device] = useQueryDetector(context, mergedOptions.queries);
   watch(device, async (newDevice) => {
     context.device = newDevice;
 
@@ -31,7 +30,7 @@ export function useMainDebugMode(context: AdheseContextState): void {
     immediate: true,
   });
 
-  onDispose(() => {
+  context.hooks.onDispose(() => {
     context.logger.resetLogs();
     context.logger.info('Adhese instance disposed');
   });

@@ -14,6 +14,7 @@
     "@adhese/sdk": "^0.16.0",
     "@adhese/sdk-devtools": "^0.11.0",
     "@adhese/sdk-react": "^0.9.3",
+    "@adhese/sdk-stack-slots": "^0.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   }

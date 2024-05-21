@@ -176,9 +176,7 @@ export function createLogger<T extends string = typeof defaultLogLevels[number],
 
 export function useLogger(options: Omit<LoggerOptions<typeof defaultLogLevels[number]>, 'levels'>, {
   context,
-  plugin: {
-    onDispose,
-  },
+  plugin,
 }: {
   context: AdheseContext;
   plugin: Parameters<AdhesePlugin>[1];
@@ -189,7 +187,7 @@ export function useLogger(options: Omit<LoggerOptions<typeof defaultLogLevels[nu
     logger.value.setMinLogLevelThreshold(debug ? 'debug' : 'info');
   }, { immediate: true });
 
-  onDispose(() => {
+  plugin.hooks.onDispose(() => {
     logger.value.resetLogs();
   });
 

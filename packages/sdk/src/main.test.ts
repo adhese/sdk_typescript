@@ -5,7 +5,6 @@ import MatchMediaMock from 'vitest-matchmedia-mock';
 import { createAdhese } from './main';
 import { logger } from './logger/logger';
 import type { Adhese } from './main.types';
-import { waitOnInit } from './hooks/onInit';
 
 vi.mock('./logger/logger', async (importOriginal) => {
   const module: { logger: typeof logger } = await importOriginal();
@@ -145,9 +144,7 @@ describe('createAdhese', () => {
       findDomSlotsOnLoad: true,
     });
 
-    await waitOnInit;
-
-    await awaitTimeout(100);
+    await awaitTimeout(200);
 
     expect(adhese.getAll().length).toBe(1);
   });

@@ -94,7 +94,7 @@ window.adhese = adhese;
 adhese.addSlot({
   format: 'newstack',
   containingElement: 'newstack',
-  type: 'stacks',
+  type: 'stack',
   setup(_, hooks) {
     hooks.onBeforeRender((data) => {
       const ad = data as AdheseAd<ReadonlyArray<CustomAdTag>>;
@@ -119,6 +119,15 @@ adhese.addSlot({
 adhese.addSlot({
   format: 'imu',
   containingElement: 'imu',
+  lazyLoading: true,
+  lazyLoadingOptions: {
+    rootMargin: '0px',
+  },
+});
+
+adhese.addSlot({
+  format: 'halfpage',
+  containingElement: 'halfpage',
   lazyLoading: true,
   lazyLoadingOptions: {
     rootMargin: '0px',

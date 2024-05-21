@@ -2,8 +2,6 @@ import { type MaybeRef, toValue } from '@adhese/sdk-shared';
 import { debounce } from 'remeda';
 import type { AdheseContext } from '../main.types';
 import { logger } from '../logger/logger';
-import { runOnRequest } from '../hooks/onRequest';
-import { runOnResponse } from '../hooks/onResponse';
 import type { AdheseAd } from './requestAds.schema';
 import { requestPreviews } from './requestAds.preview';
 import { requestWithGet, requestWithPost } from './requestAds.utils';
@@ -75,7 +73,7 @@ export async function requestAd(options: AdRequestOptions): Promise<AdheseAd | n
  * Request multiple ads from the API. If you need to fetch a single ad use the `requestAd` function.
  */
 export async function requestAds(requestOptions: AdMultiRequestOptions): Promise<ReadonlyArray<AdheseAd>> {
-  const options = await runOnRequest(requestOptions);
+  const options = await requestOptions.context.hooks.runOnRequest(requestOptions);
 
   const { context } = options;
 
@@ -116,7 +114,7 @@ export async function requestAds(requestOptions: AdMultiRequestOptions): Promise
     if (matchedPreviews.length > 0)
       context.events?.previewReceived.dispatch(matchedPreviews);
 
-    const mergedResult = await runOnResponse([
+    const mergedResult = await context.hooks.runOnResponse([
       ...result.filter(ad => !previews.some(preview => preview.libId === ad.libId)),
       ...matchedPreviews,
     ]);

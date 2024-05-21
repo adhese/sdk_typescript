@@ -1,6 +1,5 @@
 import type { AdheseAd, AdheseContext } from '@adhese/sdk';
-import type { Merge, Ref } from '@adhese/sdk-shared';
-import type { createAsyncHook, createPassiveHook } from '../hooks/createHook';
+import type { Merge, Ref, createAsyncHook, createPassiveHook } from '@adhese/sdk-shared';
 
 export type RenderMode = 'iframe' | 'inline' | 'none';
 export type SlotHooks = {

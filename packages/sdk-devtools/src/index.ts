@@ -3,8 +3,10 @@ import { watch } from '@adhese/sdk-shared';
 import { lazy } from 'react';
 
 export const devtoolsPlugin: AdhesePlugin = (context: AdheseContext, {
-  onInit,
-  onDispose,
+  hooks: {
+    onInit,
+    onDispose,
+  },
 }) => {
   const wrapperElement = document.createElement('div');
   let unmount: (() => void) | undefined;

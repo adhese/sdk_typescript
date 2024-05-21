@@ -2,20 +2,20 @@ import {
   type ComputedRef,
   type Ref,
   computed,
+  createAsyncHook,
+  createPassiveHook,
   ref,
   waitForDomLoad,
   watch,
 } from '@adhese/sdk-shared';
 import type { AdheseAd, AdheseContext, AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
 import { round } from 'remeda';
-import { onInit } from '../hooks/onInit';
-import { createAsyncHook, createPassiveHook } from '../hooks/createHook';
 import type { SlotHooks } from './slot.types';
 
-export function useDomLoaded(): Readonly<Ref<boolean>> {
+export function useDomLoaded(context: AdheseContext): Readonly<Ref<boolean>> {
   const isDomLoaded = ref(false);
 
-  onInit(async () => {
+  context.hooks.onInit(async () => {
     await waitForDomLoad();
 
     isDomLoaded.value = true;
@@ -137,18 +137,18 @@ export function useViewabilityObserver(
   return isTracked;
 }
 
-export function useSlotHooks({ setup }: AdheseSlotOptions, slotContext: Ref<AdheseSlot | null>, id: string): {
+export function useSlotHooks({ setup }: AdheseSlotOptions, slotContext: Ref<AdheseSlot | null>): {
   runOnBeforeRender: ReturnType<typeof createAsyncHook<AdheseAd>>[0];
   runOnRender: ReturnType<typeof createAsyncHook<AdheseAd>>[0];
   runOnBeforeRequest: ReturnType<typeof createAsyncHook<AdheseAd | null>>[0];
   runOnRequest: ReturnType<typeof createAsyncHook<AdheseAd>>[0];
   runOnDispose: ReturnType<typeof createPassiveHook<void>>[0];
 } & SlotHooks {
-  const [runOnBeforeRender, onBeforeRender, disposeOnBeforeRender] = createAsyncHook<AdheseAd>(`onBeforeRender:${id}`);
-  const [runOnRender, onRender, disposeOnRender] = createAsyncHook<AdheseAd>(`onRender:${id}`);
-  const [runOnBeforeRequest, onBeforeRequest, disposeOnBeforeRequest] = createAsyncHook<AdheseAd | null>(`onBeforeRequest:${id}`);
-  const [runOnRequest, onRequest, disposeOnRequest] = createAsyncHook<AdheseAd>(`onRequest:${id}`);
-  const [runOnDispose, onDispose, disposeOnDispose] = createPassiveHook(`onDispose:${id}`);
+  const [runOnBeforeRender, onBeforeRender, disposeOnBeforeRender] = createAsyncHook<AdheseAd>();
+  const [runOnRender, onRender, disposeOnRender] = createAsyncHook<AdheseAd>();
+  const [runOnBeforeRequest, onBeforeRequest, disposeOnBeforeRequest] = createAsyncHook<AdheseAd | null>();
+  const [runOnRequest, onRequest, disposeOnRequest] = createAsyncHook<AdheseAd>();
+  const [runOnDispose, onDispose, disposeOnDispose] = createPassiveHook();
 
   setup?.(slotContext, {
     onBeforeRender,

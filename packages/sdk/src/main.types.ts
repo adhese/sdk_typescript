@@ -4,22 +4,14 @@ import type { SlotManagerOptions } from './slotManager/slotManager';
 import type { AdheseAd } from './requestAds/requestAds.schema';
 import type { AdMultiRequestOptions } from './requestAds/requestAds';
 import type { logger } from './logger/logger';
-import type { onInit } from './hooks/onInit';
-import type { onDispose } from './hooks/onDispose';
-import type { onRequest } from './hooks/onRequest';
-import type { onResponse } from './hooks/onResponse';
-import type { onSlotCreate } from './hooks/onSlotCreate';
-
 import type { AdheseSlot, AdheseSlotOptions } from './slot/slot.types';
+
+import type { createGlobalHooks } from './hooks';
 
 export type AdhesePluginInformation = {
   index: number;
   version: string;
-  onInit: typeof onInit;
-  onDispose: typeof onDispose;
-  onRequest: typeof onRequest;
-  onResponse: typeof onResponse;
-  onSlotCreate: typeof onSlotCreate;
+  hooks: ReturnType<typeof createGlobalHooks>;
 };
 
 export type AdhesePlugin = (context: AdheseContext, plugin: AdhesePluginInformation) => void;
@@ -236,7 +228,8 @@ export type Adhese = Omit<BaseAdhese, ReadonlyProps> & Readonly<Pick<BaseAdhese,
 
 export type AdheseContextState = Omit<BaseAdhese, 'options'> & {
   readonly options: MergedOptions;
+  hooks: ReturnType<typeof createGlobalHooks>;
 };
 
-type NonPartialProps = 'options' | 'logger' | 'events' | 'isDisposed' | 'location' | 'consent' | 'debug' | 'parameters' | 'slots';
+type NonPartialProps = 'options' | 'logger' | 'events' | 'isDisposed' | 'location' | 'consent' | 'debug' | 'parameters' | 'slots' | 'hooks';
 export type AdheseContext = Omit<Partial<AdheseContextState>, NonPartialProps> & Pick<AdheseContextState, NonPartialProps>;

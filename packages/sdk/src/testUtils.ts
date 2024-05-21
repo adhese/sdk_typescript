@@ -2,12 +2,15 @@ import { createEventManager } from '@adhese/sdk-shared';
 import type { AdheseContext } from './main.types';
 import { logger } from './logger/logger';
 
+import { createGlobalHooks } from './hooks';
+
 export const testContext: AdheseContext = {
   location: 'foo',
   consent: false,
   debug: true,
   isDisposed: false,
   slots: new Map(),
+  hooks: createGlobalHooks(),
   options: {
     account: 'test',
     host: 'https://ads-test.adhese.com',
