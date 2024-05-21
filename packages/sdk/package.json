@@ -32,7 +32,7 @@
     "prepareRelease": "npm run build"
   },
   "dependencies": {
-    "@adhese/sdk-shared": "^0.5.0",
+    "@adhese/sdk-shared": "^0.5.1",
     "remeda": "^1.61.0",
     "zod": "^3.23.6"
   }
