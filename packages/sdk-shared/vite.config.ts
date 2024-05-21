@@ -1,8 +1,33 @@
-import { defineConfig } from 'vite';
+import { execSync } from 'node:child_process';
+import { type PluginOption, defineConfig } from 'vite';
 import { flat } from 'remeda';
 import { dependencies, peerDependencies } from './package.json';
 
+function myPlugin(): PluginOption {
+  const entries: Array<string> = [];
+
+  return {
+    name: 'my-plugin',
+    apply: 'build',
+    config(config): void {
+      if (config.build?.lib) {
+        const { entry } = config.build.lib;
+
+        if (Array.isArray(entry))
+          entries.push(...entry);
+      }
+    },
+    closeBundle(): void {
+      // eslint-disable-next-line no-console
+      console.log();
+      for (const entry of entries)
+        execSync(`tsup ${entry} --dts-only --format esm --out-dir dist`, { stdio: 'inherit' });
+    },
+  };
+}
+
 export default defineConfig({
+  plugins: [myPlugin()],
   build: {
     emptyOutDir: true,
     minify: false,

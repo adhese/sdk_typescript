@@ -10,10 +10,12 @@
   "sideEffects": false,
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
     "./validators": {
+      "types": "./dist/validators.d.ts",
       "import": "./dist/validators.js",
       "require": "./dist/validators.cjs"
     }
@@ -28,7 +30,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "vite build && tsup src/index.ts --dts-only --minify --format esm",
+    "build": "vite build",
     "dev": "vitest --silent",
     "dev:verbose": "vitest",
     "test": "vitest --run --coverage --silent",
