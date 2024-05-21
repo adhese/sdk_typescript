@@ -15,6 +15,7 @@ export default defineConfig({
       '@adhese/sdk-devtools': `${path.resolve()}/../../packages/sdk-devtools/src`,
       '@adhese/sdk-react': `${path.resolve()}/../../packages/sdk-react/src`,
       '@adhese/sdk-shared': `${path.resolve()}/../../packages/sdk-shared/src`,
+      '@adhese/sdk-shared/validators': `${path.resolve()}/../../sdk-shared/src/validators`,
       '@adhese/sdk-stack-slots': `${path.resolve()}/../../packages/sdk-stack-slots/src`,
       /* eslint-enable ts/naming-convention */
     },

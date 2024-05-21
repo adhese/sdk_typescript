@@ -8,6 +8,16 @@
     "url": "git+https://github.com/adhese/sdk_typescript.git"
   },
   "sideEffects": false,
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./validators": {
+      "import": "./dist/validators.js",
+      "require": "./dist/validators.cjs"
+    }
+  },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",

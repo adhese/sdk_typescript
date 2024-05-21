@@ -30,6 +30,7 @@ export default defineConfig({
       '@server-mocks': `${path.resolve()}/../server-mocks/src`,
       '@adhese/sdk': `${path.resolve()}/src`,
       '@adhese/sdk-shared': `${path.resolve()}/../sdk-shared/src`,
+      '@adhese/sdk-shared/validators': `${path.resolve()}/../sdk-shared/src/validators`,
       /* eslint-enable ts/naming-convention */
     },
   },

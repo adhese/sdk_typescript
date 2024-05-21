@@ -7,7 +7,7 @@ import {
   isJsonOrHtmlString,
   numberLike,
   urlLike,
-} from '@adhese/sdk-shared';
+} from '@adhese/sdk-shared/validators';
 
 const baseSchema = object({
   adDuration: numberLike.optional(),

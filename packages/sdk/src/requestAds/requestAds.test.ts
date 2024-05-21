@@ -1,6 +1,7 @@
 import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { type UrlString, dateLike, numberLike, urlLike } from '@adhese/sdk-shared';
+import type { UrlString } from '@adhese/sdk-shared';
 import type { AdheseContext } from '@adhese/sdk';
+import { dateLike, numberLike, urlLike } from '@adhese/sdk-shared/validators';
 import { testContext } from '../testUtils';
 import { createSlot } from '../slot/slot';
 import { logger } from '../logger/logger';

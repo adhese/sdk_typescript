@@ -7,10 +7,10 @@ export default defineConfig({
     emptyOutDir: true,
     minify: false,
     lib: {
-      entry: 'src/index.ts',
+      entry: ['src/index.ts', 'src/validators.ts'],
       name: '@adhese/sdk-shared',
       formats: ['es', 'cjs'],
-      fileName: format => `index.${format === 'cjs' ? 'cjs' : 'js'}`,
+      fileName: format => `[name].${format === 'cjs' ? 'cjs' : 'js'}`,
     },
     sourcemap: true,
     rollupOptions: {
