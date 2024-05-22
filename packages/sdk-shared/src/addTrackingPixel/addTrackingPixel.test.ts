@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { addTrackingPixel } from './impressionTracking';
+import { addTrackingPixel } from './addTrackingPixel';
 
-describe('impressionTracking', () => {
+describe('addTrackingPixel', () => {
   it('should add tracking pixel', () => {
     const element = addTrackingPixel(new URL('https://example.com'));
 

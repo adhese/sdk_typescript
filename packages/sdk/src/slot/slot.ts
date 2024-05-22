@@ -1,6 +1,7 @@
 import {
   type Ref,
   type UnwrapRef,
+  addTrackingPixel,
   computed,
   effectScope,
   reactive,
@@ -11,7 +12,6 @@ import {
 } from '@adhese/sdk-shared';
 import { doNothing, isDeepEqual } from 'remeda';
 import type { AdheseAd } from '@adhese/sdk';
-import { addTrackingPixel } from '../impressionTracking/impressionTracking';
 import { requestAd as extRequestAd } from '../requestAds/requestAds';
 import { logger } from '../logger/logger';
 import { useQueryDetector } from '../queryDetector/queryDetector';
