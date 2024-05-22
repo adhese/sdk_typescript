@@ -1,5 +1,17 @@
 # @adhese/sdk-stack-slots
 
+## 0.2.0
+
+### Minor Changes
+
+- d52b465: Add viewability and impression tracking to stack slots
+
+### Patch Changes
+
+- Updated dependencies [a4b013d]
+- Updated dependencies [696b4ea]
+  - @adhese/sdk-shared@0.7.0
+
 ## 0.1.2
 
 ### Patch Changes

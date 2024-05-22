@@ -1,5 +1,17 @@
 # @adhese/sdk
 
+## 0.18.0
+
+### Minor Changes
+
+- d52b465: Allow modifying slot data from within a slot's setup function
+
+### Patch Changes
+
+- Updated dependencies [a4b013d]
+- Updated dependencies [696b4ea]
+  - @adhese/sdk-shared@0.7.0
+
 ## 0.17.0
 
 ### Minor Changes

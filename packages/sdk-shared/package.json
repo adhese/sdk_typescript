@@ -1,7 +1,7 @@
 {
   "name": "@adhese/sdk-shared",
   "type": "module",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Adhese SDK",
   "repository": {
     "type": "git",

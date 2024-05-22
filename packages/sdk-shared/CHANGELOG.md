@@ -1,5 +1,12 @@
 # @adhese/sdk-shared
 
+## 0.7.0
+
+### Minor Changes
+
+- a4b013d: Move addTrackingPixel to @adhese/sdk-shared
+- 696b4ea: Replace @vue/runtime-core with @vue/reactivity and @vue-reactivity/watch
+
 ## 0.6.0
 
 ### Minor Changes
