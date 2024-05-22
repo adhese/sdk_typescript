@@ -11,7 +11,7 @@ describe('cookie', () => {
         return Array.from(cookieMap.values()).join('');
       },
       set(value: string) {
-        const [key, val] = value.split(/[=;]/gu);
+        const [key, val] = value.split(/[=;]/u);
 
         if (val)
           cookieMap.set(key, value);

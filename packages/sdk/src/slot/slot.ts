@@ -15,7 +15,7 @@ import type { AdheseAd } from '@adhese/sdk';
 import { requestAd as extRequestAd } from '../requestAds/requestAds';
 import { logger } from '../logger/logger';
 import { useQueryDetector } from '../queryDetector/queryDetector';
-import type { AdheseSlot, AdheseSlotOptions, RenderMode } from './slot.types';
+import type { AdheseSlot, AdheseSlotContext, AdheseSlotOptions, RenderMode } from './slot.types';
 import { generateName, renderIframe, renderInline } from './slot.utils';
 import {
   useDomLoaded,
@@ -46,7 +46,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
   const scope = effectScope();
 
   return scope.run(() => {
-    const slotContext = ref<AdheseSlot | null>(null);
+    const slotContext = ref<AdheseSlotContext | null>(null);
     const options = slotOptions.context.hooks.runOnSlotCreate({
       ...defaultOptions,
       ...slotOptions,
@@ -156,7 +156,11 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     });
 
     const impressionTrackingPixelElement = ref<HTMLImageElement | null>(null);
-    const isImpressionTracked = computed(() => Boolean(impressionTrackingPixelElement.value));
+    const isImpressionTracked = ref(false);
+    hooks.onDispose(() => {
+      if (impressionTrackingPixelElement.value)
+        impressionTrackingPixelElement.value.remove();
+    });
 
     async function request(): Promise<AdheseAd | null> {
       if (options.lazyLoading && !isInViewport.value)
@@ -229,11 +233,10 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
       renderFunctions[renderMode](renderAd, element.value);
 
-      if (renderAd.impressionCounter && !impressionTrackingPixelElement.value) {
+      if (renderAd.impressionCounter && !impressionTrackingPixelElement.value)
         impressionTrackingPixelElement.value = addTrackingPixel(renderAd.impressionCounter);
 
-        logger.debug(`Impression tracking pixel fired for ${name.value}`);
-      }
+      isImpressionTracked.value = true;
 
       logger.debug('Slot rendered', {
         renderedElement: element,
@@ -265,8 +268,6 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
     function dispose(): void {
       cleanElement();
-
-      impressionTrackingPixelElement.value?.remove();
 
       data.value = null;
 

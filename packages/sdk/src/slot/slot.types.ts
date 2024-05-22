@@ -2,7 +2,7 @@ import type { AdheseAd, AdheseContext } from '@adhese/sdk';
 import type { Merge, Ref, createAsyncHook, createPassiveHook } from '@adhese/sdk-shared';
 
 export type RenderMode = 'iframe' | 'inline' | 'none';
-export type SlotHooks = {
+export type AdheseSlotHooks = {
   /**
    * Hook that is called when the format of the slot changes.
    */
@@ -68,7 +68,7 @@ export type AdheseSlotOptions = {
    * Special callback that is run when the slot is initialized. It passes the slot context ref object and a special
    * plugin object that contains a set of hooks you can use to hook into different moments of the slots lifecycle.
    */
-  setup?(context: Ref<AdheseSlot | null>, hooks: SlotHooks): void;
+  setup?(context: Ref<AdheseSlotContext | null>, hooks: AdheseSlotHooks): void;
 } & ({
   /**
    * If the slot should be lazy loaded. This means that the ad will only be requested when the slot is in the viewport.
@@ -86,18 +86,18 @@ export type AdheseSlotOptions = {
   lazyLoadingOptions?: never;
 });
 
-export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' | 'onFormatChange' | 'format'>, SlotHooks & {
+type BaseAdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' | 'onFormatChange' | 'format'>, AdheseSlotHooks & {
   /**
    * Type of the slot. On its own has no effect, but can be used by plugins to create different behavior for different
    * types of slots.
    */
-  readonly type?: string;
+  type?: string;
   /**
    * The name of the slot. This is used to identify the slot in the Adhese instance.
    *
    * The name is generated based on the location, format, and slot of the slot.
    */
-  readonly name: string;
+  name: string;
   /**
    * The format code of the slot. Used to find the correct element on the page to render the ad in.
    *
@@ -106,11 +106,11 @@ export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' |
    *
    * When you change the format, the slot will request a new ad from the API automatically.
    */
-  readonly format: string;
+  format: string;
   /**
    * The location of the slot. This is the location that is used to determine the current page URL.
    */
-  readonly location: string;
+  location: string;
   /**
    * The parameters that are used to render the ad.
    */
@@ -135,19 +135,19 @@ export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' |
    * - `rendered`: The slot has rendered the ad
    * - `error`: The slot has encountered an error
    */
-  readonly status: 'initializing' | 'initialized' | 'loading' | 'loaded' | 'empty' | 'rendering' | 'rendered' | 'error';
+  status: 'initializing' | 'initialized' | 'loading' | 'loaded' | 'empty' | 'rendering' | 'rendered' | 'error';
   /**
    * Is the slot disposed.
    */
-  readonly isDisposed: boolean;
+  isDisposed: boolean;
   /**
    * The element that contains the slot.
    */
-  readonly element: HTMLElement | null;
+  element: HTMLElement | null;
   /**
    * Unique identifier of the slot. ID is generated on initialization and will never change.
    */
-  readonly id: string;
+  id: string;
   /**
    * Slot related data fetched from the API.
    */
@@ -169,3 +169,9 @@ export type AdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' |
    */
   dispose(): void;
 }>;
+
+export type AdheseSlotContext = BaseAdheseSlot;
+
+type ReadonlyProps = 'type' | 'name' | 'format' | 'location' | 'status' | 'isDisposed' | 'element' | 'id';
+
+export type AdheseSlot = Omit<BaseAdheseSlot, ReadonlyProps> & Readonly<Pick<BaseAdheseSlot, ReadonlyProps>>;

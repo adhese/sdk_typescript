@@ -1,6 +1,8 @@
 import type { AdheseAd, AdhesePlugin } from '@adhese/sdk';
-import { uniqueId, useLogger } from '@adhese/sdk-shared';
+import { computed, ref, uniqueId, useLogger } from '@adhese/sdk-shared';
 import { name, version } from '../package.json';
+import { useTracking } from './stackSlots.composables';
+import type { AdheseStackSchema } from './index';
 
 export const stackSlotsPlugin: AdhesePlugin = (context, plugin) => {
   const logger = useLogger({
@@ -22,6 +24,8 @@ export const stackSlotsPlugin: AdhesePlugin = (context, plugin) => {
       setup(slotContext, slotHooks): void {
         slot.setup?.(slotContext, slotHooks);
 
+        const stackAds = ref<AdheseStackSchema | null>(null);
+
         slotHooks.onBeforeRequest(async (ad) => {
           if (!slotContext.value)
             return ad;
@@ -37,7 +41,7 @@ export const stackSlotsPlugin: AdhesePlugin = (context, plugin) => {
                   accept: 'application/json',
                 },
               }),
-              import('./stackSchema').then(module => module.stackSchema),
+              import('./stackSlots.schema').then(module => module.stackSlotsSchema),
             ]);
 
             if (!response.ok)
@@ -52,6 +56,8 @@ export const stackSlotsPlugin: AdhesePlugin = (context, plugin) => {
 
             const id = uniqueId(6);
 
+            stackAds.value = data;
+
             return {
               tag: data.ads,
               id,
@@ -61,7 +67,6 @@ export const stackSlotsPlugin: AdhesePlugin = (context, plugin) => {
               slotID: id,
               slotName: slotContext.value.name,
               ext: 'stack',
-              ...data,
               ...ad,
             } satisfies AdheseAd;
           }
@@ -70,6 +75,20 @@ export const stackSlotsPlugin: AdhesePlugin = (context, plugin) => {
 
             return ad;
           }
+        });
+
+        useTracking({
+          hooks: slotHooks,
+          stackAds,
+          isTracked: computed(() => slotContext.value?.isViewabilityTracked ?? false),
+          trackingUrlKey: 'viewableImpressionCounter',
+        });
+
+        useTracking({
+          hooks: slotHooks,
+          stackAds,
+          isTracked: computed(() => slotContext.value?.isImpressionTracked ?? false),
+          trackingUrlKey: 'impressionCounter',
         });
       },
     });

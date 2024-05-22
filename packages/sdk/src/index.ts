@@ -4,4 +4,4 @@ export type { AdheseSlotManager } from './slotManager/slotManager';
 export type { AdRequestOptions } from './requestAds/requestAds';
 export type { AdheseAd } from './requestAds/requestAds.schema';
 export type { AdheseContext, Adhese, AdheseOptions, AdhesePlugin, AdhesePluginInformation } from './main.types';
-export type { AdheseSlot, AdheseSlotOptions } from './slot/slot.types';
+export type { AdheseSlot, AdheseSlotOptions, AdheseSlotHooks, AdheseSlotContext } from './slot/slot.types';

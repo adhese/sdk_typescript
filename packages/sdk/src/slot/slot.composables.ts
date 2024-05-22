@@ -1,16 +1,13 @@
 import {
-  type ComputedRef,
   type Ref,
-  computed,
   createAsyncHook,
   createPassiveHook,
   ref,
   waitForDomLoad,
   watch,
 } from '@adhese/sdk-shared';
-import type { AdheseAd, AdheseContext, AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
+import type { AdheseAd, AdheseContext, AdheseSlot, AdheseSlotContext, AdheseSlotHooks, AdheseSlotOptions } from '@adhese/sdk';
 import { round } from 'remeda';
-import type { SlotHooks } from './slot.types';
 
 export function useDomLoaded(context: AdheseContext): Readonly<Ref<boolean>> {
   const isDomLoaded = ref(false);
@@ -26,7 +23,7 @@ export function useDomLoaded(context: AdheseContext): Readonly<Ref<boolean>> {
 export function useRenderIntersectionObserver({ options, element, hooks }: {
   options: AdheseSlotOptions;
   element: Ref<HTMLElement | null>;
-  hooks: SlotHooks;
+  hooks: AdheseSlotHooks;
 }): Ref<boolean> {
   const isInViewport = ref(false);
 
@@ -64,10 +61,10 @@ export function useViewabilityObserver(
   { context, slotContext, hooks, onTracked }: {
     context: AdheseContext;
     slotContext: Ref<AdheseSlot | null>;
-    hooks: SlotHooks;
+    hooks: AdheseSlotHooks;
     onTracked?(trackingPixel: Ref<HTMLImageElement | null>): void;
   },
-): ComputedRef<boolean> {
+): Ref<boolean> {
   let timeoutId: number | null = null;
   const {
     threshold,
@@ -82,7 +79,7 @@ export function useViewabilityObserver(
 
   const trackingPixel = ref<HTMLImageElement | null>(null);
 
-  const isTracked = computed(() => Boolean(trackingPixel.value));
+  const isTracked = ref(false);
 
   const viewabilityObserver = new IntersectionObserver(([entry]) => {
     if (context.options.viewabilityTracking && !trackingPixel.value) {
@@ -94,6 +91,8 @@ export function useViewabilityObserver(
           timeoutId = null;
 
           onTracked?.(trackingPixel);
+
+          isTracked.value = true;
         }, duration);
       }
       else if (ratio < threshold && timeoutId) {
@@ -137,13 +136,13 @@ export function useViewabilityObserver(
   return isTracked;
 }
 
-export function useSlotHooks({ setup }: AdheseSlotOptions, slotContext: Ref<AdheseSlot | null>): {
+export function useSlotHooks({ setup }: AdheseSlotOptions, slotContext: Ref<AdheseSlotContext | null>): {
   runOnBeforeRender: ReturnType<typeof createAsyncHook<AdheseAd>>[0];
   runOnRender: ReturnType<typeof createAsyncHook<AdheseAd>>[0];
   runOnBeforeRequest: ReturnType<typeof createAsyncHook<AdheseAd | null>>[0];
   runOnRequest: ReturnType<typeof createAsyncHook<AdheseAd>>[0];
   runOnDispose: ReturnType<typeof createPassiveHook<void>>[0];
-} & SlotHooks {
+} & AdheseSlotHooks {
   const [runOnBeforeRender, onBeforeRender, disposeOnBeforeRender] = createAsyncHook<AdheseAd>();
   const [runOnRender, onRender, disposeOnRender] = createAsyncHook<AdheseAd>();
   const [runOnBeforeRequest, onBeforeRequest, disposeOnBeforeRequest] = createAsyncHook<AdheseAd | null>();
