@@ -45,6 +45,6 @@
   },
   "dependencies": {
     "@vue/runtime-core": "^3.2.29",
-    "zod": "^3.23.6"
+    "zod": "^3.23.8"
   }
 }
