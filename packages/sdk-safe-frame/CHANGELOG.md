@@ -1,5 +1,11 @@
 # @adhese/sdk-safe-frame
 
+## 0.1.5
+
+### Patch Changes
+
+- 85ce995: Allow plugins to return data that will be accessible for users through the adhese.plugins property
+
 ## 0.1.4
 
 ### Patch Changes
