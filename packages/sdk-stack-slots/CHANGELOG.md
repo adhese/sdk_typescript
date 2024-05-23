@@ -1,5 +1,11 @@
 # @adhese/sdk-stack-slots
 
+## 0.3.1
+
+### Patch Changes
+
+- 101ab87: Fix docs and readme no longer matching implementation
+
 ## 0.3.0
 
 ### Minor Changes
