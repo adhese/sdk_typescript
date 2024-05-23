@@ -31,7 +31,7 @@
     "typecheck": "turbo typecheck --cache-dir=.turbo",
     "prepare": "husky",
     "changeset": "changeset",
-    "changeset:version": "changeset version",
+    "changeset:version": "changeset version && npm i",
     "prepareRelease": "turbo prepareRelease --cache-dir=.turbo",
     "release": "npm run prepareRelease && changeset publish"
   },
