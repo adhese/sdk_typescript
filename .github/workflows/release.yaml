@@ -46,7 +46,7 @@ jobs:
         with:
           title: Bump version packages
           publish: npm run release
-          version: npm run changeset:version
+          version: npm run changeset:version && npm install
           commit: Bump version packages
         env:
           GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
