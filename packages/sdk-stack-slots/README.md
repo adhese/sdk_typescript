@@ -22,16 +22,16 @@ const adhese = createAdhese({
 ```
 
 ### Create a stack slot
-To create a stack slot, you need to call the `addSlot` method on the Adhese instance like you would with a regular slot.
+To create a stack slot, you need to call the `addSlot` method on the stackSlots instance like you would with a regular slot.
 The only difference is that you need to pass an additional a `type: 'stack'` property to the slot options. Because
 stacks are returned as an array of ads you need to use the `onBeforeRender` hook in the `setup` method to render the
 ads in your provided HTML.
 
 ```js
-const slot = adhese.addSlot({
+const slot = adhese.plugins.stackSlots.addSlot({
   format: 'stack',
   containingElement: 'stack',
-  type: 'stack',
+  maxAds: 3,
   setup(_, {onBeforeRender}) {
     onBeforeRender((ad) => {
       if (typeof ad.tag !== 'object') {
