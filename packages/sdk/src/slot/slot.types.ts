@@ -65,6 +65,10 @@ export type AdheseSlotOptions = {
    */
   renderMode?: RenderMode;
   /**
+   * Specific options for the slot that may be used my plugins
+   */
+  pluginOptions?: Record<string, unknown>;
+  /**
    * Special callback that is run when the slot is initialized. It passes the slot context ref object and a special
    * plugin object that contains a set of hooks you can use to hook into different moments of the slots lifecycle.
    */

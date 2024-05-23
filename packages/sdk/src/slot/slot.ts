@@ -56,6 +56,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       containingElement,
       slot,
       context,
+      pluginOptions,
       renderMode = 'iframe',
       type = 'normal',
     } = options;
@@ -293,6 +294,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       element,
       isDisposed,
       id,
+      pluginOptions,
       render,
       request,
       dispose,

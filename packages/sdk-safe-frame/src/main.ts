@@ -1,5 +1,5 @@
-import { createLogger, ref, uniqueId, watch } from '@adhese/sdk-shared';
-import type { AdheseAd, AdheseContext, AdhesePlugin } from '@adhese/sdk';
+import { type ComputedRef, computed, createLogger, ref, uniqueId, watch } from '@adhese/sdk-shared';
+import type { AdheseAd, AdheseContext, AdhesePlugin, AdheseSlot } from '@adhese/sdk';
 import { name, version } from '../package.json';
 import type { Config, Position, SafeFrameImplementation } from './main.types';
 
@@ -14,7 +14,7 @@ export type SafeFrameOptions = {
   context: AdheseContext;
 };
 
-export const safeFramePlugin: AdhesePlugin = (context, {
+export const safeFramePlugin: AdhesePlugin<{ name: 'safeFrame'; slots: ComputedRef<ReadonlyArray<AdheseSlot>> }> = (context, {
   hooks: {
     onInit,
     onDispose,
@@ -52,6 +52,7 @@ export const safeFramePlugin: AdhesePlugin = (context, {
     return ({
       ...slot,
       renderMode: 'none',
+      type: 'safeFrame',
       setup(slotContext, slotHooks): void {
         slot.setup?.(slotContext, slotHooks);
 
@@ -67,6 +68,11 @@ export const safeFramePlugin: AdhesePlugin = (context, {
       },
     });
   });
+
+  return {
+    name: 'safeFrame',
+    slots: computed(() => Array.from(context.slots.values()).filter(slot => slot.type === 'safeFrame')),
+  };
 };
 
 function createSafeFrame({

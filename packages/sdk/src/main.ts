@@ -1,9 +1,16 @@
 import { awaitTimeout, createEventManager, effectScope, reactive, watch } from '@adhese/sdk-shared';
+import { omit } from 'remeda';
 import { version } from '../package.json';
 import { createSlotManager } from './slotManager/slotManager';
 import { useConsent } from './consent/consent';
 import { fetchAllUnrenderedSlots, isPreviewMode, setupLogging } from './main.utils';
-import type { Adhese, AdheseContextState, AdheseOptions, MergedOptions } from './main.types';
+import type {
+  Adhese,
+  AdheseContextStateWithPlugins,
+  AdheseOptions,
+  AdhesePlugin,
+  MergedOptions,
+} from './main.types';
 import { logger } from './logger/logger';
 import { useMainDebugMode, useMainParameters, useMainQueryDetector } from './main.composables';
 import { createGlobalHooks } from './hooks';
@@ -17,11 +24,11 @@ import type { AdheseSlot, AdheseSlotOptions } from './slot/slot.types';
  *
  * @return Adhese The Adhese instance.
  */
-export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
+export function createAdhese<T extends ReadonlyArray<AdhesePlugin>>(options: AdheseOptions<T>): Adhese<T> {
   const scope = effectScope();
 
   return scope.run(() => {
-    const mergedOptions = {
+    const mergedOptions: MergedOptions = {
       host: `https://ads-${options.account}.adhese.com`,
       poolHost: `https://pool-${options.account}.adhese.com`,
       location: 'homepage',
@@ -34,14 +41,13 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       logUrl: true,
       eagerRendering: false,
       viewabilityTracking: true,
-      plugins: [],
       ...options,
-    } satisfies MergedOptions;
+    };
     setupLogging(mergedOptions);
 
     const hooks = createGlobalHooks();
 
-    const context = reactive<AdheseContextState>({
+    const context = reactive<AdheseContextStateWithPlugins<T>>({
       location: mergedOptions.location,
       consent: mergedOptions.consent,
       debug: mergedOptions.debug,
@@ -53,6 +59,7 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       slots: new Map(),
       device: 'unknown',
       hooks,
+      plugins: {},
       dispose,
       findDomSlots,
       getAll,
@@ -60,12 +67,15 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
       addSlot,
     });
 
-    for (const [index, plugin] of mergedOptions.plugins.entries()) {
-      plugin(context, {
+    for (const [index, plugin] of options.plugins?.entries() ?? []) {
+      const data = plugin(context, {
         index,
         version,
         hooks,
       });
+
+      const name = data.name as keyof typeof context.plugins;
+      context.plugins[name] = omit(data, ['name']) as typeof context.plugins[typeof name];
     }
 
     watch(() => context.location, (newLocation) => {
@@ -144,6 +154,6 @@ export function createAdhese(options: AdheseOptions): Readonly<Adhese> {
 
     hooks.runOnInit();
 
-    return context;
+    return context as Adhese<T>;
   })!;
 }

@@ -1,10 +1,18 @@
-import type { AdheseAd, AdhesePlugin } from '@adhese/sdk';
-import { computed, ref, uniqueId, useLogger } from '@adhese/sdk-shared';
+import type { AdheseAd, AdhesePlugin, AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
+import { type ComputedRef, computed, ref, uniqueId, useLogger } from '@adhese/sdk-shared';
 import { name, version } from '../package.json';
 import { useTracking } from './stackSlots.composables';
 import type { AdheseStackSchema } from './index';
 
-export const stackSlotsPlugin: AdhesePlugin = (context, plugin) => {
+export type AdheseStackSlotsSlotOptions = {
+  maxAds?: number;
+};
+
+export const stackSlotsPlugin: AdhesePlugin<{
+  name: 'stackSlots';
+  slots: ComputedRef<ReadonlyArray<AdheseSlot>>;
+  addSlot(slot: Omit<AdheseSlotOptions, 'location' | 'context' | 'type' | 'renderMode' | 'pluginOptions'> & { maxAds: number }): Readonly<AdheseSlot>;
+}> = (context, plugin) => {
   const logger = useLogger({
     scope: `${name}@${version}`,
   }, {
@@ -13,6 +21,8 @@ export const stackSlotsPlugin: AdhesePlugin = (context, plugin) => {
   });
 
   logger.value.info('Stack slots plugin initialized', plugin);
+
+  const stackSlots = computed(() => Array.from(context.slots.values()).filter(slot => slot.type === 'stack'));
 
   plugin.hooks.onSlotCreate((slot) => {
     if (slot.type !== 'stack')
@@ -30,8 +40,13 @@ export const stackSlotsPlugin: AdhesePlugin = (context, plugin) => {
           if (!slotContext.value)
             return ad;
 
+          const stackSlotsOptions = slotContext.value.pluginOptions?.stackSlots as Partial<{
+            maxAds: number;
+          }> | undefined;
+
           const endpoint = new URL(`${context.options.host}/m/stack/sl${slotContext.value?.name}`);
-          endpoint.searchParams.set('max_ads', '5');
+          if (stackSlotsOptions?.maxAds)
+            endpoint.searchParams.set('max_ads', stackSlotsOptions.maxAds.toString());
 
           try {
             const [response, schema] = await Promise.all([
@@ -93,4 +108,28 @@ export const stackSlotsPlugin: AdhesePlugin = (context, plugin) => {
       },
     });
   });
+
+  function addSlot({
+    maxAds,
+    ...slot
+  }: Omit<AdheseSlotOptions, 'location' | 'context' | 'type' | 'renderMode' | 'pluginOptions'> & AdheseStackSlotsSlotOptions): Readonly<AdheseSlot> {
+    if (!context.addSlot)
+      throw new Error('Slot manager not found');
+
+    return context.addSlot({
+      ...slot,
+      type: 'stack',
+      pluginOptions: {
+        stackSlots: {
+          maxAds,
+        } satisfies AdheseStackSlotsSlotOptions,
+      },
+    });
+  }
+
+  return {
+    name: 'stackSlots',
+    slots: stackSlots,
+    addSlot,
+  };
 };

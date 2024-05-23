@@ -2,7 +2,9 @@ import type { AdheseContext, AdhesePlugin } from '@adhese/sdk';
 import { watch } from '@adhese/sdk-shared';
 import { lazy } from 'react';
 
-export const devtoolsPlugin: AdhesePlugin = (context: AdheseContext, {
+export const devtoolsPlugin: AdhesePlugin<{
+  name: 'devtools';
+}> = (context: AdheseContext, {
   hooks: {
     onInit,
     onDispose,
@@ -45,6 +47,10 @@ export const devtoolsPlugin: AdhesePlugin = (context: AdheseContext, {
   }
 
   onDispose(dispose);
+
+  return {
+    name: 'devtools',
+  };
 };
 
 // eslint-disable-next-line ts/naming-convention

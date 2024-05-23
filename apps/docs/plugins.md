@@ -23,7 +23,40 @@ function myPlugin(context, plugin) {
   plugin.onSlotCreate((slotOptions) => {
     console.log('Slot options', slotOptions);
   });
+
+  return {
+    name: 'myPlugin',
+  }
+}
 ```
+
+## Returning Data
+Plugins can return data that will be accessible for users through the `adhese.plugins` property. This can be useful
+when you want to expose some data from the plugin to the user.
+
+```js
+function myPlugin(context, plugin) {
+  const message = ref('Hello, world!');
+
+  return {
+    name: 'myPlugin',
+    message,
+  }
+}
+
+const adhese = createAdhese({
+  account: 'your-account',
+  plugins: [myPlugin],
+});
+
+console.log(adhese.plugins.myPlugin.message.value); // Hello, world!
+```
+
+> [!NOTE]
+> A plugin can return any type of data, including functions, objects, and primitives.
+
+> [!WARNING]
+> Make sure to always return a unique name for the plugin to prevent conflicts with other plugins.
 
 ### Available Hooks
 

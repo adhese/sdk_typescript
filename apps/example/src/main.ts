@@ -91,10 +91,10 @@ const adhese = createAdhese({
 
 window.adhese = adhese;
 
-adhese.addSlot({
+adhese.plugins.stackSlots.addSlot({
   format: 'newstack',
   containingElement: 'newstack',
-  type: 'stack',
+  maxAds: 3,
   setup(_, hooks) {
     hooks.onBeforeRender((data) => {
       const ad = data as AdheseAd<ReadonlyArray<CustomAdTag>>;

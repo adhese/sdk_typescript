@@ -92,6 +92,11 @@ export function Child(): ReactElement {
       <AdheseSlot
         format="newstack"
         type="stack"
+        pluginOptions={{
+          stackSlots: {
+            maxAds: 3,
+          },
+        }}
         setup={(_, { onBeforeRender }) => {
           onBeforeRender((data) => {
             const ad = data as AdheseAd<ReadonlyArray<CustomAdTag>>;
