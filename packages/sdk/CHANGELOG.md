@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 0.19.0
+
+### Minor Changes
+
+- 85ce995: Allow plugins to return data that will be accessible for users through the adhese.plugins property
+
 ## 0.18.0
 
 ### Minor Changes

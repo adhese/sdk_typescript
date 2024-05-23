@@ -1,5 +1,15 @@
 # @adhese/sdk-stack-slots
 
+## 0.3.0
+
+### Minor Changes
+
+- 85ce995: Add specific addSlot function for stack slots
+
+### Patch Changes
+
+- 85ce995: Allow plugins to return data that will be accessible for users through the adhese.plugins property
+
 ## 0.2.0
 
 ### Minor Changes

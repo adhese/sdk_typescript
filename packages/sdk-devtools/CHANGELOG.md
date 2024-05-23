@@ -1,5 +1,11 @@
 # @adhese/sdk-devtools
 
+## 0.11.3
+
+### Patch Changes
+
+- 85ce995: Allow plugins to return data that will be accessible for users through the adhese.plugins property
+
 ## 0.11.2
 
 ### Patch Changes
