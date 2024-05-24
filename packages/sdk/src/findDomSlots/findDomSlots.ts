@@ -1,7 +1,6 @@
-import { waitForDomLoad } from '@adhese/sdk-shared';
+import { generateName, waitForDomLoad } from '@adhese/sdk-shared';
 import type { AdheseContext, AdheseSlot } from '@adhese/sdk';
 import { createSlot } from '../slot/slot';
-import { generateName } from '../slot/slot.utils';
 
 /**
  * Find all slots in the DOM and render them. Ignore slots that are already active.
