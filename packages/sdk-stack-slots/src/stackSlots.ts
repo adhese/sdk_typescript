@@ -5,12 +5,21 @@ import { useTracking } from './stackSlots.composables';
 import type { AdheseStackSchema } from './index';
 
 export type AdheseStackSlotsSlotOptions = {
+  /**
+   * The maximum number of ads to request within a stack
+   */
   maxAds?: number;
 };
 
 export const stackSlotsPlugin: AdhesePlugin<{
   name: 'stackSlots';
+  /**
+   * Slots that are stack slots
+   */
   slots: ComputedRef<ReadonlyArray<AdheseSlot>>;
+  /**
+   * Add a stack slot
+   */
   addSlot(slot: Omit<AdheseSlotOptions, 'location' | 'context' | 'type' | 'renderMode' | 'pluginOptions'> & { maxAds: number }): Readonly<AdheseSlot>;
 }> = (context, plugin) => {
   const logger = useLogger({
@@ -21,8 +30,6 @@ export const stackSlotsPlugin: AdhesePlugin<{
   });
 
   logger.value.info('Stack slots plugin initialized', plugin);
-
-  const stackSlots = computed(() => Array.from(context.slots.values()).filter(slot => slot.type === 'stack'));
 
   plugin.hooks.onSlotCreate((slot) => {
     if (slot.type !== 'stack')
@@ -129,7 +136,7 @@ export const stackSlotsPlugin: AdhesePlugin<{
 
   return {
     name: 'stackSlots',
-    slots: stackSlots,
+    slots: computed(() => Array.from(context.slots.values()).filter(slot => slot.type === 'stack')),
     addSlot,
   };
 };

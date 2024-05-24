@@ -1,4 +1,4 @@
-import { type ComputedRef, computed, createLogger, ref, uniqueId, watch } from '@adhese/sdk-shared';
+import { type ComputedRef, computed, ref, uniqueId, useLogger } from '@adhese/sdk-shared';
 import type { AdheseAd, AdheseContext, AdhesePlugin, AdheseSlot } from '@adhese/sdk';
 import { name, version } from '../package.json';
 import type { Config, Position, SafeFrameImplementation } from './main.types';
@@ -14,38 +14,30 @@ export type SafeFrameOptions = {
   context: AdheseContext;
 };
 
-export const safeFramePlugin: AdhesePlugin<{ name: 'safeFrame'; slots: ComputedRef<ReadonlyArray<AdheseSlot>> }> = (context, {
-  hooks: {
-    onInit,
-    onDispose,
-    onSlotCreate,
-  },
-}) => {
-  const logger = createLogger({
+export const safeFramePlugin: AdhesePlugin<{
+  name: 'safeFrame';
+  /**
+   * Slots that are rendered using a safe frame
+   */
+  slots: ComputedRef<ReadonlyArray<AdheseSlot>>;
+}> = (context, plugin) => {
+  const logger = useLogger({
     scope: `${name}@${version}`,
-  });
-
-  watch(() => context.debug, (debug) => {
-    if (debug)
-      logger.setMinLogLevelThreshold('debug');
-    else
-      logger.setMinLogLevelThreshold('info');
-  }, { immediate: true });
-
-  onDispose(() => {
-    logger.resetLogs();
+  }, {
+    context,
+    plugin,
   });
 
   const safeFrame = ref<SafeFrame | null>(null);
 
-  onInit(() => {
+  plugin.hooks.onInit(() => {
     safeFrame.value = createSafeFrame({
       renderFile: `${context.options.poolHost}/sf/r.html`,
       context,
     });
   });
 
-  onSlotCreate((slot) => {
+  plugin.hooks.onSlotCreate((slot) => {
     if (slot.renderMode !== 'iframe')
       return slot;
 
@@ -62,7 +54,7 @@ export const safeFramePlugin: AdhesePlugin<{ name: 'safeFrame'; slots: ComputedR
 
             await safeFrame.value.render(position);
 
-            logger.debug('Rendered slot using safe frame', slotContext);
+            logger.value.debug('Rendered slot using safe frame', slotContext);
           }
         });
       },
