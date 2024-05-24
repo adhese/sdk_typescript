@@ -51,7 +51,9 @@ export const stackSlotsPlugin: AdhesePlugin<{
             maxAds: number;
           }> | undefined;
 
-          const endpoint = new URL(`${context.options.host}/m/stack/sl${slotContext.value?.name}`);
+          const parameterString = [...context.parameters.entries(), ...slotContext.value.parameters].map(([key, value]) => `${key}${value.toString()}`).join('/');
+          const endpoint = new URL(`${context.options.host}/m/stack/sl${slotContext.value?.name}/${parameterString}`);
+
           if (stackSlotsOptions?.maxAds)
             endpoint.searchParams.set('max_ads', stackSlotsOptions.maxAds.toString());
 
