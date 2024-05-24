@@ -28,7 +28,6 @@
     "@adhese/sdk": "^0"
   },
   "dependencies": {
-    "@adhese/sdk-shared": "^0.8.0",
-    "zod": "^3.23.8"
+    "@adhese/sdk-shared": "^0.8.0"
   }
 }

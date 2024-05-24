@@ -1,5 +1,4 @@
-import { type TypeOf, array, object, string, unknown } from 'zod';
-import { urlLike } from '@adhese/sdk-shared/validators';
+import { type TypeOf, array, object, string, unknown, urlLike } from '@adhese/sdk-shared/validators';
 
 export const stackSlotsSchema = object({
   ads: array(object({
