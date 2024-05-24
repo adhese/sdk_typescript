@@ -25,6 +25,7 @@ export default async (data: {
         { text: 'Safe Frame', link: '/safe-frame' },
         { text: 'Devtools', link: '/devtools' },
         { text: 'Stack Slots', link: '/stack-slots' },
+        { text: 'VAST URL', link: '/vast-url' },
         { text: 'React SDK', link: '/react-sdk' },
         {
           text: 'Contributing',
