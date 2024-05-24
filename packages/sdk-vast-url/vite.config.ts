@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { defineConfig } from 'vite';
 import { flat } from 'remeda';
 import { dependencies, name, peerDependencies } from './package.json';
@@ -21,6 +22,14 @@ export default defineConfig({
       output: {
         inlineDynamicImports: false,
       },
+    },
+  },
+  resolve: {
+    alias: {
+      /* eslint-disable ts/naming-convention */
+      '@adhese/sdk': `${path.resolve()}/../sdk/src`,
+      '@adhese/sdk-shared': `${path.resolve()}/../sdk-shared/src`,
+      /* eslint-enable ts/naming-convention */
     },
   },
   test: {
