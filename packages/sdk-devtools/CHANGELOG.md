@@ -1,5 +1,14 @@
 # @adhese/sdk-devtools
 
+## 0.11.5
+
+### Patch Changes
+
+- d8b7f2e: Move remeda exports to @adhese/sdk-shared
+- Updated dependencies [aa0ef98]
+- Updated dependencies [d8b7f2e]
+  - @adhese/sdk-shared@0.9.0
+
 ## 0.11.4
 
 ### Patch Changes

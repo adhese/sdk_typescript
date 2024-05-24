@@ -1,5 +1,12 @@
 # @adhese/sdk-shared
 
+## 0.9.0
+
+### Minor Changes
+
+- aa0ef98: Move zod exports to @adhese/sdk-shared
+- d8b7f2e: Move remeda exports to @adhese/sdk-shared
+
 ## 0.8.0
 
 ### Minor Changes

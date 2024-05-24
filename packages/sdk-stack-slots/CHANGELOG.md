@@ -1,5 +1,14 @@
 # @adhese/sdk-stack-slots
 
+## 0.3.4
+
+### Patch Changes
+
+- aa0ef98: Move zod exports to @adhese/sdk-shared
+- Updated dependencies [aa0ef98]
+- Updated dependencies [d8b7f2e]
+  - @adhese/sdk-shared@0.9.0
+
 ## 0.3.3
 
 ### Patch Changes
