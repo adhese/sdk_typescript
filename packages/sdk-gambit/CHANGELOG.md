@@ -1,5 +1,14 @@
 # @adhese/sdk-gambit
 
+## 0.2.11
+
+### Patch Changes
+
+- d8b7f2e: Move remeda exports to @adhese/sdk-shared
+- Updated dependencies [aa0ef98]
+- Updated dependencies [d8b7f2e]
+  - @adhese/sdk-shared@0.9.0
+
 ## 0.2.10
 
 ### Patch Changes

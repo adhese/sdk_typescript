@@ -1,5 +1,13 @@
 # @adhese/sdk-vast-url
 
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies [aa0ef98]
+- Updated dependencies [d8b7f2e]
+  - @adhese/sdk-shared@0.9.0
+
 ## 0.1.0
 
 ### Minor Changes

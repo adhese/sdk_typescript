@@ -1,5 +1,13 @@
 # @adhese/sdk-safe-frame
 
+## 0.1.7
+
+### Patch Changes
+
+- Updated dependencies [aa0ef98]
+- Updated dependencies [d8b7f2e]
+  - @adhese/sdk-shared@0.9.0
+
 ## 0.1.6
 
 ### Patch Changes
