@@ -1,5 +1,12 @@
 # @adhese/sdk-devtools
 
+## 0.11.4
+
+### Patch Changes
+
+- Updated dependencies [34268cf]
+  - @adhese/sdk-shared@0.8.0
+
 ## 0.11.3
 
 ### Patch Changes

@@ -1,7 +1,7 @@
 {
   "name": "@adhese/sdk-vast-url",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Adhese SDK",
   "repository": {
     "type": "git",
@@ -32,6 +32,6 @@
     "@adhese/sdk": "^0"
   },
   "dependencies": {
-    "@adhese/sdk-shared": "^0.7.0"
+    "@adhese/sdk-shared": "^0.8.0"
   }
 }

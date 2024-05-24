@@ -1,5 +1,13 @@
 # @adhese/sdk
 
+## 0.19.1
+
+### Patch Changes
+
+- 34268cf: Move generateName function @adhese/sdk-shared
+- Updated dependencies [34268cf]
+  - @adhese/sdk-shared@0.8.0
+
 ## 0.19.0
 
 ### Minor Changes
