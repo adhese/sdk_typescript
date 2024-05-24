@@ -1,5 +1,11 @@
 # @adhese/sdk-stack-slots
 
+## 0.3.3
+
+### Patch Changes
+
+- 09ab292: Make sure stack slots are requested with parameters
+
 ## 0.3.2
 
 ### Patch Changes
