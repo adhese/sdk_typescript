@@ -1,5 +1,13 @@
 # @adhese/sdk-safe-frame
 
+## 0.1.6
+
+### Patch Changes
+
+- 7efe40e: Add JsDocs comments
+- Updated dependencies [34268cf]
+  - @adhese/sdk-shared@0.8.0
+
 ## 0.1.5
 
 ### Patch Changes

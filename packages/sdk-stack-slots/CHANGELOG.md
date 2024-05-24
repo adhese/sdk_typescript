@@ -1,5 +1,13 @@
 # @adhese/sdk-stack-slots
 
+## 0.3.2
+
+### Patch Changes
+
+- 7efe40e: Add JsDocs comments
+- Updated dependencies [34268cf]
+  - @adhese/sdk-shared@0.8.0
+
 ## 0.3.1
 
 ### Patch Changes
