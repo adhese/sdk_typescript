@@ -1,0 +1,37 @@
+{
+  "name": "@adhese/sdk-vast-url",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "Adhese SDK",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adhese/sdk_typescript.git"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md",
+    "dist"
+  ],
+  "scripts": {
+    "build": "vite build && tsup src/index.ts --dts-only --minify --format esm",
+    "dev": "vitest --silent",
+    "dev:verbose": "vitest",
+    "test": "vitest --run --coverage --silent",
+    "test:verbose": "vitest --run --coverage",
+    "lint": "eslint . --ignore-pattern **/*.md/**/*",
+    "lint:fix": "eslint --fix . --ignore-pattern **/*.md/**/*",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "prepareRelease": "npm run build"
+  },
+  "peerDependencies": {
+    "@adhese/sdk": "^0"
+  },
+  "dependencies": {
+    "@adhese/sdk-shared": "^0.7.0"
+  }
+}

@@ -4,6 +4,7 @@ import {
   addTrackingPixel,
   computed,
   effectScope,
+  generateName,
   reactive,
   ref,
   uniqueId,
@@ -16,7 +17,7 @@ import { requestAd as extRequestAd } from '../requestAds/requestAds';
 import { logger } from '../logger/logger';
 import { useQueryDetector } from '../queryDetector/queryDetector';
 import type { AdheseSlot, AdheseSlotContext, AdheseSlotOptions, RenderMode } from './slot.types';
-import { generateName, renderIframe, renderInline } from './slot.utils';
+import { renderIframe, renderInline } from './slot.utils';
 import {
   useDomLoaded,
   useRenderIntersectionObserver,

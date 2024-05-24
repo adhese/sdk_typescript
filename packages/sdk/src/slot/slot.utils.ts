@@ -29,11 +29,3 @@ export function renderIframe(ad: AdheseAd, element: HTMLElement): void {
 export function renderInline(ad: AdheseAd, element: HTMLElement): void {
   element.innerHTML = String(ad.tag);
 }
-
-export function generateName(
-  location: string,
-  format: string,
-  slot: string | undefined,
-): string {
-  return `${location}${slot ? `${slot}` : ''}-${format}`;
-}
