@@ -1,5 +1,4 @@
-import { debounce } from 'remeda';
-import { type ComputedRef, computed, ref } from '@adhese/sdk-shared';
+import { type ComputedRef, computed, debounce, ref } from '@adhese/sdk-shared';
 import type { AdheseContext } from '@adhese/sdk';
 
 /**

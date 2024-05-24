@@ -1,4 +1,4 @@
-import { isArray } from 'remeda';
+import { isArray } from '@adhese/sdk-shared';
 import type { GambitParameters } from './gambit.types';
 
 /**

@@ -1,7 +1,7 @@
 import { type RefObject, useState } from 'react';
 import type { AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
 import useDeepCompareEffect from 'use-deep-compare-effect';
-import { omit } from 'remeda';
+import { omit } from '@adhese/sdk-shared';
 import { useAdhese } from './adheseContext';
 
 /**

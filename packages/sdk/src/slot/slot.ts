@@ -3,15 +3,16 @@ import {
   type UnwrapRef,
   addTrackingPixel,
   computed,
+  doNothing,
   effectScope,
   generateName,
+  isDeepEqual,
   reactive,
   ref,
   uniqueId,
   waitForDomLoad,
   watch,
 } from '@adhese/sdk-shared';
-import { doNothing, isDeepEqual } from 'remeda';
 import type { AdheseAd } from '@adhese/sdk';
 import { requestAd as extRequestAd } from '../requestAds/requestAds';
 import { logger } from '../logger/logger';

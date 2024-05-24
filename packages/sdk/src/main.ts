@@ -1,5 +1,4 @@
-import { awaitTimeout, createEventManager, effectScope, reactive, watch } from '@adhese/sdk-shared';
-import { omit } from 'remeda';
+import { awaitTimeout, createEventManager, effectScope, omit, reactive, watch } from '@adhese/sdk-shared';
 import { version } from '../package.json';
 import { createSlotManager } from './slotManager/slotManager';
 import { useConsent } from './consent/consent';
