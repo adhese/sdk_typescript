@@ -62,6 +62,7 @@ function renderHalfwidth(data: CustomAdTag): string {
 const adhese = createAdhese({
   account: 'demo',
   debug: true,
+  consent: true,
   initialSlots: [
     {
       format: 'skyscraper',

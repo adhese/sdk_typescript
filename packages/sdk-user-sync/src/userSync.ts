@@ -49,19 +49,15 @@ export const userSyncPlugin: AdhesePlugin<UserSyncPlugin> = (context, plugin) =>
         if (context.consentString === 'none')
           throw new Error('No consent provided');
 
-        const endpoint = new URL(`https://ads-${context.options.account}.adhese.com/usersync/${serviceHandler}/user_sync`);
+        const endpoint = new URL(`https://ads-${context.options.account}.adhese.com/usersync/handlers/${serviceHandler}/user_sync`);
         endpoint.searchParams.set('id', events.join(','));
         endpoint.searchParams.set('u', userId);
         endpoint.searchParams.set('ttl', expiration.toString());
 
-        const [response, { userSyncErrorSchema }] = await Promise.all([fetch(endpoint.toString()), import('./userSync.schema')]);
+        const response = await fetch(endpoint);
 
-        const data = await response.json() as unknown;
-
-        const errorData = userSyncErrorSchema.safeParse(data);
-
-        if (errorData.success)
-          throw new Error(errorData.error);
+        if (!response.ok)
+          throw new Error(response.statusText ?? 'Unknown error');
 
         logger.value.debug('User synced with Adhese', {
           serviceHandler,
