@@ -1,8 +1,4 @@
-import { boolean, dateLike, number, object, optional, string } from '@adhese/sdk-shared/validators';
-
-export const userSyncSchema = object({
-  ok: boolean(),
-});
+import { dateLike, number, object, optional, string } from '@adhese/sdk-shared/validators';
 
 export const userSyncErrorSchema = object({
   timestamp: dateLike,

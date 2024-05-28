@@ -54,9 +54,7 @@ export const userSyncPlugin: AdhesePlugin<UserSyncPlugin> = (context, plugin) =>
         endpoint.searchParams.set('u', userId);
         endpoint.searchParams.set('ttl', expiration.toString());
 
-        logger.value.debug('Syncing user', endpoint.href);
-
-        const [response, { userSyncSchema, userSyncErrorSchema }] = await Promise.all([fetch(endpoint.toString()), import('./userSync.schema')]);
+        const [response, { userSyncErrorSchema }] = await Promise.all([fetch(endpoint.toString()), import('./userSync.schema')]);
 
         const data = await response.json() as unknown;
 
@@ -65,11 +63,12 @@ export const userSyncPlugin: AdhesePlugin<UserSyncPlugin> = (context, plugin) =>
         if (errorData.success)
           throw new Error(errorData.error);
 
-        const parsedData = userSyncSchema.safeParse(data);
-        if (!parsedData.success)
-          throw new Error(parsedData.error.toString());
-
-        logger.value.debug('User synced', parsedData.data);
+        logger.value.debug('User synced with Adhese', {
+          serviceHandler,
+          events,
+          userId,
+          expiration,
+        });
       }
       catch (error) {
         logger.value.error(`Failed to sync user. ${(error as Error).message}`);
