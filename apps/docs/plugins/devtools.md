@@ -1,5 +1,9 @@
+---
+title: Devtools
+---
+
 <script setup>
-import sdkDevtoolsPackage from '../../packages/sdk-devtools/package.json';
+import sdkDevtoolsPackage from '@adhese/sdk-devtools/package.json';
 </script>
 
 # Devtools <Badge>{{sdkDevtoolsPackage.version}}</Badge>

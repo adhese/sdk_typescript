@@ -1,3 +1,7 @@
+---
+title: React SDK
+---
+
 <script setup>
 import sdkReactPackage from '../../packages/sdk-react/package.json';
 </script>

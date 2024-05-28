@@ -19,14 +19,19 @@ export default async (data: {
         { text: 'Getting Started', link: '/index' },
         { text: 'Slots', link: '/slots' },
         { text: 'Events', link: '/events' },
-        { text: 'Plugins', link: '/plugins' },
         { text: 'Gambit config', link: '/gambit' },
         { text: 'Consent', link: '/consent' },
-        { text: 'Safe Frame', link: '/safe-frame' },
-        { text: 'Devtools', link: '/devtools' },
-        { text: 'Stack Slots', link: '/stack-slots' },
-        { text: 'VAST URL', link: '/vast-url' },
         { text: 'React SDK', link: '/react-sdk' },
+        {
+          text: 'Plugins',
+          items: [
+            { text: 'Plugins', link: '/plugins' },
+            { text: 'Safe Frame', link: '/plugins/safe-frame' },
+            { text: 'Devtools', link: '/plugins/devtools' },
+            { text: 'Stack Slots', link: '/plugins/stack-slots' },
+            { text: 'VAST URL', link: '/plugins/vast-url' },
+          ],
+        },
         {
           text: 'Contributing',
           items: [

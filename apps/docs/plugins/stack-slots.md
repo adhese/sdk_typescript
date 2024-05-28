@@ -1,5 +1,9 @@
+---
+title: Stack slots
+---
+
 <script setup>
-import sdkStacksPackage from '../../packages/sdk-stack-slots/package.json';
+import sdkStacksPackage from '@adhese/sdk-stack-slots/package.json';
 </script>
 
 # Stack slots <Badge>{{sdkStacksPackage.version}}</Badge>

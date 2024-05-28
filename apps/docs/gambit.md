@@ -1,3 +1,7 @@
+---
+title: Gambit
+---
+
 <script setup>
 import sdkGambitPackage from '../../packages/sdk-gambit/package.json';
 </script>

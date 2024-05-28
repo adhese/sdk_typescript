@@ -1,5 +1,9 @@
+---
+title: Safe Frame
+---
+
 <script setup>
-import sdkSafeFramePackage from '../../packages/sdk-safe-frame/package.json';
+import sdkSafeFramePackage from '@adhese/sdk-safe-frame/package.json';
 </script>
 
 # Safe Frame <Badge>{{sdkSafeFramePackage.version}}</Badge>

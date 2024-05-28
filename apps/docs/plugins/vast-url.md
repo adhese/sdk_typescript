@@ -1,5 +1,9 @@
+---
+title: VAST URL
+---
+
 <script setup>
-import sdkVastUrlPackage from '../../packages/sdk-vast-url/package.json';
+import sdkVastUrlPackage from '@adhese/sdk-vast-url/package.json';
 </script>
 
 # VAST URL <Badge>{{sdkVastUrlPackage.version}}</Badge>
