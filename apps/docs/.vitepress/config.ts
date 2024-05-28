@@ -30,6 +30,7 @@ export default async (data: {
             { text: 'Devtools', link: '/plugins/devtools' },
             { text: 'Stack Slots', link: '/plugins/stack-slots' },
             { text: 'VAST URL', link: '/plugins/vast-url' },
+            { text: 'User Sync', link: '/plugins/user-sync' },
           ],
         },
         {

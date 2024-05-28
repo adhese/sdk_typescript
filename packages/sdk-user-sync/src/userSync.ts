@@ -3,14 +3,32 @@ import { useLogger } from '@adhese/sdk-shared';
 import { name, version } from '../package.json';
 
 export type SyncOptions = {
+  /**
+   * Service handler to sync with. This is provided by Adhese. Make sure to contact Adhese support to have access to this.
+   */
   serviceHandler: string;
+  /**
+   * List of events to sync
+   */
   events: ReadonlyArray<string>;
+  /**
+   * User ID that should be synced
+   */
   userId: string;
+  /**
+   * Expiration time in minutes
+   */
   expiration: number;
 };
 
 export type UserSyncPlugin = {
   name: 'userSync';
+  /**
+   * Sync user with Adhese. This will send a request to the Adhese user sync endpoint.
+   *
+   * @warning This method should only be called when the user has given consent to sync their data. Otherwise, it will
+   * throw an error.
+   */
   sync(options: SyncOptions): Promise<void>;
 };
 
@@ -54,7 +72,7 @@ export const userSyncPlugin: AdhesePlugin<UserSyncPlugin> = (context, plugin) =>
         logger.value.debug('User synced', parsedData.data);
       }
       catch (error) {
-        logger.value.error(`Failed to sync user; ${(error as Error).message}`);
+        logger.value.error(`Failed to sync user. ${(error as Error).message}`);
         throw error;
       }
     },

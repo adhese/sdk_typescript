@@ -9,6 +9,7 @@
 [![@adhese/sdk-shared version](https://img.shields.io/npm/v/%40adhese%2Fsdk-shared?label=%40adhese%2Fsdk-shared)](https://www.npmjs.com/package/@adhese/sdk-shared)
 [![@adhese/sdk-stack-slots version](https://img.shields.io/npm/v/%40adhese%2Fsdk-stack-slots?label=%40adhese%2Fsdk-vast-url)](https://www.npmjs.com/package/@adhese/sdk-stack-slots)
 [![@adhese/sdk-vast-url version](https://img.shields.io/npm/v/%40adhese%2Fsdk-vast-url?label=%40adhese%2Fsdk-vast-url)](https://www.npmjs.com/package/@adhese/sdk-vast-url)
+[![@adhese/sdk-user-sync version](https://img.shields.io/npm/v/%40adhese%2Fsdk-user-sync?label=%40adhese%2Fsdk-user-sync)](https://www.npmjs.com/package/@adhese/sdk-user-sync)
 
 ## Introduction
 This monorepo contains the Adhese SDK for web. The project uses Turborepo to manage the monorepo. Make sure to run
