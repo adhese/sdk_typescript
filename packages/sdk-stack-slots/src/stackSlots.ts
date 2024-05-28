@@ -29,8 +29,6 @@ export const stackSlotsPlugin: AdhesePlugin<{
     plugin,
   });
 
-  logger.value.info('Stack slots plugin initialized', plugin);
-
   plugin.hooks.onSlotCreate((slot) => {
     if (slot.type !== 'stack')
       return slot;
