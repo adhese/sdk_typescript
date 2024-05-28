@@ -18,6 +18,7 @@ export default defineConfig({
       '@adhese/sdk-shared/validators': `${path.resolve()}/../../sdk-shared/src/validators`,
       '@adhese/sdk-stack-slots': `${path.resolve()}/../../packages/sdk-stack-slots/src`,
       '@adhese/sdk-vast-url': `${path.resolve()}/../../packages/sdk-vast-url/src`,
+      '@adhese/sdk-user-sync': `${path.resolve()}/../../packages/sdk-user-sync/src`,
       /* eslint-enable ts/naming-convention */
     },
   },

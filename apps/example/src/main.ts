@@ -1,6 +1,7 @@
 import { type AdheseAd, createAdhese } from '@adhese/sdk';
 import { devtoolsPlugin } from '@adhese/sdk-devtools';
 import { stackSlotsPlugin } from '@adhese/sdk-stack-slots';
+import { userSyncPlugin } from '@adhese/sdk-user-sync';
 
 type CustomAdTag = {
   type: string;
@@ -86,10 +87,17 @@ const adhese = createAdhese({
     },
   ],
   location: '_sdk_example_',
-  plugins: [devtoolsPlugin, stackSlotsPlugin],
+  plugins: [devtoolsPlugin, stackSlotsPlugin, userSyncPlugin],
 });
 
 window.adhese = adhese;
+
+adhese.plugins.userSync.sync({
+  serviceHandler: 'example',
+  events: ['event1', 'event2'],
+  userId: '1234',
+  expiration: 60,
+}).catch(console.error);
 
 adhese.plugins.stackSlots.addSlot({
   format: 'newstack',
