@@ -20,7 +20,8 @@
     },
     "resolveJsonModule": true,
     "types": [
-      "vite/client", "vitest"
+      "vite/client",
+      "vitest"
     ],
     "strict": true,
     "noImplicitAny": true,
