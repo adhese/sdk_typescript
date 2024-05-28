@@ -37,5 +37,9 @@ export function useConsent(context: AdheseContext): [
     }
   }, { immediate: true });
 
+  watch(consent, (newConsent) => {
+    context.consentString = newConsent;
+  }, { immediate: true });
+
   return [consent, consentType];
 }
