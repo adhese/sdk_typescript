@@ -1,5 +1,11 @@
 # @adhese/sdk-stack-slots
 
+## 0.3.5
+
+### Patch Changes
+
+- cb59a9c: Remove log when the plugin is initialized
+
 ## 0.3.4
 
 ### Patch Changes
