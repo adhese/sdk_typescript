@@ -1,5 +1,11 @@
 # @adhese/sdk-gambit
 
+## 0.2.12
+
+### Patch Changes
+
+- 2dda12f: Update peerDependencies to match nearest compatible version
+
 ## 0.2.11
 
 ### Patch Changes

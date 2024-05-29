@@ -1,7 +1,7 @@
 {
   "name": "@adhese/sdk-stack-slots",
   "type": "module",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "Adhese SDK",
   "repository": {
     "type": "git",

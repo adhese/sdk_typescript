@@ -1,5 +1,11 @@
 # @adhese/sdk-react
 
+## 0.9.12
+
+### Patch Changes
+
+- 2dda12f: Update peerDependencies to match nearest compatible version
+
 ## 0.9.11
 
 ### Patch Changes

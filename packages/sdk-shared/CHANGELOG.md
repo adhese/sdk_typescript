@@ -1,5 +1,11 @@
 # @adhese/sdk-shared
 
+## 0.9.1
+
+### Patch Changes
+
+- 2dda12f: Update peerDependencies to match nearest compatible version
+
 ## 0.9.0
 
 ### Minor Changes

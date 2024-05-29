@@ -1,5 +1,11 @@
 # @adhese/sdk-devtools
 
+## 0.11.6
+
+### Patch Changes
+
+- 2dda12f: Update peerDependencies to match nearest compatible version
+
 ## 0.11.5
 
 ### Patch Changes
