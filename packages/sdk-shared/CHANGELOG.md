@@ -1,5 +1,11 @@
 # @adhese/sdk-shared
 
+## 0.9.2
+
+### Patch Changes
+
+- 1654711: Expand peer dependency range of @adhese/sdk to include version 0.17
+
 ## 0.9.1
 
 ### Patch Changes
