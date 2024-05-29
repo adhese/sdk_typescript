@@ -1,5 +1,5 @@
 import { type Ref, ref, watch } from '@vue/runtime-core';
-import type { AdheseContext, AdhesePlugin } from '@adhese/sdk';
+import type { AdheseContext, AdhesePluginInformation } from '@adhese/sdk';
 import { createEventManager } from '../eventManager/eventManager';
 import { uniqueId } from '../uniqueId/uniqueId';
 
@@ -179,7 +179,7 @@ export function useLogger(options: Omit<LoggerOptions<typeof defaultLogLevels[nu
   plugin,
 }: {
   context: AdheseContext;
-  plugin: Parameters<AdhesePlugin>[1];
+  plugin: AdhesePluginInformation;
 }): Ref<ReturnType<typeof createLogger<typeof defaultLogLevels[number]>>> {
   const logger = ref(createLogger<typeof defaultLogLevels[number]>(options));
 

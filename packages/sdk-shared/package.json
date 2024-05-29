@@ -41,7 +41,12 @@
     "prepareRelease": "npm run build"
   },
   "peerDependencies": {
-    "@adhese/sdk": ">= 0.19.2 < 1"
+    "@adhese/sdk": ">= 0.17 < 1"
+  },
+  "peerDependenciesMeta": {
+    "@adhese/sdk": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@vue/runtime-core": "^3.2.29",
