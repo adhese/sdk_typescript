@@ -16,6 +16,7 @@
       "@adhese/sdk-shared/validators": ["packages/sdk-shared/src/validators.ts"],
       "@adhese/sdk-safe-frame": ["packages/sdk-safe-frame/src/index.ts"],
       "@adhese/sdk-stack-slots": ["packages/sdk-stack-slots/src/index.ts"],
+      "@adhese/sdk-user-sync": ["packages/sdk-user-sync/src/index.ts"],
       "@adhese/sdk-vast-url": ["packages/sdk-vast-url/src/index.ts"]
     },
     "resolveJsonModule": true,
