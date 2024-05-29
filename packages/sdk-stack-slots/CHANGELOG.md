@@ -1,5 +1,11 @@
 # @adhese/sdk-stack-slots
 
+## 0.3.6
+
+### Patch Changes
+
+- 2dda12f: Update peerDependencies to match nearest compatible version
+
 ## 0.3.5
 
 ### Patch Changes

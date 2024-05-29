@@ -1,5 +1,11 @@
 # @adhese/sdk-vast-url
 
+## 0.1.2
+
+### Patch Changes
+
+- 2dda12f: Update peerDependencies to match nearest compatible version
+
 ## 0.1.1
 
 ### Patch Changes

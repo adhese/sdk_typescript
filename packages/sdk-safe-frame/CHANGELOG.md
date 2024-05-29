@@ -1,5 +1,11 @@
 # @adhese/sdk-safe-frame
 
+## 0.1.8
+
+### Patch Changes
+
+- 2dda12f: Update peerDependencies to match nearest compatible version
+
 ## 0.1.7
 
 ### Patch Changes
