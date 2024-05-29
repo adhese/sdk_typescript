@@ -1,6 +1,6 @@
 import { type ReactElement, useEffect, useState } from 'react';
-import type { AdheseContext } from '@adhese/sdk';
 import type { Log } from '@adhese/sdk-shared';
+import { useAdheseContext } from '../AdheseContext';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Badge } from './badge';
 
@@ -24,12 +24,10 @@ const logBadgeClasses: Record<string, string> = {
 };
 
 // eslint-disable-next-line ts/naming-convention
-export function LogTable({
-  adheseContext,
-}: {
-  adheseContext: AdheseContext;
-}): ReactElement {
+export function LogTable(): ReactElement {
   const [logs, setLogs] = useState<ReadonlyArray<Log<string>>>([]);
+
+  const adheseContext = useAdheseContext();
 
   useEffect(() => {
     function onLogsChange(): void {

@@ -1,36 +1,39 @@
-import type { AdheseContext } from '@adhese/sdk';
 import { type ReactElement, useEffect, useState } from 'react';
+import { watch } from '@adhese/sdk-shared';
+import { useAdheseContext } from '../AdheseContext';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Badge } from './badge';
 
 // eslint-disable-next-line ts/naming-convention
-export function ParametersTable({
-  adheseContext,
-}:
-{
-  adheseContext: AdheseContext;
-}): ReactElement {
+export function ParametersTable(): ReactElement {
   const [parameters, setParameters] = useState<ReadonlyArray<{
     name: string;
     value: string | ReadonlyArray<string>;
   }>>([]);
 
+  const adheseContext = useAdheseContext();
+
   useEffect(() => {
-    function onParametersChange(): void {
-      setParameters(Array.from(adheseContext.parameters?.entries() ?? []).map(([name, value]) => ({
-        name,
-        value,
-      })).toSorted((a, b) => a.name.localeCompare(b.name)));
-    }
+    if (!adheseContext)
+      return;
 
-    adheseContext.events?.parametersChange.addListener(onParametersChange);
-
-    onParametersChange();
+    const disposeWatcher = watch(() => adheseContext.parameters, (newParameters) => {
+      setParameters(Array.from(newParameters.entries())
+        .map(([name, value]) => ({
+          name,
+          value,
+        }))
+        .filter(({ value }) => value)
+        .toSorted((a, b) => a.name.localeCompare(b.name)));
+    }, {
+      immediate: true,
+      deep: true,
+    });
 
     return (): void => {
-      adheseContext.events?.parametersChange.removeListener(onParametersChange);
+      disposeWatcher();
     };
-  }, []);
+  }, [adheseContext?.parameters]);
 
   return (
     <Table>

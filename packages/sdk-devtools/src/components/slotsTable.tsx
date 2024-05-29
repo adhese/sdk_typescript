@@ -1,8 +1,9 @@
 import { Fragment, type ReactElement, useEffect, useMemo, useState } from 'react';
-import type { AdheseContext, AdheseSlot } from '@adhese/sdk';
+import type { AdheseSlot } from '@adhese/sdk';
 import { createPortal } from 'react-dom';
 import { type UnwrapRef, watch } from '@adhese/sdk-shared';
 import { cn } from '../utils';
+import { useAdheseContext } from '../AdheseContext';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Badge } from './badge';
 import { buttonVariants } from './button';
@@ -30,12 +31,15 @@ const renderStatusMap = {
 } as const satisfies Record<UnwrapRef<AdheseSlot['status']>, string>;
 
 // eslint-disable-next-line ts/naming-convention
-export function SlotsTable({ adheseContext }: {
-  adheseContext: AdheseContext;
-}): ReactElement {
+export function SlotsTable(): ReactElement {
   const [slots, setSlots] = useState<ReadonlyArray<AdheseSlot>>([]);
 
+  const adheseContext = useAdheseContext();
+
   useEffect(() => {
+    if (!adheseContext)
+      return;
+
     const disposeWatcher = watch(() => adheseContext.slots, (newSlots) => {
       setSlots(Array.from(newSlots.values()));
     }, { immediate: true, deep: true });
@@ -73,7 +77,7 @@ export function SlotsTable({ adheseContext }: {
   }, [formattedSlots]);
 
   return (
-    formattedSlots.length > 0
+    adheseContext && (formattedSlots.length > 0)
       ? (
         <Table>
           <TableHeader>
