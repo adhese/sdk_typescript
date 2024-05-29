@@ -31,7 +31,7 @@
     "prepareRelease": "npm run build"
   },
   "peerDependencies": {
-    "@adhese/sdk": "^0"
+    "@adhese/sdk": ">= 0.19.2 < 1"
   },
   "dependencies": {
     "@adhese/sdk-shared": "^0.9.0"

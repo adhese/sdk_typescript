@@ -26,7 +26,7 @@
     "prepareRelease": "npm run build"
   },
   "peerDependencies": {
-    "@adhese/sdk": "^0",
+    "@adhese/sdk": ">= 0.19.2 < 1",
     "react": ">=16.13",
     "react-dom": ">=16.13"
   },
