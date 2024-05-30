@@ -41,7 +41,7 @@ const baseSchema = object({
     prebid: unknown().optional(),
   }).optional(),
   height: numberLike.optional(),
-  id: string(),
+  id: string().optional(),
   impressionCounter: urlLike.optional(),
   libId: string().optional(),
   orderId: string().optional(),
