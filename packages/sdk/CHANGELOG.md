@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 0.20.1
+
+### Patch Changes
+
+- b4a1289: Make ID in response optional
+
 ## 0.20.0
 
 ### Minor Changes
