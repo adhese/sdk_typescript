@@ -10,7 +10,7 @@ export type AdheseSlotHooks = {
   /**
    * Hook that is called when the slot is rendered.
    */
-  onRender: ReturnType<typeof createAsyncHook<AdheseAd>>[1];
+  onRender: ReturnType<typeof createPassiveHook<AdheseAd>>[1];
   /**
    * Hook that is called before the slot is requested from the server.
    */
@@ -19,6 +19,10 @@ export type AdheseSlotHooks = {
    * Hook that is called when the slot is requested from the server.
    */
   onRequest: ReturnType<typeof createAsyncHook<AdheseAd>>[1];
+  /**
+   * Hook that is called when the slot is initialized.
+   */
+  onInit: ReturnType<typeof createPassiveHook>[1];
   /**
    * Hook that is called when the slot is disposed.
    */
@@ -156,6 +160,10 @@ type BaseAdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' | 'o
    * Slot related data fetched from the API.
    */
   data: AdheseAd | null;
+  /**
+   * Options slot was created with
+   */
+  options: Omit<AdheseSlotOptions, 'context'>;
   /**
    * Renders the slot in the containing element. If no data is provided, new data will be requested from the API.
    */

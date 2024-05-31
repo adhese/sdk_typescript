@@ -7,6 +7,7 @@ import {
   effectScope,
   generateName,
   isDeepEqual,
+  omit,
   reactive,
   ref,
   uniqueId,
@@ -69,6 +70,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       runOnRender,
       runOnBeforeRequest,
       runOnRequest,
+      runOnInit,
       runOnDispose,
       ...hooks
     } = useSlotHooks(options, slotContext);
@@ -134,15 +136,6 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
     hooks.onDispose(() => {
       disposeQueryDetector();
-    });
-
-    context.hooks.onInit(async () => {
-      status.value = 'initialized';
-
-      if (options.lazyLoading)
-        return;
-
-      data.value = await slotContext.value?.request() ?? null;
     });
 
     const isViewabilityTracked = useViewabilityObserver({
@@ -215,8 +208,6 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         return null;
       }
 
-      renderAd = await runOnRender(renderAd);
-
       if (!element.value) {
         const error = `Could not create slot for format ${format.value}. No element found.`;
         logger.error(error, options);
@@ -241,7 +232,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
       isImpressionTracked.value = true;
 
-      logger.debug('Slot rendered', {
+      logger.debug(`Slot rendered ${name.value}`, {
         renderedElement: element,
         location: context.location,
         format,
@@ -252,6 +243,8 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       data.value = renderAd;
 
       status.value = 'rendered';
+
+      runOnRender(renderAd);
 
       return element.value;
     }
@@ -301,6 +294,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       request,
       dispose,
       cleanElement,
+      options: omit(options, ['context']),
       ...hooks,
     });
 
@@ -309,6 +303,17 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     }, {
       deep: true,
       immediate: true,
+    });
+
+    context.hooks.onInit(async () => {
+      status.value = 'initialized';
+
+      runOnInit();
+
+      if (options.lazyLoading)
+        return;
+
+      data.value = await slotContext.value?.request() ?? null;
     });
 
     return state;

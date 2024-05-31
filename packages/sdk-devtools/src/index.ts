@@ -1,57 +1,20 @@
-import type { AdheseContext, AdhesePlugin } from '@adhese/sdk';
-import { watch } from '@adhese/sdk-shared';
-import { lazy } from 'react';
+import type { AdhesePlugin } from '@adhese/sdk';
+import { useLogger } from '@adhese/sdk-shared';
+import { name, version } from '../package.json';
+import { useDevtoolsUi, useModifiedSlotsHijack } from './devtools.composables';
 
 export const devtoolsPlugin: AdhesePlugin<{
   name: 'devtools';
-}> = (context: AdheseContext, {
-  hooks: {
-    onInit,
-    onDispose,
-  },
-}) => {
-  const wrapperElement = document.createElement('div');
-  let unmount: (() => void) | undefined;
+}> = (context, plugin) => {
+  const logger = useLogger({
+    scope: `${name}@${version}`,
+  }, { context, plugin });
 
-  async function initDevtools(): Promise<void> {
-    const main = await import('./main');
+  useDevtoolsUi(context, plugin.hooks);
 
-    if (!unmount) {
-      document.body.appendChild(wrapperElement);
-
-      unmount = main.createAdheseDevtools(wrapperElement, context);
-    }
-  }
-
-  onInit(() => {
-    watch(() => [context.debug, context.isDisposed], async ([debug, isDisposed]) => {
-      if (debug && !isDisposed) {
-        await initDevtools();
-
-        if (context.isDisposed)
-          dispose();
-      }
-      else {
-        dispose();
-      }
-    }, {
-      immediate: true,
-    });
-  });
-
-  function dispose(): void {
-    unmount?.();
-    unmount = undefined;
-    if (wrapperElement.parentElement)
-      wrapperElement.outerHTML = '';
-  }
-
-  onDispose(dispose);
+  useModifiedSlotsHijack(context, plugin.hooks, logger);
 
   return {
     name: 'devtools',
   };
 };
-
-// eslint-disable-next-line ts/naming-convention
-export const Devtools = lazy(() => import('./Devtools').then(module => ({ default: module.Devtools })));

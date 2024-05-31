@@ -6,11 +6,7 @@ import packageJson from './package.json';
 
 export default defineConfig({
   plugins: [
-    cssInjectedByJsPlugin({
-      jsAssetsFilterFunction(chunk) {
-        return chunk.name === 'devtools';
-      },
-    }),
+    cssInjectedByJsPlugin(),
   ],
   build: {
     emptyOutDir: true,
@@ -29,9 +25,6 @@ export default defineConfig({
       ].map(dep => [dep, new RegExp(`^${dep}(/.*)?`)])),
       output: {
         inlineDynamicImports: false,
-        manualChunks: {
-          devtools: ['./src/Devtools.tsx', './src/main.tsx'],
-        },
       },
     },
   },

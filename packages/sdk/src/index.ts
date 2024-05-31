@@ -1,5 +1,6 @@
 /* v8 ignore start */
 export { createAdhese } from './main';
+export { createSlot } from './slot/slot';
 export type { AdheseSlotManager } from './slotManager/slotManager';
 export type { AdRequestOptions } from './requestAds/requestAds';
 export type { AdheseAd } from './requestAds/requestAds.schema';

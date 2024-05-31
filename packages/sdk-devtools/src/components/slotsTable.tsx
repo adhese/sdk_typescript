@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { Badge } from './badge';
 import { buttonVariants } from './button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './sheet';
+import { EditSlot } from './editSlot';
 
 const slotIndexBadgeClasses = [
   'bg-blue-500 hover:bg-blue-500',
@@ -101,6 +102,7 @@ export function SlotsTable(): ReactElement {
               {
                 previewExist && <TableHead>Preview</TableHead>
               }
+              <TableHead>Controls</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -287,6 +289,9 @@ export function SlotsTable(): ReactElement {
                       )}
                     </TableCell>
                   )}
+                  <TableCell>
+                    <EditSlot id={id} />
+                  </TableCell>
                 </TableRow>
                 {element && status === 'rendered' && createPortal(
                   <div className="absolute inset-1 flex gap-2 items-start">
