@@ -1,12 +1,14 @@
 import { Fragment, type ReactElement, useEffect, useMemo, useState } from 'react';
 import type { AdheseSlot } from '@adhese/sdk';
-import { createPortal } from 'react-dom';
-import { type UnwrapRef, watch } from '@adhese/sdk-shared';
+import { type UnwrapRef, generateName, watch } from '@adhese/sdk-shared';
+import { ResetIcon } from '@radix-ui/react-icons';
 import { cn } from '../utils';
 import { useAdheseContext } from '../AdheseContext';
+import { useModifiedSlots } from '../modifiedSlots.store';
+import type { DevtoolsSlotPluginOptions } from '../devtools.composables';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Badge } from './badge';
-import { buttonVariants } from './button';
+import { Button, buttonVariants } from './button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './sheet';
 import { EditSlot } from './editSlot';
 
@@ -49,16 +51,26 @@ export function SlotsTable(): ReactElement {
       disposeWatcher();
     };
   }, [adheseContext]);
+  const modifiedSlots = useModifiedSlots();
 
-  const formattedSlots = useMemo(() => slots.map(slot => ({
-    ...slot,
-    parameters: Array.from(slot.parameters.entries()),
-  })).toSorted((a, b) => {
-    const offsetA = a.element?.getBoundingClientRect().top ?? 0;
-    const offsetB = b.element?.getBoundingClientRect().top ?? 0;
+  const formattedSlots = useMemo(() => slots
+    .filter(slot => !(slot.pluginOptions?.devtools as DevtoolsSlotPluginOptions)?.hijackedSlot).map((slot) => {
+      const hijackedSlotOptions = modifiedSlots.slots.get(slot.name);
+      const hijackedSlot = (adheseContext && hijackedSlotOptions) && adheseContext.get?.(generateName(adheseContext.location, hijackedSlotOptions.format, hijackedSlotOptions.slot));
 
-    return offsetA - offsetB;
-  }), [slots]);
+      return ({
+        ...(hijackedSlot ?? slot),
+        parameters: Array.from((hijackedSlot ?? slot).parameters.entries()),
+        hijackedSlot,
+        originalSlot: slot,
+      });
+    })
+    .toSorted((a, b) => {
+      const offsetA = a.element?.getBoundingClientRect().top ?? 0;
+      const offsetB = b.element?.getBoundingClientRect().top ?? 0;
+
+      return offsetA - offsetB;
+    }), [slots]);
 
   const slotParametersExist = useMemo(() => formattedSlots.some(formattedSlot => formattedSlot.parameters.length > 0), [formattedSlots]);
   const previewExist = useMemo(() => formattedSlots.some(formattedSlot => formattedSlot.data?.preview), [formattedSlots]);
@@ -117,23 +129,29 @@ export function SlotsTable(): ReactElement {
               element,
               parameters,
               slot,
-              id,
+              hijackedSlot,
+              originalSlot,
             }, index) => (
-              <Fragment key={id}>
+              <Fragment key={originalSlot.id}>
                 <TableRow id={name}>
                   <TableCell className="font-medium">
-                    <button onClick={() => {
-                      if (element) {
-                        element.scrollIntoView();
-                        element.style.outline = 'solid 5px red';
+                    <button
+                      onClick={() => {
+                        if (element) {
+                          element.scrollIntoView();
+                          element.style.outline = 'solid 5px red';
 
-                        setTimeout(() => {
-                          element.style.outline = '';
-                        }, 1000);
-                      }
-                    }}
+                          setTimeout(() => {
+                            element.style.outline = '';
+                          }, 1000);
+                        }
+                      }}
+                      className="flex flex-col gap-1"
                     >
-                      <Badge className={cn(slotIndexBadgeClasses[index % slotIndexBadgeClasses.length], 'text-white')}>{name}</Badge>
+                      <Badge className={cn(slotIndexBadgeClasses[index % slotIndexBadgeClasses.length], 'text-white')}>
+                        {name}
+                      </Badge>
+                      {hijackedSlot && <del className="text-xs text-muted-foreground">{originalSlot.name}</del>}
                     </button>
                   </TableCell>
                   <TableCell>{location}</TableCell>
@@ -289,21 +307,24 @@ export function SlotsTable(): ReactElement {
                       )}
                     </TableCell>
                   )}
-                  <TableCell>
-                    <EditSlot id={id} />
+                  <TableCell className="flex gap-1">
+                    <EditSlot id={originalSlot.id} />
+                    {modifiedSlots.slots.has(originalSlot.name) && (
+                      <Button
+                        onClick={
+                      () => {
+                        modifiedSlots.remove(originalSlot.name);
+                      }
+                    }
+                        variant="ghost"
+                        size="sm"
+                        title="Reset"
+                      >
+                        <ResetIcon />
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
-                {element && status === 'rendered' && createPortal(
-                  <div className="absolute inset-1 flex gap-2 items-start">
-                    <Badge className={cn(slotIndexBadgeClasses[index % slotIndexBadgeClasses.length], 'text-white')}>
-                      {name}
-                    </Badge>
-                    {
-                      data?.preview && <Badge className="bg-amber-400 text-amber-950 hover:bg-amber-400">PREVIEW</Badge>
-                    }
-                  </div>,
-                  element,
-                )}
               </Fragment>
             ))}
           </TableBody>

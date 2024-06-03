@@ -1,38 +1,47 @@
 import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
-import type { AdheseSlotOptions } from '@adhese/sdk';
 import { type StorageValue, persist } from 'zustand/middleware';
 import { name as packageName, version } from '../package.json';
 
-type SlotPair = {
-  old: Pick<AdheseSlotOptions, 'format' | 'slot'>;
-  new: Pick<AdheseSlotOptions, 'format' | 'slot'>;
+type SlotOptions = {
+  format: string;
+  slot?: string;
 };
 
 export type ModifiedSlotsStore = {
-  slots: Map<string, SlotPair>;
-  set(slot: SlotPair, id: string): string;
+  slots: Map<string, SlotOptions>;
+  set(name: string, slot: SlotOptions): string;
+  remove(id: string): void;
 };
 
-const name = `${packageName}/modifiedSlots`;
+const storeName = `${packageName}/modifiedSlots`;
 
 export const modifiedSlotsStore = createStore(persist<ModifiedSlotsStore>(
   set => ({
     slots: new Map(),
-    set(pair, id): string {
+    set(name: string, slot: SlotOptions): string {
       set((state) => {
-        state.slots.set(id, pair);
+        state.slots.set(name, slot);
 
         return {
           slots: new Map(state.slots),
         };
       });
 
-      return id;
+      return name;
+    },
+    remove(id: string): void {
+      set((state) => {
+        state.slots.delete(id);
+
+        return {
+          slots: new Map(state.slots),
+        };
+      });
     },
   }),
   {
-    name,
+    name: storeName,
     version: Number(version.split('.')[0]),
     storage: {
       getItem(key) {

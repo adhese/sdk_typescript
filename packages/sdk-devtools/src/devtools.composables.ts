@@ -1,7 +1,10 @@
-import { type AdheseContext, type AdhesePlugin, type AdheseSlot, createSlot } from '@adhese/sdk';
-import { ref, type useLogger, watch } from '@adhese/sdk-shared';
-import { omit } from 'remeda';
+import type { AdheseContext, AdhesePlugin, AdheseSlot } from '@adhese/sdk';
+import { computed, omit, ref, type useLogger, watch } from '@adhese/sdk-shared';
 import type { ModifiedSlotsStore, modifiedSlotsStore } from './modifiedSlots.store';
+
+export type DevtoolsSlotPluginOptions = {
+  hijackedSlot?: string;
+};
 
 export function useDevtoolsUi(context: AdheseContext, { onInit, onDispose }: Parameters<AdhesePlugin>[1]['hooks']): void {
   const wrapperElement = document.createElement('div');
@@ -64,29 +67,41 @@ export function useModifiedSlotsHijack(
         const state = ref<ModifiedSlotsStore | null>(null);
         const hijackSlot = ref<AdheseSlot | null>(null);
 
+        const hijackSlotOptions = computed(() => (state.value ?? store?.getState())?.slots.get(slotContext.value?.name ?? ''));
+
         let disposeSub: (() => void) | undefined;
 
         async function createHijack(): Promise<void> {
           if (context.debug && slotContext.value && slotContext.value.element) {
             hijackSlot.value?.dispose();
 
-            const hijackPair = (state.value ?? store?.getState())?.slots.get(slotContext.value.name);
-
-            if (hijackPair) {
+            if (hijackSlotOptions.value) {
               slotContext.value.renderMode = 'none';
 
-              hijackSlot.value = createSlot({
-                context,
+              hijackSlot.value = context.addSlot?.({
                 ...omit(slotContext.value.options, ['setup']),
-                ...hijackPair.new,
+                ...hijackSlotOptions.value,
                 containingElement: slotContext.value.element,
                 lazyLoading: false,
                 lazyLoadingOptions: undefined,
-              });
+                pluginOptions: {
+                  devtools: {
+                    hijackedSlot: slotContext.value.name,
+                  } satisfies DevtoolsSlotPluginOptions,
+                },
+              }) ?? null;
 
-              logger.value.debug(`Hijacking slot ${slotContext.value.name} with new slot ${hijackSlot.value.name}`);
+              logger.value.debug(`Hijacking slot ${slotContext.value.name} with new slot ${hijackSlot.value?.name}`);
 
-              await hijackSlot.value.render();
+              await hijackSlot.value?.render();
+            }
+            else {
+              slotContext.value.renderMode = slotContext.value.options.renderMode ?? 'iframe';
+
+              hijackSlot.value?.dispose();
+              hijackSlot.value = null;
+
+              await slotContext.value.render();
             }
           }
         }

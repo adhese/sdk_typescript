@@ -6,7 +6,11 @@ import packageJson from './package.json';
 
 export default defineConfig({
   plugins: [
-    cssInjectedByJsPlugin(),
+    cssInjectedByJsPlugin({
+      jsAssetsFilterFunction(chunk) {
+        return chunk.name === 'main';
+      },
+    }),
   ],
   build: {
     emptyOutDir: true,
@@ -15,7 +19,7 @@ export default defineConfig({
       entry: 'src/index.ts',
       name: '@adhese/sdk',
       formats: ['es', 'cjs'],
-      fileName: format => `index.${format === 'cjs' ? 'cjs' : 'js'}`,
+      fileName: format => `[name].${format === 'cjs' ? 'cjs' : 'js'}`,
     },
     sourcemap: true,
     rollupOptions: {

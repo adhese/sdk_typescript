@@ -1,4 +1,4 @@
-import { type PropsWithChildren, type ReactElement, useEffect, useState } from 'react';
+import { type PropsWithChildren, type ReactElement, useEffect, useMemo, useState } from 'react';
 import { pick, watch } from '@adhese/sdk-shared';
 import type { AdheseSlot } from '@adhese/sdk';
 import { type TypeOf, object, string } from '@adhese/sdk-shared/validators';
@@ -27,32 +27,6 @@ export function EditSlot({
 }): ReactElement {
   const slot = useSlot(id);
 
-  const adheseContext = useAdheseContext();
-
-  const form = useForm<SlotSchema>({
-    resolver: zodResolver(slotSchema),
-    defaultValues: {
-      format: slot?.format ?? '',
-      slot: slot?.slot ?? '',
-    },
-  });
-
-  const modifiedSlots = useModifiedSlots();
-
-  const onSubmit: SubmitHandler<SlotSchema> = (data) => {
-    if (slot) {
-      if (!adheseContext?.slots.has(slot.name)) {
-        modifiedSlots.set({
-          old: pick(slot.options, ['format', 'slot']),
-          new: pick({
-            ...slot.options,
-            ...data,
-          }, ['format', 'slot']),
-        }, slot.name);
-      }
-    }
-  };
-
   return (
     <Sheet>
       <SheetTrigger
@@ -65,49 +39,77 @@ export function EditSlot({
         <Pencil1Icon />
       </SheetTrigger>
       <SheetContent>
-        {slot && (
-          <>
-            <SheetHeader className="mb-8">
-              <SheetTitle>
-                Edit slot
-              </SheetTitle>
-              <SheetDescription>
-                {slot.name}
-              </SheetDescription>
-            </SheetHeader>
-
-            <Form {...form}>
-              {/* eslint-disable-next-line ts/no-misused-promises */}
-              <form onSubmit={form.handleSubmit(onSubmit)}>
-                <FormField
-                  control={form.control}
-                  name="format"
-                  render={({ field }) => (
-                    <SlotFormItem label="Format">
-                      <Input {...field} />
-                    </SlotFormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="slot"
-                  render={({ field }) => (
-                    <SlotFormItem label="Slot">
-                      <Input {...field} />
-                    </SlotFormItem>
-                  )}
-                />
-
-                <Button className="w-full mt-10">
-                  Edit
-                </Button>
-                <p className="mt-3 text-sm text-muted-foreground">Refresh the page to see your changes</p>
-              </form>
-            </Form>
-          </>
-        )}
+        {slot && <EditSlotForm slot={slot} />}
       </SheetContent>
     </Sheet>
+  );
+}
+
+// eslint-disable-next-line ts/naming-convention
+function EditSlotForm({
+  slot,
+}: {
+  slot: AdheseSlot;
+}): ReactElement {
+  const modifiedSlots = useModifiedSlots();
+  const modifiedSlot = useMemo(() => modifiedSlots.slots.get(slot?.name ?? ''), [modifiedSlots, slot]);
+
+  const defaultValues = useMemo(() => pick(modifiedSlot ?? {
+    format: slot.format,
+    slot: slot.slot ?? '',
+  }, ['format', 'slot']), [slot, modifiedSlot]);
+
+  const form = useForm<SlotSchema>({
+    resolver: zodResolver(slotSchema),
+    defaultValues,
+  });
+
+  const onSubmit: SubmitHandler<SlotSchema> = (data) => {
+    modifiedSlots.set(slot.name, pick({
+      ...slot,
+      ...data,
+    }, ['format', 'slot']));
+  };
+
+  return (
+    <>
+      <SheetHeader className="mb-8">
+        <SheetTitle>
+          Edit slot
+        </SheetTitle>
+        <SheetDescription>
+          {slot.name}
+        </SheetDescription>
+      </SheetHeader>
+
+      <Form {...form}>
+        {/* eslint-disable-next-line ts/no-misused-promises */}
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <FormField
+            control={form.control}
+            name="format"
+            render={({ field }) => (
+              <SlotFormItem label="Format">
+                <Input {...field} />
+              </SlotFormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="slot"
+            render={({ field }) => (
+              <SlotFormItem label="Slot">
+                <Input {...field} />
+              </SlotFormItem>
+            )}
+          />
+
+          <Button className="w-full mt-10">
+            Edit
+          </Button>
+        </form>
+      </Form>
+    </>
   );
 }
 

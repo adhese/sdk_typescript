@@ -3,6 +3,8 @@ import { useLogger } from '@adhese/sdk-shared';
 import { name, version } from '../package.json';
 import { useDevtoolsUi, useModifiedSlotsHijack } from './devtools.composables';
 
+export type { DevtoolsSlotPluginOptions } from './devtools.composables';
+
 export const devtoolsPlugin: AdhesePlugin<{
   name: 'devtools';
 }> = (context, plugin) => {
