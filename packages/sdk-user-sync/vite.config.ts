@@ -15,8 +15,8 @@ export default defineConfig({
     sourcemap: true,
     rollupOptions: {
       external: flat([
-        ...(dependencies ? Object.keys(dependencies) : []),
-        ...(peerDependencies ? Object.keys(peerDependencies) : []),
+        ...Object.keys(dependencies),
+        ...Object.keys(peerDependencies),
       ].map(dep => [dep, new RegExp(`^${dep}(/.*)?`)])),
       output: {
         inlineDynamicImports: false,

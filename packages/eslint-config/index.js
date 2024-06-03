@@ -98,6 +98,9 @@ export function createConfig(
       parserOptions: {
         project: `${pathToRoot}tsconfig.eslint.json`,
       },
+      overrides: {
+        'ts/strict-boolean-expressions': 'off',
+      },
     },
   }, {
     files: ['**/*.ts', '**/*.tsx'],
@@ -116,6 +119,7 @@ export function createConfig(
       'ts/array-type': ['error', { default: 'generic' }],
       'ts/consistent-type-definitions': 'off',
       'ts/consistent-type-exports': 'error',
+      'ts/strict-boolean-expressions': 'off',
       'ts/consistent-type-imports': [
         'error',
         {
