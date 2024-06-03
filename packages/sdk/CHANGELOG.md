@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 0.22.0
+
+### Minor Changes
+
+- 3ba6fd6: Add isVissible property to slots
+
 ## 0.21.1
 
 ### Patch Changes

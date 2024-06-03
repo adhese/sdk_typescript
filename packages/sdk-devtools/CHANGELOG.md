@@ -1,5 +1,11 @@
 # @adhese/sdk-devtools
 
+## 0.13.0
+
+### Minor Changes
+
+- 3ba6fd6: Show badges with important info about a slot when in debug mode
+
 ## 0.12.1
 
 ### Patch Changes

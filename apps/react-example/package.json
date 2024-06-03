@@ -11,8 +11,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@adhese/sdk": "^0.21.0",
-    "@adhese/sdk-devtools": "^0.12.0",
+    "@adhese/sdk": "^0.22.0",
+    "@adhese/sdk-devtools": "^0.13.0",
     "@adhese/sdk-react": "^0.9.12",
     "@adhese/sdk-stack-slots": "^0.3.6",
     "react": "^18.3.1",
