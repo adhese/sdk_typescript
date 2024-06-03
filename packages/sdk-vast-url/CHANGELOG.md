@@ -1,5 +1,11 @@
 # @adhese/sdk-vast-url
 
+## 0.1.4
+
+### Patch Changes
+
+- 1feb9ff: Fix types not being published
+
 ## 0.1.3
 
 ### Patch Changes

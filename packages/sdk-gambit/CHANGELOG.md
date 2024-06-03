@@ -1,5 +1,11 @@
 # @adhese/sdk-gambit
 
+## 0.2.14
+
+### Patch Changes
+
+- 1feb9ff: Fix types not being published
+
 ## 0.2.13
 
 ### Patch Changes

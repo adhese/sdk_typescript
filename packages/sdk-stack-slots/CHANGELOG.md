@@ -1,5 +1,11 @@
 # @adhese/sdk-stack-slots
 
+## 0.3.8
+
+### Patch Changes
+
+- 1feb9ff: Fix types not being published
+
 ## 0.3.7
 
 ### Patch Changes
