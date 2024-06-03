@@ -12,7 +12,7 @@
       "@adhese/sdk-react": ["packages/sdk-react/src/sdkReact.ts"],
       "@adhese/sdk-devtools": ["packages/sdk-devtools/src/sdkDevtools.ts"],
       "@adhese/sdk-gambit": ["packages/sdk-gambit/src/gambit.ts"],
-      "@adhese/sdk-shared": ["packages/sdk-shared/src.ts"],
+      "@adhese/sdk-shared": ["packages/sdk-shared/src/index.ts"],
       "@adhese/sdk-shared/validators": ["packages/sdk-shared/src/validators.ts"],
       "@adhese/sdk-safe-frame": ["packages/sdk-safe-frame/src/safeFrame.ts"],
       "@adhese/sdk-stack-slots": ["packages/sdk-stack-slots/src/stackSlots.ts"],
