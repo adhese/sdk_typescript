@@ -211,6 +211,15 @@ export function useSlotBadge(
       watch(() => context.slots, async () => {
         await renderBadges();
       }, { immediate: false, deep: true });
+
+      watch(() => context.debug, async (debug) => {
+        if (debug) {
+          await renderBadges();
+        }
+        else {
+          element.value?.remove();
+        }
+      }, { immediate: true });
     },
   }));
 }
