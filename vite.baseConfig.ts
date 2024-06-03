@@ -2,9 +2,10 @@ import { execSync } from 'node:child_process';
 import { type LibraryOptions, type PluginOption, type UserConfig, defineConfig } from 'vite';
 import { flat } from 'remeda';
 
-export function viteBaseConfig({ dependencies = {}, peerDependencies = {}, entries, plugins = [], name }: {
+export function viteBaseConfig({ dependencies = {}, peerDependencies = {}, devDependencies = {}, entries, plugins = [], name }: {
   dependencies?: Record<string, string>;
   peerDependencies?: Record<string, string>;
+  devDependencies?: Record<string, string>;
   name: string;
   entries: LibraryOptions['entry'];
   plugins?: UserConfig['plugins'];
@@ -22,13 +23,18 @@ export function viteBaseConfig({ dependencies = {}, peerDependencies = {}, entri
 
               if (Array.isArray(entry))
                 buildEntries.push(...entry);
+              else
+                buildEntries.push(entry as string);
             }
           },
           closeBundle(): void {
             // eslint-disable-next-line no-console
             console.log();
+
+            const external = [dependencies, peerDependencies, devDependencies].flatMap(Object.keys);
+
             for (const entry of buildEntries)
-              execSync(`tsup ${entry} --dts-only --format esm --out-dir dist`, { stdio: 'inherit' });
+              execSync(`tsup ${entry} --dts-only --format esm --out-dir dist ${external.map(pack => ` --external ${pack}`).join(' ')}`, { stdio: 'inherit' });
           },
         });
       })(),
