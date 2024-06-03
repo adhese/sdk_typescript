@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [
     cssInjectedByJsPlugin({
       jsAssetsFilterFunction(chunk) {
-        return chunk.name === 'devtools';
+        return chunk.name === 'main';
       },
     }),
   ],
@@ -19,7 +19,7 @@ export default defineConfig({
       entry: 'src/index.ts',
       name: '@adhese/sdk',
       formats: ['es', 'cjs'],
-      fileName: format => `index.${format === 'cjs' ? 'cjs' : 'js'}`,
+      fileName: format => `[name].${format === 'cjs' ? 'cjs' : 'js'}`,
     },
     sourcemap: true,
     rollupOptions: {
@@ -29,9 +29,6 @@ export default defineConfig({
       ].map(dep => [dep, new RegExp(`^${dep}(/.*)?`)])),
       output: {
         inlineDynamicImports: false,
-        manualChunks: {
-          devtools: ['./src/Devtools.tsx', './src/main.tsx'],
-        },
       },
     },
   },

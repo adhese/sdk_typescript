@@ -88,7 +88,6 @@ export function Child(): ReactElement {
       <div ref={halfwidthsmallresponsiveRef} />
       <AdheseSlot format="leaderboard" renderMode="inline" />
       <AdheseSlot format="imu" lazyLoading />
-      <AdheseSlot format="halfpage" lazyLoading />
       <AdheseSlot
         format="newstack"
         type="stack"

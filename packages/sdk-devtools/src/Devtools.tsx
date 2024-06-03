@@ -1,5 +1,4 @@
-import type { AdheseContext } from '@adhese/sdk';
-import { type ReactElement, useEffect, useRef, useState } from 'react';
+import { type ReactElement, useRef, useState } from 'react';
 import './globals.css';
 import { SlotsTable } from './components/slotsTable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/tabs';
@@ -8,32 +7,14 @@ import { Button } from './components/button';
 import { ParametersTable } from './components/parametersTable';
 import { Settings } from './components/settings';
 import { PreviewButton } from './components/previewButton';
+import { useSpacing } from './Devtools.hooks';
 
 // eslint-disable-next-line ts/naming-convention
-export function Devtools({ adheseContext }: {
-  adheseContext: AdheseContext;
-}): ReactElement {
-  const [spacing, setSpacing] = useState(0);
+export function Devtools(): ReactElement {
   const appRef = useRef<HTMLDivElement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  useEffect(() => {
-    let resizeObserver: ResizeObserver | undefined;
-
-    if (isOpen) {
-      resizeObserver = new ResizeObserver(([entry]) => {
-        setSpacing(entry.target.getBoundingClientRect().height);
-      },
-      );
-
-      if (appRef.current)
-        resizeObserver.observe(appRef.current);
-    }
-
-    return (): void => {
-      resizeObserver?.disconnect();
-    };
-  }, [isOpen]);
+  const spacing = useSpacing(isOpen, appRef);
 
   return (
     <div className="adhese-devtools">
@@ -65,16 +46,16 @@ export function Devtools({ adheseContext }: {
                 </div>
                 <div className="overflow-auto max-h-96 border-t-2 border-t-accent p-4">
                   <TabsContent value="slots">
-                    <SlotsTable adheseContext={adheseContext} />
+                    <SlotsTable />
                   </TabsContent>
                   <TabsContent value="logs">
-                    <LogTable adheseContext={adheseContext} />
+                    <LogTable />
                   </TabsContent>
                   <TabsContent value="parameters">
-                    <ParametersTable adheseContext={adheseContext} />
+                    <ParametersTable />
                   </TabsContent>
                   <TabsContent value="settings">
-                    <Settings adheseContext={adheseContext} />
+                    <Settings />
                   </TabsContent>
                 </div>
               </Tabs>

@@ -138,15 +138,17 @@ export function useViewabilityObserver(
 
 export function useSlotHooks({ setup }: AdheseSlotOptions, slotContext: Ref<AdheseSlotContext | null>): {
   runOnBeforeRender: ReturnType<typeof createAsyncHook<AdheseAd>>[0];
-  runOnRender: ReturnType<typeof createAsyncHook<AdheseAd>>[0];
+  runOnRender: ReturnType<typeof createPassiveHook<AdheseAd>>[0];
   runOnBeforeRequest: ReturnType<typeof createAsyncHook<AdheseAd | null>>[0];
   runOnRequest: ReturnType<typeof createAsyncHook<AdheseAd>>[0];
+  runOnInit: ReturnType<typeof createPassiveHook<void>>[0];
   runOnDispose: ReturnType<typeof createPassiveHook<void>>[0];
 } & AdheseSlotHooks {
   const [runOnBeforeRender, onBeforeRender, disposeOnBeforeRender] = createAsyncHook<AdheseAd>();
-  const [runOnRender, onRender, disposeOnRender] = createAsyncHook<AdheseAd>();
+  const [runOnRender, onRender, disposeOnRender] = createPassiveHook<AdheseAd>();
   const [runOnBeforeRequest, onBeforeRequest, disposeOnBeforeRequest] = createAsyncHook<AdheseAd | null>();
   const [runOnRequest, onRequest, disposeOnRequest] = createAsyncHook<AdheseAd>();
+  const [runOnInit, onInit, disposeOnInit] = createPassiveHook();
   const [runOnDispose, onDispose, disposeOnDispose] = createPassiveHook();
 
   setup?.(slotContext, {
@@ -155,6 +157,7 @@ export function useSlotHooks({ setup }: AdheseSlotOptions, slotContext: Ref<Adhe
     onBeforeRequest,
     onDispose,
     onRequest,
+    onInit,
   });
 
   onDispose(() => {
@@ -162,8 +165,9 @@ export function useSlotHooks({ setup }: AdheseSlotOptions, slotContext: Ref<Adhe
     disposeOnRender();
     disposeOnBeforeRequest();
     disposeOnRequest();
+    disposeOnInit();
     disposeOnDispose();
   });
 
-  return { runOnBeforeRender, runOnRender, runOnBeforeRequest, runOnRequest, runOnDispose, onDispose, onBeforeRequest, onRequest, onBeforeRender, onRender };
+  return { runOnBeforeRender, runOnRender, runOnBeforeRequest, runOnRequest, runOnDispose, onDispose, onBeforeRequest, onRequest, onBeforeRender, onRender, onInit, runOnInit };
 }

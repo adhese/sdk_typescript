@@ -125,12 +125,3 @@ adhese.addSlot({
     rootMargin: '0px',
   },
 });
-
-adhese.addSlot({
-  format: 'halfpage',
-  containingElement: 'halfpage',
-  lazyLoading: true,
-  lazyLoadingOptions: {
-    rootMargin: '0px',
-  },
-});
