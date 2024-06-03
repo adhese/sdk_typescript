@@ -1,5 +1,19 @@
 # @adhese/sdk-devtools
 
+## 0.12.0
+
+### Minor Changes
+
+- b2dfc1e: Use React Context to show Adhese state
+- b2dfc1e: Allow editing basic slot parameters from the devtools
+
+### Patch Changes
+
+- 10a2c67: Update entry file(s)
+- Updated dependencies [10a2c67]
+- Updated dependencies [de15eab]
+  - @adhese/sdk-shared@0.10.0
+
 ## 0.11.6
 
 ### Patch Changes
