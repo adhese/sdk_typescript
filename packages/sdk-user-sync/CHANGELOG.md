@@ -1,5 +1,11 @@
 # @adhese/sdk-user-sync
 
+## 0.1.2
+
+### Patch Changes
+
+- 1feb9ff: Fix types not being published
+
 ## 0.1.1
 
 ### Patch Changes

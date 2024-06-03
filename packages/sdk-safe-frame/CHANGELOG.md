@@ -1,5 +1,11 @@
 # @adhese/sdk-safe-frame
 
+## 0.1.10
+
+### Patch Changes
+
+- 1feb9ff: Fix types not being published
+
 ## 0.1.9
 
 ### Patch Changes

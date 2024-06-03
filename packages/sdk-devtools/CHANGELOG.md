@@ -1,5 +1,11 @@
 # @adhese/sdk-devtools
 
+## 0.12.1
+
+### Patch Changes
+
+- 1feb9ff: Fix types not being published
+
 ## 0.12.0
 
 ### Minor Changes
