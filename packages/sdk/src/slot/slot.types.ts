@@ -165,6 +165,10 @@ type BaseAdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' | 'o
    */
   options: Omit<AdheseSlotOptions, 'context'>;
   /**
+   * Is the slot visible in the viewport.
+   */
+  isVisible: boolean;
+  /**
    * Renders the slot in the containing element. If no data is provided, new data will be requested from the API.
    */
   render(data?: AdheseAd): Promise<HTMLElement | null>;

@@ -290,6 +290,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       isDisposed,
       id,
       pluginOptions,
+      isVisible: isInViewport,
       render,
       request,
       dispose,

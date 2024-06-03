@@ -1,5 +1,5 @@
 import type { AdheseContext, AdhesePlugin, AdheseSlot } from '@adhese/sdk';
-import { computed, omit, ref, type useLogger, watch } from '@adhese/sdk-shared';
+import { type Ref, computed, omit, ref, type useLogger, watch } from '@adhese/sdk-shared';
 import type { ModifiedSlotsStore, modifiedSlotsStore } from './modifiedSlots.store';
 
 export type DevtoolsSlotPluginOptions = {
@@ -142,4 +142,107 @@ export function useModifiedSlotsHijack(
       },
     }),
   );
+}
+
+export function useSlotBadge(
+  context: AdheseContext,
+  hooks: Parameters<AdhesePlugin>[1]['hooks'],
+): void {
+  const modifiedSlots = useModifiedSlots(context, hooks);
+
+  const sortedSlots = computed(() => Array.from(context.slots.values()).toSorted((a, b) => {
+    const offsetA = a.element?.getBoundingClientRect().top ?? 0;
+    const offsetB = b.element?.getBoundingClientRect().top ?? 0;
+
+    return offsetA - offsetB;
+  }));
+
+  hooks.onSlotCreate(slot => ({
+    ...slot,
+    setup(slotContext, slotHooks): void {
+      slot.setup?.(slotContext, slotHooks);
+
+      const element = ref<HTMLElement | null>(null);
+
+      async function renderBadges(): Promise<void> {
+        if (!slotContext.value || slotContext.value.renderMode === 'none' || !context.debug || !slotContext.value.isVisible)
+          return;
+
+        const [
+          { renderToStaticMarkup },
+          // eslint-disable-next-line ts/naming-convention
+          { Badge },
+          { slotIndexBadgeClasses },
+          { cn },
+        ] = await Promise.all([
+          import('react-dom/server'),
+          import('./components/badge'),
+          import('./components/slotsTable'),
+          import('./utils'),
+        ]);
+
+        const slotIndex = sortedSlots.value
+          .filter(({ name }) => !modifiedSlots.value?.slots.has(name))
+          .findIndex(({ name }) => name === slotContext.value?.name,
+          );
+
+        const template = renderToStaticMarkup(
+          <div className="absolute top-0 flex gap-1 flex-col pointer-events-none">
+            <Badge
+              className={cn('w-fit', slotIndexBadgeClasses[slotIndex % slotIndexBadgeClasses.length])}
+            >
+              {slotContext.value?.name}
+            </Badge>
+            {modifiedSlots.value?.slots.has((slotContext.value.pluginOptions?.devtools as DevtoolsSlotPluginOptions)?.hijackedSlot ?? '') && <Badge className="bg-red-500 w-fit">EDITED IN DEVTOOLS</Badge>}
+          </div>,
+        );
+
+        element.value?.remove();
+        element.value = document.createElement('div');
+        slotContext.value.element?.appendChild(element.value);
+
+        element.value.innerHTML = template;
+      }
+
+      slotHooks.onRender(async () => {
+        await renderBadges();
+      });
+
+      watch(() => context.slots, async () => {
+        await renderBadges();
+      }, { immediate: false, deep: true });
+    },
+  }));
+}
+
+function useModifiedSlots(context: AdheseContext, { onInit, onDispose }: Parameters<AdhesePlugin>[1]['hooks']): Ref<ModifiedSlotsStore | null> {
+  let disposeSub: (() => void) | undefined;
+  const state = ref<ModifiedSlotsStore | null>(null);
+  async function initStore(): Promise<typeof modifiedSlotsStore> {
+    const { modifiedSlotsStore: store } = await import('./modifiedSlots.store');
+
+    disposeSub = store.subscribe((newState) => {
+      state.value = newState;
+    });
+
+    state.value = store.getState();
+
+    return store;
+  }
+
+  onInit(async () => {
+    await initStore();
+  });
+
+  watch(() => context.debug, async (debug) => {
+    if (debug) {
+      await initStore();
+    }
+  }, { immediate: true });
+
+  onDispose(() => {
+    disposeSub?.();
+  });
+
+  return state;
 }

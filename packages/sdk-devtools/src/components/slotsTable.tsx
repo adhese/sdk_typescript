@@ -12,7 +12,7 @@ import { Button, buttonVariants } from './button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './sheet';
 import { EditSlot } from './editSlot';
 
-const slotIndexBadgeClasses = [
+export const slotIndexBadgeClasses = [
   'bg-blue-500 hover:bg-blue-500',
   'bg-amber-500 hover:bg-amber-500',
   'bg-green-500 hover:bg-green-500',
@@ -54,7 +54,8 @@ export function SlotsTable(): ReactElement {
   const modifiedSlots = useModifiedSlots();
 
   const formattedSlots = useMemo(() => slots
-    .filter(slot => !(slot.pluginOptions?.devtools as DevtoolsSlotPluginOptions)?.hijackedSlot).map((slot) => {
+    .filter(slot => !(slot.pluginOptions?.devtools as DevtoolsSlotPluginOptions)?.hijackedSlot)
+    .map((slot) => {
       const hijackedSlotOptions = modifiedSlots.slots.get(slot.name);
       const hijackedSlot = (adheseContext && hijackedSlotOptions) && adheseContext.get?.(generateName(adheseContext.location, hijackedSlotOptions.format, hijackedSlotOptions.slot));
 
