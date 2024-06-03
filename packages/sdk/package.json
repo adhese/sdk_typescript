@@ -1,7 +1,7 @@
 {
   "name": "@adhese/sdk",
   "type": "module",
-  "version": "0.20.1",
+  "version": "0.21.0",
   "description": "Adhese SDK",
   "license": "GPL-3.0",
   "repository": {
@@ -32,6 +32,6 @@
     "prepareRelease": "npm run build"
   },
   "dependencies": {
-    "@adhese/sdk-shared": "^0.9.2"
+    "@adhese/sdk-shared": "^0.10.0"
   }
 }

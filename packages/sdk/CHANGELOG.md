@@ -1,5 +1,19 @@
 # @adhese/sdk
 
+## 0.21.0
+
+### Minor Changes
+
+- b2dfc1e: Make onRender hook a passive hook, hijacks should go via the onBeforeRender hook from now on
+- b2dfc1e: Add onInit to slots initialisation
+
+### Patch Changes
+
+- 10a2c67: Update entry file(s)
+- Updated dependencies [10a2c67]
+- Updated dependencies [de15eab]
+  - @adhese/sdk-shared@0.10.0
+
 ## 0.20.1
 
 ### Patch Changes

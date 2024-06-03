@@ -1,7 +1,7 @@
 {
   "name": "@adhese/sdk-safe-frame",
   "type": "module",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Adhese SDK",
   "repository": {
     "type": "git",
@@ -28,6 +28,6 @@
     "@adhese/sdk": ">= 0.19 < 1"
   },
   "dependencies": {
-    "@adhese/sdk-shared": "^0.9.2"
+    "@adhese/sdk-shared": "^0.10.0"
   }
 }

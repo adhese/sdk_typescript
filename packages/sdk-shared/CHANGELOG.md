@@ -1,5 +1,15 @@
 # @adhese/sdk-shared
 
+## 0.10.0
+
+### Minor Changes
+
+- de15eab: Update Remeda to 2.0.1
+
+### Patch Changes
+
+- 10a2c67: Update entry file(s)
+
 ## 0.9.2
 
 ### Patch Changes

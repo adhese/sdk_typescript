@@ -1,5 +1,14 @@
 # @adhese/sdk-stack-slots
 
+## 0.3.7
+
+### Patch Changes
+
+- 10a2c67: Update entry file(s)
+- Updated dependencies [10a2c67]
+- Updated dependencies [de15eab]
+  - @adhese/sdk-shared@0.10.0
+
 ## 0.3.6
 
 ### Patch Changes
