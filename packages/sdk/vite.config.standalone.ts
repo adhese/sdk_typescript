@@ -15,6 +15,7 @@ export default defineConfig({
   resolve: {
     alias: {
       /* eslint-disable ts/naming-convention */
+      '@adhese/sdk-shared/validators': `${path.resolve()}/../sdk-shared/src/validators`,
       '@adhese/sdk-shared': `${path.resolve()}/../sdk-shared/src`,
       '@server-mocks': `${path.resolve()}/../server-mocks/src`,
       '@adhese/sdk': `${path.resolve()}/src`,

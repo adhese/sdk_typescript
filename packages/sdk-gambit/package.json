@@ -9,9 +9,9 @@
     "url": "git+https://github.com/adhese/sdk_typescript.git"
   },
   "sideEffects": false,
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/cjs/gambit.cjs",
+  "module": "./dist/gambit.js",
+  "types": "./dist/gambit.d.ts",
   "files": [
     "CHANGELOG.md",
     "LICENSE",
@@ -23,7 +23,7 @@
     "dev:verbose": "vitest",
     "test": "vitest --run --coverage --silent",
     "test:verbose": "vitest --run --coverage",
-    "build": "vite build && tsup src/index.ts --dts-only --minify --format esm",
+    "build": "vite build",
     "lint": "eslint . --ignore-pattern **/*.md/**/*",
     "lint:fix": "eslint --fix . --ignore-pattern **/*.md/**/*",
     "clean": "rm -rf dist",

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import type { GambitSlot } from '@adhese/sdk-gambit';
 import { toSlotOptions } from './toSlotOptions';
-import type { GambitSlot } from './gambit.types';
 
 describe('toSlotOptions', () => {
   it('should return a Adhese slot object', () => {

@@ -54,3 +54,7 @@ export type GambitConfig = {
   options: GambitOptions;
   account: string;
 };
+
+export { toOptions } from './toOptions';
+export { toParameters } from './toParameters';
+export { toSlotOptions } from './toSlotOptions';

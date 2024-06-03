@@ -1,29 +1,14 @@
 import path from 'node:path';
 import { defineConfig } from 'vite';
-import { flat } from 'remeda';
-import { dependencies } from './package.json';
+import { viteBaseConfig } from '../../vite.baseConfig';
+import { dependencies, name } from './package.json';
 
 export default defineConfig({
-  plugins: [],
-  build: {
-    emptyOutDir: true,
-    minify: false,
-    lib: {
-      entry: 'src/index.ts',
-      name: '@adhese/sdk',
-      formats: ['es', 'cjs'],
-      fileName: format => `[name].${format === 'cjs' ? 'cjs' : 'js'}`,
-    },
-    sourcemap: true,
-    rollupOptions: {
-      external: flat([
-        ...(dependencies ? Object.keys(dependencies) : []),
-      ].map(dep => [dep, new RegExp(`^${dep}(/.*)?`)])),
-      output: {
-        inlineDynamicImports: false,
-      },
-    },
-  },
+  ...viteBaseConfig({
+    dependencies,
+    name,
+    entries: 'src/index.ts',
+  }),
   resolve: {
     alias: {
       /* eslint-disable ts/naming-convention */

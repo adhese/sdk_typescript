@@ -1,6 +1,6 @@
 import type { AdheseSlotOptions } from '@adhese/sdk';
-import type { GambitSlot } from './gambit.types';
 import { toParameters } from './toParameters';
+import type { GambitSlot } from './gambit';
 
 /**
  * Converts `GambitSlot` to `AdheseSlot`.

@@ -1,7 +1,7 @@
 import { type ComputedRef, computed, ref, uniqueId, useLogger } from '@adhese/sdk-shared';
 import type { AdheseAd, AdheseContext, AdhesePlugin, AdheseSlot } from '@adhese/sdk';
 import { name, version } from '../package.json';
-import type { Config, Position, SafeFrameImplementation } from './main.types';
+import type { Config, Position, SafeFrameImplementation } from './safeFrame.types';
 
 export type SafeFrame = {
   config: Config;

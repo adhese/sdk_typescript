@@ -2,7 +2,7 @@ import type { AdheseAd, AdhesePlugin, AdheseSlot, AdheseSlotOptions } from '@adh
 import { type ComputedRef, computed, ref, uniqueId, useLogger } from '@adhese/sdk-shared';
 import { name, version } from '../package.json';
 import { useTracking } from './stackSlots.composables';
-import type { AdheseStackSchema } from './index';
+import type { AdheseStackSchema } from './stackSlots.schema';
 
 export type AdheseStackSlotsSlotOptions = {
   /**
@@ -140,3 +140,7 @@ export const stackSlotsPlugin: AdhesePlugin<{
     addSlot,
   };
 };
+
+export type { AdheseStackSchema } from './stackSlots.schema';
+
+export type AdheseStackAd = AdheseAd<AdheseStackSchema['ads']>;

@@ -13,11 +13,11 @@ export default (({ mode }): UserConfig => defineConfig({
           /* eslint-disable ts/naming-convention */
           '@server-mocks': `${path.resolve()}/../../packages/server-mocks/src`,
           '@adhese/sdk': `${path.resolve()}/../../packages/sdk/src`,
-          '@adhese/sdk-devtools': `${path.resolve()}/../../packages/sdk-devtools/src`,
-          '@adhese/sdk-react': `${path.resolve()}/../../packages/sdk-react/src`,
+          '@adhese/sdk-devtools': `${path.resolve()}/../../packages/sdk-devtools/src/sdkDevtools`,
+          '@adhese/sdk-react': `${path.resolve()}/../../packages/sdk-react/src/sdkReact`,
           '@adhese/sdk-shared': `${path.resolve()}/../../packages/sdk-shared/src`,
           '@adhese/sdk-shared/validators': `${path.resolve()}/../../sdk-shared/src/validators`,
-          '@adhese/sdk-stack-slots': `${path.resolve()}/../../packages/sdk-stack-slots/src`,
+          '@adhese/sdk-stack-slots': `${path.resolve()}/../../packages/sdk-stack-slots/src/stackSlots`,
           /* eslint-enable ts/naming-convention */
         }
       : undefined,
