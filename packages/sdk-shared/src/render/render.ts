@@ -1,6 +1,10 @@
-import type { AdheseAd } from '@adhese/sdk';
+export type RenderOptions = {
+  tag: string;
+  width?: number | string;
+  height?: number | string;
+};
 
-export function renderIframe(ad: AdheseAd, element: HTMLElement): void {
+export function renderIframe(ad: RenderOptions, element: HTMLElement): void {
   const iframe = document.createElement('iframe');
 
   iframe.srcdoc = `
@@ -26,6 +30,6 @@ export function renderIframe(ad: AdheseAd, element: HTMLElement): void {
   element.replaceChildren(iframe);
 }
 
-export function renderInline(ad: AdheseAd, element: HTMLElement): void {
+export function renderInline(ad: RenderOptions, element: HTMLElement): void {
   element.innerHTML = String(ad.tag);
 }

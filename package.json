@@ -20,7 +20,7 @@
     "npm": ">=10.0.0"
   },
   "scripts": {
-    "dev": "turbo dev",
+    "dev": "turbo dev --concurrency 18",
     "test": "turbo test --cache-dir=.turbo",
     "test:watch": "turbo test:watch",
     "lint": "eslint . --ignore-pattern apps --ignore-pattern packages --ignore-pattern **/*.md/**/* && turbo lint --cache-dir=.turbo",

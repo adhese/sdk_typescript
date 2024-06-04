@@ -20,8 +20,6 @@
     "build": "npm run build:npm && npm run build:standalone",
     "build:npm": "vite build --config vite.config.npm.ts",
     "build:standalone": "vite build --config vite.config.standalone.ts",
-    "dev": "vitest --silent",
-    "dev:verbose": "vitest",
     "lint": "eslint . --ignore-pattern **/*.md/**/*",
     "lint:fix": "eslint --fix . --ignore-pattern **/*.md/**/*",
     "clean": "rm -rf dist",
@@ -32,6 +30,6 @@
     "@adhese/sdk-shared": "^0.10.0"
   },
   "devDependencies": {
-    "@adhese/sdk": "^0.21.0"
+    "@adhese/sdk": "^0.22.0"
   }
 }

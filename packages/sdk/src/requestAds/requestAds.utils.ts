@@ -17,7 +17,7 @@ export function requestWithPost({
   const payload = {
     ...options,
     slots: options.slots.map(slot => ({
-      slotname: toValue(slot.name),
+      slotname: slot.name,
       parameters: parseParameters(slot.parameters),
     })),
     parameters: context.parameters && parseParameters(context.parameters),

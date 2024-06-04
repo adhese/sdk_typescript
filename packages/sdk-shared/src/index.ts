@@ -15,6 +15,8 @@ export { createSyncHook } from './hooks/syncHook';
 export { createPassiveHook } from './hooks/passiveHooks';
 export { addTrackingPixel } from './addTrackingPixel/addTrackingPixel';
 export { generateName } from './generateName/generateName';
+export type { RenderOptions } from './render/render';
+export { renderInline, renderIframe } from './render/render';
 
 export type { ComputedRef, Ref, UnwrapRef, UnwrapNestedRefs, ShallowReactive, ShallowRef, ShallowUnwrapRef, MaybeRef, WritableComputedRef, WritableComputedOptions, ComputedGetter, ComputedSetter, ComputedOptions } from '@vue/runtime-core';
 export { watch, watchEffect, effectScope, reactive, ref, toValue, toRefs, toRaw, computed, isProxy, isRef, isReactive, isReadonly, readonly, markRaw, shallowReactive, shallowReadonly, shallowRef, unref, customRef, isShallow, watchPostEffect, watchSyncEffect } from '@vue/runtime-core';

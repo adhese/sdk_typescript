@@ -16,7 +16,8 @@ export default defineConfig({
     alias: {
       /* eslint-disable ts/naming-convention */
       '@adhese/sdk-shared': `${path.resolve()}/../sdk-shared/src`,
-      '@adhese/sdk': `${path.resolve()}/src`,
+      '@adhese/sdk': `${path.resolve()}/../sdk/src`,
+      '@adhese/sdk-lite': `${path.resolve()}/src`,
       /* eslint-enable ts/naming-convention */
     },
   },
