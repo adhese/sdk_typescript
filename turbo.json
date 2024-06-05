@@ -1,9 +1,10 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "experimentalUI": true,
-  "pipeline": {
+  "tasks": {
     "test": {
-      "outputs": ["coverage/**"],
+      "outputs": [
+        "coverage/**"
+      ],
       "dependsOn": []
     },
     "lint": {},
@@ -12,16 +13,33 @@
       "cache": false
     },
     "build": {
-      "outputs": ["dist/**", "lib/**"],
-      "dependsOn": ["^build"]
+      "outputs": [
+        "dist/**",
+        "lib/**"
+      ],
+      "dependsOn": [
+        "^build"
+      ]
     },
     "docs#build": {
-      "outputs": ["dist/**"],
-      "dependsOn": ["@adhese/sdk#build"]
+      "outputs": [
+        "dist/**"
+      ],
+      "dependsOn": [
+        "@adhese/sdk#build"
+      ]
     },
     "prepareRelease": {
-      "outputs": ["dist/**", "lib/**"],
-      "dependsOn": ["^test", "^lint", "^typecheck", "^prepareRelease"]
+      "outputs": [
+        "dist/**",
+        "lib/**"
+      ],
+      "dependsOn": [
+        "^test",
+        "^lint",
+        "^typecheck",
+        "^prepareRelease"
+      ]
     },
     "dev": {
       "cache": false,
@@ -29,7 +47,7 @@
     },
     "clean": {
       "cache": false,
-      "outputMode": "errors-only"
+      "outputLogs": "errors-only"
     }
   }
 }
