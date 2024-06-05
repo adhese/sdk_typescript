@@ -22,6 +22,7 @@ export type AdheseLiteSlotOptions = Pick<AdheseSlotOptions, 'renderMode' | 'slot
   debug?: boolean;
   consent?: boolean | string;
   location: string;
+  clickTrackerUrl?: string | URL;
   onDispose?(slot: AdheseLiteSlot): void;
   onRender?(slot: AdheseLiteSlot): void;
   onRequest?(slot: AdheseLiteSlot): void;
@@ -60,7 +61,6 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
 
   const name = generateName(options.location, options.format, options.slot);
 
-  let trackingPixel: HTMLImageElement | undefined;
   const trackingPixels = new Set<HTMLImageElement>();
 
   const renderIntersectionObserver = new IntersectionObserver(onRenderIntersection, {
@@ -80,6 +80,8 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
     : {
         tl: options.consent ? 'all' : 'none',
       };
+
+  let isImpressionTracked = false;
 
   const context: AdheseLiteSlot = {
     options,
@@ -119,6 +121,7 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
     },
     async render(): Promise<HTMLElement> {
       const data = this.data ?? (await this.request());
+      options.containingElement.removeEventListener('click', onClick);
 
       if (!data) {
         options.onEmpty?.(this);
@@ -135,13 +138,16 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
       options.onRender?.(this);
       logger.debug(`Rendered slot ${name}`, this);
 
-      if (data.impressionCounter && !trackingPixel) {
+      if (data.impressionCounter && !isImpressionTracked) {
         trackingPixels.add(addTrackingPixel(data.impressionCounter));
+        isImpressionTracked = true;
       }
 
       if (data.viewableImpressionCounter) {
         viewabilityTrackingIntersectionObserver.observe(options.containingElement);
       }
+
+      options.containingElement.addEventListener('click', onClick);
 
       return options.containingElement;
     },
@@ -158,11 +164,21 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
       renderIntersectionObserver?.disconnect();
       viewabilityTrackingIntersectionObserver.disconnect();
 
+      options.containingElement.removeEventListener('click', onClick);
+
       logger.debug(`Disposing slot ${name}`, this);
 
       logger.resetLogs();
     },
   };
+
+  let isClickTracked = false;
+  function onClick(): void {
+    if (options.clickTrackerUrl && !isClickTracked) {
+      trackingPixels.add(addTrackingPixel(options.clickTrackerUrl));
+      isClickTracked = true;
+    }
+  }
 
   function onRenderIntersection([entry]: ReadonlyArray<IntersectionObserverEntry>): void {
     if (entry.isIntersecting) {
