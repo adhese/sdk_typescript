@@ -5,6 +5,13 @@ export default defineConfig({
   build: {
     outDir: 'lib',
     emptyOutDir: true,
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        passes: 3,
+
+      },
+    },
     lib: {
       entry: `src/sdkLite.ts`,
       name: 'AdheseLite',
