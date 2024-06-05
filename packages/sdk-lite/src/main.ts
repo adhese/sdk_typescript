@@ -66,13 +66,5 @@ export function createAdheseLite(options: AdheseLiteOptions): AdheseLite {
     context.addSlot(slot);
   }
 
-  Promise.allSettled(Array.from(slots.values()).map(slot => slot.render())).then((results) => {
-    const errors = results.filter(result => result.status === 'rejected');
-
-    if (errors.length > 0) {
-      logger.error('Failed to render some slots', errors);
-    }
-  }).catch(logger.error);
-
   return context;
 }

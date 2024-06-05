@@ -5,6 +5,7 @@ import {
   generateName,
   renderIframe,
   renderInline,
+  round,
 } from '@adhese/sdk-shared';
 import type { AdheseSlotOptions } from '@adhese/sdk';
 import type { RenderMode } from '@adhese/sdk/src/slot/slot.types';
@@ -16,6 +17,7 @@ export type AdheseLiteSlotOptions = Pick<AdheseSlotOptions, 'renderMode' | 'slot
   onDispose?(slot: AdheseLiteSlot): void;
   onRender?(slot: AdheseLiteSlot): void;
   onRequest?(slot: AdheseLiteSlot): void;
+  onEmpty?(slot: AdheseLiteSlot): void;
 };
 
 export type AdheseLiteSlot = {
@@ -23,7 +25,7 @@ export type AdheseLiteSlot = {
   name: string;
   data?: AdheseLiteAd;
   render(): Promise<HTMLElement>;
-  request(): Promise<AdheseLiteAd>;
+  request(): Promise<AdheseLiteAd | null>;
   dispose(): void;
 };
 
@@ -48,11 +50,28 @@ export function createSlot(options: AdheseLiteSlotOptions, context: AdheseLite):
 
   let trackingPixel: HTMLImageElement | undefined;
 
-  return {
+  const renderIntersectionObserver = new IntersectionObserver(onRenderIntersection, {
+    rootMargin: '200px',
+    threshold: 0,
+  });
+
+  const viewabilityTrackingIntersectionObserver = new IntersectionObserver(onViewabilityIntersection, {
+    rootMargin: '0px',
+    threshold: Array.from({ length: 11 }, (_, i) => i * 0.1),
+  });
+
+  const slotContext: AdheseLiteSlot = {
     options,
     name,
     async render(): Promise<HTMLElement> {
       const data = this.data ?? (await this.request());
+
+      if (!data) {
+        options.onEmpty?.(this);
+        context.logger.debug(`Slot ${name} is empty`, options);
+
+        return options.containingElement;
+      }
 
       if (typeof data.tag !== 'string')
         throw new Error('Received invalid ad data, tag is not a string');
@@ -66,9 +85,13 @@ export function createSlot(options: AdheseLiteSlotOptions, context: AdheseLite):
         trackingPixel = addTrackingPixel(data.impressionCounter);
       }
 
+      if (data.viewableImpressionCounter) {
+        viewabilityTrackingIntersectionObserver.observe(options.containingElement);
+      }
+
       return options.containingElement;
     },
-    async request(): Promise<AdheseLiteAd> {
+    async request(): Promise<AdheseLiteAd | null> {
       context.logger.debug(`Requesting slot ${name}`, options);
 
       const response = await fetch(`${context.options.host}/json`, {
@@ -107,6 +130,40 @@ export function createSlot(options: AdheseLiteSlotOptions, context: AdheseLite):
       trackingPixel?.remove();
 
       context.logger.debug(`Disposing slot ${name}`, options);
+
+      renderIntersectionObserver?.disconnect();
     },
   };
+
+  function onRenderIntersection([entry]: ReadonlyArray<IntersectionObserverEntry>): void {
+    if (entry.isIntersecting) {
+      slotContext.render().catch(context.logger.error);
+      renderIntersectionObserver?.disconnect();
+    }
+  }
+  renderIntersectionObserver.observe(options.containingElement);
+
+  let timeoutId: number | null = null;
+  function onViewabilityIntersection([entry]: ReadonlyArray<IntersectionObserverEntry>): void {
+    const ratio = round(entry.intersectionRatio, 1);
+    const threshold = 0.2;
+
+    if (ratio >= threshold && !timeoutId) {
+      // @ts-expect-error The is misfiring to the Node type
+      timeoutId = setTimeout(() => {
+        timeoutId = null;
+        viewabilityTrackingIntersectionObserver.disconnect();
+
+        if (slotContext.data?.impressionCounter) {
+          addTrackingPixel(slotContext.data?.impressionCounter);
+        }
+      }, 1000);
+    }
+    else if (ratio < threshold && timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+  }
+
+  return slotContext;
 }
