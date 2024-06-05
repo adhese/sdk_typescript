@@ -1,6 +1,9 @@
 import {
+  type DefaultLogLevels,
+  type Logger,
   type RenderOptions,
   addTrackingPixel,
+  createLogger,
   doNothing,
   generateName,
   renderIframe,
@@ -9,11 +12,15 @@ import {
 } from '@adhese/sdk-shared';
 import type { AdheseSlotOptions } from '@adhese/sdk';
 import type { RenderMode } from '@adhese/sdk/src/slot/slot.types';
-import type { AdheseLite } from './main';
+import { name as packageName, version } from '../package.json';
 
 export type AdheseLiteSlotOptions = Pick<AdheseSlotOptions, 'renderMode' | 'slot' | 'parameters'> & {
   containingElement: HTMLElement;
   format: string;
+  account: string;
+  host?: string;
+  debug?: boolean;
+  location: string;
   onDispose?(slot: AdheseLiteSlot): void;
   onRender?(slot: AdheseLiteSlot): void;
   onRequest?(slot: AdheseLiteSlot): void;
@@ -24,6 +31,7 @@ export type AdheseLiteSlot = {
   options: AdheseLiteSlotOptions;
   name: string;
   data?: AdheseLiteAd;
+  logger: Logger<DefaultLogLevels>;
   render(): Promise<HTMLElement>;
   request(): Promise<AdheseLiteAd | null>;
   dispose(): void;
@@ -43,12 +51,16 @@ const renderFunctions: Record<RenderMode, (ad: RenderOptions, element: HTMLEleme
   none: doNothing,
 };
 
-export function createSlot(options: AdheseLiteSlotOptions, context: AdheseLite): AdheseLiteSlot {
-  context.logger.debug('Creating slot', options);
+export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
+  const logger = createLogger({
+    scope: `${packageName}@${version}`,
+    minLogLevelThreshold: options.debug ? 'debug' : 'info',
+  });
 
-  const name = generateName(context.location, options.format, options.slot);
+  const name = generateName(options.location, options.format, options.slot);
 
   let trackingPixel: HTMLImageElement | undefined;
+  const trackingPixels = new Set<HTMLImageElement>();
 
   const renderIntersectionObserver = new IntersectionObserver(onRenderIntersection, {
     rootMargin: '200px',
@@ -60,48 +72,20 @@ export function createSlot(options: AdheseLiteSlotOptions, context: AdheseLite):
     threshold: Array.from({ length: 11 }, (_, i) => i * 0.1),
   });
 
-  const slotContext: AdheseLiteSlot = {
+  const context: AdheseLiteSlot = {
     options,
     name,
-    async render(): Promise<HTMLElement> {
-      const data = this.data ?? (await this.request());
-
-      if (!data) {
-        options.onEmpty?.(this);
-        context.logger.debug(`Slot ${name} is empty`, options);
-
-        return options.containingElement;
-      }
-
-      if (typeof data.tag !== 'string')
-        throw new Error('Received invalid ad data, tag is not a string');
-
-      renderFunctions[options.renderMode ?? 'iframe'](data, options.containingElement);
-
-      options.onRender?.(this);
-      context.logger.debug(`Rendered slot ${name}`, data);
-
-      if (data.impressionCounter && !trackingPixel) {
-        trackingPixel = addTrackingPixel(data.impressionCounter);
-      }
-
-      if (data.viewableImpressionCounter) {
-        viewabilityTrackingIntersectionObserver.observe(options.containingElement);
-      }
-
-      return options.containingElement;
-    },
+    logger,
     async request(): Promise<AdheseLiteAd | null> {
-      context.logger.debug(`Requesting slot ${name}`, options);
+      logger.debug(`Requesting ad for slot ${name}`, this);
 
-      const response = await fetch(`${context.options.host}/json`, {
+      const response = await fetch(`${options.host ?? `https://ads-${options.account}.adhese.com`}/json`, {
         method: 'POST',
         body: JSON.stringify({
           slots: [{
             slotname: name,
-            parameters: options.parameters,
           }],
-          parameters: context.options.parameters,
+          parameters: options.parameters,
         }),
         headers: {
           // eslint-disable-next-line ts/naming-convention
@@ -116,28 +100,61 @@ export function createSlot(options: AdheseLiteSlotOptions, context: AdheseLite):
 
       this.data = data;
 
-      context.logger.debug('Received response', data);
-
+      logger.debug(`Received ad data for slot ${name}`, this);
       options.onRequest?.(this);
 
       return data;
+    },
+    async render(): Promise<HTMLElement> {
+      const data = this.data ?? (await this.request());
+
+      if (!data) {
+        options.onEmpty?.(this);
+        logger.debug(`Slot ${name} is empty`, this);
+
+        return options.containingElement;
+      }
+
+      if (typeof data.tag !== 'string')
+        throw new Error('Received invalid ad data, tag is not a string');
+
+      renderFunctions[options.renderMode ?? 'iframe'](data, options.containingElement);
+
+      options.onRender?.(this);
+      logger.debug(`Rendered slot ${name}`, this);
+
+      if (data.impressionCounter && !trackingPixel) {
+        trackingPixels.add(addTrackingPixel(data.impressionCounter));
+      }
+
+      if (data.viewableImpressionCounter) {
+        viewabilityTrackingIntersectionObserver.observe(options.containingElement);
+      }
+
+      return options.containingElement;
     },
     dispose(): void {
       options.onDispose?.(this);
 
       options.containingElement.innerHTML = '';
 
-      trackingPixel?.remove();
-
-      context.logger.debug(`Disposing slot ${name}`, options);
+      for (const pixel of trackingPixels) {
+        pixel.remove();
+      }
+      trackingPixels.clear();
 
       renderIntersectionObserver?.disconnect();
+      viewabilityTrackingIntersectionObserver.disconnect();
+
+      logger.debug(`Disposing slot ${name}`, this);
+
+      logger.resetLogs();
     },
   };
 
   function onRenderIntersection([entry]: ReadonlyArray<IntersectionObserverEntry>): void {
     if (entry.isIntersecting) {
-      slotContext.render().catch(context.logger.error);
+      context.render().catch(logger.error);
       renderIntersectionObserver?.disconnect();
     }
   }
@@ -154,8 +171,8 @@ export function createSlot(options: AdheseLiteSlotOptions, context: AdheseLite):
         timeoutId = null;
         viewabilityTrackingIntersectionObserver.disconnect();
 
-        if (slotContext.data?.impressionCounter) {
-          addTrackingPixel(slotContext.data?.impressionCounter);
+        if (context.data?.impressionCounter) {
+          trackingPixels.add(addTrackingPixel(context.data?.impressionCounter));
         }
       }, 1000);
     }
@@ -165,5 +182,5 @@ export function createSlot(options: AdheseLiteSlotOptions, context: AdheseLite):
     }
   }
 
-  return slotContext;
+  return context;
 }

@@ -8,13 +8,14 @@ export default defineConfig({
     name,
     dependencies,
     devDependencies,
-    entries: 'src/index.ts',
+    entries: 'src/sdkLite.ts',
+    bundle: true,
   }),
   resolve: {
     alias: {
       /* eslint-disable ts/naming-convention */
       '@server-mocks': `${path.resolve()}/../server-mocks/src`,
-      '@adhese/sdk-lite': `${path.resolve()}/src`,
+      '@adhese/sdk-lite': `${path.resolve()}/src/sdkLite.ts`,
       '@adhese/sdk': `${path.resolve()}/../sdk/src`,
       '@adhese/sdk-shared': `${path.resolve()}/../sdk-shared/src`,
       /* eslint-enable ts/naming-convention */

@@ -6,7 +6,7 @@ export default defineConfig({
     outDir: 'lib',
     emptyOutDir: true,
     lib: {
-      entry: `src/main.ts`,
+      entry: `src/sdkLite.ts`,
       name: 'AdheseLite',
       formats: ['iife'],
       fileName: () => `adheseLite.js`,

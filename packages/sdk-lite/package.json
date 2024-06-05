@@ -7,9 +7,9 @@
     "type": "git",
     "url": "git+https://github.com/adhese/sdk_typescript.git"
   },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/cjs/sdkLite.cjs",
+  "module": "./dist/sdkLite.js",
+  "types": "./dist/sdkLite.d.ts",
   "files": [
     "CHANGELOG.md",
     "LICENSE",
