@@ -34,6 +34,7 @@ export type AdheseLiteSlot = {
   name: string;
   data?: AdheseLiteAd;
   logger: Logger<DefaultLogLevels>;
+  parameters: Record<string, string | ReadonlyArray<string>>;
   render(): Promise<HTMLElement>;
   request(): Promise<AdheseLiteAd | null>;
   dispose(): void;
@@ -73,7 +74,11 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
     threshold: Array.from({ length: 11 }, (_, i) => i * 0.1),
   });
 
-  const consentParameters = typeof options.consent === 'string'
+  const consentParameters: {
+    tl: 'all' | 'none';
+  } | {
+    xt: string;
+  } = typeof options.consent === 'string'
     ? {
         xt: options.consent,
       }
@@ -81,12 +86,18 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
         tl: options.consent ? 'all' : 'none',
       };
 
+  const parameters = {
+    ...options.parameters,
+    ...consentParameters,
+  };
+
   let isImpressionTracked = false;
 
   const context: AdheseLiteSlot = {
     options,
     name,
     logger,
+    parameters,
     async request(): Promise<AdheseLiteAd | null> {
       logger.debug(`Requesting ad for slot ${name}`, this);
 
@@ -96,10 +107,7 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
           slots: [{
             slotname: name,
           }],
-          parameters: {
-            ...options.parameters,
-            ...consentParameters,
-          },
+          parameters,
         }),
         headers: {
           // eslint-disable-next-line ts/naming-convention
@@ -180,14 +188,6 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
     }
   }
 
-  function onRenderIntersection([entry]: ReadonlyArray<IntersectionObserverEntry>): void {
-    if (entry.isIntersecting) {
-      context.render().catch(logger.error);
-      renderIntersectionObserver?.disconnect();
-    }
-  }
-  renderIntersectionObserver.observe(options.containingElement);
-
   let timeoutId: number | null = null;
   function onViewabilityIntersection([entry]: ReadonlyArray<IntersectionObserverEntry>): void {
     const ratio = round(entry.intersectionRatio, 1);
@@ -199,8 +199,8 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
         timeoutId = null;
         viewabilityTrackingIntersectionObserver.disconnect();
 
-        if (context.data?.impressionCounter) {
-          trackingPixels.add(addTrackingPixel(context.data?.impressionCounter));
+        if (context.data?.viewableImpressionCounter) {
+          trackingPixels.add(addTrackingPixel(context.data?.viewableImpressionCounter));
         }
       }, 1000);
     }
@@ -210,5 +210,12 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
     }
   }
 
+  function onRenderIntersection([entry]: ReadonlyArray<IntersectionObserverEntry>): void {
+    if (entry.isIntersecting) {
+      context.render().catch(logger.error);
+      renderIntersectionObserver?.disconnect();
+    }
+  }
+  renderIntersectionObserver.observe(options.containingElement);
   return context;
 }

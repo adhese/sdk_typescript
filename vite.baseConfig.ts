@@ -18,6 +18,7 @@ export function viteBaseConfig({ dependencies = {}, peerDependencies = {}, devDe
 
         return ({
           name: 'dts',
+          apply: 'build',
           config(config): void {
             if (config.build?.lib) {
               const { entry } = config.build.lib;

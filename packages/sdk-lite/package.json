@@ -17,6 +17,10 @@
     "dist"
   ],
   "scripts": {
+    "dev": "vitest --config vite.config.npm.ts --silent",
+    "dev:verbose": "vitest --config vite.config.npm.ts",
+    "test": "vitest --config vite.config.npm.ts --silent --run --coverage",
+    "test:verbose": "vitest --config vite.config.npm.ts --run --coverage",
     "build": "npm run build:npm && npm run build:standalone",
     "build:npm": "vite build --config vite.config.npm.ts",
     "build:standalone": "vite build --config vite.config.standalone.ts",

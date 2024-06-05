@@ -21,8 +21,11 @@ export const adRequestHandlers = [
       libId: slot.slotname,
       id: slot.slotname,
       origin: 'JERLICIA',
+      impressionCounter: '/impression',
+      viewableImpressionCounter: '/viewable-impression',
     }))));
   }),
+  http.post('https://ads-empty.adhese.com/json', async () => new HttpResponse(JSON.stringify([]))),
   http.post('https://ads-fail.adhese.com/json', async () => new HttpResponse(undefined, {
     status: 400,
   })),
