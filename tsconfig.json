@@ -17,6 +17,7 @@
       "@adhese/sdk-safe-frame": ["packages/sdk-safe-frame/src/safeFrame.ts"],
       "@adhese/sdk-stack-slots": ["packages/sdk-stack-slots/src/stackSlots.ts"],
       "@adhese/sdk-user-sync": ["packages/sdk-user-sync/src/userSync.ts"],
+      "@adhese/sdk-lite": ["packages/sdk-lite/src/sdkLite.ts"],
       "@adhese/sdk-vast-url": ["packages/sdk-vast-url/src/vastUrl.ts"]
     },
     "resolveJsonModule": true,

@@ -88,6 +88,8 @@ export type LoggerOptions<T extends string, U extends T = T> = {
 
 const defaultLogLevels = ['trace', 'debug', 'info', 'warn', 'error'] as const;
 
+export type DefaultLogLevels = typeof defaultLogLevels[number];
+
 /**
  * Create a logger instance with the given options
  */

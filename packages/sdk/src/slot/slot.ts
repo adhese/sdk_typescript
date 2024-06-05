@@ -1,5 +1,6 @@
 import {
   type Ref,
+  type RenderOptions,
   type UnwrapRef,
   addTrackingPixel,
   computed,
@@ -10,6 +11,8 @@ import {
   omit,
   reactive,
   ref,
+  renderIframe,
+  renderInline,
   uniqueId,
   waitForDomLoad,
   watch,
@@ -19,7 +22,6 @@ import { requestAd as extRequestAd } from '../requestAds/requestAds';
 import { logger } from '../logger/logger';
 import { useQueryDetector } from '../queryDetector/queryDetector';
 import type { AdheseSlot, AdheseSlotContext, AdheseSlotOptions, RenderMode } from './slot.types';
-import { renderIframe, renderInline } from './slot.utils';
 import {
   useDomLoaded,
   useRenderIntersectionObserver,
@@ -27,7 +29,7 @@ import {
   useViewabilityObserver,
 } from './slot.composables';
 
-const renderFunctions: Record<RenderMode, (ad: AdheseAd, element: HTMLElement) => void> = {
+const renderFunctions: Record<RenderMode, (ad: RenderOptions, element: HTMLElement) => void> = {
   iframe: renderIframe,
   inline: renderInline,
   none: doNothing,
@@ -225,7 +227,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         throw new Error(error);
       }
 
-      renderFunctions[renderMode](renderAd, element.value);
+      renderFunctions[renderMode](renderAd as RenderOptions, element.value);
 
       if (renderAd.impressionCounter && !impressionTrackingPixelElement.value)
         impressionTrackingPixelElement.value = addTrackingPixel(renderAd.impressionCounter);

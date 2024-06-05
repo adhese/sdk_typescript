@@ -1,0 +1,36 @@
+{
+  "name": "@adhese/sdk-lite",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "Adhese SDK",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adhese/sdk_typescript.git"
+  },
+  "main": "./dist/cjs/sdkLite.cjs",
+  "module": "./dist/sdkLite.js",
+  "types": "./dist/sdkLite.d.ts",
+  "files": [
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md",
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vitest --config vite.config.npm.ts --silent",
+    "dev:verbose": "vitest --config vite.config.npm.ts",
+    "test": "vitest --config vite.config.npm.ts --silent --run --coverage",
+    "test:verbose": "vitest --config vite.config.npm.ts --run --coverage",
+    "build": "npm run build:npm && npm run build:standalone",
+    "build:npm": "vite build --config vite.config.npm.ts",
+    "build:standalone": "vite build --config vite.config.standalone.ts",
+    "lint": "eslint . --ignore-pattern **/*.md/**/*",
+    "lint:fix": "eslint --fix . --ignore-pattern **/*.md/**/*",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "prepareRelease": "npm run build"
+  },
+  "dependencies": {
+    "@adhese/sdk-shared": "^0.10.0"
+  }
+}

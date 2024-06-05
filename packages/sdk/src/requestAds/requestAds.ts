@@ -1,4 +1,4 @@
-import { type MaybeRef, debounce, toValue } from '@adhese/sdk-shared';
+import { debounce } from '@adhese/sdk-shared';
 import type { AdheseContext } from '../main.types';
 import { logger } from '../logger/logger';
 import type { AdheseAd } from './requestAds.schema';
@@ -10,7 +10,7 @@ export type AdRequestOptions = {
    * Slot you want to fetch the ad for
    */
   slot: {
-    name: MaybeRef<string>;
+    name: string;
     parameters: Map<string, ReadonlyArray<string> | string>;
   };
   context: AdheseContext;
@@ -38,7 +38,7 @@ const runRequestAdsBatch = debounce(async (context: AdheseContext) => {
   });
 
   for (const { options, resolve } of batch.values()) {
-    const ad = ads.find(({ slotName }) => toValue(slotName) === toValue(options.slot.name));
+    const ad = ads.find(({ slotName }) => slotName === options.slot.name);
 
     if (ad)
       resolve(ad);
@@ -59,7 +59,7 @@ const runRequestAdsBatch = debounce(async (context: AdheseContext) => {
  */
 export async function requestAd(options: AdRequestOptions): Promise<AdheseAd | null> {
   const promise = new Promise<AdheseAd | null>((resolve) => {
-    batch.set(toValue(options.slot.name), { options, resolve });
+    batch.set(options.slot.name, { options, resolve });
   },
   );
 

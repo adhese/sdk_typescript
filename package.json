@@ -20,7 +20,7 @@
     "npm": ">=10.0.0"
   },
   "scripts": {
-    "dev": "turbo dev",
+    "dev": "turbo dev --concurrency 18",
     "test": "turbo test --cache-dir=.turbo",
     "test:watch": "turbo test:watch",
     "lint": "eslint . --ignore-pattern apps --ignore-pattern packages --ignore-pattern **/*.md/**/* && turbo lint --cache-dir=.turbo",
@@ -50,6 +50,7 @@
     "remeda": "^2.0.1",
     "sdk-eslint-config": "^1.0.1",
     "tailwindcss": "^3.4.3",
+    "terser": "^5.31.0",
     "tsup": "^8.1.0",
     "turbo": "^1.13.3",
     "typescript": "^5.4.5",

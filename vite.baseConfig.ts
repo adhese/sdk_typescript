@@ -2,13 +2,14 @@ import { execSync } from 'node:child_process';
 import { type LibraryOptions, type PluginOption, type UserConfig, defineConfig } from 'vite';
 import { flat } from 'remeda';
 
-export function viteBaseConfig({ dependencies = {}, peerDependencies = {}, devDependencies = {}, entries, plugins = [], name }: {
+export function viteBaseConfig({ dependencies = {}, peerDependencies = {}, devDependencies = {}, entries, plugins = [], name, bundle = false }: {
   dependencies?: Record<string, string>;
   peerDependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
   name: string;
   entries: LibraryOptions['entry'];
   plugins?: UserConfig['plugins'];
+  bundle?: boolean;
 }): UserConfig {
   return defineConfig({
     plugins: [
@@ -17,6 +18,7 @@ export function viteBaseConfig({ dependencies = {}, peerDependencies = {}, devDe
 
         return ({
           name: 'dts',
+          apply: 'build',
           config(config): void {
             if (config.build?.lib) {
               const { entry } = config.build.lib;
@@ -57,8 +59,15 @@ export function viteBaseConfig({ dependencies = {}, peerDependencies = {}, devDe
         ].map(dep => [dep, new RegExp(`^${dep}(/.*)?`)])),
         output: {
           inlineDynamicImports: false,
-          preserveModulesRoot: 'src',
-          preserveModules: true,
+          ...(bundle
+            ? {
+                preserveModulesRoot: 'src',
+                preserveModules: false,
+              }
+            : {
+                preserveModulesRoot: 'src',
+                preserveModules: true,
+              }),
         },
       },
     },

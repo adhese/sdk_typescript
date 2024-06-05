@@ -222,28 +222,28 @@ describe('createAdhese', () => {
     expect(adhese.parameters.get('tl')).toBe('all');
   });
 
-  // it('should be able to handle device change', async () => {
-  //   adhese = createAdhese({
-  //     account: 'test',
-  //     location: '_sdk-example_',
-  //   });
-  //
-  //   const element = document.createElement('div');
-  //   adhese.addSlot({
-  //     format: 'foo',
-  //     containingElement: element,
-  //   });
-  //
-  //   expect(adhese.parameters.get('dt')).toBe('mobile');
-  //   expect(adhese.parameters.get('br')).toBe('mobile');
-  //
-  //   mediaQueryMock.useMediaQuery('(min-width: 769px) and (max-width: 1024px)');
-  //
-  //   await awaitTimeout(70);
-  //
-  //   expect(adhese.parameters.get('dt')).toBe('tablet');
-  //   expect(adhese.parameters.get('br')).toBe('tablet');
-  // });
+  it('should be able to handle device change', async () => {
+    adhese = createAdhese({
+      account: 'test',
+      location: '_sdk-example_',
+    });
+
+    const element = document.createElement('div');
+    adhese.addSlot({
+      format: 'foo',
+      containingElement: element,
+    });
+
+    expect(adhese.parameters.get('dt')).toBe('mobile');
+    expect(adhese.parameters.get('br')).toBe('mobile');
+
+    mediaQueryMock.useMediaQuery('(min-width: 769px) and (max-width: 1024px)');
+
+    await awaitTimeout(70);
+
+    expect(adhese.parameters.get('dt')).toBe('tablet');
+    expect(adhese.parameters.get('br')).toBe('tablet');
+  });
 
   it('should dispose the instance', () => {
     adhese = createAdhese({

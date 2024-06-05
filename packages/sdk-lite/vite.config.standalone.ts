@@ -13,19 +13,18 @@ export default defineConfig({
       },
     },
     lib: {
-      entry: `src/main.ts`,
-      name: 'Adhese',
+      entry: `src/sdkLite.ts`,
+      name: 'AdheseLite',
       formats: ['iife'],
-      fileName: () => `adhese.js`,
+      fileName: () => `adheseLite.js`,
     },
   },
   resolve: {
     alias: {
       /* eslint-disable ts/naming-convention */
-      '@adhese/sdk-shared/validators': `${path.resolve()}/../sdk-shared/src/validators`,
       '@adhese/sdk-shared': `${path.resolve()}/../sdk-shared/src`,
-      '@server-mocks': `${path.resolve()}/../server-mocks/src`,
-      '@adhese/sdk': `${path.resolve()}/src`,
+      '@adhese/sdk': `${path.resolve()}/../sdk/src`,
+      '@adhese/sdk-lite': `${path.resolve()}/src`,
       /* eslint-enable ts/naming-convention */
     },
   },
