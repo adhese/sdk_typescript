@@ -1,13 +1,12 @@
 import path from 'node:path';
 import { defineConfig } from 'vite';
 import { viteBaseConfig } from '../../vite.baseConfig';
-import { dependencies, devDependencies, name } from './package.json';
+import { dependencies, name } from './package.json';
 
 export default defineConfig({
   ...viteBaseConfig({
     name,
     dependencies,
-    devDependencies,
     entries: 'src/sdkLite.ts',
     bundle: true,
   }),

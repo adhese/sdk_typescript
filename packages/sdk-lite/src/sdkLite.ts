@@ -4,24 +4,26 @@ import {
   type RenderOptions,
   addTrackingPixel,
   createLogger,
-  doNothing,
   generateName,
   renderIframe,
   renderInline,
   round,
 } from '@adhese/sdk-shared';
-import type { AdheseSlotOptions } from '@adhese/sdk';
-import type { RenderMode } from '@adhese/sdk/src/slot/slot.types';
 import { name as packageName, version } from '../package.json';
 
-export type AdheseLiteSlotOptions = Pick<AdheseSlotOptions, 'renderMode' | 'slot' | 'parameters'> & {
+type RenderMode = 'iframe' | 'inline';
+
+export type AdheseLiteSlotOptions = {
   containingElement: HTMLElement;
   format: string;
   account: string;
+  location: string;
   host?: string;
   debug?: boolean;
+  renderMode?: RenderMode;
+  parameters?: Record<string, string | ReadonlyArray<string>>;
+  slot?: string;
   consent?: boolean | string;
-  location: string;
   clickTrackerUrl?: string | URL;
   onDispose?(slot: AdheseLiteSlot): void;
   onRender?(slot: AdheseLiteSlot): void;
@@ -51,7 +53,6 @@ export type AdheseLiteAd = {
 const renderFunctions: Record<RenderMode, (ad: RenderOptions, element: HTMLElement) => void> = {
   iframe: renderIframe,
   inline: renderInline,
-  none: doNothing,
 };
 
 export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {

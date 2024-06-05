@@ -32,8 +32,5 @@
   },
   "dependencies": {
     "@adhese/sdk-shared": "^0.10.0"
-  },
-  "devDependencies": {
-    "@adhese/sdk": "^0.22.0"
   }
 }
