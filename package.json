@@ -2,7 +2,7 @@
   "name": "adhese-sdk",
   "type": "module",
   "private": true,
-  "packageManager": "npm@10.5.2",
+  "packageManager": "npm@10.7.0",
   "license": "GPL-3.0",
   "homepage": "https://github.com/adhese/sdk_typescript#readme",
   "repository": {
@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.5",
-    "@types/node": "^20.14.0",
+    "@types/node": "^20.14.2",
     "@vitejs/plugin-react": "^4.3.0",
     "@vitest/coverage-v8": "^1.6.0",
     "autoprefixer": "^10.4.19",
@@ -48,7 +48,7 @@
     "jsdom": "^24.1.0",
     "lint-staged": "^15.2.5",
     "postcss": "^8.4.38",
-    "remeda": "^2.0.1",
+    "remeda": "^2.0.4",
     "sdk-eslint-config": "^1.0.1",
     "tailwindcss": "^3.4.3",
     "terser": "^5.31.0",

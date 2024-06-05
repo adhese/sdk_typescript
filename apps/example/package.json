@@ -14,6 +14,6 @@
   "dependencies": {
     "@adhese/sdk": "^0.22.0",
     "@adhese/sdk-devtools": "^0.13.0",
-    "@adhese/sdk-stack-slots": "^0.3.6"
+    "@adhese/sdk-stack-slots": "^0.3.8"
   }
 }
