@@ -20,6 +20,7 @@ export type AdheseLiteSlotOptions = Pick<AdheseSlotOptions, 'renderMode' | 'slot
   account: string;
   host?: string;
   debug?: boolean;
+  consent?: boolean | string;
   location: string;
   onDispose?(slot: AdheseLiteSlot): void;
   onRender?(slot: AdheseLiteSlot): void;
@@ -72,6 +73,14 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
     threshold: Array.from({ length: 11 }, (_, i) => i * 0.1),
   });
 
+  const consentParameters = typeof options.consent === 'string'
+    ? {
+        xt: options.consent,
+      }
+    : {
+        tl: options.consent ? 'all' : 'none',
+      };
+
   const context: AdheseLiteSlot = {
     options,
     name,
@@ -85,7 +94,10 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
           slots: [{
             slotname: name,
           }],
-          parameters: options.parameters,
+          parameters: {
+            ...options.parameters,
+            ...consentParameters,
+          },
         }),
         headers: {
           // eslint-disable-next-line ts/naming-convention
