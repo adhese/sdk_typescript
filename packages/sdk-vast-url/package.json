@@ -1,7 +1,7 @@
 {
   "name": "@adhese/sdk-vast-url",
   "type": "module",
-  "version": "0.1.4",
+  "version": "1.0.0",
   "description": "Adhese SDK",
   "repository": {
     "type": "git",
@@ -29,9 +29,9 @@
     "prepareRelease": "npm run build"
   },
   "peerDependencies": {
-    "@adhese/sdk": ">= 0.19 < 1"
+    "@adhese/sdk": ">=1.0.0"
   },
   "dependencies": {
-    "@adhese/sdk-shared": "^0.10.0"
+    "@adhese/sdk-shared": "^1.0.0"
   }
 }
