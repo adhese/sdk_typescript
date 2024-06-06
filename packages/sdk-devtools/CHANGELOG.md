@@ -1,5 +1,24 @@
 # @adhese/sdk-devtools
 
+## 1.0.0
+
+### Major Changes
+
+- ff93b63: 🎉🎉🎉 – Release 1.0.0 – 🎉🎉🎉
+
+  This release marks the first stable release of the Adhese SDK packages. From here on out we will follow semantic
+  versioning, meaning that all patch and minor updates will be backwards compatible. Major updates will introduce
+  breaking changes.
+
+### Patch Changes
+
+- a5e39f1: Fix badges not being removed when debug mode is disabled
+- e05a09c: Make sure that DALE slots also have useful data visible in the devtools
+- Updated dependencies [ff93b63]
+- Updated dependencies [21aad18]
+  - @adhese/sdk@1.0.0
+  - @adhese/sdk-shared@1.0.0
+
 ## 0.13.0
 
 ### Minor Changes

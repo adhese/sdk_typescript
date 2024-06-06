@@ -1,7 +1,7 @@
 {
   "name": "@adhese/sdk-react",
   "type": "module",
-  "version": "0.9.14",
+  "version": "1.0.0",
   "description": "Adhese SDK",
   "repository": {
     "type": "git",
@@ -25,12 +25,12 @@
     "prepareRelease": "npm run build"
   },
   "peerDependencies": {
-    "@adhese/sdk": ">= 0.16 < 1",
+    "@adhese/sdk": ">=1.0.0",
     "react": ">=16.13",
     "react-dom": ">=16.13"
   },
   "dependencies": {
-    "@adhese/sdk-shared": "^0.10.0",
+    "@adhese/sdk-shared": "^1.0.0",
     "use-deep-compare-effect": "^1.8.1"
   },
   "devDependencies": {

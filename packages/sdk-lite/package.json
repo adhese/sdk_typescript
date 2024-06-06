@@ -1,7 +1,7 @@
 {
   "name": "@adhese/sdk-lite",
   "type": "module",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Adhese SDK",
   "repository": {
     "type": "git",
@@ -31,6 +31,6 @@
     "prepareRelease": "npm run build"
   },
   "dependencies": {
-    "@adhese/sdk-shared": "^0.10.0"
+    "@adhese/sdk-shared": "^1.0.0"
   }
 }
