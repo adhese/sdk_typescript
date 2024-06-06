@@ -1,5 +1,5 @@
 import { Fragment, type ReactElement, useEffect, useMemo, useState } from 'react';
-import type { AdheseSlot } from '@adhese/sdk';
+import type { AdheseAd, AdheseSlot } from '@adhese/sdk';
 import { type UnwrapRef, generateName, watch } from '@adhese/sdk-shared';
 import { ResetIcon } from '@radix-ui/react-icons';
 import { cn } from '../utils';
@@ -59,8 +59,24 @@ export function SlotsTable(): ReactElement {
       const hijackedSlotOptions = modifiedSlots.slots.get(slot.name);
       const hijackedSlot = (adheseContext && hijackedSlotOptions) && adheseContext.get?.(generateName(adheseContext.location, hijackedSlotOptions.format, hijackedSlotOptions.slot));
 
+      let interimSlot = hijackedSlot ?? slot;
+
+      if (interimSlot.data?.origin === 'DALE') {
+        // @ts-expect-error - Data structure is not typed and very messy to type
+        // eslint-disable-next-line ts/no-unsafe-member-access
+        const nestedAdheseData = interimSlot.data?.originData?.seatbid[0]?.bid[0]?.ext?.adhese as AdheseAd;
+
+        interimSlot = {
+          ...interimSlot,
+          data: {
+            ...interimSlot.data,
+            ...nestedAdheseData,
+          },
+        };
+      }
+
       return ({
-        ...(hijackedSlot ?? slot),
+        ...interimSlot,
         parameters: Array.from((hijackedSlot ?? slot).parameters.entries()),
         hijackedSlot,
         originalSlot: slot,
