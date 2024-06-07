@@ -1,4 +1,12 @@
-# @adhese/sdk-lite
+---
+title: SDK Lite
+---
+
+<script setup>
+import {version} from '../../packages/sdk-lite/package.json';
+</script>
+
+# Adhese SDK Lite <Badge>{{version}}</Badge>
 The Adhese SDK Lite is a lightweight version of the Adhese SDK. It is a smaller package that can only render a single
 slot. This package is most useful for use in places like Google Tag Manager.
 
