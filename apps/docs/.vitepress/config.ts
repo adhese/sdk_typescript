@@ -6,8 +6,12 @@ export default async (data: {
   mode: string;
 // eslint-disable-next-line ts/explicit-function-return-type,ts/explicit-module-boundary-types
 }) => {
-  if (data.command === 'build')
-    await writeFile('public/files/adhese.js', await readFile('../../packages/sdk/lib/adhese.js'));
+  if (data.command === 'build') {
+    await Promise.all([
+      writeFile('public/files/adhese.js', await readFile('../../packages/sdk/lib/adhese.js')),
+      writeFile('public/files/adheseLite.js', await readFile('../../packages/sdk-lite/lib/adheseLite.js')),
+    ]);
+  }
 
   return defineConfig({
     title: 'Adhese SDK',
@@ -21,6 +25,7 @@ export default async (data: {
         { text: 'Events', link: '/events' },
         { text: 'Gambit config', link: '/gambit' },
         { text: 'Consent', link: '/consent' },
+        { text: 'Lite', link: '/lite' },
         { text: 'React SDK', link: '/react-sdk' },
         {
           text: 'Plugins',

@@ -8,13 +8,14 @@ import {
   renderIframe,
   renderInline,
   round,
+  uniqueId,
 } from '@adhese/sdk-shared';
 import { name as packageName, version } from '../package.json';
 
 type RenderMode = 'iframe' | 'inline';
 
 export type AdheseLiteSlotOptions = {
-  containingElement: HTMLElement;
+  containingElement?: HTMLElement;
   format: string;
   account: string;
   location: string;
@@ -37,6 +38,7 @@ export type AdheseLiteSlot = {
   data?: AdheseLiteAd;
   logger: Logger<DefaultLogLevels>;
   parameters: Record<string, string | ReadonlyArray<string>>;
+  element: HTMLElement;
   render(): Promise<HTMLElement>;
   request(): Promise<AdheseLiteAd | null>;
   dispose(): void;
@@ -94,11 +96,24 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
 
   let isImpressionTracked = false;
 
+  const element = options.containingElement ?? document.createElement('div');
+
+  if (!options.containingElement) {
+    element.id = `${name}:${uniqueId(3)}`;
+    element.classList.add('adunit');
+    element.dataset.format = options.format;
+    element.dataset.slot = options.format;
+    element.dataset.location = options.location;
+
+    document.currentScript?.insertAdjacentElement('beforebegin', element);
+  }
+
   const context: AdheseLiteSlot = {
     options,
     name,
     logger,
     parameters,
+    element,
     async request(): Promise<AdheseLiteAd | null> {
       logger.debug(`Requesting ad for slot ${name}`, this);
 
@@ -130,19 +145,19 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
     },
     async render(): Promise<HTMLElement> {
       const data = this.data ?? (await this.request());
-      options.containingElement.removeEventListener('click', onClick);
+      element.removeEventListener('click', onClick);
 
       if (!data) {
         options.onEmpty?.(this);
         logger.debug(`Slot ${name} is empty`, this);
 
-        return options.containingElement;
+        return element;
       }
 
       if (typeof data.tag !== 'string')
         throw new Error('Received invalid ad data, tag is not a string');
 
-      renderFunctions[options.renderMode ?? 'iframe'](data, options.containingElement);
+      renderFunctions[options.renderMode ?? 'iframe'](data, element);
 
       options.onRender?.(this);
       logger.debug(`Rendered slot ${name}`, this);
@@ -153,17 +168,17 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
       }
 
       if (data.viewableImpressionCounter) {
-        viewabilityTrackingIntersectionObserver.observe(options.containingElement);
+        viewabilityTrackingIntersectionObserver.observe(element);
       }
 
-      options.containingElement.addEventListener('click', onClick);
+      element.addEventListener('click', onClick);
 
-      return options.containingElement;
+      return element;
     },
     dispose(): void {
       options.onDispose?.(this);
 
-      options.containingElement.innerHTML = '';
+      element.innerHTML = '';
 
       for (const pixel of trackingPixels) {
         pixel.remove();
@@ -173,7 +188,7 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
       renderIntersectionObserver?.disconnect();
       viewabilityTrackingIntersectionObserver.disconnect();
 
-      options.containingElement.removeEventListener('click', onClick);
+      element.removeEventListener('click', onClick);
 
       logger.debug(`Disposing slot ${name}`, this);
 
@@ -217,6 +232,6 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
       renderIntersectionObserver?.disconnect();
     }
   }
-  renderIntersectionObserver.observe(options.containingElement);
+  renderIntersectionObserver.observe(element);
   return context;
 }
