@@ -1,16 +1,32 @@
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Adhese</title>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Adhese</title>
+
+  <script src="./public/adheseLite.js"></script>
 </head>
-<body>
-    <div class="adunit" data-format="skyscraper" id="skyscraper"></div>
-    <div class="adunit" data-format="leaderboard" id="leaderboard"></div>
-    <div class="adunit" data-format="imu" id="imu"></div>
-    <div class="adunit" data-format="halfpage" id="halfpage"></div>
-    <script src="/src/main.ts" type="module"></script>
-</body>
+  <body>
+    <script>
+      AdheseLite.createSlot({
+        format: 'skyscraper',
+        account: 'demo',
+        location: '_sdk_example_',
+      })
+
+      AdheseLite.createSlot({
+        format: 'leaderboard',
+        account: 'demo',
+        location: '_sdk_example_',
+      })
+
+      AdheseLite.createSlot({
+        format: 'imu',
+        account: 'demo',
+        location: '_sdk_example_',
+      })
+    </script>
+  </body>
 </html>

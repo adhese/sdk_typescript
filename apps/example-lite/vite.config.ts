@@ -1,12 +1,20 @@
 import path from 'node:path';
-import { type UserConfig, type UserConfigFn, defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import fs from 'node:fs';
+import { type Plugin, type UserConfig, type UserConfigFn, defineConfig } from 'vite';
 
 export default (({ mode }): UserConfig => defineConfig({
   build: {
     emptyOutDir: true,
   },
-  plugins: [react()],
+  plugins: [
+    ((): Plugin => ({
+      name: 'replace-adhese-sdk',
+      apply: 'build',
+      buildStart(): void {
+        fs.copyFileSync(path.resolve(__dirname, '../../packages/sdk-lite/lib/adheseLite.js'), path.resolve(__dirname, 'public/adheseLite.js'));
+      },
+    }))(),
+  ],
   resolve: {
     alias: mode === 'development'
       ? {
