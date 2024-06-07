@@ -1,5 +1,11 @@
 # @adhese/sdk-lite
 
+## 1.1.1
+
+### Patch Changes
+
+- d29a909: Remove logger to optmize output js file
+
 ## 1.1.0
 
 ### Minor Changes
