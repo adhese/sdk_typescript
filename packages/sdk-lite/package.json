@@ -1,7 +1,7 @@
 {
   "name": "@adhese/sdk-lite",
   "type": "module",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Adhese SDK",
   "repository": {
     "type": "git",
