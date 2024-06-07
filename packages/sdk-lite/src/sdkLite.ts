@@ -1,16 +1,12 @@
 import {
-  type DefaultLogLevels,
-  type Logger,
   type RenderOptions,
   addTrackingPixel,
-  createLogger,
   generateName,
   renderIframe,
   renderInline,
   round,
   uniqueId,
 } from '@adhese/sdk-shared';
-import { name as packageName, version } from '../package.json';
 
 type RenderMode = 'iframe' | 'inline';
 
@@ -20,7 +16,6 @@ export type AdheseLiteSlotOptions = {
   account: string;
   location: string;
   host?: string;
-  debug?: boolean;
   renderMode?: RenderMode;
   parameters?: Record<string, string | ReadonlyArray<string>>;
   slot?: string;
@@ -36,7 +31,6 @@ export type AdheseLiteSlot = {
   options: AdheseLiteSlotOptions;
   name: string;
   data?: AdheseLiteAd;
-  logger: Logger<DefaultLogLevels>;
   parameters: Record<string, string | ReadonlyArray<string>>;
   element: HTMLElement;
   render(): Promise<HTMLElement>;
@@ -58,11 +52,6 @@ const renderFunctions: Record<RenderMode, (ad: RenderOptions, element: HTMLEleme
 };
 
 export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
-  const logger = createLogger({
-    scope: `${packageName}@${version}`,
-    minLogLevelThreshold: options.debug ? 'debug' : 'info',
-  });
-
   const name = generateName(options.location, options.format, options.slot);
 
   const trackingPixels = new Set<HTMLImageElement>();
@@ -111,12 +100,9 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
   const context: AdheseLiteSlot = {
     options,
     name,
-    logger,
     parameters,
     element,
     async request(): Promise<AdheseLiteAd | null> {
-      logger.debug(`Requesting ad for slot ${name}`, this);
-
       const response = await fetch(`${options.host ?? `https://ads-${options.account}.adhese.com`}/json`, {
         method: 'POST',
         body: JSON.stringify({
@@ -138,7 +124,6 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
 
       this.data = data;
 
-      logger.debug(`Received ad data for slot ${name}`, this);
       options.onRequest?.(this);
 
       return data;
@@ -149,7 +134,6 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
 
       if (!data) {
         options.onEmpty?.(this);
-        logger.debug(`Slot ${name} is empty`, this);
 
         return element;
       }
@@ -160,7 +144,6 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
       renderFunctions[options.renderMode ?? 'iframe'](data, element);
 
       options.onRender?.(this);
-      logger.debug(`Rendered slot ${name}`, this);
 
       if (data.impressionCounter && !isImpressionTracked) {
         trackingPixels.add(addTrackingPixel(data.impressionCounter));
@@ -189,10 +172,6 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
       viewabilityTrackingIntersectionObserver.disconnect();
 
       element.removeEventListener('click', onClick);
-
-      logger.debug(`Disposing slot ${name}`, this);
-
-      logger.resetLogs();
     },
   };
 
@@ -228,10 +207,12 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
 
   function onRenderIntersection([entry]: ReadonlyArray<IntersectionObserverEntry>): void {
     if (entry.isIntersecting) {
-      context.render().catch(logger.error);
+      context.render().catch(console.error);
       renderIntersectionObserver?.disconnect();
     }
   }
   renderIntersectionObserver.observe(element);
   return context;
 }
+
+export { version } from '../package.json';
