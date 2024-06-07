@@ -7,17 +7,8 @@ export default {
     if (gitUser === 'github-actions[bot]')
       return [];
 
-    const workspaces = ['packages', 'apps'];
-    const workspaceFiles = fileNames
-      .filter(fileName => workspaces.some(workspace => fileName.includes(workspace)));
-    const nonWorkspaceFiles = fileNames
-      .filter(fileName => !workspaces.some(workspace => fileName.includes(workspace)));
-
-    return [
-      workspaceFiles.length > 0 && `turbo lint:fix -- ${workspaceFiles.join(' ')}`,
-      nonWorkspaceFiles.length > 0 && `eslint ${nonWorkspaceFiles.join(' ')} ${workspaces.map(workspace => `--ignore-pattern ${workspace}`).join(' ')}  --fix`,
-      'npm run test',
-      'npm run typecheck',
-    ].filter(Boolean);
+    return [`eslint --fix ${fileNames.join(' ')}`];
   },
+  '**/*.{ts,tsx,js,jsx}': () => ['npm run test'],
+  '**/*.{ts,tsx,cts,mts}': () => ['npm run typecheck'],
 };
