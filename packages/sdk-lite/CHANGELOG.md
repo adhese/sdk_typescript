@@ -1,5 +1,15 @@
 # @adhese/sdk-lite
 
+## 1.1.0
+
+### Minor Changes
+
+- 431b736: When not passing an element to a lite slot the parent element of the script where it's called is selected
+
+### Patch Changes
+
+- 431b736: Improve documentation
+
 ## 1.0.0
 
 ### Major Changes

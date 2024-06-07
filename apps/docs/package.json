@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@adhese/sdk": "^1.0.0",
-    "@adhese/sdk-lite": "^1.0.0",
+    "@adhese/sdk-lite": "^1.1.0",
     "vitepress": "^1.2.3",
     "vue": "^3.4.15"
   }
