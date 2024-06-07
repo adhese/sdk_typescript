@@ -21,14 +21,6 @@
         "^build"
       ]
     },
-    "docs#build": {
-      "outputs": [
-        "dist/**"
-      ],
-      "dependsOn": [
-        "@adhese/sdk#build"
-      ]
-    },
     "prepareRelease": {
       "outputs": [
         "dist/**",
