@@ -1,0 +1,19 @@
+{
+  "name": "app-additional-creatives",
+  "type": "module",
+  "private": true,
+  "license": "GPL-3.0",
+  "scripts": {
+    "dev": "vite --host --port 5176",
+    "build": "vite build",
+    "lint": "eslint . --ignore-pattern public",
+    "lint:fix": "eslint --fix . --ignore-pattern public",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@adhese/sdk": "^1.0.0",
+    "@adhese/sdk-devtools": "^1.0.0",
+    "@adhese/sdk-shared": "^1.0.0"
+  }
+}

@@ -241,9 +241,6 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         containingElement,
       });
 
-      // eslint-disable-next-line require-atomic-updates
-      data.value = renderAd;
-
       status.value = 'rendered';
 
       runOnRender(renderAd);
