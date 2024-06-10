@@ -12,6 +12,6 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@adhese/sdk-lite": "^1.1.0"
+    "@adhese/sdk-lite": "^1.1.1"
   }
 }
