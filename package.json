@@ -50,7 +50,7 @@
     "postcss": "^8.4.38",
     "remeda": "^2.0.4",
     "sdk-eslint-config": "^1.0.1",
-    "tailwindcss": "^3.4.3",
+    "tailwindcss": "^3.4.4",
     "terser": "^5.31.0",
     "tsup": "^8.1.0",
     "turbo": "^2.0.1",
