@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.0.1
+
+### Patch Changes
+
+- d4cedb4: Fix ad data getting set when the data is passed via the render function
+
 ## 1.0.0
 
 ### Major Changes
