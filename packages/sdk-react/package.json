@@ -25,11 +25,11 @@
     "prepareRelease": "npm run build"
   },
   "peerDependencies": {
-    "@adhese/sdk": ">=1.0.0",
     "react": ">=16.13",
     "react-dom": ">=16.13"
   },
   "dependencies": {
+    "@adhese/sdk": ">= 1.0.2",
     "@adhese/sdk-shared": "^1.0.0",
     "use-deep-compare-effect": "^1.8.1"
   },
