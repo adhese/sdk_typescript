@@ -1,6 +1,7 @@
 import { watch } from '@adhese/sdk-shared';
 import type { AdheseContextState, MergedOptions } from './main.types';
 import { useQueryDetector } from './queryDetector/queryDetector';
+import { isPreviewMode } from './main.utils';
 
 export function useMainQueryDetector(mergedOptions: MergedOptions, context: AdheseContextState): void {
   const [device] = useQueryDetector(context, mergedOptions.queries);
@@ -15,6 +16,10 @@ export function useMainQueryDetector(mergedOptions: MergedOptions, context: Adhe
 }
 
 export function useMainDebugMode(context: AdheseContextState): void {
+  if (window.location.search.includes('adhese_debug=true') || isPreviewMode()) {
+    context.debug = true;
+  }
+
   watch(() => context.debug, async (newDebug) => {
     if (newDebug) {
       context.logger.setMinLogLevelThreshold('debug');

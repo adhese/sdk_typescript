@@ -2,7 +2,7 @@ import { awaitTimeout, createEventManager, effectScope, omit, reactive, watch } 
 import { version } from '../package.json';
 import { createSlotManager } from './slotManager/slotManager';
 import { useConsent } from './consent/consent';
-import { fetchAllUnrenderedSlots, isPreviewMode, setupLogging } from './main.utils';
+import { fetchAllUnrenderedSlots } from './main.utils';
 import type {
   Adhese,
   AdheseContextStateWithPlugins,
@@ -42,7 +42,6 @@ export function createAdhese<T extends ReadonlyArray<AdhesePlugin>>(options: Adh
       viewabilityTracking: true,
       ...options,
     };
-    setupLogging(mergedOptions);
 
     const hooks = createGlobalHooks();
 
@@ -144,8 +143,9 @@ export function createAdhese<T extends ReadonlyArray<AdhesePlugin>>(options: Adh
       if (mergedOptions.findDomSlotsOnLoad)
         await context?.findDomSlots();
 
-      if (mergedOptions.debug || window.location.search.includes('adhese_debug=true') || isPreviewMode())
-        context.events?.debugChange.dispatch(true);
+      logger.debug('Created Adhese SDK instance', {
+        mergedOptions,
+      });
 
       if (!scope.active)
         dispose();

@@ -103,7 +103,7 @@ describe('createAdhese', () => {
     });
 
     expect(logger.getMinLogLevelThreshold()).toBe('debug');
-    expect(debugLoggerSpy).toHaveBeenCalledWith('Debug logging enabled');
+    expect(debugLoggerSpy).toHaveBeenCalledWith('Debug mode enabled');
     expect(debugLoggerSpy).toHaveBeenCalled();
   });
 
