@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.0.2
+
+### Patch Changes
+
+- ce4a2c0: Fix fetching of initialSlots and dom slots on init not being handled properly causing issues with debug mode not being recognized when set in the URL or when in preview mode
+
 ## 1.0.1
 
 ### Patch Changes
