@@ -1,5 +1,12 @@
 # @adhese/sdk
 
+## 1.0.3
+
+### Patch Changes
+
+- 43a682c: Revert accidental change of Promise.allSettled to Promise.all which can cause issuess when a request fails
+- 5393373: Add fallback legacy d.ts file for older ts version with very limited types
+
 ## 1.0.2
 
 ### Patch Changes

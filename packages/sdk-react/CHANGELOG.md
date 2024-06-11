@@ -1,5 +1,12 @@
 # @adhese/sdk-react
 
+## 1.0.1
+
+### Patch Changes
+
+- 5393373: Add fallback legacy d.ts file for older ts version with very limited types
+- 5393373: Mode @adhese/sdk as a dependency instead of peer dependency
+
 ## 1.0.0
 
 ### Major Changes

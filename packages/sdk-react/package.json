@@ -1,18 +1,20 @@
 {
   "name": "@adhese/sdk-react",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Adhese SDK",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/adhese/sdk_typescript.git"
   },
-  "exports": [{
-    "types": "./dist/sdkReact.d.ts",
-    "import": "./dist/sdkReact.js",
-    "require": "./dist/cjs/sdkReact.cjs",
-    "types@<5.1": "./dist/legacy.d.ts"
-  }],
+  "exports": [
+    {
+      "types": "./dist/sdkReact.d.ts",
+      "import": "./dist/sdkReact.js",
+      "require": "./dist/cjs/sdkReact.cjs",
+      "types@<5.1": "./dist/legacy.d.ts"
+    }
+  ],
   "main": "./dist/cjs/sdkReact.cjs",
   "module": "./dist/sdkReact.js",
   "types": "./dist/sdkReact.d.ts",
