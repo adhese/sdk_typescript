@@ -1,19 +1,21 @@
 {
   "name": "@adhese/sdk",
   "type": "module",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Adhese SDK",
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/adhese/sdk_typescript.git"
   },
-  "exports": [{
-    "types": "./dist/index.d.ts",
-    "import": "./dist/index.js",
-    "require": "./dist/index.cjs",
-    "types@<5.1": "./dist/legacy.d.ts"
-  }],
+  "exports": [
+    {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types@<5.1": "./dist/legacy.d.ts"
+    }
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
