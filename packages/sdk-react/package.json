@@ -7,14 +7,28 @@
     "type": "git",
     "url": "git+https://github.com/adhese/sdk_typescript.git"
   },
+  "exports": [{
+    "types": "./dist/sdkReact.d.ts",
+    "import": "./dist/sdkReact.js",
+    "require": "./dist/cjs/sdkReact.cjs",
+    "types@<5.1": "./dist/legacy.d.ts"
+  }],
   "main": "./dist/cjs/sdkReact.cjs",
   "module": "./dist/sdkReact.js",
   "types": "./dist/sdkReact.d.ts",
+  "typesVersions": {
+    "<5.1": {
+      "*": [
+        "./dist/legacy.d.ts"
+      ]
+    }
+  },
   "files": [
     "CHANGELOG.md",
     "LICENSE",
     "README.md",
-    "dist"
+    "dist",
+    "src/legacy.d.ts"
   ],
   "scripts": {
     "build": "vite build",
@@ -25,16 +39,12 @@
     "prepareRelease": "npm run build"
   },
   "peerDependencies": {
-    "@adhese/sdk": ">=1.0.0",
     "react": ">=16.13",
     "react-dom": ">=16.13"
   },
   "dependencies": {
+    "@adhese/sdk": "^1.0.2",
     "@adhese/sdk-shared": "^1.0.0",
     "use-deep-compare-effect": "^1.8.1"
-  },
-  "devDependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
   }
 }

@@ -1,6 +1,8 @@
 import { execSync } from 'node:child_process';
+import { copyFile } from 'node:fs/promises';
 import { type LibraryOptions, type PluginOption, type UserConfig, defineConfig } from 'vite';
 import { flat } from 'remeda';
+import chalk from 'chalk';
 
 export function viteBaseConfig({ dependencies = {}, peerDependencies = {}, devDependencies = {}, entries, plugins = [], name, bundle = false }: {
   dependencies?: Record<string, string>;
@@ -12,6 +14,7 @@ export function viteBaseConfig({ dependencies = {}, peerDependencies = {}, devDe
   bundle?: boolean;
 }): UserConfig {
   return defineConfig({
+    /* eslint-disable no-console */
     plugins: [
       ((): PluginOption => {
         const buildEntries: Array<string> = [];
@@ -30,7 +33,6 @@ export function viteBaseConfig({ dependencies = {}, peerDependencies = {}, devDe
             }
           },
           closeBundle(): void {
-            // eslint-disable-next-line no-console
             console.log();
 
             const external = [dependencies, peerDependencies, devDependencies].flatMap(Object.keys);
@@ -40,8 +42,24 @@ export function viteBaseConfig({ dependencies = {}, peerDependencies = {}, devDe
           },
         });
       })(),
+      ((): PluginOption => ({
+        apply: 'build',
+        async closeBundle(): Promise<void> {
+          try {
+            console.log();
+            console.log(chalk.blue('Copying legacy.d.ts file'));
+            await copyFile('./src/legacy.d.ts', './dist/legacy.d.ts');
+            console.log(chalk.green('Successfully copied legacy.d.ts file'));
+          }
+          catch {
+            console.log(chalk.yellow('No legacy.d.ts file found, skipping copy'));
+          }
+        },
+        name: 'copy-legacy-dts',
+      }))(),
       ...plugins,
     ],
+    /* eslint-enable no-console */
     build: {
       emptyOutDir: true,
       minify: false,
