@@ -1,5 +1,11 @@
 # @adhese/sdk-react
 
+## 1.0.2
+
+### Patch Changes
+
+- e59b2d5: Replace use-deep-compare-effect in useAdheseSlot with useEffect and useRef
+
 ## 1.0.1
 
 ### Patch Changes
