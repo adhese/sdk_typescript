@@ -29,8 +29,7 @@
     "CHANGELOG.md",
     "LICENSE",
     "README.md",
-    "dist",
-    "src/legacy.d.ts"
+    "dist"
   ],
   "scripts": {
     "build": "vite build",

@@ -20,7 +20,7 @@ export default (({ mode }): UserConfig => defineConfig({
       ? {
         /* eslint-disable ts/naming-convention */
           '@server-mocks': `${path.resolve()}/../../packages/server-mocks/src`,
-          '@adhese/sdk': `${path.resolve()}/../../packages/sdk/src`,
+          '@adhese/sdk': `${path.resolve()}/../../packages/sdk/src/adheseSdk`,
           '@adhese/sdk-lite': `${path.resolve()}/../../packages/sdk-lite/src/sdkLite.ts`,
           '@adhese/sdk-shared': `${path.resolve()}/../../packages/sdk-shared/src`,
         /* eslint-enable ts/naming-convention */

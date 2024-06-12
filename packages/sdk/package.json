@@ -8,17 +8,17 @@
     "type": "git",
     "url": "git+https://github.com/adhese/sdk_typescript.git"
   },
-  "exports": [
-    {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
+  "exports": {
+    ".": {
+      "types": "./dist/adheseSdk.d.ts",
+      "import": "./dist/adheseSdk.js",
+      "require": "./dist/adheseSdk.cjs",
       "types@<5.1": "./dist/legacy.d.ts"
     }
-  ],
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  },
+  "main": "./dist/adheseSdk.cjs",
+  "module": "./dist/adheseSdk.js",
+  "types": "./dist/adheseSdk.d.ts",
   "typesVersions": {
     "<5.1": {
       "*": [

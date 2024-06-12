@@ -7,13 +7,13 @@ export default defineConfig({
   ...viteBaseConfig({
     dependencies,
     name,
-    entries: 'src/index.ts',
+    entries: 'src/adheseSdk.ts',
   }),
   resolve: {
     alias: {
       /* eslint-disable ts/naming-convention */
       '@server-mocks': `${path.resolve()}/../server-mocks/src`,
-      '@adhese/sdk': `${path.resolve()}/src`,
+      '@adhese/sdk': `${path.resolve()}/src/adheseSdk`,
       '@adhese/sdk-shared': `${path.resolve()}/../sdk-shared/src`,
       '@adhese/sdk-shared/validators': `${path.resolve()}/../sdk-shared/src/validators`,
       /* eslint-enable ts/naming-convention */

@@ -1,6 +1,6 @@
 import { createAsyncHook, createSyncHook } from '@adhese/sdk-shared';
 import type { AdMultiRequestOptions } from './requestAds/requestAds';
-import type { AdheseAd, AdheseSlotOptions } from './index';
+import type { AdheseAd, AdheseSlotOptions } from './adheseSdk';
 
 // eslint-disable-next-line ts/explicit-function-return-type,ts/explicit-module-boundary-types
 export function createGlobalHooks() {
