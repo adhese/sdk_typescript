@@ -1,5 +1,6 @@
-import { type ReactElement, useEffect, useRef } from 'react';
-import type { AdheseSlotOptions, AdheseSlot as Slot } from '@adhese/sdk';
+import { type ReactElement, useRef } from 'react';
+import type { AdheseSlotContext, AdheseSlotHooks, AdheseSlotOptions, AdheseSlot as Slot } from '@adhese/sdk';
+import { type Ref, watch } from '@adhese/sdk-shared';
 import { useAdheseSlot } from './useAdheseSlot';
 
 export type AdheseSlotProps = {
@@ -20,11 +21,16 @@ export function AdheseSlot({
 }: AdheseSlotProps): ReactElement {
   const element = useRef<HTMLDivElement | null>(null);
 
-  const slot = useAdheseSlot(element, options);
+  useAdheseSlot(element, {
+    ...options,
+    setup(context: Ref<AdheseSlotContext | null>, hooks: AdheseSlotHooks) {
+      options.setup?.(context, hooks);
 
-  useEffect(() => {
-    onChange?.(slot);
-  }, [onChange, slot]);
+      watch(context, (newSlot) => {
+        onChange?.(newSlot);
+      }, { immediate: true, deep: true });
+    },
+  });
 
   return (
     <div ref={element} />

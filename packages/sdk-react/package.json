@@ -7,14 +7,14 @@
     "type": "git",
     "url": "git+https://github.com/adhese/sdk_typescript.git"
   },
-  "exports": [
-    {
+  "exports": {
+    ".": {
       "types": "./dist/sdkReact.d.ts",
       "import": "./dist/sdkReact.js",
       "require": "./dist/cjs/sdkReact.cjs",
       "types@<5.1": "./dist/legacy.d.ts"
     }
-  ],
+  },
   "main": "./dist/cjs/sdkReact.cjs",
   "module": "./dist/sdkReact.js",
   "types": "./dist/sdkReact.d.ts",
@@ -46,7 +46,6 @@
   },
   "dependencies": {
     "@adhese/sdk": "^1.0.2",
-    "@adhese/sdk-shared": "^1.0.0",
-    "use-deep-compare-effect": "^1.8.1"
+    "@adhese/sdk-shared": "^1.0.0"
   }
 }

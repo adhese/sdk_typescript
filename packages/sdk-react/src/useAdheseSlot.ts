@@ -1,7 +1,5 @@
-import { type RefObject, useState } from 'react';
+import { type RefObject, useEffect, useRef } from 'react';
 import type { AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
-import useDeepCompareEffect from 'use-deep-compare-effect';
-import { omit } from '@adhese/sdk-shared';
 import { useAdhese } from './adheseContext';
 
 /**
@@ -10,28 +8,22 @@ import { useAdhese } from './adheseContext';
  * @param elementRef The ref to the containing element
  * @param options The options to create the slot
  */
-export function useAdheseSlot(elementRef: RefObject<HTMLElement>, options: Omit<AdheseSlotOptions, 'containingElement' | 'context'>): AdheseSlot | null {
-  const [slot, setSlot] = useState<AdheseSlot | null>(null);
+export function useAdheseSlot(elementRef: RefObject<HTMLElement>, options: Omit<AdheseSlotOptions, 'containingElement' | 'context'>): RefObject<AdheseSlot | null> {
+  const slot = useRef<AdheseSlot | null>(null);
   const adhese = useAdhese();
 
-  useDeepCompareEffect(() => {
-    let intermediate: AdheseSlot | undefined;
+  useEffect(() => {
+    if (!adhese || !elementRef.current)
+      return;
 
-    if (adhese && elementRef.current) {
-      intermediate = adhese.addSlot(
-        {
-          ...options,
-          containingElement: elementRef.current,
-        },
-      );
-
-      setSlot(intermediate);
-    }
-
+    slot.current = adhese?.addSlot({
+      ...options,
+      containingElement: elementRef.current,
+    });
     return (): void => {
-      intermediate?.dispose();
+      slot.current?.dispose();
     };
-  }, [adhese, omit(options, Object.entries(options).filter(([, value]) => typeof value === 'function').map(([key]) => key as keyof typeof options)), elementRef.current]);
+  }, [adhese?.addSlot, options, elementRef.current]);
 
   return slot;
 }
