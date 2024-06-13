@@ -1,7 +1,7 @@
 {
   "name": "@adhese/sdk-react",
   "type": "module",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Adhese SDK",
   "repository": {
     "type": "git",
