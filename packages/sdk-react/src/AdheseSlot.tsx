@@ -1,3 +1,5 @@
+'use client';
+
 import { type ReactElement, useCallback, useRef } from 'react';
 import type { AdheseSlotOptions, AdheseSlot as Slot } from '@adhese/sdk';
 import { watch } from '@adhese/sdk-shared';
