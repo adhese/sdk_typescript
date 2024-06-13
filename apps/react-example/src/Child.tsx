@@ -1,6 +1,6 @@
-import { type ReactElement, useRef, useState } from 'react';
+import { type ReactElement, useCallback, useRef, useState } from 'react';
 import { AdheseSlot, useAdheseSlot } from '@adhese/sdk-react';
-import type { AdheseAd } from '@adhese/sdk';
+import type { AdheseAd, AdheseSlotOptions } from '@adhese/sdk';
 
 type CustomAdTag = {
   type: string;
@@ -36,7 +36,7 @@ export function Child(): ReactElement {
   useAdheseSlot(halfwidthsmallresponsiveRef, {
     format: 'halfwidthsmallresponsive',
     renderMode: 'inline',
-    setup(_, { onBeforeRender }): void {
+    setup: useCallback(((_, { onBeforeRender }): void => {
       onBeforeRender((data) => {
         const ad = data as AdheseAd<CustomAdTag>;
 
@@ -74,7 +74,7 @@ export function Child(): ReactElement {
             </a>`,
         };
       });
-    },
+    }) satisfies AdheseSlotOptions['setup'], []),
   });
 
   return (
@@ -84,7 +84,7 @@ export function Child(): ReactElement {
         isSlotShown && (
           <AdheseSlot format="skyscraper" />
         )
-      }
+       }
       <div ref={halfwidthsmallresponsiveRef} />
       <AdheseSlot format="leaderboard" renderMode="inline" />
       <AdheseSlot format="imu" lazyLoading />
@@ -96,7 +96,7 @@ export function Child(): ReactElement {
             maxAds: 3,
           },
         }}
-        setup={(_, { onBeforeRender }) => {
+        setup={useCallback(((_, { onBeforeRender }): void => {
           onBeforeRender((data) => {
             const ad = data as AdheseAd<ReadonlyArray<CustomAdTag>>;
 
@@ -108,7 +108,7 @@ export function Child(): ReactElement {
               tag: ad.tag.map(renderAd).join(''),
             };
           });
-        }}
+        }) satisfies AdheseSlotOptions['setup'], [])}
       />
     </>
   );

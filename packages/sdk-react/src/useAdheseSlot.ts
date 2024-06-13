@@ -1,5 +1,10 @@
-import { type RefObject, useEffect, useRef } from 'react';
+import {
+  type RefObject,
+  useEffect,
+  useState,
+} from 'react';
 import type { AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
+import { toRaw, watch } from '@adhese/sdk-shared';
 import { useAdhese } from './adheseContext';
 
 /**
@@ -7,23 +12,37 @@ import { useAdhese } from './adheseContext';
  * when the containing element is available and the Adhese instance is available.
  * @param elementRef The ref to the containing element
  * @param options The options to create the slot
+ *
+ * @warning Make sure to wrap your `setup` function in a `useCallback` as it can trigger an infinite loop if it's not
+ * memoized.
  */
-export function useAdheseSlot(elementRef: RefObject<HTMLElement>, options: Omit<AdheseSlotOptions, 'containingElement' | 'context'>): RefObject<AdheseSlot | null> {
-  const slot = useRef<AdheseSlot | null>(null);
+export function useAdheseSlot(elementRef: RefObject<HTMLElement>, options: Omit<AdheseSlotOptions, 'containingElement' | 'context'>): AdheseSlot | null {
   const adhese = useAdhese();
 
+  const [slot, setSlot] = useState<AdheseSlot | null>(null);
   useEffect(() => {
-    if (!adhese || !elementRef.current)
-      return;
+    let intermediate: AdheseSlot | null = null;
 
-    slot.current = adhese?.addSlot({
-      ...options,
-      containingElement: elementRef.current,
-    });
+    if (adhese && elementRef.current) {
+      intermediate = toRaw(adhese?.addSlot({
+        ...options,
+        containingElement: elementRef.current,
+        setup(context, hooks) {
+          options.setup?.(context, hooks);
+
+          watch(context, (newSlot) => {
+            setSlot(newSlot);
+          }, { deep: true, immediate: true });
+        },
+      }));
+    }
+
     return (): void => {
-      slot.current?.dispose();
+      intermediate?.dispose();
+
+      setSlot(null);
     };
-  }, [adhese?.addSlot, options, elementRef.current]);
+  }, [adhese, ...Object.values(options)]);
 
   return slot;
 }
