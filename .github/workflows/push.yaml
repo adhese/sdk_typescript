@@ -2,6 +2,8 @@ name: On push
 
 on:
   push:
+    branches-ignore:
+      - main # Ignore the main branch which is handled by the release workflow
   workflow_dispatch:
 
 jobs:
