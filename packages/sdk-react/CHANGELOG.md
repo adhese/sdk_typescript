@@ -1,5 +1,13 @@
 # @adhese/sdk-react
 
+## 1.0.3
+
+### Patch Changes
+
+- 32e1ca5: Remove src/legacy.d.ts from included files
+- 98121c3: Fix slot state sync not working properly
+- 5e953f8: Add 'use client' directive to AdheseSlot component for RSC environments
+
 ## 1.0.2
 
 ### Patch Changes

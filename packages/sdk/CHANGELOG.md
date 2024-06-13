@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.0.4
+
+### Patch Changes
+
+- 32e1ca5: Update entry file name to make inspection after bundling easier
+
 ## 1.0.3
 
 ### Patch Changes
