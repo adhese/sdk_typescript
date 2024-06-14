@@ -13,7 +13,7 @@ export default defineConfig({
   resolve: {
     alias: {
       /* eslint-disable ts/naming-convention */
-      '@adhese/sdk': `${path.resolve()}/../sdk/src`,
+      '@adhese/sdk': `${path.resolve()}/../sdk/src/adheseSdk`,
       '@adhese/sdk-shared': `${path.resolve()}/../sdk-shared/src`,
       /* eslint-enable ts/naming-convention */
     },

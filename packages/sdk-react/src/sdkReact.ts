@@ -1,3 +1,3 @@
 export { AdheseProvider, useAdhese } from './adheseContext';
 export { useAdheseSlot } from './useAdheseSlot';
-export { AdheseSlot } from './AdheseSlot';
+export { AdheseSlot } from './AdheseSlot/AdheseSlot.lazy';
