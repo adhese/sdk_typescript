@@ -234,8 +234,8 @@ describe('createAdhese', () => {
       containingElement: element,
     });
 
-    expect(adhese.parameters.get('dt')).toBe('mobile');
-    expect(adhese.parameters.get('br')).toBe('mobile');
+    expect(adhese.parameters.get('dt')).toBe('phone');
+    expect(adhese.parameters.get('br')).toBe('phone');
 
     mediaQueryMock.useMediaQuery('(min-width: 769px) and (max-width: 1024px)');
 
