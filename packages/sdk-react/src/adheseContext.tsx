@@ -18,11 +18,14 @@ const adheseContext = createContext<Adhese | undefined>(undefined);
  * @constructor
  */
 // eslint-disable-next-line ts/naming-convention
-export function AdheseProvider({ children, options }: PropsWithChildren<{ options: AdheseOptions }>): ReactElement {
+export function AdheseProvider({ children, options }: PropsWithChildren<{ options?: AdheseOptions }>): ReactElement {
   const [adhese, setAdhese] = useState<Adhese | undefined>(undefined);
 
   useEffect(() => {
     let instance: Adhese | undefined;
+
+    if (!options)
+      return;
 
     import('@adhese/sdk').then(({ createAdhese }) => {
       instance = createAdhese(options);
