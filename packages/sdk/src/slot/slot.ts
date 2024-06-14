@@ -227,7 +227,10 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         throw new Error(error);
       }
 
-      renderFunctions[renderMode](renderAd as RenderOptions, element.value);
+      renderFunctions[renderMode]({
+        ...renderAd,
+        ...options,
+      } as RenderOptions, element.value);
 
       if (renderAd.impressionCounter && !impressionTrackingPixelElement.value)
         impressionTrackingPixelElement.value = addTrackingPixel(renderAd.impressionCounter);

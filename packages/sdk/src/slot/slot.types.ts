@@ -69,6 +69,18 @@ export type AdheseSlotOptions = {
    */
   renderMode?: RenderMode;
   /**
+   * Overwrite the width of the slot. If not provided, the width will be determined by the ad response
+   *
+   * Will be ignored if `renderMode` is set to `inline` or `none`
+   */
+  width?: number | string;
+  /**
+   * Overwrite the height of the slot. If not provided, the height will be determined by the ad response
+   *
+   * Will be ignored if `renderMode` is set to `inline` or `none`
+   */
+  height?: number | string;
+  /**
    * Specific options for the slot that may be used my plugins
    */
   pluginOptions?: Record<string, unknown>;

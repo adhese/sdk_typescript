@@ -25,8 +25,8 @@ export function renderIframe(ad: RenderOptions, element: HTMLElement): void {
       `.replaceAll(/\s+/g, ' ').trim();
 
   iframe.style.border = 'none';
-  iframe.style.width = ad.width ? `${ad.width}px` : 'auto';
-  iframe.style.height = ad.height ? `${ad.height}px` : 'auto';
+  iframe.style.width = typeof ad.width === 'number' ? `${ad.width}px` : (ad.width ?? 'auto');
+  iframe.style.height = typeof ad.height === 'number' ? `${ad.height}px` : (ad.height ?? 'auto');
   element.replaceChildren(iframe);
 }
 
