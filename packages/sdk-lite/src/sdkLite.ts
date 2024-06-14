@@ -2,6 +2,7 @@ import {
   type RenderOptions,
   addTrackingPixel,
   generateName,
+  pick,
   renderIframe,
   renderInline,
   round,
@@ -17,6 +18,8 @@ export type AdheseLiteSlotOptions = {
   location: string;
   host?: string;
   renderMode?: RenderMode;
+  width?: string | number;
+  height?: string | number;
   parameters?: Record<string, string | ReadonlyArray<string>>;
   slot?: string;
   consent?: boolean | string;
@@ -141,7 +144,10 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
       if (typeof data.tag !== 'string')
         throw new Error('Received invalid ad data, tag is not a string');
 
-      renderFunctions[options.renderMode ?? 'iframe'](data, element);
+      renderFunctions[options.renderMode ?? 'iframe']({
+        ...data,
+        ...pick(options, ['width', 'height']),
+      }, element);
 
       options.onRender?.(this);
 
