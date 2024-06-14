@@ -20,7 +20,7 @@ export const stackSlotsPlugin: AdhesePlugin<{
   /**
    * Add a stack slot
    */
-  addSlot(slot: Omit<AdheseSlotOptions, 'location' | 'context' | 'type' | 'renderMode' | 'pluginOptions'> & { maxAds: number }): Readonly<AdheseSlot>;
+  addSlot(slot: Omit<AdheseSlotOptions, 'location' | 'context' | 'type' | 'renderMode' | 'pluginOptions' | 'width' | 'height'> & { maxAds: number }): Readonly<AdheseSlot>;
 }> = (context, plugin) => {
   const logger = useLogger({
     scope: `${name}@${version}`,

@@ -82,7 +82,7 @@ export function Child(): ReactElement {
       <button onClick={() => { setIsSlotShown(value => !value); }}>Toggle slot</button>
       {
         isSlotShown && (
-          <AdheseSlot format="skyscraper" />
+          <AdheseSlot format="skyscraper" width="100%" />
         )
        }
       <div ref={halfwidthsmallresponsiveRef} />

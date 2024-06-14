@@ -9,6 +9,7 @@ import {
   generateName,
   isDeepEqual,
   omit,
+  pick,
   reactive,
   ref,
   renderIframe,
@@ -227,7 +228,10 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         throw new Error(error);
       }
 
-      renderFunctions[renderMode](renderAd as RenderOptions, element.value);
+      renderFunctions[renderMode]({
+        ...renderAd,
+        ...pick(options, ['width', 'height']),
+      } as RenderOptions, element.value);
 
       if (renderAd.impressionCounter && !impressionTrackingPixelElement.value)
         impressionTrackingPixelElement.value = addTrackingPixel(renderAd.impressionCounter);
