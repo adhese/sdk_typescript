@@ -1,5 +1,18 @@
 # @adhese/sdk-lite
 
+## 1.2.0
+
+### Minor Changes
+
+- 112e224: Add `width` and `height` option to overwrite slot sizing
+
+  **NOTE**: Only applies when `renderMode` is `iframe` or `undefined`
+
+### Patch Changes
+
+- Updated dependencies [112e224]
+  - @adhese/sdk-shared@1.1.0
+
 ## 1.1.1
 
 ### Patch Changes
