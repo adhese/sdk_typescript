@@ -1,5 +1,11 @@
 # @adhese/sdk-react
 
+## 1.1.1
+
+### Patch Changes
+
+- 180e82a: Fix issue where `mobile` would be passed as a param instead of the required `phone`, which would result in that the server would not return any ads
+
 ## 1.1.0
 
 ### Minor Changes
