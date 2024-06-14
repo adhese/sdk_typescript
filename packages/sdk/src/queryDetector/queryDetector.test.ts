@@ -24,7 +24,7 @@ describe('queryDetector', () => {
 
     const [device, dispose] = useQueryDetector(testContext);
 
-    expect(device.value).toBe('mobile');
+    expect(device.value).toBe('phone');
 
     dispose();
   });
@@ -42,7 +42,7 @@ describe('queryDetector', () => {
 
   it('should create a queryDetector with custom queries', () => {
     const [device, dispose] = useQueryDetector(testContext, {
-      mobile: '(max-width: 768px) and (pointer: coarse)',
+      phone: '(max-width: 768px) and (pointer: coarse)',
       tablet: '(min-width: 769px) and (max-width: 1024px) and (pointer: coarse)',
       desktop: '(min-width: 1025px) and (pointer: fine)',
       largeDesktop: '(min-width: 1280px) and (pointer: fine)',

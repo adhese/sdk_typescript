@@ -5,7 +5,7 @@ import type { AdheseContext } from '@adhese/sdk';
  * Create a query detector that will match a list of media queries and keeps track of the current matching query
  */
 export function useQueryDetector(context: AdheseContext, queries: Record<string, string> = {
-  mobile: '(max-width: 768px)',
+  phone: '(max-width: 768px)',
   tablet: '(min-width: 769px) and (max-width: 1024px)',
   desktop: '(min-width: 1025px)',
 }): [ComputedRef<string>, () => void] {
