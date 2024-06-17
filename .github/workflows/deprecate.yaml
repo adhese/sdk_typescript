@@ -1,0 +1,40 @@
+name: Deprecate package
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: The package to deprecate
+        required: true
+      version_range:
+        description: The version range to deprecate
+        required: true
+      message:
+        description: The deprecation message
+        required: true
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  NPM_TOKEN: ${{ secrets.NPMJS_PUBLISH_TOKEN }}
+
+permissions: write-all
+
+jobs:
+  deprecate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Create .npmrc
+        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+        env:
+          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ env.NPM_TOKEN }}
+
+      - name: Deprecate
+        run: npm deprecate ${{ github.event.inputs.package }}@${{ github.event.inputs.version_range }} "${{ github.event.inputs.message }}"
