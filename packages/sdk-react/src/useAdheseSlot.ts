@@ -4,6 +4,7 @@ import {
   useState,
 } from 'react';
 import type { AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
+import { watch } from '@adhese/sdk-shared';
 import { useAdhese } from './adheseContext';
 
 /**
@@ -22,21 +23,19 @@ export function useAdheseSlot(elementRef: RefObject<HTMLElement>, options: Omit<
   useEffect(() => {
     let intermediate: AdheseSlot | null = null;
 
-    import('@adhese/sdk-shared').then(({ watch }) => {
-      if (adhese && elementRef.current) {
-        intermediate = adhese?.addSlot({
-          ...options,
-          containingElement: elementRef.current,
-          setup(context, hooks) {
-            options.setup?.(context, hooks);
+    if (adhese && elementRef.current) {
+      intermediate = adhese?.addSlot({
+        ...options,
+        containingElement: elementRef.current,
+        setup(context, hooks) {
+          options.setup?.(context, hooks);
 
-            watch(context, (newSlot) => {
-              setSlot(newSlot);
-            }, { deep: true, immediate: true });
-          },
-        });
-      }
-    }).catch(console.error);
+          watch(context, (newSlot) => {
+            setSlot(newSlot);
+          }, { deep: true, immediate: true });
+        },
+      });
+    }
 
     return (): void => {
       intermediate?.dispose();
