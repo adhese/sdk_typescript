@@ -1,18 +1,31 @@
-import type { ReactElement } from 'react';
-import { devtoolsPlugin } from '@adhese/sdk-devtools';
+import { type ReactElement, useEffect, useState } from 'react';
 import { AdheseProvider } from '@adhese/sdk-react';
-import { stackSlotsPlugin } from '@adhese/sdk-stack-slots';
+import type { AdhesePlugin } from '@adhese/sdk';
 import { Child } from './Child';
 
 // eslint-disable-next-line ts/naming-convention
 export function App(): ReactElement {
+  const [plugins, setPlugins] = useState<ReadonlyArray<AdhesePlugin>>([]);
+
+  useEffect(() => {
+    Promise
+      .all([
+        import('@adhese/sdk-devtools').then(({ devtoolsPlugin }) => devtoolsPlugin),
+        import('@adhese/sdk-stack-slots').then(({ stackSlotsPlugin }) => stackSlotsPlugin),
+      ])
+      .then(setPlugins)
+      .catch(console.error);
+  }, []);
+
   return (
-    <AdheseProvider options={{
-      account: 'demo',
-      debug: true,
-      location: '_sdk_example_',
-      plugins: [devtoolsPlugin, stackSlotsPlugin],
-    }}
+    <AdheseProvider options={plugins.length > 0
+      ? {
+          account: 'demo',
+          debug: true,
+          location: '_sdk_example_',
+          plugins,
+        }
+      : undefined}
     >
       <Child />
     </AdheseProvider>
