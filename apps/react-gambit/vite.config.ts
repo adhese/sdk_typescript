@@ -5,6 +5,13 @@ import react from '@vitejs/plugin-react';
 export default (({ mode }): UserConfig => defineConfig({
   build: {
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ['react', '@adhese/sdk', '@adhese/sdk-shared', '@adhese/sdk-react', '@adhese/sdk-shared/validators'],
+        },
+      },
+    },
   },
   plugins: [react()],
   resolve: {

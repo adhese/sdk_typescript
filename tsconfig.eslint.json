@@ -3,6 +3,7 @@
   "include": [
     "packages/**/*",
     "apps/**/*",
+    "scripts/**/*",
     "eslint.config.js",
     "**/vite.config.ts",
     "lint-staged.config.js",

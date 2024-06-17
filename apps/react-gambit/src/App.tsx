@@ -1,6 +1,5 @@
 import type { ReactElement } from 'react';
 import { AdheseProvider } from '@adhese/sdk-react';
-import { devtoolsPlugin } from '@adhese/sdk-devtools';
 import { Child } from './Child';
 
 // eslint-disable-next-line ts/naming-convention
@@ -11,7 +10,7 @@ export function App(): ReactElement {
       debug: true,
       location: 'ah.nl_homepage',
       // @ts-expect-error plugin is on cdn
-      plugins: [devtoolsPlugin, adhesePlugin],
+      plugins: [adhesePlugin],
       consent: true,
       parameters: {
         ab: 'a',
