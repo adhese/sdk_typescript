@@ -39,7 +39,7 @@ program
         // eslint-disable-next-line ts/naming-convention
         issue_number: Number(options.pullRequest),
         body: `Created nightly build for the following packages:
-        ${packages.map(pkg => `- \`${pkg.name}@${pkg.version}\``).join('\n')}
+        \n ${packages.map(pkg => `- \`${pkg.name}@${pkg.version}\``).join('\n')}
       `,
       });
     }

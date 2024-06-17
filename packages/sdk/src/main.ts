@@ -43,6 +43,8 @@ export function createAdhese<T extends ReadonlyArray<AdhesePlugin>>(options: Adh
       ...options,
     };
 
+    import('./requestAds/requestAds.schema').catch(logger.error);
+
     const hooks = createGlobalHooks();
 
     const context = reactive<AdheseContextStateWithPlugins<T>>({
