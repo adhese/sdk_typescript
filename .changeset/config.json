@@ -5,6 +5,9 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "minor",
+  "snapshot": {
+    "useCalculatedVersion": true
+  },
   "ignore": [
     "!@adhese/*"
   ],

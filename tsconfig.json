@@ -34,6 +34,6 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true
   },
-  "include": ["packages/**/*", "apps/**/*"],
+  "include": ["packages/**/*", "apps/**/*", "scripts/**/*"],
   "exclude": ["node_modules"]
 }

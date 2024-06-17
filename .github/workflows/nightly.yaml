@@ -1,0 +1,61 @@
+name: Nightly build
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  NPM_TOKEN: ${{ secrets.NPMJS_PUBLISH_TOKEN }}
+
+jobs:
+  nightly:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Turbo artifacts
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.job }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-${{github.job}}-
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run prepareRelease
+
+      - name: Generate changelog
+        run: npm run changeset version -- --snapshot nightly
+
+      - name: Publish nightly
+        id: publish
+        uses: changesets/action@v1
+        with:
+          publish: npm run changeset publish -- --snapshot --tag nightly
+          createGithubReleases: false
+        env:
+          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ env.NPM_TOKEN }}
+
+      - name: Create .npmrc
+        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+        env:
+          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ env.NPM_TOKEN }}
+
+      - name: Deprecate nightly
+        run: npx tsx ./scripts/nightlyGithubAction.ts --packages '${{steps.publish.outputs.publishedPackages}}' --pull-request ${{github.event.number}}
+        env:
+          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ env.NPM_TOKEN }}
