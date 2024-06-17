@@ -32,6 +32,6 @@
     "@adhese/sdk": ">=1.0.0"
   },
   "dependencies": {
-    "@adhese/sdk-shared": "^1.0.0"
+    "@adhese/sdk-shared": "^1.1.0"
   }
 }

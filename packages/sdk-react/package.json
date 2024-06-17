@@ -44,7 +44,7 @@
     "react-dom": ">=16.13"
   },
   "dependencies": {
-    "@adhese/sdk": "^1.1.0",
+    "@adhese/sdk": "^1.1.1",
     "@adhese/sdk-shared": "^1.1.0"
   }
 }

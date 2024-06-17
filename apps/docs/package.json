@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@adhese/sdk": "^1.1.0",
+    "@adhese/sdk": "^1.1.1",
     "@adhese/sdk-lite": "^1.2.0",
     "vitepress": "^1.2.3",
     "vue": "^3.4.15"
