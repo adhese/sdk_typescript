@@ -55,7 +55,7 @@ jobs:
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
 
       - name: Deprecate nightly
-        run: npx tsx ./scripts/deprecateNightly.ts -P '${{steps.publish.outputs.publishedPackages}}'
+        run: npx tsx ./scripts/nightlyGithubAction.ts --packages '${{steps.publish.outputs.publishedPackages}}' --pull-request ${{github.event.number}}
         env:
           GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
