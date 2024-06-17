@@ -1,5 +1,15 @@
 # @adhese/sdk-react
 
+## 1.1.2
+
+### Patch Changes
+
+- 6dd76ff: Make AdheseSlot a lazy component
+- 6dd76ff: Wrap watch from @adhese/sdk-shared in dynamic import to enable more chunk splitting
+- 6dd76ff: Make passing of options optional to `AdheseProvider`, this will not initialize the SDK but will create the context
+  provider. You can, for example, use this to dynamically import plugins first before creating the SDK. See
+  `apps/react-example` for an example.
+
 ## 1.1.1
 
 ### Patch Changes
