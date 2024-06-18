@@ -1,9 +1,11 @@
 import {
   type RefObject,
+  useCallback,
   useEffect,
   useState,
 } from 'react';
 import type { AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
+import { watch } from '@adhese/sdk-shared';
 import { useAdhese } from './adheseContext';
 
 /**
@@ -19,24 +21,25 @@ export function useAdheseSlot(elementRef: RefObject<HTMLElement>, options: Omit<
   const adhese = useAdhese();
 
   const [slot, setSlot] = useState<AdheseSlot | null>(null);
+
+  const setup = useCallback(((context, hooks): void => {
+    options.setup?.(context, hooks);
+
+    watch(context, (newSlot) => {
+      setSlot(newSlot);
+    }, { deep: true, immediate: true });
+  }) satisfies AdheseSlotOptions['setup'], [options.setup]);
+
   useEffect(() => {
     let intermediate: AdheseSlot | null = null;
 
-    import('@adhese/sdk-shared').then(({ watch }) => {
-      if (adhese && elementRef.current) {
-        intermediate = adhese?.addSlot({
-          ...options,
-          containingElement: elementRef.current,
-          setup(context, hooks) {
-            options.setup?.(context, hooks);
-
-            watch(context, (newSlot) => {
-              setSlot(newSlot);
-            }, { deep: true, immediate: true });
-          },
-        });
-      }
-    }).catch(console.error);
+    if (adhese && elementRef.current) {
+      intermediate = adhese?.addSlot({
+        ...options,
+        containingElement: elementRef.current,
+        setup,
+      });
+    }
 
     return (): void => {
       intermediate?.dispose();

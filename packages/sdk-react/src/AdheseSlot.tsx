@@ -1,9 +1,9 @@
 'use client';
 
-import { type ReactElement, useCallback, useRef } from 'react';
+import { type ReactElement, useCallback, useId, useRef } from 'react';
 import type { AdheseSlotOptions, AdheseSlot as Slot } from '@adhese/sdk';
 import { watch } from '@adhese/sdk-shared';
-import { useAdheseSlot } from '../useAdheseSlot';
+import { useAdheseSlot } from './useAdheseSlot';
 
 export type AdheseSlotProps = {
   /**
@@ -26,7 +26,7 @@ export function AdheseSlot({
 }: AdheseSlotProps): ReactElement {
   const element = useRef<HTMLDivElement | null>(null);
 
-  useAdheseSlot(element, {
+  const slot = useAdheseSlot(element, {
     ...options,
     setup: useCallback(((context, hooks): void => {
       options.setup?.(context, hooks);
@@ -37,7 +37,9 @@ export function AdheseSlot({
     }) satisfies AdheseSlotOptions['setup'], [options.setup, onChange]),
   });
 
+  const id = useId();
+
   return (
-    <div ref={element} />
+    <div ref={element} id={`${id}${slot?.id}`} data-name={slot?.name} />
   );
 }
