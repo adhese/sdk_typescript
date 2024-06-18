@@ -141,6 +141,25 @@ jobs:
         if: steps.changesets.outputs.published == 'true'
         run: git push --follow-tags
 
+      - name: Setup Node.js with Github packages registry
+        if: steps.changesets.outputs.published == 'true'
+        uses: actions/setup-node@v4
+        with:
+          registry-url: 'https://npm.pkg.github.com'
+          node-version: lts/*
+
+      - name: Publish to Github packages
+        if: steps.changesets.outputs.published == 'true'
+        id: changesets-gh
+        uses: changesets/action@v1
+        with:
+          publish: npm run release -- --no-git-tags
+          createGithubReleases: false
+        env:
+          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ env.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ env.GITHUB_TOKEN }}
+
   deploy_docs:
     name: Deploy docs
     needs: [release]
