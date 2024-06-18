@@ -1,5 +1,6 @@
 import {
   type RefObject,
+  useCallback,
   useEffect,
   useState,
 } from 'react';
@@ -20,6 +21,15 @@ export function useAdheseSlot(elementRef: RefObject<HTMLElement>, options: Omit<
   const adhese = useAdhese();
 
   const [slot, setSlot] = useState<AdheseSlot | null>(null);
+
+  const setup = useCallback(((context, hooks): void => {
+    options.setup?.(context, hooks);
+
+    watch(context, (newSlot) => {
+      setSlot(newSlot);
+    }, { deep: true, immediate: true });
+  }) satisfies AdheseSlotOptions['setup'], [options.setup]);
+
   useEffect(() => {
     let intermediate: AdheseSlot | null = null;
 
@@ -27,13 +37,7 @@ export function useAdheseSlot(elementRef: RefObject<HTMLElement>, options: Omit<
       intermediate = adhese?.addSlot({
         ...options,
         containingElement: elementRef.current,
-        setup(context, hooks) {
-          options.setup?.(context, hooks);
-
-          watch(context, (newSlot) => {
-            setSlot(newSlot);
-          }, { deep: true, immediate: true });
-        },
+        setup,
       });
     }
 
