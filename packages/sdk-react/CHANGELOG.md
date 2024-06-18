@@ -1,5 +1,12 @@
 # @adhese/sdk-react
 
+## 1.1.3
+
+### Patch Changes
+
+- f568fa6: Revert chunk splitting in sdk-react as it was causing worse performance timings in applications
+- f568fa6: Preload validators on Adhese instance creation
+
 ## 1.1.2
 
 ### Patch Changes

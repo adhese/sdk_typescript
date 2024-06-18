@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.1.2
+
+### Patch Changes
+
+- f568fa6: Preload validators on Adhese instance creation
+
 ## 1.1.1
 
 ### Patch Changes
