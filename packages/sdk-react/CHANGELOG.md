@@ -1,5 +1,13 @@
 # @adhese/sdk-react
 
+## 1.1.4
+
+### Patch Changes
+
+- f36afb7: Fix @adhese/sdk export for cjs builds not pointing to the correct path
+- Updated dependencies [f36afb7]
+  - @adhese/sdk@1.1.3
+
 ## 1.1.3
 
 ### Patch Changes

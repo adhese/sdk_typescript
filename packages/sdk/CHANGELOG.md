@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.1.3
+
+### Patch Changes
+
+- f36afb7: Fix @adhese/sdk export for cjs builds not pointing to the correct path
+
 ## 1.1.2
 
 ### Patch Changes
