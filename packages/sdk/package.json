@@ -12,11 +12,11 @@
     ".": {
       "types": "./dist/adheseSdk.d.ts",
       "import": "./dist/adheseSdk.js",
-      "require": "./dist/adheseSdk.cjs",
+      "require": "./dist/cjs/adheseSdk.cjs",
       "types@<5.1": "./dist/legacy.d.ts"
     }
   },
-  "main": "./dist/adheseSdk.cjs",
+  "main": "./dist/cjs/adheseSdk.cjs",
   "module": "./dist/adheseSdk.js",
   "types": "./dist/adheseSdk.d.ts",
   "typesVersions": {
