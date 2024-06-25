@@ -1,6 +1,6 @@
 'use client';
 
-import { type ReactElement, useCallback, useId, useRef } from 'react';
+import { type HTMLAttributes, type ReactElement, useCallback, useId, useRef } from 'react';
 import type { AdheseSlotOptions, AdheseSlot as Slot } from '@adhese/sdk';
 import { watch } from '@adhese/sdk-shared';
 import { useAdheseSlot } from './useAdheseSlot';
@@ -10,7 +10,7 @@ export type AdheseSlotProps = {
    * Callback to be called when the slot is created or disposed
    */
   onChange?(slot: Slot | null): void;
-} & Omit<AdheseSlotOptions, 'containingElement' | 'context'>;
+} & Omit<AdheseSlotOptions, 'containingElement' | 'context'> & HTMLAttributes<HTMLDivElement>;
 
 /**
  * Component to create an Adhese slot. The slot will be disposed when the component is unmounted. The slot will be
@@ -22,34 +22,56 @@ export type AdheseSlotProps = {
 // eslint-disable-next-line ts/naming-convention
 export function AdheseSlot({
   onChange,
-  ...options
+  width,
+  height,
+  lazyLoading,
+  lazyLoadingOptions,
+  slot,
+  pluginOptions,
+  renderMode,
+  type,
+  setup,
+  parameters,
+  format,
+  style,
+  id,
+  ...props
 }: AdheseSlotProps): ReactElement {
   const element = useRef<HTMLDivElement | null>(null);
 
-  const slot = useAdheseSlot(element, {
-    ...options,
+  const slotState = useAdheseSlot(element, {
+    width,
+    height,
+    lazyLoading,
+    lazyLoadingOptions,
+    slot,
+    pluginOptions,
+    renderMode,
+    type,
+    parameters,
+    format,
     setup: useCallback(((context, hooks): void => {
-      options.setup?.(context, hooks);
+      setup?.(context, hooks);
 
       watch(context, (newSlot) => {
         onChange?.(newSlot);
       }, { immediate: true, deep: true });
-    }) satisfies AdheseSlotOptions['setup'], [options.setup, onChange]),
+    }) satisfies AdheseSlotOptions['setup'], [setup, onChange]),
   });
 
-  const id = useId();
+  const componentId = useId();
 
   return (
     <div
       ref={element}
-      id={`${id}${slot?.id}`}
-      data-name={slot?.name}
-      style={slot?.options
-        ? {
-            width: slot?.options.width,
-            height: slot?.options.height,
-          }
-        : undefined}
+      id={id && `${componentId}${slotState?.id}`}
+      data-name={slotState?.name}
+      style={{
+        width: slotState?.options.width,
+        height: slotState?.options.height,
+        ...style,
+      }}
+      {...props}
     />
   );
 }
