@@ -1,5 +1,19 @@
 # @adhese/sdk-react
 
+## 1.2.0
+
+### Minor Changes
+
+- ac8433e: Allow passing of all HTMLAttributes props to AdheseSlot to allow more customizing of the rendered element
+- ac8433e: Set width and height on passed element from the passed options to prevent content jumping in your page if the size of the slot is already known
+
+### Patch Changes
+
+- ac8433e: Filter out passed undefined values from slot options
+- Updated dependencies [ac8433e]
+- Updated dependencies [ac8433e]
+  - @adhese/sdk@1.1.4
+
 ## 1.1.4
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @adhese/sdk
 
+## 1.1.4
+
+### Patch Changes
+
+- ac8433e: Move setting of position relative when in debug mode to @adhese/sdk-devtools plugin
+- ac8433e: Filter out passed undefined values from slot options
+
 ## 1.1.3
 
 ### Patch Changes
