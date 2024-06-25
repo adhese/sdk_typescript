@@ -55,7 +55,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     const slotContext = ref<AdheseSlotContext | null>(null);
     const options = slotOptions.context.hooks.runOnSlotCreate({
       ...defaultOptions,
-      ...slotOptions,
+      ...(Object.fromEntries(Object.entries(slotOptions).filter(([,value]) => value !== undefined)) as AdheseSlotOptions),
     });
 
     const {
