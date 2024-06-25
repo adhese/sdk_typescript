@@ -1,5 +1,5 @@
 import type { AdheseContext, AdhesePlugin, AdheseSlot } from '@adhese/sdk';
-import { type Ref, computed, omit, ref, type useLogger, watch } from '@adhese/sdk-shared';
+import { type Ref, computed, omit, ref, type useLogger, watch, watchEffect } from '@adhese/sdk-shared';
 import type { ModifiedSlotsStore, modifiedSlotsStore } from './modifiedSlots.store';
 
 export type DevtoolsSlotPluginOptions = {
@@ -105,6 +105,15 @@ export function useModifiedSlotsHijack(
             }
           }
         }
+
+        watchEffect(() => {
+          if (context.debug && slotContext.value?.element) {
+            slotContext.value.element.style.position = 'relative';
+          }
+          else {
+            slotContext.value?.element?.style.removeProperty('position');
+          }
+        });
 
         slotHooks.onInit(async () => {
           if (context.debug && slotContext.value) {

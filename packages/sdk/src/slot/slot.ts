@@ -217,9 +217,6 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         throw new Error(error);
       }
 
-      if (context.debug)
-        element.value.style.position = 'relative';
-
       if (typeof renderAd?.tag !== 'string') {
         const error = `Could not render slot for slot ${name.value}. A valid tag doesn't exist or is not HTML string.`;
         logger.error(error, options);
@@ -258,8 +255,6 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
       element.value.innerHTML = '';
       element.value.style.position = '';
-      element.value.style.width = '';
-      element.value.style.height = '';
 
       data.value = null;
       originalData.value = null;

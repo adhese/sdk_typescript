@@ -40,6 +40,16 @@ export function AdheseSlot({
   const id = useId();
 
   return (
-    <div ref={element} id={`${id}${slot?.id}`} data-name={slot?.name} />
+    <div
+      ref={element}
+      id={`${id}${slot?.id}`}
+      data-name={slot?.name}
+      style={slot?.options
+        ? {
+            width: slot?.options.width,
+            height: slot?.options.height,
+          }
+        : undefined}
+    />
   );
 }
