@@ -1,5 +1,11 @@
 # @adhese/sdk-devtools
 
+## 1.0.1
+
+### Patch Changes
+
+- ac8433e: Move setting of position relative when in debug mode to @adhese/sdk-devtools plugin
+
 ## 1.0.0
 
 ### Major Changes
