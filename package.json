@@ -50,7 +50,7 @@
     "jsdom": "^24.1.0",
     "lint-staged": "^15.2.7",
     "octokit": "^4.0.2",
-    "postcss": "^8.4.38",
+    "postcss": "^8.4.39",
     "remeda": "^2.2.0",
     "sdk-eslint-config": "^1.0.1",
     "tailwindcss": "^3.4.4",
