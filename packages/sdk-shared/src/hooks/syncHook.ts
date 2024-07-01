@@ -31,7 +31,7 @@ export function createSyncHook<
     }
 
     // eslint-disable-next-line no-console
-    Promise.allSettled(promisedCallbacks.map(callback => callback(latestResult))).catch(console.trace);
+    Promise.allSettled(promisedCallbacks.map(async callback => callback(latestResult))).catch(console.trace);
 
     onRun?.(callbacks);
 

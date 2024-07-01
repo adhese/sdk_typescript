@@ -6,19 +6,19 @@ export function PreviewButton(): ReactElement {
   return (
     <>
       {
-    window.location.search.includes('adhesePreviewCreativeId') && (
-      <Button
-        onClick={() => {
-          const currentUrl = new URL(window.location.href);
+        window.location.search.includes('adhesePreviewCreativeId') && (
+          <Button
+            onClick={() => {
+              const currentUrl = new URL(window.location.href);
 
-          window.location.replace(`${currentUrl.origin}${currentUrl.pathname === '/' ? '' : currentUrl.pathname}`);
-        }}
-        variant="secondary"
-      >
-        Disable preview mode
-      </Button>
-    )
-  }
+              window.location.replace(`${currentUrl.origin}${currentUrl.pathname === '/' ? '' : currentUrl.pathname}`);
+            }}
+            variant="secondary"
+          >
+            Disable preview mode
+          </Button>
+        )
+      }
     </>
   );
 }

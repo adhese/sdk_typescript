@@ -20,59 +20,59 @@ export function Devtools(): ReactElement {
     <div className="adhese-devtools">
       {isOpen
         ? (
-          <>
-            <section
-              className="fixed bottom-0 w-full border-t-2 border-t-accent bg-background shadow-lg overflow-auto"
-              ref={appRef}
-              aria-label="Adhese Devtools"
-            >
-              <Tabs defaultValue="slots">
-                <div className="flex justify-between  p-4">
-                  <TabsList>
-                    <TabsTrigger value="slots">Slots</TabsTrigger>
-                    <TabsTrigger value="logs">Logs</TabsTrigger>
-                    <TabsTrigger value="parameters">Parameters</TabsTrigger>
-                    <TabsTrigger value="settings">Settings</TabsTrigger>
-                  </TabsList>
+            <>
+              <section
+                className="fixed bottom-0 w-full border-t-2 border-t-accent bg-background shadow-lg overflow-auto"
+                ref={appRef}
+                aria-label="Adhese Devtools"
+              >
+                <Tabs defaultValue="slots">
+                  <div className="flex justify-between  p-4">
+                    <TabsList>
+                      <TabsTrigger value="slots">Slots</TabsTrigger>
+                      <TabsTrigger value="logs">Logs</TabsTrigger>
+                      <TabsTrigger value="parameters">Parameters</TabsTrigger>
+                      <TabsTrigger value="settings">Settings</TabsTrigger>
+                    </TabsList>
 
-                  <div className="flex items-center gap-2">
-                    <PreviewButton />
-                    <Button
-                      onClick={setIsOpen.bind(null, false)}
-                    >
-                      Close
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <PreviewButton />
+                      <Button
+                        onClick={setIsOpen.bind(null, false)}
+                      >
+                        Close
+                      </Button>
+                    </div>
                   </div>
-                </div>
-                <div className="overflow-auto max-h-96 border-t-2 border-t-accent p-4">
-                  <TabsContent value="slots">
-                    <SlotsTable />
-                  </TabsContent>
-                  <TabsContent value="logs">
-                    <LogTable />
-                  </TabsContent>
-                  <TabsContent value="parameters">
-                    <ParametersTable />
-                  </TabsContent>
-                  <TabsContent value="settings">
-                    <Settings />
-                  </TabsContent>
-                </div>
-              </Tabs>
-            </section>
-            <div style={{
-              height: spacing,
-            }}
-            />
-          </>
+                  <div className="overflow-auto max-h-96 border-t-2 border-t-accent p-4">
+                    <TabsContent value="slots">
+                      <SlotsTable />
+                    </TabsContent>
+                    <TabsContent value="logs">
+                      <LogTable />
+                    </TabsContent>
+                    <TabsContent value="parameters">
+                      <ParametersTable />
+                    </TabsContent>
+                    <TabsContent value="settings">
+                      <Settings />
+                    </TabsContent>
+                  </div>
+                </Tabs>
+              </section>
+              <div style={{
+                height: spacing,
+              }}
+              />
+            </>
           )
         : (
-          <div className="fixed bottom-4 right-4 flex flex-col gap-2">
-            <Button onClick={setIsOpen.bind(null, true)}>
-              Open Adhese Devtools
-            </Button>
-            <PreviewButton />
-          </div>
+            <div className="fixed bottom-4 right-4 flex flex-col gap-2">
+              <Button onClick={setIsOpen.bind(null, true)}>
+                Open Adhese Devtools
+              </Button>
+              <PreviewButton />
+            </div>
           )}
     </div>
   );

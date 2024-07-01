@@ -53,13 +53,13 @@ export function ParametersTable(): ReactElement {
               {
                 Array.isArray(parameter.value)
                   ? (
-                    <ul className="flex gap-1">
-                      {parameter.value.map((item, index) => (
-                        <li key={index}>
-                          <Badge variant="outline">{item}</Badge>
-                        </li>
-                      ))}
-                    </ul>
+                      <ul className="flex gap-1">
+                        {parameter.value.map((item, index) => (
+                          <li key={index}>
+                            <Badge variant="outline">{item}</Badge>
+                          </li>
+                        ))}
+                      </ul>
                     )
                   : <Badge variant="outline">{parameter.value}</Badge>
               }

@@ -83,7 +83,7 @@ function createEvent<T>(): Event<T> {
 
   async function dispatchAsync(data: T): Promise<void> {
     await Promise.allSettled(
-      Array.from(listeners).map(listener => listener(data)),
+      Array.from(listeners).map(async listener => listener(data)),
     );
   }
 

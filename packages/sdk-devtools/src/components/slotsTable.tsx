@@ -109,243 +109,243 @@ export function SlotsTable(): ReactElement {
   return (
     adheseContext && (formattedSlots.length > 0)
       ? (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Location</TableHead>
-              {slotCodeExists && <TableHead>Slot</TableHead>}
-              <TableHead>Format</TableHead>
-              {origins.length > 1 && <TableHead>Origin</TableHead>}
-              <TableHead>Render Status</TableHead>
-              <TableHead>Campaign ID</TableHead>
-              <TableHead>Booking ID</TableHead>
-              <TableHead>Creative ID</TableHead>
-              <TableHead>Traffic ID</TableHead>
-              <TableHead>Creative type</TableHead>
-              <TableHead>Impression tracked</TableHead>
-              <TableHead>Viewability tracked</TableHead>
-              {
-                slotParametersExist && <TableHead>Parameters</TableHead>
-              }
-              {
-                previewExist && <TableHead>Preview</TableHead>
-              }
-              <TableHead>Controls</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {formattedSlots.map(({
-              data,
-              name,
-              format,
-              location,
-              status,
-              isViewabilityTracked,
-              isImpressionTracked,
-              element,
-              parameters,
-              slot,
-              hijackedSlot,
-              originalSlot,
-            }, index) => (
-              <Fragment key={originalSlot.id}>
-                <TableRow id={name}>
-                  <TableCell className="font-medium">
-                    <button
-                      onClick={() => {
-                        if (element) {
-                          element.scrollIntoView();
-                          element.style.outline = 'solid 5px red';
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Location</TableHead>
+                {slotCodeExists && <TableHead>Slot</TableHead>}
+                <TableHead>Format</TableHead>
+                {origins.length > 1 && <TableHead>Origin</TableHead>}
+                <TableHead>Render Status</TableHead>
+                <TableHead>Campaign ID</TableHead>
+                <TableHead>Booking ID</TableHead>
+                <TableHead>Creative ID</TableHead>
+                <TableHead>Traffic ID</TableHead>
+                <TableHead>Creative type</TableHead>
+                <TableHead>Impression tracked</TableHead>
+                <TableHead>Viewability tracked</TableHead>
+                {
+                  slotParametersExist && <TableHead>Parameters</TableHead>
+                }
+                {
+                  previewExist && <TableHead>Preview</TableHead>
+                }
+                <TableHead>Controls</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {formattedSlots.map(({
+                data,
+                name,
+                format,
+                location,
+                status,
+                isViewabilityTracked,
+                isImpressionTracked,
+                element,
+                parameters,
+                slot,
+                hijackedSlot,
+                originalSlot,
+              }, index) => (
+                <Fragment key={originalSlot.id}>
+                  <TableRow id={name}>
+                    <TableCell className="font-medium">
+                      <button
+                        onClick={() => {
+                          if (element) {
+                            element.scrollIntoView();
+                            element.style.outline = 'solid 5px red';
 
-                          setTimeout(() => {
-                            element.style.outline = '';
-                          }, 1000);
-                        }
-                      }}
-                      className="flex flex-col gap-1"
-                    >
-                      <Badge className={cn(slotIndexBadgeClasses[index % slotIndexBadgeClasses.length], 'text-white')}>
-                        {name}
-                      </Badge>
-                      {hijackedSlot && <del className="text-xs text-muted-foreground">{originalSlot.name}</del>}
-                    </button>
-                  </TableCell>
-                  <TableCell>{location}</TableCell>
-                  {slotCodeExists && <TableCell>{slot ?? ''}</TableCell>}
-                  <TableCell>
-                    {!data?.adFormat || data?.adFormat === format
-                      ? format
-                      : (
-                        <>
-                          <del className="text-red-300 italic">{format}</del>
-                          <ins className="no-underline text-green-700">{data?.adFormat}</ins>
-                        </>
-                        )}
-                  </TableCell>
-                  {origins.length > 1 && (
-                    <TableCell>
-                      {data?.origin && <Badge className={cn(slotIndexBadgeClasses[origins.indexOf(data.origin) % slotIndexBadgeClasses.length], 'text-white')}>{data.origin.toLowerCase()}</Badge>}
-                    </TableCell>
-                  )}
-                  <TableCell>
-                    <Badge variant="outline" className={cn(status === 'error' ? 'bg-red-500 text-red-50' : '')}>
-                      {renderStatusMap[status]}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {data?.orderId && data?.orderId !== '0'
-                      ? (
-                        <a
-                          href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/editCampaign/${data.orderId}`}
-                          target="_blank"
-                          referrerPolicy="no-referrer"
-                          className={cn(buttonVariants({
-                            variant: 'ghost',
-                            size: 'sm',
-                          }))}
-                        >
-                          {data.orderId}
-                        </a>
-                        )
-                      : '-'}
-                  </TableCell>
-                  <TableCell>
-                    {data?.adspaceId && data?.adspaceId !== '0'
-                      ? (
-                        <a
-                          href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/bookingDetail/${data.adspaceId}/${data.orderId}`}
-                          target="_blank"
-                          referrerPolicy="no-referrer"
-                          className={cn(buttonVariants({
-                            variant: 'ghost',
-                            size: 'sm',
-                          }))}
-                        >
-                          {data.adspaceId}
-                        </a>
-                        )
-                      : '-'}
-                  </TableCell>
-                  <TableCell>
-                    {data?.libId && data?.orderId !== '0'
-                      ? (
-                        <a
-                          href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/creativeDetail/${data.libId}/${data.orderId}`}
-                          target="_blank"
-                          referrerPolicy="no-referrer"
-                          className={cn(buttonVariants({
-                            variant: 'ghost',
-                            size: 'sm',
-                          }))}
-                        >
-                          {data.libId}
-                        </a>
-                        )
-                      : '-'}
-                  </TableCell>
-                  <TableCell>{data?.id ?? '-'}</TableCell>
-                  <TableCell>{data?.ext ? <Badge variant="outline">{data.ext}</Badge> : '-'}</TableCell>
-                  <TableCell>
-                    {isImpressionTracked
-                      ? <Badge className="bg-green-100 text-green-900 hover:bg-green-100">Yes</Badge>
-                      : <Badge variant="secondary">No</Badge>}
-                  </TableCell>
-                  <TableCell>
-                    {isViewabilityTracked
-                      ? <Badge className="bg-green-100 text-green-900 hover:bg-green-100">Yes</Badge>
-                      : <Badge variant="secondary">No</Badge>}
-                  </TableCell>
-                  {
-                    slotParametersExist && (
-                      <TableCell>
-                        {
-                        parameters.length > 0 && (
-                          <Sheet>
-                            <SheetTrigger className={buttonVariants({
-                              variant: 'secondary',
-                              size: 'sm',
-                            })}
-                            >
-                              Show
-                            </SheetTrigger>
-                            <SheetContent className="bg-white flex flex-col gap-4">
-                              <SheetHeader>
-                                <SheetTitle>
-                                  Parameters
-                                </SheetTitle>
-                              </SheetHeader>
-                              <Table>
-                                <TableHeader>
-                                  <TableRow>
-                                    <TableHead>Key</TableHead>
-                                    <TableHead>Value</TableHead>
-                                  </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                  {parameters.map(([parameterName, value]) => (
-                                    <TableRow key={parameterName}>
-                                      <TableCell>
-                                        <Badge variant="outline">{parameterName}</Badge>
-                                      </TableCell>
-                                      <TableCell>
-                                        {
-                                          Array.isArray(value)
-                                            ? (
-                                              <ul className="flex gap-1">
-                                                {value.map((item, paramIndex) => (
-                                                  <li key={paramIndex}>
-                                                    <Badge variant="outline">{item}</Badge>
-                                                  </li>
-                                                ))}
-                                              </ul>
-                                              )
-                                            : <Badge variant="outline">{value}</Badge>
-                                        }
-                                      </TableCell>
-                                    </TableRow>
-                                  ))}
-                                </TableBody>
-                              </Table>
-                            </SheetContent>
-                          </Sheet>
-                        )
-                      }
-                      </TableCell>
-                    )
-                  }
-                  {previewExist && (
-                    <TableCell>
-                      {data?.preview
-                      && (
-                        <Badge className="bg-amber-400 text-amber-950 hover:bg-amber-400">
-                          PREVIEW
+                            setTimeout(() => {
+                              element.style.outline = '';
+                            }, 1000);
+                          }
+                        }}
+                        className="flex flex-col gap-1"
+                      >
+                        <Badge className={cn(slotIndexBadgeClasses[index % slotIndexBadgeClasses.length], 'text-white')}>
+                          {name}
                         </Badge>
+                        {hijackedSlot && <del className="text-xs text-muted-foreground">{originalSlot.name}</del>}
+                      </button>
+                    </TableCell>
+                    <TableCell>{location}</TableCell>
+                    {slotCodeExists && <TableCell>{slot ?? ''}</TableCell>}
+                    <TableCell>
+                      {!data?.adFormat || data?.adFormat === format
+                        ? format
+                        : (
+                            <>
+                              <del className="text-red-300 italic">{format}</del>
+                              <ins className="no-underline text-green-700">{data?.adFormat}</ins>
+                            </>
+                          )}
+                    </TableCell>
+                    {origins.length > 1 && (
+                      <TableCell>
+                        {data?.origin && <Badge className={cn(slotIndexBadgeClasses[origins.indexOf(data.origin) % slotIndexBadgeClasses.length], 'text-white')}>{data.origin.toLowerCase()}</Badge>}
+                      </TableCell>
+                    )}
+                    <TableCell>
+                      <Badge variant="outline" className={cn(status === 'error' ? 'bg-red-500 text-red-50' : '')}>
+                        {renderStatusMap[status]}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {data?.orderId && data?.orderId !== '0'
+                        ? (
+                            <a
+                              href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/editCampaign/${data.orderId}`}
+                              target="_blank"
+                              referrerPolicy="no-referrer"
+                              className={cn(buttonVariants({
+                                variant: 'ghost',
+                                size: 'sm',
+                              }))}
+                            >
+                              {data.orderId}
+                            </a>
+                          )
+                        : '-'}
+                    </TableCell>
+                    <TableCell>
+                      {data?.adspaceId && data?.adspaceId !== '0'
+                        ? (
+                            <a
+                              href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/bookingDetail/${data.adspaceId}/${data.orderId}`}
+                              target="_blank"
+                              referrerPolicy="no-referrer"
+                              className={cn(buttonVariants({
+                                variant: 'ghost',
+                                size: 'sm',
+                              }))}
+                            >
+                              {data.adspaceId}
+                            </a>
+                          )
+                        : '-'}
+                    </TableCell>
+                    <TableCell>
+                      {data?.libId && data?.orderId !== '0'
+                        ? (
+                            <a
+                              href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/creativeDetail/${data.libId}/${data.orderId}`}
+                              target="_blank"
+                              referrerPolicy="no-referrer"
+                              className={cn(buttonVariants({
+                                variant: 'ghost',
+                                size: 'sm',
+                              }))}
+                            >
+                              {data.libId}
+                            </a>
+                          )
+                        : '-'}
+                    </TableCell>
+                    <TableCell>{data?.id ?? '-'}</TableCell>
+                    <TableCell>{data?.ext ? <Badge variant="outline">{data.ext}</Badge> : '-'}</TableCell>
+                    <TableCell>
+                      {isImpressionTracked
+                        ? <Badge className="bg-green-100 text-green-900 hover:bg-green-100">Yes</Badge>
+                        : <Badge variant="secondary">No</Badge>}
+                    </TableCell>
+                    <TableCell>
+                      {isViewabilityTracked
+                        ? <Badge className="bg-green-100 text-green-900 hover:bg-green-100">Yes</Badge>
+                        : <Badge variant="secondary">No</Badge>}
+                    </TableCell>
+                    {
+                      slotParametersExist && (
+                        <TableCell>
+                          {
+                            parameters.length > 0 && (
+                              <Sheet>
+                                <SheetTrigger className={buttonVariants({
+                                  variant: 'secondary',
+                                  size: 'sm',
+                                })}
+                                >
+                                  Show
+                                </SheetTrigger>
+                                <SheetContent className="bg-white flex flex-col gap-4">
+                                  <SheetHeader>
+                                    <SheetTitle>
+                                      Parameters
+                                    </SheetTitle>
+                                  </SheetHeader>
+                                  <Table>
+                                    <TableHeader>
+                                      <TableRow>
+                                        <TableHead>Key</TableHead>
+                                        <TableHead>Value</TableHead>
+                                      </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                      {parameters.map(([parameterName, value]) => (
+                                        <TableRow key={parameterName}>
+                                          <TableCell>
+                                            <Badge variant="outline">{parameterName}</Badge>
+                                          </TableCell>
+                                          <TableCell>
+                                            {
+                                              Array.isArray(value)
+                                                ? (
+                                                    <ul className="flex gap-1">
+                                                      {value.map((item, paramIndex) => (
+                                                        <li key={paramIndex}>
+                                                          <Badge variant="outline">{item}</Badge>
+                                                        </li>
+                                                      ))}
+                                                    </ul>
+                                                  )
+                                                : <Badge variant="outline">{value}</Badge>
+                                            }
+                                          </TableCell>
+                                        </TableRow>
+                                      ))}
+                                    </TableBody>
+                                  </Table>
+                                </SheetContent>
+                              </Sheet>
+                            )
+                          }
+                        </TableCell>
+                      )
+                    }
+                    {previewExist && (
+                      <TableCell>
+                        {data?.preview
+                        && (
+                          <Badge className="bg-amber-400 text-amber-950 hover:bg-amber-400">
+                            PREVIEW
+                          </Badge>
+                        )}
+                      </TableCell>
+                    )}
+                    <TableCell className="flex gap-1">
+                      <EditSlot id={originalSlot.id} />
+                      {modifiedSlots.slots.has(originalSlot.name) && (
+                        <Button
+                          onClick={
+                            () => {
+                              modifiedSlots.remove(originalSlot.name);
+                            }
+                          }
+                          variant="ghost"
+                          size="sm"
+                          title="Reset"
+                        >
+                          <ResetIcon />
+                        </Button>
                       )}
                     </TableCell>
-                  )}
-                  <TableCell className="flex gap-1">
-                    <EditSlot id={originalSlot.id} />
-                    {modifiedSlots.slots.has(originalSlot.name) && (
-                      <Button
-                        onClick={
-                      () => {
-                        modifiedSlots.remove(originalSlot.name);
-                      }
-                    }
-                        variant="ghost"
-                        size="sm"
-                        title="Reset"
-                      >
-                        <ResetIcon />
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              </Fragment>
-            ))}
-          </TableBody>
-        </Table>
+                  </TableRow>
+                </Fragment>
+              ))}
+            </TableBody>
+          </Table>
         )
       : <p>No slots available</p>
   );

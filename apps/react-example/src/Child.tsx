@@ -84,7 +84,7 @@ export function Child(): ReactElement {
         isSlotShown && (
           <AdheseSlot format="skyscraper" width="100%" />
         )
-       }
+      }
       <div ref={halfwidthsmallresponsiveRef} />
       <AdheseSlot format="leaderboard" renderMode="inline" />
       <AdheseSlot format="imu" lazyLoading />

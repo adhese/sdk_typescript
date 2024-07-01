@@ -10,7 +10,7 @@ type AdPostPayload = {
   parameters?: Record<string, ReadonlyArray<string> | string>;
 };
 
-export function requestWithPost({
+export async function requestWithPost({
   context,
   ...options
 }: Omit<AdMultiRequestOptions, 'method'>): Promise<Response> {

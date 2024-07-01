@@ -20,7 +20,7 @@ export function createPassiveHook<
 
   function run(arg: T): void {
     // eslint-disable-next-line no-console
-    Promise.allSettled(Array.from(callbacks).map(callback => callback(arg))).catch(console.trace);
+    Promise.allSettled(Array.from(callbacks).map(async callback => callback(arg))).catch(console.trace);
 
     onRun?.(callbacks);
   }
