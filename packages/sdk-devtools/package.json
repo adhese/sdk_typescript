@@ -41,7 +41,7 @@
     "@radix-ui/react-tabs": "^1.1.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
-    "react-hook-form": "^7.52.0",
+    "react-hook-form": "^7.52.2",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "zustand": "^4.5.4"
