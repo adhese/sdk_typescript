@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
 import type { AdheseOptions } from '@adhese/sdk';
+import { describe, expect, it } from 'vitest';
 import { toOptions } from './toOptions';
 
 describe('toOptions', () => {

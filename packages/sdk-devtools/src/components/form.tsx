@@ -2,6 +2,16 @@
 import type * as LabelPrimitive from '@radix-ui/react-label';
 import { Slot } from '@radix-ui/react-slot';
 import {
+  type ComponentPropsWithoutRef,
+  createContext,
+  type ElementRef,
+  forwardRef,
+  type HTMLAttributes,
+  useContext,
+  useId,
+} from 'react';
+
+import {
   Controller,
   type ControllerProps,
   type FieldPath,
@@ -9,16 +19,6 @@ import {
   FormProvider,
   useFormContext,
 } from 'react-hook-form';
-
-import {
-  type ComponentPropsWithoutRef,
-  type ElementRef,
-  type HTMLAttributes,
-  createContext,
-  forwardRef,
-  useContext,
-  useId,
-} from 'react';
 import { cn } from '../utils';
 import { Label } from './label';
 
@@ -182,12 +182,12 @@ const FormMessage = forwardRef<
 FormMessage.displayName = 'FormMessage';
 
 export {
-  useFormField,
   Form,
-  FormItem,
-  FormLabel,
   FormControl,
   FormDescription,
-  FormMessage,
   FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  useFormField,
 };

@@ -1,11 +1,11 @@
-import { type ChangeEventHandler, type HTMLAttributes, type ReactElement, useCallback, useId, useMemo, useState } from 'react';
 import { deleteCookie, getCookie, hasCookie, setCookie } from '@adhese/sdk-shared';
-import { cn } from '../utils';
+import { type ChangeEventHandler, type HTMLAttributes, type ReactElement, useCallback, useId, useMemo, useState } from 'react';
 import { useAdheseContext } from '../AdheseContext';
-import { Switch } from './switch';
-import { Label } from './label';
-import { Input } from './input';
+import { cn } from '../utils';
 import { Button } from './button';
+import { Input } from './input';
+import { Label } from './label';
+import { Switch } from './switch';
 
 const cookieKey = 'debugKey';
 

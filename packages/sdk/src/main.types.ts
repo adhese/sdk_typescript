@@ -1,12 +1,12 @@
 /* v8 ignore start */
 import type { EventManager, Merge, UrlString } from '@adhese/sdk-shared';
-import type { SlotManagerOptions } from './slotManager/slotManager';
-import type { AdheseAd } from './requestAds/requestAds.schema';
-import type { AdMultiRequestOptions } from './requestAds/requestAds';
+import type { createGlobalHooks } from './hooks';
 import type { logger } from './logger/logger';
+import type { AdMultiRequestOptions } from './requestAds/requestAds';
+import type { AdheseAd } from './requestAds/requestAds.schema';
 import type { AdheseSlot, AdheseSlotOptions } from './slot/slot.types';
 
-import type { createGlobalHooks } from './hooks';
+import type { SlotManagerOptions } from './slotManager/slotManager';
 
 export type AdhesePluginInformation = {
   index: number;

@@ -1,8 +1,8 @@
 import { execSync } from 'node:child_process';
 import { copyFile } from 'node:fs/promises';
-import { type LibraryOptions, type PluginOption, type UserConfig, defineConfig } from 'vite';
-import { flat } from 'remeda';
 import chalk from 'chalk';
+import { flat } from 'remeda';
+import { defineConfig, type LibraryOptions, type PluginOption, type UserConfig } from 'vite';
 
 export function viteBaseConfig({ dependencies = {}, peerDependencies = {}, devDependencies = {}, entries, plugins = [], name, bundle = false }: {
   dependencies?: Record<string, string>;

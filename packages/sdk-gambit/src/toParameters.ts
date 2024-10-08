@@ -1,5 +1,5 @@
-import { isArray } from '@adhese/sdk-shared';
 import type { GambitParameters } from './gambit';
+import { isArray } from '@adhese/sdk-shared';
 
 /**
  * Converts `GambitData` to `Parameters`.

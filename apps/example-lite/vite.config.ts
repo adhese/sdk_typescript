@@ -1,6 +1,6 @@
-import path from 'node:path';
 import fs from 'node:fs';
-import { type Plugin, type UserConfig, type UserConfigFn, defineConfig } from 'vite';
+import path from 'node:path';
+import { defineConfig, type Plugin, type UserConfig, type UserConfigFn } from 'vite';
 
 export default (({ mode }): UserConfig => defineConfig({
   build: {

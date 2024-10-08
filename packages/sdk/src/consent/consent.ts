@@ -1,6 +1,6 @@
-import { type ComputedRef, type Ref, computed, ref, watch } from '@adhese/sdk-shared';
 import type { AdheseContext } from '@adhese/sdk';
 import type { ConsentData } from '../types';
+import { computed, type ComputedRef, type Ref, ref, watch } from '@adhese/sdk-shared';
 
 export function useConsent(context: AdheseContext): [
   value: Ref<string>,

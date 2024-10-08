@@ -1,8 +1,8 @@
-import { type ReactElement, useEffect, useState } from 'react';
 import type { Log } from '@adhese/sdk-shared';
+import { type ReactElement, useEffect, useState } from 'react';
 import { useAdheseContext } from '../AdheseContext';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Badge } from './badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 
 const dateFormatter = new Intl.DateTimeFormat('en-US', {
   hour: 'numeric',

@@ -1,6 +1,6 @@
-import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
-import { type StorageValue, persist } from 'zustand/middleware';
+import { persist, type StorageValue } from 'zustand/middleware';
+import { createStore } from 'zustand/vanilla';
 import { name as packageName, version } from '../package.json';
 
 type SlotOptions = {

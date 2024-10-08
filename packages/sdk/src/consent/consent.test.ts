@@ -1,6 +1,6 @@
-import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { createAdhese } from '@adhese/sdk';
 import { awaitTimeout } from '@adhese/sdk-shared';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 describe('consent', () => {
   const listeners = new Set<(data: unknown, success: boolean) => void>();

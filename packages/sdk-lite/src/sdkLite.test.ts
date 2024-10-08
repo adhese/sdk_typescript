@@ -1,6 +1,6 @@
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createSlot } from '@adhese/sdk-lite';
 import { mockServer } from 'server-mocking';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('sdkLite', () => {
   const intersectionMockFunctions = {
@@ -114,6 +114,7 @@ describe('sdkLite', () => {
 
     await slot.render();
 
+    // eslint-disable-next-line ts/no-unused-expressions
     expect(slot.data).toBeUndefined;
     expect(onEmpty).toHaveBeenCalledTimes(1);
   });

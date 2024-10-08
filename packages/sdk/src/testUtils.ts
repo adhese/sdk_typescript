@@ -1,8 +1,8 @@
-import { createEventManager } from '@adhese/sdk-shared';
 import type { AdheseContext } from './main.types';
-import { logger } from './logger/logger';
-
+import { createEventManager } from '@adhese/sdk-shared';
 import { createGlobalHooks } from './hooks';
+
+import { logger } from './logger/logger';
 
 export const testContext: AdheseContext = {
   location: 'foo',

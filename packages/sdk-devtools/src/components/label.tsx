@@ -1,6 +1,6 @@
 // eslint-disable-next-line ts/naming-convention
 import * as LabelPrimitive from '@radix-ui/react-label';
-import { type VariantProps, cva } from 'class-variance-authority';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react';
 import { cn } from '../utils';
 

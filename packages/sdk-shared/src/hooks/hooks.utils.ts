@@ -1,3 +1,4 @@
+// eslint-disable-next-line ts/no-unsafe-function-type
 export function add<Callback extends Function>(callback: Callback, {
   callbacks,
   onAdd,

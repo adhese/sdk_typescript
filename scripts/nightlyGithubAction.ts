@@ -1,8 +1,8 @@
 import { execSync } from 'node:child_process';
 import { env } from 'node:process';
 import { Command } from 'commander';
-import { array, object, string } from 'zod';
 import { Octokit } from 'octokit';
+import { array, object, string } from 'zod';
 
 const program = new Command();
 

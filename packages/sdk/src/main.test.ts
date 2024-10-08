@@ -1,10 +1,10 @@
-import { type MockInstance, afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { Adhese } from './main.types';
 import { awaitTimeout, waitForDomLoad } from '@adhese/sdk-shared';
+import { afterAll, afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 // eslint-disable-next-line ts/naming-convention
 import MatchMediaMock from 'vitest-matchmedia-mock';
-import { createAdhese } from './main';
 import { logger } from './logger/logger';
-import type { Adhese } from './main.types';
+import { createAdhese } from './main';
 
 vi.mock('./logger/logger', async (importOriginal) => {
   const module: { logger: typeof logger } = await importOriginal();

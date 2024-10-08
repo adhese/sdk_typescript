@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { createAdhese } from '@adhese/sdk';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { vastUrlPlugin } from './vastUrl';
 
 describe('vastUrlPlugin', () => {

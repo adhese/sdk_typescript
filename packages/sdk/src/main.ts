@@ -1,8 +1,3 @@
-import { awaitTimeout, createEventManager, effectScope, omit, reactive, watch } from '@adhese/sdk-shared';
-import { version } from '../package.json';
-import { createSlotManager } from './slotManager/slotManager';
-import { useConsent } from './consent/consent';
-import { fetchAllUnrenderedSlots } from './main.utils';
 import type {
   Adhese,
   AdheseContextStateWithPlugins,
@@ -10,11 +5,16 @@ import type {
   AdhesePlugin,
   MergedOptions,
 } from './main.types';
+import type { AdheseSlot, AdheseSlotOptions } from './slot/slot.types';
+import { awaitTimeout, createEventManager, effectScope, omit, reactive, watch } from '@adhese/sdk-shared';
+import { version } from '../package.json';
+import { useConsent } from './consent/consent';
+import { createGlobalHooks } from './hooks';
 import { logger } from './logger/logger';
 import { useMainDebugMode, useMainParameters, useMainQueryDetector } from './main.composables';
-import { createGlobalHooks } from './hooks';
+import { fetchAllUnrenderedSlots } from './main.utils';
 
-import type { AdheseSlot, AdheseSlotOptions } from './slot/slot.types';
+import { createSlotManager } from './slotManager/slotManager';
 
 /**
  * Creates an Adhese instance. This instance is your main entry point to the Adhese API.

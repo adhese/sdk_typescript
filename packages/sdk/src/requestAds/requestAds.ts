@@ -1,7 +1,7 @@
-import { debounce } from '@adhese/sdk-shared';
 import type { AdheseContext } from '../main.types';
-import { logger } from '../logger/logger';
 import type { AdheseAd } from './requestAds.schema';
+import { debounce } from '@adhese/sdk-shared';
+import { logger } from '../logger/logger';
 import { requestPreviews } from './requestAds.preview';
 import { requestWithGet, requestWithPost } from './requestAds.utils';
 

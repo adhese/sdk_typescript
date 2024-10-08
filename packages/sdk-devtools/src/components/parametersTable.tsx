@@ -1,8 +1,8 @@
-import { type ReactElement, useEffect, useState } from 'react';
 import { watch } from '@adhese/sdk-shared';
+import { type ReactElement, useEffect, useState } from 'react';
 import { useAdheseContext } from '../AdheseContext';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Badge } from './badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 
 // eslint-disable-next-line ts/naming-convention
 export function ParametersTable(): ReactElement {

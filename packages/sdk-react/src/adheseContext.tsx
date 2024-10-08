@@ -1,14 +1,14 @@
 'use client';
 
+import { type Adhese, type AdheseOptions, createAdhese } from '@adhese/sdk';
 import {
+  createContext,
   type PropsWithChildren,
   type ReactElement,
-  createContext,
   useContext,
   useEffect,
   useState,
 } from 'react';
-import { type Adhese, type AdheseOptions, createAdhese } from '@adhese/sdk';
 
 const adheseContext = createContext<Adhese | undefined>(undefined);
 

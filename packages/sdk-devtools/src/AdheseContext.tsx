@@ -1,6 +1,6 @@
-import { type PropsWithChildren, type ReactElement, createContext, useContext, useEffect, useState } from 'react';
 import type { AdheseContext } from '@adhese/sdk';
 import { watch } from '@adhese/sdk-shared';
+import { createContext, type PropsWithChildren, type ReactElement, useContext, useEffect, useState } from 'react';
 
 const adheseContext = createContext<AdheseContext | undefined>(undefined);
 

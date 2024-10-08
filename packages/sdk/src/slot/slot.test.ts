@@ -1,6 +1,6 @@
-import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { awaitTimeout } from '@adhese/sdk-shared';
 import type { AdheseContext } from '@adhese/sdk';
+import { awaitTimeout } from '@adhese/sdk-shared';
+import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // eslint-disable-next-line ts/naming-convention
 import MatchMediaMock from 'vitest-matchmedia-mock';
 import { testContext } from '../testUtils';

@@ -1,5 +1,5 @@
-import { afterAll, afterEach, beforeAll, beforeEach, vi } from 'vitest';
 import { mockServer } from 'server-mocking';
+import { afterAll, afterEach, beforeAll, beforeEach, vi } from 'vitest';
 // eslint-disable-next-line ts/naming-convention
 import MatchMediaMock from 'vitest-matchmedia-mock';
 

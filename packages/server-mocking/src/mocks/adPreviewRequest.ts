@@ -1,4 +1,4 @@
-import { HttpResponse, http } from 'msw';
+import { http, HttpResponse } from 'msw';
 
 export const adPreviewRequestHandlers = [
   http.get(`https://test-preview.adhese.org/creatives/preview/json/tag.do`, ({ request }) => {

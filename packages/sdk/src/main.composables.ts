@@ -1,7 +1,7 @@
-import { watch } from '@adhese/sdk-shared';
 import type { AdheseContextState, MergedOptions } from './main.types';
-import { useQueryDetector } from './queryDetector/queryDetector';
+import { watch } from '@adhese/sdk-shared';
 import { isPreviewMode } from './main.utils';
+import { useQueryDetector } from './queryDetector/queryDetector';
 
 export function useMainQueryDetector(mergedOptions: MergedOptions, context: AdheseContextState): void {
   const [device] = useQueryDetector(context, mergedOptions.queries);
