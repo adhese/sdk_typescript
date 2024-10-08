@@ -1,16 +1,16 @@
-import { type PropsWithChildren, type ReactElement, useEffect, useMemo, useState } from 'react';
-import { pick, watch } from '@adhese/sdk-shared';
 import type { AdheseSlot } from '@adhese/sdk';
-import { type TypeOf, object, string } from '@adhese/sdk-shared/validators';
-import { type SubmitHandler, useForm } from 'react-hook-form';
+import { pick, watch } from '@adhese/sdk-shared';
+import { object, string, type TypeOf } from '@adhese/sdk-shared/validators';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Pencil1Icon } from '@radix-ui/react-icons';
+import { type PropsWithChildren, type ReactElement, useEffect, useMemo, useState } from 'react';
+import { type SubmitHandler, useForm } from 'react-hook-form';
 import { useAdheseContext } from '../AdheseContext';
 import { useModifiedSlots } from '../modifiedSlots.store';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from './sheet';
+import { Button, buttonVariants } from './button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from './form';
 import { Input } from './input';
-import { Button, buttonVariants } from './button';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from './sheet';
 
 const slotSchema = object({
   format: string().min(1),
@@ -83,7 +83,7 @@ function EditSlotForm({
       </SheetHeader>
 
       <Form {...form}>
-        {/* eslint-disable-next-line ts/no-misused-promises */}
+        { }
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FormField
             control={form.control}

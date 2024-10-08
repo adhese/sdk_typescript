@@ -1,6 +1,6 @@
+import type { AdheseAd, AdheseSlotOptions } from '@adhese/sdk';
 import type { ReactElement } from 'react';
 import { AdheseSlot } from '@adhese/sdk-react';
-import type { AdheseAd, AdheseSlotOptions } from '@adhese/sdk';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 function html(data: AdheseAd): AdheseAd<string> | void {

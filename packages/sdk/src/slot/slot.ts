@@ -1,7 +1,6 @@
+import type { AdheseAd } from '@adhese/sdk';
+import type { AdheseSlot, AdheseSlotContext, AdheseSlotOptions, RenderMode } from './slot.types';
 import {
-  type Ref,
-  type RenderOptions,
-  type UnwrapRef,
   addTrackingPixel,
   computed,
   doNothing,
@@ -11,18 +10,19 @@ import {
   omit,
   pick,
   reactive,
+  type Ref,
   ref,
   renderIframe,
   renderInline,
+  type RenderOptions,
   uniqueId,
+  type UnwrapRef,
   waitForDomLoad,
   watch,
 } from '@adhese/sdk-shared';
-import type { AdheseAd } from '@adhese/sdk';
-import { requestAd as extRequestAd } from '../requestAds/requestAds';
 import { logger } from '../logger/logger';
 import { useQueryDetector } from '../queryDetector/queryDetector';
-import type { AdheseSlot, AdheseSlotContext, AdheseSlotOptions, RenderMode } from './slot.types';
+import { requestAd as extRequestAd } from '../requestAds/requestAds';
 import {
   useDomLoaded,
   useRenderIntersectionObserver,

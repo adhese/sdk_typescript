@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react';
+import { devtoolsPlugin } from '@adhese/sdk-devtools';
 import { AdheseProvider } from '@adhese/sdk-react';
 import { stackSlotsPlugin } from '@adhese/sdk-stack-slots';
-import { devtoolsPlugin } from '@adhese/sdk-devtools';
 import { Child } from './Child';
 
 // eslint-disable-next-line ts/naming-convention

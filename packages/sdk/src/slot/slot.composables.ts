@@ -1,13 +1,13 @@
+import type { AdheseAd, AdheseContext, AdheseSlot, AdheseSlotContext, AdheseSlotHooks, AdheseSlotOptions } from '@adhese/sdk';
 import {
-  type Ref,
   createAsyncHook,
   createPassiveHook,
+  type Ref,
   ref,
   round,
   waitForDomLoad,
   watch,
 } from '@adhese/sdk-shared';
-import type { AdheseAd, AdheseContext, AdheseSlot, AdheseSlotContext, AdheseSlotHooks, AdheseSlotOptions } from '@adhese/sdk';
 
 export function useDomLoaded(context: AdheseContext): Readonly<Ref<boolean>> {
   const isDomLoaded = ref(false);

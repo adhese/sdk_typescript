@@ -1,8 +1,8 @@
 /* eslint-disable ts/naming-convention */
 import * as SheetPrimitive from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
-import { type VariantProps, cva } from 'class-variance-authority';
-import { type ComponentPropsWithoutRef, type ElementRef, type HTMLAttributes, type ReactElement, forwardRef } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { type ComponentPropsWithoutRef, type ElementRef, forwardRef, type HTMLAttributes, type ReactElement } from 'react';
 import { cn } from '../utils';
 
 const Sheet = SheetPrimitive.Root;
@@ -130,13 +130,13 @@ SheetDescription.displayName = SheetPrimitive.Description.displayName;
 
 export {
   Sheet,
-  SheetPortal,
-  SheetOverlay,
-  SheetTrigger,
   SheetClose,
   SheetContent,
-  SheetHeader,
-  SheetFooter,
-  SheetTitle,
   SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetOverlay,
+  SheetPortal,
+  SheetTitle,
+  SheetTrigger,
 };

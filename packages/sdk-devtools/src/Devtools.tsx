@@ -1,13 +1,13 @@
 import { type ReactElement, useRef, useState } from 'react';
-import './globals.css';
+import { Button } from './components/button';
+import { LogTable } from './components/logTable';
+import { ParametersTable } from './components/parametersTable';
+import { PreviewButton } from './components/previewButton';
+import { Settings } from './components/settings';
 import { SlotsTable } from './components/slotsTable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/tabs';
-import { LogTable } from './components/logTable';
-import { Button } from './components/button';
-import { ParametersTable } from './components/parametersTable';
-import { Settings } from './components/settings';
-import { PreviewButton } from './components/previewButton';
 import { useSpacing } from './Devtools.hooks';
+import './globals.css';
 
 // eslint-disable-next-line ts/naming-convention
 export function Devtools(): ReactElement {

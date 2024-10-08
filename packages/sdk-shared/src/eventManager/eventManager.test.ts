@@ -12,7 +12,7 @@ describe('eventManager', () => {
 
     expect(eventManager).toBeDefined();
     expect(eventManager).toEqual({
-      /* eslint-disable ts/no-unsafe-assignment */
+
       event1: {
         listeners: new Set([listener]),
         dispatch: expect.any(Function),
@@ -21,7 +21,7 @@ describe('eventManager', () => {
         removeListener: expect.any(Function),
       },
       dispose: expect.any(Function),
-      /* eslint-enable ts/no-unsafe-assignment */
+
     } satisfies typeof eventManager);
   });
 

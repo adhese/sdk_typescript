@@ -1,5 +1,5 @@
-import { type Ref, ref, watch } from '@vue/runtime-core';
 import type { AdheseContext, AdhesePluginInformation } from '@adhese/sdk';
+import { type Ref, ref, watch } from '@vue/runtime-core';
 import { createEventManager } from '../eventManager/eventManager';
 import { uniqueId } from '../uniqueId/uniqueId';
 

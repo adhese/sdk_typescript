@@ -1,10 +1,10 @@
 import {
-  type RenderOptions,
   addTrackingPixel,
   generateName,
   pick,
   renderIframe,
   renderInline,
+  type RenderOptions,
   round,
   uniqueId,
 } from '@adhese/sdk-shared';

@@ -1,6 +1,6 @@
+import type { AdMultiRequestOptions } from './requestAds';
 import { toValue } from '@adhese/sdk-shared';
 import { logger } from '../logger/logger';
-import type { AdMultiRequestOptions } from './requestAds';
 
 type AdPostPayload = {
   slots: ReadonlyArray<{

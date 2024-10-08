@@ -1,11 +1,11 @@
+import type { AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
+import { watch } from '@adhese/sdk-shared';
 import {
   type RefObject,
   useCallback,
   useEffect,
   useState,
 } from 'react';
-import type { AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
-import { watch } from '@adhese/sdk-shared';
 import { useAdhese } from './adheseContext';
 
 /**

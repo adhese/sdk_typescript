@@ -1,6 +1,6 @@
 import type { AdheseContext, AdhesePlugin, AdheseSlot } from '@adhese/sdk';
-import { type Ref, computed, omit, ref, type useLogger, watch, watchEffect } from '@adhese/sdk-shared';
 import type { ModifiedSlotsStore, modifiedSlotsStore } from './modifiedSlots.store';
+import { computed, omit, type Ref, ref, type useLogger, watch, watchEffect } from '@adhese/sdk-shared';
 
 export type DevtoolsSlotPluginOptions = {
   hijackedSlot?: string;

@@ -1,6 +1,6 @@
 import path from 'node:path';
-import { type UserConfig, type UserConfigFn, defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { defineConfig, type UserConfig, type UserConfigFn } from 'vite';
 
 export default (({ mode }): UserConfig => defineConfig({
   build: {

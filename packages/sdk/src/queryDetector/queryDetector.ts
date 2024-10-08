@@ -1,5 +1,5 @@
-import { type ComputedRef, computed, debounce, ref } from '@adhese/sdk-shared';
 import type { AdheseContext } from '@adhese/sdk';
+import { computed, type ComputedRef, debounce, ref } from '@adhese/sdk-shared';
 
 /**
  * Create a query detector that will match a list of media queries and keeps track of the current matching query

@@ -1,7 +1,6 @@
 import antfu from '@antfu/eslint-config';
 
 export function createConfig(
-  pathToRoot,
 ) {
   return antfu({
     ignores: ['**/dist/**/*', '**/lib/**/*', '**/vendor/**/*', '**/public/**/*', '**/*.d.ts'],
@@ -94,9 +93,8 @@ export function createConfig(
       },
     },
     typescript: {
-      tsconfigPath: `${pathToRoot}tsconfig.eslint.json`,
       parserOptions: {
-        project: `${pathToRoot}tsconfig.eslint.json`,
+        project: `${import.meta.dirname}/../../tsconfig.eslint.json`,
       },
       overrides: {
         'ts/strict-boolean-expressions': 'off',

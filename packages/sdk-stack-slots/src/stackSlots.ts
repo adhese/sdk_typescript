@@ -1,8 +1,8 @@
 import type { AdheseAd, AdhesePlugin, AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
-import { type ComputedRef, computed, ref, uniqueId, useLogger } from '@adhese/sdk-shared';
+import type { AdheseStackSchema } from './stackSlots.schema';
+import { computed, type ComputedRef, ref, uniqueId, useLogger } from '@adhese/sdk-shared';
 import { name, version } from '../package.json';
 import { useTracking } from './stackSlots.composables';
-import type { AdheseStackSchema } from './stackSlots.schema';
 
 export type AdheseStackSlotsSlotOptions = {
   /**

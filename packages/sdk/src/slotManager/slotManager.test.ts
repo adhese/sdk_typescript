@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { AdheseContext, AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { testContext } from '../testUtils';
 import { createSlotManager } from './slotManager';
 

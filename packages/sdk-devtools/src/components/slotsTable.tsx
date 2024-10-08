@@ -1,16 +1,16 @@
-import { Fragment, type ReactElement, useEffect, useMemo, useState } from 'react';
 import type { AdheseAd, AdheseSlot } from '@adhese/sdk';
-import { type UnwrapRef, generateName, watch } from '@adhese/sdk-shared';
+import type { DevtoolsSlotPluginOptions } from '../devtools.composables';
+import { generateName, type UnwrapRef, watch } from '@adhese/sdk-shared';
 import { ResetIcon } from '@radix-ui/react-icons';
-import { cn } from '../utils';
+import { Fragment, type ReactElement, useEffect, useMemo, useState } from 'react';
 import { useAdheseContext } from '../AdheseContext';
 import { useModifiedSlots } from '../modifiedSlots.store';
-import type { DevtoolsSlotPluginOptions } from '../devtools.composables';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
+import { cn } from '../utils';
 import { Badge } from './badge';
 import { Button, buttonVariants } from './button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './sheet';
 import { EditSlot } from './editSlot';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './sheet';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 
 export const slotIndexBadgeClasses = [
   'bg-blue-500 hover:bg-blue-500',
@@ -63,7 +63,7 @@ export function SlotsTable(): ReactElement {
 
       if (interimSlot.data?.origin === 'DALE') {
         // @ts-expect-error - Data structure is not typed and very messy to type
-        // eslint-disable-next-line ts/no-unsafe-member-access
+
         const nestedAdheseData = interimSlot.data?.originData?.seatbid[0]?.bid[0]?.ext?.adhese as AdheseAd;
 
         interimSlot = {

@@ -19,7 +19,7 @@ const adhese = createAdhese({
   },
   plugins: [
     devtoolsPlugin,
-    ((_context, plugin): { name: 'additionalCreatives' } => {
+    (_context, plugin): { name: 'additionalCreatives' } => {
       const windowWidth = ref(window.innerWidth);
       const onChange = debounce(() => {
         windowWidth.value = window.innerWidth;
@@ -67,7 +67,7 @@ const adhese = createAdhese({
       return ({
         name: 'additionalCreatives',
       });
-    }),
+    },
   ],
 });
 

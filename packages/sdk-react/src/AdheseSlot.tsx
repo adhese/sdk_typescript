@@ -1,8 +1,8 @@
 'use client';
 
-import { type HTMLAttributes, type ReactElement, useCallback, useId, useRef } from 'react';
 import type { AdheseSlotOptions, AdheseSlot as Slot } from '@adhese/sdk';
 import { watch } from '@adhese/sdk-shared';
+import { type HTMLAttributes, type ReactElement, useCallback, useId, useRef } from 'react';
 import { useAdheseSlot } from './useAdheseSlot';
 
 export type AdheseSlotProps = {

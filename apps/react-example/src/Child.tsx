@@ -1,6 +1,6 @@
-import { type ReactElement, useCallback, useRef, useState } from 'react';
-import { AdheseSlot, useAdheseSlot } from '@adhese/sdk-react';
 import type { AdheseAd, AdheseSlotOptions } from '@adhese/sdk';
+import { AdheseSlot, useAdheseSlot } from '@adhese/sdk-react';
+import { type ReactElement, useCallback, useRef, useState } from 'react';
 
 type CustomAdTag = {
   type: string;

@@ -1,6 +1,6 @@
 import type { AdheseSlotHooks } from '@adhese/sdk';
-import { type ComputedRef, type Ref, addTrackingPixel, computed, ref, watchEffect } from '@adhese/sdk-shared';
 import type { AdheseStackSchema } from './stackSlots.schema';
+import { addTrackingPixel, computed, type ComputedRef, type Ref, ref, watchEffect } from '@adhese/sdk-shared';
 
 export function useTracking({
   hooks: { onDispose },

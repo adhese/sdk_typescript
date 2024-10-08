@@ -1,10 +1,10 @@
-import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { UrlString } from '@adhese/sdk-shared';
 import type { AdheseContext } from '@adhese/sdk';
+import type { UrlString } from '@adhese/sdk-shared';
 import { dateLike, numberLike, urlLike } from '@adhese/sdk-shared/validators';
-import { testContext } from '../testUtils';
-import { createSlot } from '../slot/slot';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import { logger } from '../logger/logger';
+import { createSlot } from '../slot/slot';
+import { testContext } from '../testUtils';
 import { requestAd, requestAds } from './requestAds';
 import { type AdResponse, adSchema } from './requestAds.schema';
 import { parseParameters } from './requestAds.utils';

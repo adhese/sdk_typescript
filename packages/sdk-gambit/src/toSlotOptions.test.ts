@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
 import type { GambitSlot } from '@adhese/sdk-gambit';
+import { describe, expect, it } from 'vitest';
 import { toSlotOptions } from './toSlotOptions';
 
 describe('toSlotOptions', () => {

@@ -1,5 +1,5 @@
-import { logger } from '../logger/logger';
 import type { AdheseAd } from './requestAds.schema';
+import { logger } from '../logger/logger';
 
 /**
  * Request preview ads for the given account. This function will only return items when there are preview objects in the
