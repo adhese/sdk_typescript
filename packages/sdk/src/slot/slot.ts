@@ -117,7 +117,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       if (!isDomLoaded.value || slotContext.value?.isDisposed)
         return null;
 
-      return document.querySelector<HTMLElement>(`.adunit[data-format="${format.value}"]#${options.containingElement}${options.slot ? `[data-slot="${options.slot}"]` : ''}`);
+      return document.querySelector<HTMLElement>(`#${options.containingElement}`);
     },
     );
 
