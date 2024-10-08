@@ -35,13 +35,13 @@ const adhese = createAdhese({
   ],
 })
 ```
-To identify the slot, you need to pass the ID of the element that contains the slot and the format of the slot.
+To identify the slot, you need to pass the ID of the element that contains the slot.
 The `containingElement` represents the ID of the element.
 
 Example HTML:
 ```html
-<div id="slot-1" class="adunit" data-format="billboard"></div>
-<div id="slot-2" class="adunit" data-format="leaderboard"></div>
+<div id="slot-1"></div>
+<div id="slot-2"></div>
 ```
 
 ## DOM slots
