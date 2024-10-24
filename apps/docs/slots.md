@@ -163,7 +163,7 @@ adhese.addSlot({
     });
 
     onRequest(() => {
-      console.log('Requesting ad');
+      console.log('Ad requested');
     });
 
     onDispose(() => {
@@ -200,3 +200,15 @@ adhese.addSlot({
 > The `tag` on the `ad` object can be a JSON object or a HTML string. If you want to dynamically render the ad, you need
 > to check if the `tag` is a JSON object yourself. To make sure the tag you return in your `onBeforeRender` as the SDK
 > can't render JSON objects.
+
+### Slot hooks
+In a setup function the following hooks are available:
+
+- `onBeforeRender` Hook that is called when the format of the slot changes.
+- `onRender` Hook that is called when the slot is rendered.
+- `onBeforeRequest` Hook that is called before the slot is requested from the server. Can be used to hijack the request entirely by returning a `AdheseAd` yourself. If you pass an ad yourself the request to the server is ignored and your ad is used.
+- `onRequest` Hook that is called when the slot is requested from the server.
+- `onInit` Hook that is called when the slot is initialized.
+- `onDispose` Hook that is called when the slot is disposed.
+- `onEmpty` Hook that is called when the slot is empty.
+- `onError` Hook that is called when the slot encounters an error.
