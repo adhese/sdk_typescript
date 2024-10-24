@@ -214,7 +214,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       if (!element.value) {
         const error = `Could not create slot for format ${format.value}. No element found.`;
         logger.error(error, options);
-        throw new Error(error);
+        return null;
       }
 
       if (typeof renderAd?.tag !== 'string') {
@@ -222,7 +222,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         logger.error(error, options);
 
         status.value = 'error';
-        throw new Error(error);
+        return null;
       }
 
       renderFunctions[renderMode]({
