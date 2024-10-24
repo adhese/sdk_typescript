@@ -34,7 +34,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Lint
-        run: npm run lint
+        run: npm run lint -- --affected
 
   typecheck:
     runs-on: ubuntu-latest
@@ -76,7 +76,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Test
-        run: npm run test
+        run: npm run test -- --affected
 
   build:
     runs-on: ubuntu-latest
@@ -97,7 +97,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Build
-        run: npm run build
+        run: npm run build -- --affected
 
   release:
     name: Release
