@@ -75,6 +75,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       runOnRequest,
       runOnInit,
       runOnDispose,
+      runOnEmpty,
       ...hooks
     } = useSlotHooks(options, slotContext);
 
@@ -207,6 +208,8 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       if (!renderAd) {
         status.value = 'empty';
         logger.debug(`No ad to render for slot ${name.value}`);
+
+        runOnEmpty();
 
         return null;
       }
