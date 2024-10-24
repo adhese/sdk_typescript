@@ -1,5 +1,21 @@
 # @adhese/sdk-react
 
+## 1.3.0
+
+### Minor Changes
+
+- 8f544be: Add `onEmpty` hook for slots
+- 60f6b8e: Add onError hook to slots
+
+### Patch Changes
+
+- 65ad4b6: Fix react state not recognizing the changed state of a slot
+- c27d1fa: Fix errors being thrown when they are not caught by watchers
+- Updated dependencies [8f544be]
+- Updated dependencies [60f6b8e]
+- Updated dependencies [c27d1fa]
+  - @adhese/sdk@1.3.0
+
 ## 1.2.0
 
 ### Minor Changes

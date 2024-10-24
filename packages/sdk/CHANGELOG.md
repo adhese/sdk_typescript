@@ -1,5 +1,16 @@
 # @adhese/sdk
 
+## 1.3.0
+
+### Minor Changes
+
+- 8f544be: Add `onEmpty` hook for slots
+- 60f6b8e: Add onError hook to slots
+
+### Patch Changes
+
+- c27d1fa: Fix errors being thrown when they are not caught by watchers
+
 ## 1.2.0
 
 ### Minor Changes
