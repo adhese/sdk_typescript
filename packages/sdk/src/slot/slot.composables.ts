@@ -144,6 +144,7 @@ export function useSlotHooks({ setup }: AdheseSlotOptions, slotContext: Ref<Adhe
   runOnInit: ReturnType<typeof createPassiveHook<void>>[0];
   runOnDispose: ReturnType<typeof createPassiveHook<void>>[0];
   runOnEmpty: ReturnType<typeof createPassiveHook<void>>[0];
+  runOnError: ReturnType<typeof createPassiveHook<Error>>[0];
 } & AdheseSlotHooks {
   const [runOnBeforeRender, onBeforeRender, disposeOnBeforeRender] = createAsyncHook<AdheseAd>();
   const [runOnRender, onRender, disposeOnRender] = createPassiveHook<AdheseAd>();
@@ -152,6 +153,7 @@ export function useSlotHooks({ setup }: AdheseSlotOptions, slotContext: Ref<Adhe
   const [runOnInit, onInit, disposeOnInit] = createPassiveHook();
   const [runOnDispose, onDispose, disposeOnDispose] = createPassiveHook();
   const [runOnEmpty, onEmpty, disposeOnEmpty] = createPassiveHook();
+  const [runOnError, onError, disposeOnError] = createPassiveHook<Error>();
 
   setup?.(slotContext, {
     onBeforeRender,
@@ -161,6 +163,7 @@ export function useSlotHooks({ setup }: AdheseSlotOptions, slotContext: Ref<Adhe
     onRequest,
     onInit,
     onEmpty,
+    onError,
   });
 
   onDispose(() => {
@@ -171,7 +174,8 @@ export function useSlotHooks({ setup }: AdheseSlotOptions, slotContext: Ref<Adhe
     disposeOnInit();
     disposeOnDispose();
     disposeOnEmpty();
+    disposeOnError();
   });
 
-  return { runOnBeforeRender, runOnRender, runOnBeforeRequest, runOnRequest, runOnDispose, onDispose, onBeforeRequest, onRequest, onBeforeRender, onRender, onInit, runOnInit, runOnEmpty, onEmpty };
+  return { runOnBeforeRender, runOnRender, runOnBeforeRequest, runOnRequest, runOnDispose, onDispose, onBeforeRequest, onRequest, onBeforeRender, onRender, onInit, runOnInit, runOnEmpty, onEmpty, runOnError, onError };
 }
