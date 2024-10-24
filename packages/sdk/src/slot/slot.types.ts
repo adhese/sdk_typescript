@@ -27,6 +27,10 @@ export type AdheseSlotHooks = {
    * Hook that is called when the slot is disposed.
    */
   onDispose: ReturnType<typeof createPassiveHook>[1];
+  /**
+   * Hook that is called when the slot is empty.
+   */
+  onEmpty: ReturnType<typeof createPassiveHook>[1];
 };
 export type AdheseSlotOptions = {
   /**
