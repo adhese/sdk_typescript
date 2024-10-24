@@ -26,7 +26,7 @@ export function useAdheseSlot(elementRef: RefObject<HTMLElement>, options: Omit<
     options.setup?.(context, hooks);
 
     watch(context, (newSlot) => {
-      setSlot(newSlot);
+      setSlot(newSlot && { ...newSlot });
     }, { deep: true, immediate: true });
   }) satisfies AdheseSlotOptions['setup'], [options.setup]);
 
