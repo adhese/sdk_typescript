@@ -31,6 +31,10 @@ export type AdheseSlotHooks = {
    * Hook that is called when the slot is empty.
    */
   onEmpty: ReturnType<typeof createPassiveHook>[1];
+  /**
+   * Hook that is called when the slot encounters an error.
+   */
+  onError: ReturnType<typeof createPassiveHook<Error>>[1];
 };
 export type AdheseSlotOptions = {
   /**

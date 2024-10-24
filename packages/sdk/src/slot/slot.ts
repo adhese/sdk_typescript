@@ -76,6 +76,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       runOnInit,
       runOnDispose,
       runOnEmpty,
+      runOnError,
       ...hooks
     } = useSlotHooks(options, slotContext);
 
@@ -163,93 +164,115 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     });
 
     async function request(): Promise<AdheseAd | null> {
-      if (options.lazyLoading && !isInViewport.value)
-        return null;
+      try {
+        if (options.lazyLoading && !isInViewport.value)
+          return null;
 
-      status.value = 'loading';
+        status.value = 'loading';
 
-      let response = await runOnBeforeRequest(null);
+        let response = await runOnBeforeRequest(null);
 
-      if (!response) {
-        response = await extRequestAd({
-          slot: {
-            name: name.value,
-            parameters,
-          },
-          context,
-        });
+        if (!response) {
+          response = await extRequestAd({
+            slot: {
+              name: name.value,
+              parameters,
+            },
+            context,
+          });
+        }
+
+        if (response)
+          response = await runOnRequest(response);
+
+        data.value = response;
+
+        if (!originalData.value)
+          originalData.value = response;
+
+        status.value = response ? 'loaded' : 'empty';
+
+        if (!response)
+          cleanElement();
+
+        return response;
       }
+      catch (error) {
+        status.value = 'error';
 
-      if (response)
-        response = await runOnRequest(response);
+        logger.error(`Error requesting ad for slot ${name.value}`, error);
 
-      data.value = response;
+        runOnError(new Error(`Error requesting ad for slot ${name.value}`, { cause: error }));
 
-      if (!originalData.value)
-        originalData.value = response;
-
-      status.value = response ? 'loaded' : 'empty';
-
-      if (!response)
-        cleanElement();
-
-      return response;
+        return null;
+      }
     }
 
     async function render(adToRender?: AdheseAd): Promise<HTMLElement | null> {
-      status.value = 'rendering';
+      try {
+        status.value = 'rendering';
 
-      await waitForDomLoad();
+        await waitForDomLoad();
 
-      let renderAd = adToRender ?? data.value ?? originalData.value ?? await request();
+        let renderAd = adToRender ?? data.value ?? originalData.value ?? await request();
 
-      renderAd = renderAd && await runOnBeforeRender(renderAd);
+        renderAd = renderAd && await runOnBeforeRender(renderAd);
 
-      if (!renderAd) {
-        status.value = 'empty';
-        logger.debug(`No ad to render for slot ${name.value}`);
+        if (!renderAd) {
+          status.value = 'empty';
+          logger.debug(`No ad to render for slot ${name.value}`);
 
-        runOnEmpty();
+          runOnEmpty();
 
-        return null;
+          return null;
+        }
+
+        if (!element.value) {
+          const error = `Could not create slot for format ${format.value}. No element found.`;
+          logger.error(error, options);
+
+          throw new Error(error);
+        }
+
+        if (typeof renderAd?.tag !== 'string') {
+          const error = `Could not render slot for slot ${name.value}. A valid tag doesn't exist or is not HTML string.`;
+          logger.error(error, options);
+
+          throw new Error(error);
+        }
+
+        renderFunctions[renderMode]({
+          ...renderAd,
+          ...pick(options, ['width', 'height']),
+        } as RenderOptions, element.value);
+
+        if (renderAd.impressionCounter && !impressionTrackingPixelElement.value)
+          impressionTrackingPixelElement.value = addTrackingPixel(renderAd.impressionCounter);
+
+        isImpressionTracked.value = true;
+
+        logger.debug(`Slot rendered ${name.value}`, {
+          renderedElement: element,
+          location: context.location,
+          format,
+          containingElement,
+        });
+
+        status.value = 'rendered';
+
+        runOnRender(renderAd);
+
+        return element.value;
       }
-
-      if (!element.value) {
-        const error = `Could not create slot for format ${format.value}. No element found.`;
-        logger.error(error, options);
-        return null;
-      }
-
-      if (typeof renderAd?.tag !== 'string') {
-        const error = `Could not render slot for slot ${name.value}. A valid tag doesn't exist or is not HTML string.`;
-        logger.error(error, options);
-
+      catch (error) {
         status.value = 'error';
+
+        logger.error(`${error}`, options);
+
+        runOnError(new Error(error as string));
+
         return null;
       }
-
-      renderFunctions[renderMode]({
-        ...renderAd,
-        ...pick(options, ['width', 'height']),
-      } as RenderOptions, element.value);
-
-      if (renderAd.impressionCounter && !impressionTrackingPixelElement.value)
-        impressionTrackingPixelElement.value = addTrackingPixel(renderAd.impressionCounter);
-
-      isImpressionTracked.value = true;
-
-      logger.debug(`Slot rendered ${name.value}`, {
-        renderedElement: element,
-        location: context.location,
-        format,
-        containingElement,
-      });
-
-      status.value = 'rendered';
-
-      runOnRender(renderAd);
-
-      return element.value;
     }
 
     function cleanElement(): void {
