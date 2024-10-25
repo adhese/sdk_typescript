@@ -112,7 +112,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
     const isDomLoaded = useDomLoaded(context);
 
-    const element = computed(() => {
+    function getElement(): HTMLElement | null {
       if (!(typeof options.containingElement === 'string' || !options.containingElement))
         return options.containingElement;
 
@@ -120,8 +120,14 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         return null;
 
       return document.querySelector<HTMLElement>(`#${options.containingElement}`);
-    },
-    );
+    }
+
+    const element = computed({
+      get: getElement,
+      set: value =>
+        value
+      ,
+    });
 
     const isInViewport = useRenderIntersectionObserver({
       options,
@@ -210,6 +216,8 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
     async function render(adToRender?: AdheseAd): Promise<HTMLElement | null> {
       try {
+        element.value = getElement();
+
         status.value = 'rendering';
 
         await waitForDomLoad();
