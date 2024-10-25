@@ -1,8 +1,8 @@
 'use client';
 
 import type { AdheseSlotOptions, AdheseSlot as Slot } from '@adhese/sdk';
-import { uniqueId, watch } from '@adhese/sdk-shared';
-import { type HTMLAttributes, type ReactNode, useCallback, useRef } from 'react';
+import { watch } from '@adhese/sdk-shared';
+import { type HTMLAttributes, type ReactNode, useCallback, useId, useRef } from 'react';
 import { useAdheseSlot } from './useAdheseSlot';
 
 export type AdheseSlotProps = {
@@ -39,7 +39,8 @@ export function AdheseSlot({
 }: AdheseSlotProps): ReactNode {
   const element = useRef<HTMLDivElement | null>(null);
 
-  const componentId = id ?? `slot-${uniqueId()}`;
+  const reactId = useId().replaceAll(':', '');
+  const componentId = id ?? `slot-${reactId}`;
 
   const slotState = useAdheseSlot(componentId, {
     width,
@@ -61,7 +62,7 @@ export function AdheseSlot({
     }) satisfies AdheseSlotOptions['setup'], [setup, onChange]),
   });
 
-  if (slotState?.status === 'empty' || slotState?.status === 'error') {
+  if (slotState?.status === 'empty') {
     return null;
   }
 

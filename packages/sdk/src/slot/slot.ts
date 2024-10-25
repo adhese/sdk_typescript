@@ -216,9 +216,8 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
     async function render(adToRender?: AdheseAd): Promise<HTMLElement | null> {
       try {
-        element.value = getElement();
-
         status.value = 'rendering';
+        element.value = getElement();
 
         await waitForDomLoad();
 
