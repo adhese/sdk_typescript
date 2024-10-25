@@ -15,6 +15,7 @@ import {
   renderIframe,
   renderInline,
   type RenderOptions,
+  shallowRef,
   uniqueId,
   type UnwrapRef,
   waitForDomLoad,
@@ -112,22 +113,23 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
     const isDomLoaded = useDomLoaded(context);
 
+    const element = shallowRef<HTMLElement | null>(null);
+
     function getElement(): HTMLElement | null {
       if (!(typeof options.containingElement === 'string' || !options.containingElement))
         return options.containingElement;
 
-      if (!isDomLoaded.value || slotContext.value?.isDisposed)
+      if (!isDomLoaded.value)
         return null;
 
       return document.querySelector<HTMLElement>(`#${options.containingElement}`);
     }
 
-    const element = computed({
-      get: getElement,
-      set: value =>
-        value
-      ,
-    });
+    watch([
+      isDomLoaded,
+    ], () => {
+      element.value = getElement();
+    }, { immediate: true, deep: true });
 
     const isInViewport = useRenderIntersectionObserver({
       options,
@@ -295,6 +297,8 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
     function dispose(): void {
       cleanElement();
+
+      element.value = null;
 
       data.value = null;
 
