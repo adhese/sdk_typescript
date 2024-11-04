@@ -125,11 +125,29 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       return document.querySelector<HTMLElement>(`#${options.containingElement}`);
     }
 
-    watch([
-      isDomLoaded,
-    ], () => {
+    watch(element, async (newElement, oldElement) => {
+      if (newElement === oldElement || oldElement === null)
+        return;
+
+      await render();
+    });
+
+    const domObserver = new MutationObserver(() => {
       element.value = getElement();
-    }, { immediate: true, deep: true });
+    });
+
+    domObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    watch(
+      isDomLoaded,
+      () => {
+        element.value = getElement();
+      },
+      { immediate: true, deep: true },
+    );
 
     const isInViewport = useRenderIntersectionObserver({
       options,
@@ -219,9 +237,8 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     async function render(adToRender?: AdheseAd): Promise<HTMLElement | null> {
       try {
         status.value = 'rendering';
-        element.value = getElement();
-
         await waitForDomLoad();
+        element.value = getElement();
 
         let renderAd = adToRender ?? data.value ?? originalData.value ?? await request();
 
@@ -301,6 +318,8 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       element.value = null;
 
       data.value = null;
+
+      domObserver.disconnect();
 
       runOnDispose();
 
