@@ -62,21 +62,21 @@ export function AdheseSlot({
     }) satisfies AdheseSlotOptions['setup'], [setup, onChange]),
   });
 
-  if (slotState?.status === 'empty') {
-    return null;
+  if (slotState?.status === 'loaded' || slotState?.status === 'rendered' || slotState?.status === 'rendering') {
+    return (
+      <div
+        ref={element}
+        id={componentId}
+        data-name={slotState?.name}
+        style={{
+          width: slotState?.options.width,
+          height: slotState?.options.height,
+          ...style,
+        }}
+        {...props}
+      />
+    );
   }
 
-  return (
-    <div
-      ref={element}
-      id={componentId}
-      data-name={slotState?.name}
-      style={{
-        width: slotState?.options.width,
-        height: slotState?.options.height,
-        ...style,
-      }}
-      {...props}
-    />
-  );
+  return null;
 }
