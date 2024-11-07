@@ -126,7 +126,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     }
 
     watch(element, async (newElement, oldElement) => {
-      if (newElement === oldElement || oldElement === null)
+      if (newElement === oldElement || oldElement === null || newElement === null)
         return;
 
       await render();
