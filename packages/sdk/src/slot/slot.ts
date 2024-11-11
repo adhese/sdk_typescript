@@ -126,7 +126,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     }
 
     watch(element, async (newElement, oldElement) => {
-      if (newElement === oldElement || oldElement === null || newElement === null)
+      if (newElement === oldElement || (oldElement === null && newElement === null))
         return;
 
       await render();
@@ -244,6 +244,12 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
         renderAd = renderAd && await runOnBeforeRender(renderAd);
 
+        if (!element.value) {
+          logger.debug(`Could not render slot for format ${format.value}. No element found.`, slotContext.value);
+
+          return null;
+        }
+
         if (!renderAd) {
           status.value = 'empty';
           logger.debug(`No ad to render for slot ${name.value}`);
@@ -251,13 +257,6 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
           runOnEmpty();
 
           return null;
-        }
-
-        if (!element.value) {
-          const error = `Could not create slot for format ${format.value}. No element found.`;
-          logger.error(error, options);
-
-          throw new Error(error);
         }
 
         if (typeof renderAd?.tag !== 'string') {

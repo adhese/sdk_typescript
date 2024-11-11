@@ -113,17 +113,17 @@ describe('slot', () => {
       format: 'leaderboard',
       containingElement: 'leaderboard',
       parameters: {
-        foo: 'bar',
+        fo: 'ba',
       },
       context,
     });
 
-    expect(slot.parameters.has('foo')).toBe(true);
-    expect(slot.parameters.get('foo')).toBe('bar');
+    expect(slot.parameters.has('fo')).toBe(true);
+    expect(slot.parameters.get('fo')).toBe('ba');
 
-    slot.parameters.set('foo', 'baz');
+    slot.parameters.set('fo', 'bz');
 
-    expect(slot.parameters.get('foo')).toBe('baz');
+    expect(slot.parameters.get('fo')).toBe('bz');
   });
 
   it('should log an error when no element is found', async () => {
@@ -334,6 +334,8 @@ describe('slot', () => {
       context,
     });
 
+    await awaitTimeout(0);
+
     await slot.render();
   });
 
@@ -382,6 +384,8 @@ describe('slot', () => {
       renderMode: 'inline',
       context,
     });
+
+    await awaitTimeout(0);
 
     await slot.render();
 

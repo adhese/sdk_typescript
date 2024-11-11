@@ -1,4 +1,3 @@
-import type { Merge } from '@adhese/sdk-shared';
 import type { AdheseContext } from '../main.types';
 import type { AdheseSlot, AdheseSlotOptions } from '../slot/slot.types';
 import { findDomSlots as extFindDomSlots } from '../findDomSlots/findDomSlots';
@@ -32,9 +31,7 @@ export type SlotManagerOptions = {
   /**
    * List of initial slots to add to the slot manager.
    */
-  initialSlots?: ReadonlyArray<Merge<Omit<AdheseSlotOptions, 'containingElement' | 'context' | 'lazy'>, {
-    containingElement: string;
-  }>>;
+  initialSlots?: ReadonlyArray<Omit<AdheseSlotOptions, 'context' | 'lazy'>>;
   context: AdheseContext;
 };
 
