@@ -9,7 +9,7 @@ export function App(): ReactElement {
     <AdheseProvider options={{
       account: 'aholdtest',
       debug: true,
-      location: 'ah.nl_homepage',
+      location: 'ah_website_nl',
       // @ts-expect-error plugin is on cdn
       plugins: [devtoolsPlugin, adhesePlugin],
       consent: true,

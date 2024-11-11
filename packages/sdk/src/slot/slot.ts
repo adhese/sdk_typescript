@@ -15,6 +15,7 @@ import {
   renderIframe,
   renderInline,
   type RenderOptions,
+  shallowRef,
   uniqueId,
   type UnwrapRef,
   waitForDomLoad,
@@ -112,15 +113,40 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
     const isDomLoaded = useDomLoaded(context);
 
-    const element = computed(() => {
+    const element = shallowRef<HTMLElement | null>(null);
+
+    function getElement(): HTMLElement | null {
       if (!(typeof options.containingElement === 'string' || !options.containingElement))
         return options.containingElement;
 
-      if (!isDomLoaded.value || slotContext.value?.isDisposed)
+      if (!isDomLoaded.value)
         return null;
 
       return document.querySelector<HTMLElement>(`#${options.containingElement}`);
-    },
+    }
+
+    watch(element, async (newElement, oldElement) => {
+      if (newElement === oldElement || oldElement === null || newElement === null)
+        return;
+
+      await render();
+    });
+
+    const domObserver = new MutationObserver(() => {
+      element.value = getElement();
+    });
+
+    domObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    watch(
+      isDomLoaded,
+      () => {
+        element.value = getElement();
+      },
+      { immediate: true, deep: true },
     );
 
     const isInViewport = useRenderIntersectionObserver({
@@ -211,8 +237,8 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     async function render(adToRender?: AdheseAd): Promise<HTMLElement | null> {
       try {
         status.value = 'rendering';
-
         await waitForDomLoad();
+        element.value = getElement();
 
         let renderAd = adToRender ?? data.value ?? originalData.value ?? await request();
 
@@ -289,7 +315,11 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     function dispose(): void {
       cleanElement();
 
+      element.value = null;
+
       data.value = null;
+
+      domObserver.disconnect();
 
       runOnDispose();
 

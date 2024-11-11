@@ -36,10 +36,13 @@ export function AdheseSlot({
   style,
   id,
   ...props
-}: AdheseSlotProps): ReactElement {
+}: AdheseSlotProps): ReactElement | null {
   const element = useRef<HTMLDivElement | null>(null);
 
-  const slotState = useAdheseSlot(element, {
+  const reactId = useId().replaceAll(':', '');
+  const componentId = id ?? `slot-${reactId}`;
+
+  const slotState = useAdheseSlot(componentId, {
     width,
     height,
     lazyLoading,
@@ -59,19 +62,21 @@ export function AdheseSlot({
     }) satisfies AdheseSlotOptions['setup'], [setup, onChange]),
   });
 
-  const componentId = useId();
+  if (slotState?.status === 'loaded' || slotState?.status === 'rendered' || slotState?.status === 'rendering') {
+    return (
+      <div
+        ref={element}
+        id={componentId}
+        data-name={slotState?.name}
+        style={{
+          width: slotState?.options.width,
+          height: slotState?.options.height,
+          ...style,
+        }}
+        {...props}
+      />
+    );
+  }
 
-  return (
-    <div
-      ref={element}
-      id={id && `${componentId}${slotState?.id}`}
-      data-name={slotState?.name}
-      style={{
-        width: slotState?.options.width,
-        height: slotState?.options.height,
-        ...style,
-      }}
-      {...props}
-    />
-  );
+  return null;
 }

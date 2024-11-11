@@ -3,4 +3,4 @@
 "@adhese/sdk-react": minor
 ---
 
-Add onError hook to slots
+Add `onError` hook to slots

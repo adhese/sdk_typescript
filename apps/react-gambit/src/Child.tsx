@@ -3,55 +3,69 @@ import type { ReactElement } from 'react';
 import { AdheseSlot } from '@adhese/sdk-react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
+export type Data = {
+  type: string;
+  // eslint-disable-next-line ts/naming-convention
+  documentUUID: string;
+  title: string;
+  subtitle: string;
+  link: Link;
+  isExternalLink: boolean;
+  isExternalMobileLink: boolean;
+  visual: Visual;
+  sticker: Asset;
+};
+
+export type Link = {
+  color: string;
+  theme: string;
+  href: string;
+  target: string;
+  title: string;
+  mobileLink: string;
+  isExternalMobileLink: boolean;
+  isExternalLink: boolean;
+};
+
+export type Asset = {
+  variants: Array<Variant>;
+  description: string;
+};
+
+export type Variant = {
+  url: string;
+  width: number;
+  height: number;
+  variant: string;
+};
+
+export type Visual = {
+  renderType: string;
+  image: Asset;
+  shortImage: Asset;
+  longImage: Asset;
+  theme: string;
+};
+
 function html(data: AdheseAd): AdheseAd<string> | void {
-  const ad = data as AdheseAd<{
-    type: string;
-    text: {
-      title: string;
-    };
-    images?: Array<{
-      type: string;
-      title: string;
-      width: number;
-      height: number;
-      link: {
-        href: string;
-      };
-    }>;
-    backgroundColor: string;
-    color: string;
-    navItem: {
-      title: string;
-      link: {
-        href: string;
-      };
-      appLink: string;
-    };
-  }>;
+  const ad = data as AdheseAd<Data>;
 
   if (typeof ad.tag === 'string')
     return ad as AdheseAd<string>;
-
-  const heading = ad.tag.text?.title;
-  const image = ad.tag.images?.[0];
-  const { backgroundColor } = ad.tag;
-  const link = ad.tag.navItem?.link?.href;
-  const linkText = ad.tag.images?.[0].title;
 
   return {
     ...ad,
     tag: renderToStaticMarkup((
       <a
-        href={link}
+        href={ad.tag.link.href}
         style={{
-          backgroundImage: `url(${image?.link.href})`,
-          height: `${image?.height}px`,
+          backgroundImage: `url(${ad.tag.visual.longImage.variants[0].url})`,
+          height: `${100}px`,
           backgroundSize: 'contain',
           backgroundPosition: 'right center',
           backgroundRepeat: 'no-repeat',
-          backgroundColor: `${backgroundColor}`,
+          backgroundColor: 'lightgray',
           padding: '20px',
-          maxWidth: `${image?.width}px`,
           display: 'block',
         }}
       >
@@ -68,9 +82,8 @@ function html(data: AdheseAd): AdheseAd<string> | void {
             fontSize: '24px',
           }}
           >
-            {heading}
+            {ad.tag.title}
           </h2>
-          <p>{linkText}</p>
         </div>
       </a>
     )),
@@ -85,14 +98,26 @@ const setupHalfwidthsmallresponsive: AdheseSlotOptions['setup'] = (_, { onBefore
 export function Child(): ReactElement {
   return (
     <>
-      <div id="top" className="ads">
-        <AdheseSlot format="halfwidthsmallresponsive" slot="_homepagetop_left" renderMode="inline" setup={setupHalfwidthsmallresponsive} />
-        <AdheseSlot format="halfwidthsmallresponsive" slot="_homepagetop_right" renderMode="inline" setup={setupHalfwidthsmallresponsive} />
+      <div className="ads">
+        <AdheseSlot format="flex" slot="_home_1_1" renderMode="inline" setup={setupHalfwidthsmallresponsive} />
+        <AdheseSlot format="flex" slot="_home_1_2" renderMode="inline" setup={setupHalfwidthsmallresponsive} />
       </div>
-      <div id="spacer"></div>
-      <div id="bottom" className="ads">
-        <AdheseSlot format="halfwidthsmallresponsive" slot="_homepagebottom_left" renderMode="inline" setup={setupHalfwidthsmallresponsive} />
-        <AdheseSlot format="halfwidthsmallresponsive" slot="_homepagebottom_right" renderMode="inline" setup={setupHalfwidthsmallresponsive} />
+
+      <div className="ads">
+        <AdheseSlot format="flex" slot="_home_2_1" renderMode="inline" setup={setupHalfwidthsmallresponsive} />
+        <AdheseSlot format="flex" slot="_home_2_2" renderMode="inline" setup={setupHalfwidthsmallresponsive} />
+      </div>
+      <div className="ads">
+        <AdheseSlot format="flex" slot="_home_3_1" renderMode="inline" setup={setupHalfwidthsmallresponsive} />
+        <AdheseSlot format="flex" slot="_home_3_2" renderMode="inline" setup={setupHalfwidthsmallresponsive} />
+      </div>
+      <div className="ads">
+        <AdheseSlot format="flex" slot="_home_4_1" renderMode="inline" setup={setupHalfwidthsmallresponsive} />
+        <AdheseSlot format="flex" slot="_home_4_2" renderMode="inline" setup={setupHalfwidthsmallresponsive} />
+      </div>
+      <div className="ads">
+        <AdheseSlot format="flex" slot="_home_5_1" renderMode="inline" setup={setupHalfwidthsmallresponsive} />
+        <AdheseSlot format="flex" slot="_home_5_2" renderMode="inline" setup={setupHalfwidthsmallresponsive} />
       </div>
     </>
   );

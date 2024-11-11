@@ -17,7 +17,7 @@ import { useAdhese } from './adheseContext';
  * @warning Make sure to wrap your `setup` function in a `useCallback` as it can trigger an infinite loop if it's not
  * memoized.
  */
-export function useAdheseSlot(elementRef: RefObject<HTMLElement>, options: Omit<AdheseSlotOptions, 'containingElement' | 'context'>): AdheseSlot | null {
+export function useAdheseSlot(elementRef: RefObject<HTMLElement> | string, options: Omit<AdheseSlotOptions, 'containingElement' | 'context'>): AdheseSlot | null {
   const adhese = useAdhese();
 
   const [slot, setSlot] = useState<AdheseSlot | null>(null);
@@ -33,10 +33,12 @@ export function useAdheseSlot(elementRef: RefObject<HTMLElement>, options: Omit<
   useEffect(() => {
     let intermediate: AdheseSlot | null = null;
 
-    if (adhese && elementRef.current) {
+    const element = typeof elementRef === 'string' ? elementRef : elementRef.current;
+
+    if (adhese && element) {
       intermediate = adhese?.addSlot({
         ...options,
-        containingElement: elementRef.current,
+        containingElement: element,
         setup,
       });
     }

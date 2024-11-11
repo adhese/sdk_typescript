@@ -1,6 +1,6 @@
 import type { AdheseAd, AdheseSlotOptions } from '@adhese/sdk';
-import { AdheseSlot, useAdheseSlot } from '@adhese/sdk-react';
-import { type ReactElement, useCallback, useRef, useState } from 'react';
+import { AdheseSlot } from '@adhese/sdk-react';
+import { type ReactElement, useCallback, useState } from 'react';
 
 type CustomAdTag = {
   type: string;
@@ -32,26 +32,33 @@ type CustomAdTag = {
 export function Child(): ReactElement {
   const [isSlotShown, setIsSlotShown] = useState(true);
 
-  const halfwidthsmallresponsiveRef = useRef(null);
-  useAdheseSlot(halfwidthsmallresponsiveRef, {
-    format: 'halfwidthsmallresponsive',
-    renderMode: 'inline',
-    setup: useCallback(((_, { onBeforeRender }): void => {
-      onBeforeRender((data) => {
-        const ad = data as AdheseAd<CustomAdTag>;
+  return (
+    <>
+      <button onClick={() => { setIsSlotShown(value => !value); }}>Toggle slot</button>
+      {
+        isSlotShown && (
+          <AdheseSlot format="skyscraper" width="100%" />
+        )
+      }
+      <AdheseSlot
+        format="halfwidthsmallresponsive"
+        renderMode="inline"
+        setup={useCallback(((_, { onBeforeRender }): void => {
+          onBeforeRender((data) => {
+            const ad = data as AdheseAd<CustomAdTag>;
 
-        if (typeof ad.tag === 'string')
-          return ad as AdheseAd<string>;
+            if (typeof ad.tag === 'string')
+              return ad as AdheseAd<string>;
 
-        const heading = ad.tag.native.assets.find(asset => asset.id === 1)?.title?.text;
-        const image = ad.tag.native.assets.find(asset => asset.id === 3)?.img;
-        const backgroundColor = ad.tag.native.assets.find(asset => asset.id === 6)?.data?.value;
-        const link = ad.tag.native.link.url;
-        const linkText = ad.tag.native.assets.find(asset => asset.id === 2)?.data?.value;
+            const heading = ad.tag.native.assets.find(asset => asset.id === 1)?.title?.text;
+            const image = ad.tag.native.assets.find(asset => asset.id === 3)?.img;
+            const backgroundColor = ad.tag.native.assets.find(asset => asset.id === 6)?.data?.value;
+            const link = ad.tag.native.link.url;
+            const linkText = ad.tag.native.assets.find(asset => asset.id === 2)?.data?.value;
 
-        return {
-          ...ad,
-          tag: `
+            return {
+              ...ad,
+              tag: `
             <a href="${link}" style="
               background-image: url(${image?.url});
               height: ${image?.h}px;
@@ -72,20 +79,10 @@ export function Child(): ReactElement {
                 <p>${linkText}</p>
               </div>
             </a>`,
-        };
-      });
-    }) satisfies AdheseSlotOptions['setup'], []),
-  });
-
-  return (
-    <>
-      <button onClick={() => { setIsSlotShown(value => !value); }}>Toggle slot</button>
-      {
-        isSlotShown && (
-          <AdheseSlot format="skyscraper" width="100%" />
-        )
-      }
-      <div ref={halfwidthsmallresponsiveRef} />
+            };
+          });
+        }) satisfies AdheseSlotOptions['setup'], [])}
+      />
       <AdheseSlot format="leaderboard" renderMode="inline" />
       <AdheseSlot format="imu" lazyLoading />
       <AdheseSlot
