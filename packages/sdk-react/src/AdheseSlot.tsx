@@ -2,7 +2,7 @@
 
 import type { AdheseSlotOptions, AdheseSlot as Slot } from '@adhese/sdk';
 import { watch } from '@adhese/sdk-shared';
-import { type HTMLAttributes, type ReactNode, useCallback, useId, useRef } from 'react';
+import { type HTMLAttributes, type ReactElement, useCallback, useId, useRef } from 'react';
 import { useAdheseSlot } from './useAdheseSlot';
 
 export type AdheseSlotProps = {
@@ -36,7 +36,7 @@ export function AdheseSlot({
   style,
   id,
   ...props
-}: AdheseSlotProps): ReactNode {
+}: AdheseSlotProps): ReactElement | null {
   const element = useRef<HTMLDivElement | null>(null);
 
   const reactId = useId().replaceAll(':', '');
