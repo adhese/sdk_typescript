@@ -62,7 +62,7 @@ export function AdheseSlot({
     }) satisfies AdheseSlotOptions['setup'], [setup, onChange]),
   });
 
-  if (slotState?.status === 'loaded' || slotState?.status === 'rendered' || slotState?.status === 'rendering') {
+  if (lazyLoading || (slotState?.status === 'loaded' || slotState?.status === 'rendered' || slotState?.status === 'rendering')) {
     return (
       <div
         ref={element}

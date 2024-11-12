@@ -93,6 +93,10 @@ export type AdheseSlotOptions = {
    */
   pluginOptions?: Record<string, unknown>;
   /**
+   * The initial data of the slot. If provided, the slot will not request new data from the API.
+   */
+  initialData?: AdheseAd | null;
+  /**
    * Special callback that is run when the slot is initialized. It passes the slot context ref object and a special
    * plugin object that contains a set of hooks you can use to hook into different moments of the slots lifecycle.
    */

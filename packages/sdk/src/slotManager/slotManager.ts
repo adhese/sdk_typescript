@@ -1,5 +1,6 @@
 import type { AdheseContext } from '../main.types';
 import type { AdheseSlot, AdheseSlotOptions } from '../slot/slot.types';
+import { generateSlotSignature } from '@adhese/sdk-shared';
 import { findDomSlots as extFindDomSlots } from '../findDomSlots/findDomSlots';
 import { logger } from '../logger/logger';
 import { createSlot } from '../slot/slot';
@@ -50,9 +51,20 @@ export function createSlotManager({
   }
 
   function add(options: Omit<AdheseSlotOptions, 'context' | 'onDispose'>): Readonly<AdheseSlot> {
+    const signature = generateSlotSignature({
+      location: context.location,
+      format: options.format,
+      slot: options.slot,
+      parameters: options.parameters,
+    },
+    );
+
+    const current = context.slots.get(signature);
+
     const slot = createSlot({
       ...options as AdheseSlotOptions,
       context,
+      initialData: current?.data,
       setup(slotContext, slotHooks) {
         options.setup?.(slotContext, slotHooks);
 
@@ -66,13 +78,9 @@ export function createSlotManager({
       },
     });
 
-    if (get(slot.name)) {
-      slot.dispose();
+    current?.dispose();
 
-      throw new Error(`Slot with the name: ${slot.name} already exists. Create a new slot with a different format, slot, or the location.`);
-    }
-
-    context.slots.set(slot.id, slot);
+    context.slots.set(signature, slot);
 
     logger.debug('Slot added', {
       slot,

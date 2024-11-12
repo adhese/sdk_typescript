@@ -133,6 +133,13 @@ export function useViewabilityObserver(
     viewabilityObserver.disconnect();
   });
 
+  watch(() => slotContext.value?.status, async (newStatus, oldStatus) => {
+    if (newStatus === 'loaded' && oldStatus === 'rendered') {
+      trackingPixel.value?.remove();
+      trackingPixel.value = null;
+    }
+  });
+
   return isTracked;
 }
 
