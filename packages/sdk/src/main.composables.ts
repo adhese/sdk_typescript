@@ -37,7 +37,7 @@ export function useMainDebugMode(context: AdheseContextState): void {
 
   context.hooks.onDispose(() => {
     context.logger.resetLogs();
-    context.logger.info('Adhese instance disposed');
+    context.logger.debug('Adhese instance disposed');
   });
 }
 

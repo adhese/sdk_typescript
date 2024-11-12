@@ -12,6 +12,14 @@ export function App(): ReactElement {
       debug: true,
       location: '_sdk_example_',
       plugins: [devtoolsPlugin, stackSlotsPlugin],
+      initialSlots: [
+        {
+          format: 'skyscraper',
+        },
+        {
+          format: 'leaderboard',
+        },
+      ],
     }}
     >
       <Child />

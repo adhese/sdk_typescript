@@ -42,7 +42,13 @@ function Devtools() {
   return (
     <AdheseProvider options={{
       account: 'your-account-id',
-    }}>
+      initialSlots: [
+        {
+          format: 'slot-format' // You can pass in initial slots here that will be pre fetched. When you create your component with same format, slot, and parameters it will use this prefetched data and start rendering immediately.
+        }
+      ]
+    }}
+    >
       <YourApp />
     </AdheseProvider>
   );
@@ -106,8 +112,8 @@ Like described in the [slots documentation](/slots.html#hijacking-the-rendering-
 `jsx` you can use the React `renderToStaticMarkup` function to create static HTML while still having the benefits of JSX.
 
 ```jsx
-import { renderToStaticMarkup } from 'react-dom/server';
 import { useAdheseSlot } from '@adhese/sdk-react';
+import { renderToStaticMarkup } from 'react-dom/server';
 
 function YourComponent() {
   const adhese = useAdhese();

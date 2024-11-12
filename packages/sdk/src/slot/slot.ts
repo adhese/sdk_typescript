@@ -64,6 +64,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       slot,
       context,
       pluginOptions,
+      initialData = null,
       renderMode = 'iframe',
       type = 'normal',
     } = options;
@@ -92,9 +93,11 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
     const format = computed(() => typeof options.format === 'string' ? options.format : device.value);
 
-    const data = ref<AdheseAd | null>(null) as Ref<AdheseAd | null>;
+    const data = ref<AdheseAd | null>(initialData) as Ref<AdheseAd | null>;
     const originalData = ref(data.value) as Ref<AdheseAd | null>;
     const name = computed(() => generateName(options.context.location, format.value, options.slot));
+
+    const status = ref<UnwrapRef<AdheseSlot>['status']>('initializing');
 
     watch(name, async (newName, oldName) => {
       if (newName === oldName)
@@ -126,7 +129,13 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     }
 
     watch(element, async (newElement, oldElement) => {
-      if (newElement === oldElement || oldElement === null || newElement === null)
+      if (newElement === null && data.value) {
+        status.value = 'loaded';
+
+        return;
+      }
+
+      if (newElement === oldElement || (oldElement === null && newElement === null))
         return;
 
       await render();
@@ -154,8 +163,6 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       element,
       hooks,
     });
-
-    const status = ref<UnwrapRef<AdheseSlot>['status']>('initializing');
 
     watch([data, isInViewport], async ([newData, newIsInViewport], [oldData]) => {
       if ((!newData || (oldData && isDeepEqual(newData, oldData))) && status.value === 'rendered')
@@ -187,6 +194,12 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     hooks.onDispose(() => {
       if (impressionTrackingPixelElement.value)
         impressionTrackingPixelElement.value.remove();
+    });
+    watch(status, async (newStatus, oldStatus) => {
+      if (newStatus === 'loaded' && oldStatus === 'rendered') {
+        impressionTrackingPixelElement.value?.remove();
+        impressionTrackingPixelElement.value = null;
+      }
     });
 
     async function request(): Promise<AdheseAd | null> {
@@ -244,6 +257,12 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
         renderAd = renderAd && await runOnBeforeRender(renderAd);
 
+        if (!element.value) {
+          logger.debug(`Could not render slot for format ${format.value}. No element found.`, slotContext.value);
+
+          return null;
+        }
+
         if (!renderAd) {
           status.value = 'empty';
           logger.debug(`No ad to render for slot ${name.value}`);
@@ -251,13 +270,6 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
           runOnEmpty();
 
           return null;
-        }
-
-        if (!element.value) {
-          const error = `Could not create slot for format ${format.value}. No element found.`;
-          logger.error(error, options);
-
-          throw new Error(error);
         }
 
         if (typeof renderAd?.tag !== 'string') {
@@ -365,8 +377,14 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
       runOnInit();
 
-      if (options.lazyLoading)
+      if (initialData) {
+        status.value = 'loaded';
         return;
+      }
+
+      if (options.lazyLoading) {
+        return;
+      }
 
       data.value = await slotContext.value?.request() ?? null;
     });

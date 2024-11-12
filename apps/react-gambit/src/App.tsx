@@ -12,6 +12,48 @@ export function App(): ReactElement {
       location: 'ah_website_nl',
       // @ts-expect-error plugin is on cdn
       plugins: [devtoolsPlugin, adhesePlugin],
+      initialSlots: [
+        {
+          format: 'flex',
+          slot: '_home_1_1',
+        },
+        {
+          format: 'flex',
+          slot: '_home_1_2',
+        },
+        {
+          format: 'flex',
+          slot: '_home_2_1',
+        },
+        {
+          format: 'flex',
+          slot: '_home_2_2',
+        },
+        {
+          format: 'flex',
+          slot: '_home_3_1',
+        },
+        {
+          format: 'flex',
+          slot: '_home_3_2',
+        },
+        {
+          format: 'flex',
+          slot: '_home_4_1',
+        },
+        {
+          format: 'flex',
+          slot: '_home_4_2',
+        },
+        {
+          format: 'flex',
+          slot: '_home_5_1',
+        },
+        {
+          format: 'flex',
+          slot: '_home_5_2',
+        },
+      ],
       consent: true,
       parameters: {
         ab: 'a',

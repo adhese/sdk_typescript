@@ -6,6 +6,7 @@ export { createLogger, useLogger } from './createLogger/createLogger';
 export type { EventManager } from './eventManager/eventManager';
 export { createEventManager } from './eventManager/eventManager';
 export { generateName } from './generateName/generateName';
+export { generateSlotSignature } from './generateSignature/generateSignature';
 export { createAsyncHook } from './hooks/asyncHook';
 export { createPassiveHook } from './hooks/passiveHooks';
 export { createSyncHook } from './hooks/syncHook';

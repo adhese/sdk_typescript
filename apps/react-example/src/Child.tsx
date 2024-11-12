@@ -30,7 +30,7 @@ type CustomAdTag = {
 
 // eslint-disable-next-line ts/naming-convention
 export function Child(): ReactElement {
-  const [isSlotShown, setIsSlotShown] = useState(true);
+  const [isSlotShown, setIsSlotShown] = useState(false);
 
   return (
     <>
