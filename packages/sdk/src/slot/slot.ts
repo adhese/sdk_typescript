@@ -257,7 +257,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
         renderAd = renderAd && await runOnBeforeRender(renderAd);
 
-        if (!element.value) {
+        if (!element.value && renderMode !== 'none') {
           logger.debug(`Could not render slot for format ${format.value}. No element found.`, slotContext.value);
 
           return null;
@@ -272,17 +272,19 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
           return null;
         }
 
-        if (typeof renderAd?.tag !== 'string') {
+        if (typeof renderAd?.tag !== 'string' && renderMode !== 'none') {
           const error = `Could not render slot for slot ${name.value}. A valid tag doesn't exist or is not HTML string.`;
           logger.error(error, options);
 
           throw new Error(error);
         }
 
-        renderFunctions[renderMode]({
-          ...renderAd,
-          ...pick(options, ['width', 'height']),
-        } as RenderOptions, element.value);
+        if (renderMode !== 'none' && element.value) {
+          renderFunctions[renderMode]({
+            ...renderAd,
+            ...pick(options, ['width', 'height']),
+          } as RenderOptions, element.value);
+        }
 
         if (renderAd.impressionCounter && !impressionTrackingPixelElement.value)
           impressionTrackingPixelElement.value = addTrackingPixel(renderAd.impressionCounter);

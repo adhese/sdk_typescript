@@ -2,7 +2,7 @@
 
 import type { AdheseSlotOptions, AdheseSlot as Slot } from '@adhese/sdk';
 import { watch } from '@adhese/sdk-shared';
-import { type HTMLAttributes, type ReactElement, useCallback, useId, useRef } from 'react';
+import { type HTMLAttributes, type ReactElement, type ReactNode, useCallback, useId, useRef } from 'react';
 import { useAdheseSlot } from './useAdheseSlot';
 
 export type AdheseSlotProps = {
@@ -10,6 +10,10 @@ export type AdheseSlotProps = {
    * Callback to be called when the slot is created or disposed
    */
   onChange?(slot: Slot | null): void;
+  /**
+   * Inject custom React elements into the slot when it's rendered.
+   */
+  render?(slot: Slot): ReactNode;
 } & Omit<AdheseSlotOptions, 'containingElement' | 'context'> & HTMLAttributes<HTMLDivElement>;
 
 /**
@@ -35,6 +39,7 @@ export function AdheseSlot({
   format,
   style,
   id,
+  render,
   ...props
 }: AdheseSlotProps): ReactElement | null {
   const element = useRef<HTMLDivElement | null>(null);
@@ -49,7 +54,7 @@ export function AdheseSlot({
     lazyLoadingOptions,
     slot,
     pluginOptions,
-    renderMode,
+    renderMode: render ? 'none' : renderMode,
     type,
     parameters,
     format,
@@ -74,7 +79,9 @@ export function AdheseSlot({
           ...style,
         }}
         {...props}
-      />
+      >
+        {slotState?.status === 'rendered' && render?.(slotState)}
+      </div>
     );
   }
 
