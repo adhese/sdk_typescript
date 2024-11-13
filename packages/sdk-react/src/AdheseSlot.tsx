@@ -2,7 +2,7 @@
 
 import type { AdheseSlotOptions, AdheseSlot as Slot } from '@adhese/sdk';
 import { watch } from '@adhese/sdk-shared';
-import { type HTMLAttributes, type PropsWithChildren, type ReactElement, type ReactNode, useCallback, useId } from 'react';
+import { type HTMLAttributes, type ReactNode, useCallback, useId } from 'react';
 import { useAdheseSlot } from './useAdheseSlot';
 
 export type AdheseSlotProps = {
@@ -69,53 +69,24 @@ export function AdheseSlot({
     }) satisfies AdheseSlotOptions['setup'], [setup, onChange]),
   });
 
-  if (!lazyLoading && (slotState?.status === 'loading' || slotState?.status === 'initialized' || slotState?.status === 'initializing')) {
-    return placeholder && (
-      <SlotWrapper slot={slotState} {...props}>
-        {placeholder}
-      </SlotWrapper>
-    );
+  const { status, name, format: slotFormat } = slotState ?? {};
+
+  if (!slotState || (status === 'error' || status === 'empty')) {
+    return null;
   }
 
-  if (lazyLoading || (slotState?.status === 'loaded' || slotState?.status === 'rendered' || slotState?.status === 'rendering')) {
-    return (
-      <SlotWrapper
-        id={componentId}
-        slot={slotState}
-        {...props}
-      >
-
-        {slotState?.status === 'rendered' ? render?.(slotState) : placeholder}
-      </SlotWrapper>
-    );
-  }
-
-  return null;
-}
-
-// eslint-disable-next-line ts/naming-convention
-function SlotWrapper({
-  children,
-  slot,
-  style,
-  ...props
-}: PropsWithChildren<{
-  slot: Slot | null;
-} & Omit<HTMLAttributes<HTMLDivElement>, 'slot'>>): ReactElement {
   return (
     <div
-      data-name={slot?.name}
-      data-status={slot?.status}
-      data-format={slot?.format}
-      data-slot={slot?.slot}
-      style={{
-        width: slot?.options.width,
-        height: slot?.options.height,
-        ...style,
-      }}
+      data-name={name}
+      data-status={status}
+      data-format={slotFormat}
+      data-slot={slot}
+      id={componentId}
       {...props}
     >
-      {children}
+      {(status === 'loading' || status === 'initialized' || status === 'initializing') && placeholder}
+
+      {status === 'rendered' && render?.(slotState)}
     </div>
   );
 }

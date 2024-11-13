@@ -47,6 +47,16 @@ export function Child(): ReactElement {
 
       />
       <AdheseSlot format="leaderboard" renderMode="inline" />
+      <div style={{
+        height: '150dvh',
+        backgroundColor: 'lightgrey',
+        display: 'grid',
+        alignContent: 'center',
+        textAlign: 'center',
+      }}
+      >
+        spacer
+      </div>
       <AdheseSlot format="imu" lazyLoading />
     </>
   );

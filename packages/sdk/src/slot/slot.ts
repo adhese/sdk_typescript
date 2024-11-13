@@ -129,6 +129,10 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     }
 
     watch(element, async (newElement, oldElement) => {
+      if (status.value === 'empty' || status.value === 'error') {
+        return;
+      }
+
       if (newElement === null && data.value) {
         status.value = 'loaded';
 
@@ -249,6 +253,9 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
     async function render(adToRender?: AdheseAd): Promise<HTMLElement | null> {
       try {
+        if (options.lazyLoading && !isInViewport.value)
+          return null;
+
         status.value = 'rendering';
         await waitForDomLoad();
         element.value = getElement();
