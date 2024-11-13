@@ -44,6 +44,7 @@ export function AdheseSlot({
   id,
   render,
   placeholder,
+  style,
   ...props
 }: AdheseSlotProps): ReactNode {
   const reactId = useId().replaceAll(':', '');
@@ -82,6 +83,11 @@ export function AdheseSlot({
       data-format={slotFormat}
       data-slot={slot}
       id={componentId}
+      style={{
+        width,
+        height,
+        ...style,
+      }}
       {...props}
     >
       {(status === 'loading' || status === 'initialized' || status === 'initializing') && placeholder}
