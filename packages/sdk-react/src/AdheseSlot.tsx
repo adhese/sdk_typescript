@@ -2,14 +2,22 @@
 
 import type { AdheseSlotOptions, AdheseSlot as Slot } from '@adhese/sdk';
 import { watch } from '@adhese/sdk-shared';
-import { type HTMLAttributes, type ReactElement, useCallback, useId, useRef } from 'react';
+import { type HTMLAttributes, type ReactNode, useCallback, useId } from 'react';
 import { useAdheseSlot } from './useAdheseSlot';
 
 export type AdheseSlotProps = {
   /**
+   * Placeholder to be shown when the slot is not rendered yet.
+   */
+  placeholder?: ReactNode;
+  /**
    * Callback to be called when the slot is created or disposed
    */
   onChange?(slot: Slot | null): void;
+  /**
+   * Inject custom React elements into the slot when it's rendered.
+   */
+  render?(slot: Slot): ReactNode;
 } & Omit<AdheseSlotOptions, 'containingElement' | 'context'> & HTMLAttributes<HTMLDivElement>;
 
 /**
@@ -33,12 +41,11 @@ export function AdheseSlot({
   setup,
   parameters,
   format,
-  style,
   id,
+  render,
+  placeholder,
   ...props
-}: AdheseSlotProps): ReactElement | null {
-  const element = useRef<HTMLDivElement | null>(null);
-
+}: AdheseSlotProps): ReactNode {
   const reactId = useId().replaceAll(':', '');
   const componentId = id ?? `slot-${reactId}`;
 
@@ -49,7 +56,7 @@ export function AdheseSlot({
     lazyLoadingOptions,
     slot,
     pluginOptions,
-    renderMode,
+    renderMode: render ? 'none' : renderMode,
     type,
     parameters,
     format,
@@ -62,21 +69,24 @@ export function AdheseSlot({
     }) satisfies AdheseSlotOptions['setup'], [setup, onChange]),
   });
 
-  if (lazyLoading || (slotState?.status === 'loaded' || slotState?.status === 'rendered' || slotState?.status === 'rendering')) {
-    return (
-      <div
-        ref={element}
-        id={componentId}
-        data-name={slotState?.name}
-        style={{
-          width: slotState?.options.width,
-          height: slotState?.options.height,
-          ...style,
-        }}
-        {...props}
-      />
-    );
+  const { status, name, format: slotFormat } = slotState ?? {};
+
+  if (!slotState || (status === 'error' || status === 'empty')) {
+    return null;
   }
 
-  return null;
+  return (
+    <div
+      data-name={name}
+      data-status={status}
+      data-format={slotFormat}
+      data-slot={slot}
+      id={componentId}
+      {...props}
+    >
+      {(status === 'loading' || status === 'initialized' || status === 'initializing') && placeholder}
+
+      {status === 'rendered' && render?.(slotState)}
+    </div>
+  );
 }
