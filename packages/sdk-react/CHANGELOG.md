@@ -1,5 +1,27 @@
 # @adhese/sdk-react
 
+## 1.3.0
+
+### Minor Changes
+
+- 14949a5: Add 'render' prop to render custom React components inside a slot
+- 14949a5: Add placeholder prop for rendering content when the loading is not complete yet
+- 97e282d: Allow initial slots to be passed in a the React build
+- 6cb6dd3: Do not render wrapper element when slot is empty or errored
+
+### Patch Changes
+
+- 65ad4b6: Fix react state not recognizing the changed state of a slot
+- Updated dependencies [97e282d]
+- Updated dependencies [97e282d]
+- Updated dependencies [6cb6dd3]
+- Updated dependencies [8f544be]
+- Updated dependencies [14949a5]
+- Updated dependencies [60f6b8e]
+- Updated dependencies [c27d1fa]
+  - @adhese/sdk@1.3.0
+  - @adhese/sdk-shared@1.2.0
+
 ## 1.2.0
 
 ### Minor Changes
