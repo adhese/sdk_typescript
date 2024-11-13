@@ -38,7 +38,7 @@ function.
 ```jsx
 import { AdheseProvider } from '@adhese/sdk-react';
 
-function Devtools() {
+function App() {
   return (
     <AdheseProvider options={{
       account: 'your-account-id',
@@ -106,43 +106,59 @@ function YourComponent() {
 }
 ```
 
-## `useAdheseSlot` with `onBeforeRender`
+## Custom slot rendering
 Like described in the [slots documentation](/slots.html#hijacking-the-rendering-process), you can use the
-`onBeforeRender` callback to intercept the to be rendered ad. The example there is written in vanilla JavaScript. To use
-`jsx` you can use the React `renderToStaticMarkup` function to create static HTML while still having the benefits of JSX.
+`onBeforeRender` callback to intercept the to be rendered ad. Using the `onBeforeRender` hook you can only render
+static markup which is not ideal when you are in a React environment. Ideally you'd want to utilize the whole React
+feature set. The `AdheseSlot` component offers a prop called `render`, this prop expects a callback that returns JSX.
+The slot data is passed as an argument.
 
 ```jsx
-import { useAdheseSlot } from '@adhese/sdk-react';
-import { renderToStaticMarkup } from 'react-dom/server';
+import { AdheseSlot } from '@adhese/sdk-react';
 
 function YourComponent() {
-  const adhese = useAdhese();
-  const elementRef = useRef(null);
-
-  const slot = useAdheseSlot(elementRef, {
-    format: 'your-format',
-    setup(_, { onBeforeRender }) {
-      onBeforeRender((ad) => {
-        if (typeof ad.tag !== 'object') {
-          // If the tag is not an object, return the ad as is
-          return ad;
-        }
-
-        return {
-          ...ad,
-          tag: renderToStaticMarkup((
-            <div>
-              <h1>{ad.tag.title}</h1>
-              <p>{ad.tag.description}</p>
-            </div>
-          )),
-        }
-      })
-    },
-  });
-
   return (
-    <div ref={slot.elementRef} />
+    <div>
+      <AdheseSlot
+        format="flex"
+        slot="1"
+        render={slot => <DynamicSlot {...slot} />}
+      />
+      <AdheseSlot
+        format="flex"
+        slot="2"
+        render={slot => <DynamicSlot {...slot} />}
+      />
+    </div>
+  );
+}
+
+function DynamicSlot(slot) {
+  return (
+    <div>
+      <h1>{ad.tag.title}</h1>
+      <p>{ad.tag.description}</p>
+    </div>
+  );
+}
+```
+
+## Placeholders
+During loading you render a placeholder.
+
+```jsx
+import { AdheseSlot } from '@adhese/sdk-react';
+
+function YourComponent() {
+  return (
+    <div>
+      <AdheseSlot
+        format="flex"
+        slot="1"
+        placeholder={<div>Loading...</div>}
+        render={slot => <DynamicSlot {...slot} />}
+      />
+    </div>
   );
 }
 ```
