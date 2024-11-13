@@ -1,5 +1,21 @@
 # @adhese/sdk
 
+## 1.3.0
+
+### Minor Changes
+
+- 97e282d: Allow initial slots without a matching element to make it possible for ads to be preloaded before their creation
+- 6cb6dd3: Make sure slot checks for the existence of the element before rendering starts
+- 8f544be: Add `onEmpty` hook for slots
+- 14949a5: When renderMode is 'none' skip certain steps in the render pipeline as they are not required
+- 60f6b8e: Add `onError` hook to slots
+
+### Patch Changes
+
+- c27d1fa: Fix errors being thrown when they are not caught by watchers
+- Updated dependencies [97e282d]
+  - @adhese/sdk-shared@1.2.0
+
 ## 1.2.0
 
 ### Minor Changes

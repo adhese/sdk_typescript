@@ -1,5 +1,11 @@
 # @adhese/sdk-shared
 
+## 1.2.0
+
+### Minor Changes
+
+- 97e282d: Add generateSlotSignature function to generate a unique signature based on the options of a slot and it's location
+
 ## 1.1.0
 
 ### Minor Changes
