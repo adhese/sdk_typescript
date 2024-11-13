@@ -51,22 +51,44 @@ export function Child(): ReactElement {
   return (
     <>
       <div className="ads">
-        <AdheseSlot format="flex" slot="_home_1_1" placeholder={<div>loading</div>} render={slot => <FlexAdvar {...slot} />} />
-        <AdheseSlot format="flex" slot="_home_1_2" placeholder={<div>loading</div>} render={slot => <FlexAdvar {...slot} />} />
-
-        <AdheseSlot format="flex" slot="_home_2_1" placeholder={<div>loading</div>} render={slot => <FlexAdvar {...slot} />} />
-        <AdheseSlot format="flex" slot="_home_2_2" placeholder={<div>loading</div>} render={slot => <FlexAdvar {...slot} />} />
-
-        <AdheseSlot format="flex" slot="_home_3_1" placeholder={<div>loading</div>} render={slot => <FlexAdvar {...slot} />} />
-        <AdheseSlot format="flex" slot="_home_3_2" placeholder={<div>loading</div>} render={slot => <FlexAdvar {...slot} />} />
-
-        <AdheseSlot format="flex" slot="_home_4_1" placeholder={<div>loading</div>} render={slot => <FlexAdvar {...slot} />} />
-        <AdheseSlot format="flex" slot="_home_4_2" placeholder={<div>loading</div>} render={slot => <FlexAdvar {...slot} />} />
-
-        <AdheseSlot format="flex" slot="_home_5_1" placeholder={<div>loading</div>} render={slot => <FlexAdvar {...slot} />} />
-        <AdheseSlot format="flex" slot="_home_5_2" placeholder={<div>loading</div>} render={slot => <FlexAdvar {...slot} />} />
+        {Array.from({ length: 10 }).map((_, index) => (
+          <>
+            <AdheseSlot
+              format="flex"
+              slot={`_home_${index + 1}_1`}
+              height="150px"
+              placeholder={<Loading />}
+              render={slot => <FlexAdvar {...slot} />}
+            />
+            <AdheseSlot
+              format="flex"
+              slot={`_home_${index + 1}_2`}
+              height="150px"
+              placeholder={<Loading />}
+              render={slot => <FlexAdvar {...slot} />}
+            />
+          </>
+        ))}
       </div>
     </>
+  );
+}
+
+// eslint-disable-next-line ts/naming-convention
+function Loading(): ReactElement {
+  return (
+    <div style={{
+      backgroundColor: 'lightgray',
+      padding: 0,
+      margin: 0,
+      height: '100%',
+      textAlign: 'center',
+      display: 'grid',
+      alignContent: 'center',
+    }}
+    >
+      loading
+    </div>
   );
 }
 
@@ -90,7 +112,7 @@ function FlexAdvar(slot: AdheseSlotInstance): ReactElement {
       href={ad.tag.link.href}
       style={{
         backgroundImage: `url(${ad.tag.visual.longImage.variants[0].url})`,
-        height: `${100}px`,
+        height: `100%`,
         backgroundSize: 'contain',
         backgroundPosition: 'right center',
         backgroundRepeat: 'no-repeat',
