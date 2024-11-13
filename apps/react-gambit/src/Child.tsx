@@ -51,25 +51,20 @@ export function Child(): ReactElement {
   return (
     <>
       <div className="ads">
-        <AdheseSlot format="flex" slot="_home_1_1" render={slot => <FlexAdvar {...slot} />} />
-        <AdheseSlot format="flex" slot="_home_1_2" render={slot => <FlexAdvar {...slot} />} />
-      </div>
+        <AdheseSlot format="flex" slot="_home_1_1" placeholder={<div>loading</div>} render={slot => <FlexAdvar {...slot} />} />
+        <AdheseSlot format="flex" slot="_home_1_2" placeholder={<div>loading</div>} render={slot => <FlexAdvar {...slot} />} />
 
-      <div className="ads">
-        <AdheseSlot format="flex" slot="_home_2_1" render={slot => <FlexAdvar {...slot} />} />
-        <AdheseSlot format="flex" slot="_home_2_2" render={slot => <FlexAdvar {...slot} />} />
-      </div>
-      <div className="ads">
-        <AdheseSlot format="flex" slot="_home_3_1" render={slot => <FlexAdvar {...slot} />} />
-        <AdheseSlot format="flex" slot="_home_3_2" render={slot => <FlexAdvar {...slot} />} />
-      </div>
-      <div className="ads">
-        <AdheseSlot format="flex" slot="_home_4_1" render={slot => <FlexAdvar {...slot} />} />
-        <AdheseSlot format="flex" slot="_home_4_2" render={slot => <FlexAdvar {...slot} />} />
-      </div>
-      <div className="ads">
-        <AdheseSlot format="flex" slot="_home_5_1" render={slot => <FlexAdvar {...slot} />} />
-        <AdheseSlot format="flex" slot="_home_5_2" render={slot => <FlexAdvar {...slot} />} />
+        <AdheseSlot format="flex" slot="_home_2_1" placeholder={<div>loading</div>} render={slot => <FlexAdvar {...slot} />} />
+        <AdheseSlot format="flex" slot="_home_2_2" placeholder={<div>loading</div>} render={slot => <FlexAdvar {...slot} />} />
+
+        <AdheseSlot format="flex" slot="_home_3_1" placeholder={<div>loading</div>} render={slot => <FlexAdvar {...slot} />} />
+        <AdheseSlot format="flex" slot="_home_3_2" placeholder={<div>loading</div>} render={slot => <FlexAdvar {...slot} />} />
+
+        <AdheseSlot format="flex" slot="_home_4_1" placeholder={<div>loading</div>} render={slot => <FlexAdvar {...slot} />} />
+        <AdheseSlot format="flex" slot="_home_4_2" placeholder={<div>loading</div>} render={slot => <FlexAdvar {...slot} />} />
+
+        <AdheseSlot format="flex" slot="_home_5_1" placeholder={<div>loading</div>} render={slot => <FlexAdvar {...slot} />} />
+        <AdheseSlot format="flex" slot="_home_5_2" placeholder={<div>loading</div>} render={slot => <FlexAdvar {...slot} />} />
       </div>
     </>
   );
@@ -105,7 +100,6 @@ function FlexAdvar(slot: AdheseSlotInstance): ReactElement {
       }}
     >
       <div style={{
-        maxWidth: '40%',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
