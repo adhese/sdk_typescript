@@ -47,6 +47,6 @@
     "prepareRelease": "npm run build"
   },
   "dependencies": {
-    "@adhese/sdk-shared": "^1.2.0"
+    "@adhese/sdk-shared": "1.2.0"
   }
 }
