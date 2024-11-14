@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.3.1
+
+### Patch Changes
+
+- 45c5319: Fix rendering being triggered too many times
+
 ## 1.3.0
 
 ### Minor Changes
