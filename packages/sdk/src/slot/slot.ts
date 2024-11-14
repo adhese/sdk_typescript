@@ -129,7 +129,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     }
 
     watch(element, async (newElement, oldElement) => {
-      if (status.value === 'empty' || status.value === 'error') {
+      if (status.value === 'empty' || status.value === 'error' || status.value === 'loading') {
         return;
       }
 
@@ -169,7 +169,10 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     });
 
     watch([data, isInViewport], async ([newData, newIsInViewport], [oldData]) => {
-      if ((!newData || (oldData && isDeepEqual(newData, oldData))) && status.value === 'rendered')
+      if (options.lazyLoading && newIsInViewport && !newData && !oldData)
+        await slotContext.value?.request();
+
+      if (!newData || (oldData ? isDeepEqual(newData, oldData) : false))
         return;
 
       if (newIsInViewport)
