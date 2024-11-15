@@ -6,7 +6,6 @@ import {
   doNothing,
   effectScope,
   generateName,
-  isDeepEqual,
   omit,
   pick,
   reactive,
@@ -168,16 +167,10 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       hooks,
     });
 
-    watch([data, isInViewport], async ([newData, newIsInViewport], [oldData]) => {
-      if (options.lazyLoading && newIsInViewport && !newData && !oldData)
-        await slotContext.value?.request();
-
-      if (!newData || (oldData ? isDeepEqual(newData, oldData) : false))
-        return;
-
-      if (newIsInViewport)
-        await slotContext.value?.render(newData ?? undefined);
-    });
+    watch(isInViewport, async (newIsInViewport) => {
+      if (newIsInViewport && status.value !== 'rendered')
+        await slotContext.value?.render();
+    }, { immediate: true });
 
     hooks.onDispose(() => {
       disposeQueryDetector();

@@ -3,4 +3,4 @@
 "@adhese/sdk": patch
 ---
 
-Connect package version more strictly to better enfore tandem updates
+Connect package version more strictly to better enforce tandem updates
