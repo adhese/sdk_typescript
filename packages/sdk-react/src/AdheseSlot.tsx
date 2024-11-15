@@ -90,9 +90,7 @@ export function AdheseSlot({
       }}
       {...props}
     >
-      {(!slotState || ['loading', 'initialized', 'initializing'].includes(status ?? '')) && placeholder}
-
-      {slotState?.status === 'rendered' && render?.(slotState)}
+      {slotState?.data ? render?.(slotState) : placeholder}
     </div>
   );
 }
