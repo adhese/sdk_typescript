@@ -319,14 +319,11 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     }
 
     function cleanElement(): void {
-      if (!element.value)
+      if (!element.value || renderMode === 'none')
         return;
 
       element.value.innerHTML = '';
       element.value.style.position = '';
-
-      data.value = null;
-      originalData.value = null;
     }
 
     function dispose(): void {
@@ -335,6 +332,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       element.value = null;
 
       data.value = null;
+      originalData.value = null;
 
       domObserver.disconnect();
 
