@@ -1,5 +1,17 @@
 # @adhese/sdk-react
 
+## 1.3.2
+
+### Patch Changes
+
+- 448224a: Fix custom render not visible in rendering state of the slot
+- 4e327ce: Make sure placeholder is rendered as the inital render to fix issues in SSR environments
+- 3d76945: Fix license field missing in package.json
+- 3d76945: Connect package version more strictly to better enforce tandem updates
+- Updated dependencies [448224a]
+- Updated dependencies [3d76945]
+  - @adhese/sdk@1.3.2
+
 ## 1.3.1
 
 ### Patch Changes

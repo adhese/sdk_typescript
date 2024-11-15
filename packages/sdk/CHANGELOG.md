@@ -1,5 +1,12 @@
 # @adhese/sdk
 
+## 1.3.2
+
+### Patch Changes
+
+- 448224a: Fix rerender triggering too many times
+- 3d76945: Connect package version more strictly to better enforce tandem updates
+
 ## 1.3.1
 
 ### Patch Changes
