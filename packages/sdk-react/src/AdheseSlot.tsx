@@ -72,7 +72,7 @@ export function AdheseSlot({
 
   const { status, name, format: slotFormat } = slotState ?? {};
 
-  if (!slotState || (status === 'error' || status === 'empty')) {
+  if (['error', 'empty'].includes(status ?? '')) {
     return null;
   }
 
@@ -90,9 +90,9 @@ export function AdheseSlot({
       }}
       {...props}
     >
-      {(status === 'loading' || status === 'initialized' || status === 'initializing') && placeholder}
+      {(!slotState || ['loading', 'initialized', 'initializing'].includes(status ?? '')) && placeholder}
 
-      {status === 'rendered' && render?.(slotState)}
+      {slotState?.status === 'rendered' && render?.(slotState)}
     </div>
   );
 }
