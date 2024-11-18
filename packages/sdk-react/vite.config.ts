@@ -5,5 +5,5 @@ export default viteBaseConfig({
   name,
   dependencies,
   peerDependencies,
-  entries: 'src/sdkReact.ts',
+  entries: ['src/sdkReact.ts', 'src/core.ts'],
 });

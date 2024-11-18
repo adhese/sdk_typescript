@@ -1,4 +1,4 @@
-import type { AdheseAd, AdheseSlot as AdheseSlotInstance } from '@adhese/sdk';
+import type { AdheseAd, AdheseSlot as AdheseSlotInstance } from '@adhese/sdk-react/core';
 import { AdheseSlot } from '@adhese/sdk-react';
 
 import { type ReactElement, useState } from 'react';

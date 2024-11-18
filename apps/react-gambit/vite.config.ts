@@ -15,6 +15,7 @@ export default (({ mode }): UserConfig => defineConfig({
           '@adhese/sdk': `${path.resolve()}/../../packages/sdk/src/adheseSdk`,
           '@adhese/sdk-devtools': `${path.resolve()}/../../packages/sdk-devtools/src/sdkDevtools`,
           '@adhese/sdk-react': `${path.resolve()}/../../packages/sdk-react/src/sdkReact`,
+          '@adhese/sdk-react/core': `${path.resolve()}/../../packages/sdk-react/src/sdkReact/core`,
           '@adhese/sdk-shared': `${path.resolve()}/../../packages/sdk-shared/src`,
           '@adhese/sdk-shared/validators': `${path.resolve()}/../../sdk-shared/src/validators`,
           '@adhese/sdk-stack-slots': `${path.resolve()}/../../packages/sdk-stack-slots/src/stackSlots`,
