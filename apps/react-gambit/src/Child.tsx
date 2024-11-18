@@ -1,6 +1,6 @@
-import type { AdheseAd, AdheseSlot as AdheseSlotInstance } from '@adhese/sdk';
-import type { ReactElement } from 'react';
+import type { AdheseAd, AdheseSlot as AdheseSlotInstance } from '@adhese/sdk-react/core';
 import { AdheseSlot } from '@adhese/sdk-react';
+import { Fragment, type ReactElement } from 'react';
 
 export type Data = {
   type: string;
@@ -50,26 +50,25 @@ export type Visual = {
 export function Child(): ReactElement {
   return (
     <>
-      <div className="ads">
-        {Array.from({ length: 10 }).map((_, index) => (
-          <>
-            <AdheseSlot
-              format="flex"
-              slot={`_home_${index + 1}_1`}
-              height="150px"
-              placeholder={<Loading />}
-              render={slot => <FlexAdvar {...slot} />}
-            />
-            <AdheseSlot
-              format="flex"
-              slot={`_home_${index + 1}_2`}
-              height="150px"
-              placeholder={<Loading />}
-              render={slot => <FlexAdvar {...slot} />}
-            />
-          </>
-        ))}
-      </div>
+      {Array.from({ length: 2 }).map((_, index) => (
+        <Fragment key={index}>
+          <AdheseSlot
+            format="flex"
+            slot={`_home_${index + 1}_1`}
+            height="150px"
+            placeholder={<Loading />}
+            render={slot => <FlexAdvar {...slot} />}
+          />
+          <AdheseSlot
+            format="flex"
+            slot={`_home_${index + 1}_2`}
+            height="150px"
+            placeholder={<Loading />}
+            render={slot => <FlexAdvar {...slot} />}
+          />
+          <div style={{ height: '150dvh', backgroundColor: 'red' }} />
+        </Fragment>
+      ))}
     </>
   );
 }

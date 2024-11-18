@@ -10,9 +10,7 @@
     },
     "lint": {},
     "lint:fix": {},
-    "typecheck": {
-      "cache": false
-    },
+    "typecheck": {},
     "build": {
       "outputs": [
         "dist/**",

@@ -19,7 +19,7 @@ export type { UrlString } from './types/UrlString';
 export { uniqueId } from './uniqueId/uniqueId';
 export { waitForDomLoad } from './waitForDomLoad/waitForDomLoad';
 
-export type { ComputedGetter, ComputedOptions, ComputedRef, ComputedSetter, MaybeRef, Ref, ShallowReactive, ShallowRef, ShallowUnwrapRef, UnwrapNestedRefs, UnwrapRef, WritableComputedOptions, WritableComputedRef } from '@vue/runtime-core';
+export type { ComputedGetter, ComputedOptions, ComputedRef, ComputedSetter, MaybeRef, Ref, ShallowReactive, ShallowRef, ShallowUnwrapRef, UnwrapNestedRefs, UnwrapRef, WatchHandle, WatchOptions, WatchStopHandle, WritableComputedOptions, WritableComputedRef } from '@vue/runtime-core';
 export { computed, customRef, effectScope, isProxy, isReactive, isReadonly, isRef, isShallow, markRaw, reactive, readonly, ref, shallowReactive, shallowReadonly, shallowRef, toRaw, toRefs, toValue, unref, watch, watchEffect, watchPostEffect, watchSyncEffect } from '@vue/runtime-core';
 
 export * from 'remeda';

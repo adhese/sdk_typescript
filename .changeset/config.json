@@ -4,12 +4,11 @@
   "commit": false,
   "access": "public",
   "baseBranch": "main",
+  "linked": [["@adhese/sdk-react", "@adhese/sdk"]],
   "snapshot": {
     "useCalculatedVersion": true
   },
-  "ignore": [
-    "!@adhese/*"
-  ],
+  "ignore": ["!@adhese/*"],
   "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
     "onlyUpdatePeerDependentsWhenOutOfRange": true
   }

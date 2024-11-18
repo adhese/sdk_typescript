@@ -14,6 +14,12 @@
       "import": "./dist/sdkReact.js",
       "require": "./dist/cjs/sdkReact.cjs",
       "types@<5.1": "./dist/legacy.d.ts"
+    },
+    "./core": {
+      "types": "./dist/core.d.ts",
+      "import": "./dist/core.js",
+      "require": "./dist/cjs/core.cjs",
+      "types@<5.1": "./dist/legacy.d.ts"
     }
   },
   "main": "./dist/cjs/sdkReact.cjs",

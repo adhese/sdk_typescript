@@ -10,6 +10,7 @@
       "@server-mocks": ["packages/server-mocks/src/index.ts"],
       "@adhese/sdk": ["packages/sdk/src/adheseSdk.ts"],
       "@adhese/sdk-react": ["packages/sdk-react/src/sdkReact.ts"],
+      "@adhese/sdk-react/core": ["packages/sdk-react/src/core.ts"],
       "@adhese/sdk-devtools": ["packages/sdk-devtools/src/sdkDevtools.ts"],
       "@adhese/sdk-gambit": ["packages/sdk-gambit/src/gambit.ts"],
       "@adhese/sdk-shared": ["packages/sdk-shared/src/index.ts"],
