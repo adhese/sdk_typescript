@@ -1,8 +1,7 @@
 import type { AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
-import { generateSlotSignature, watch } from '@adhese/sdk-shared';
+import { generateSlotSignature, watch, type WatchHandle, type WatchOptions } from '@adhese/sdk-shared';
 import {
   type RefObject,
-  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -30,23 +29,14 @@ export function useAdheseSlot(elementRef: RefObject<HTMLElement> | string, optio
 
   const [slot, setSlot] = useState<AdheseSlot | null>(null);
 
-  const setup = useCallback(((context, hooks): void => {
-    options.setup?.(context, hooks);
-
-    watch(context, (newSlot) => {
-      setSlot(newSlot && { ...newSlot });
-    }, { deep: true, immediate: true });
-  }) satisfies AdheseSlotOptions['setup'], [options.setup]);
-
   useEffect(() => {
     const element = typeof elementRef === 'string' ? elementRef : elementRef.current;
 
     if (adhese && element) {
-      adhese?.addSlot({
+      setSlot(adhese?.addSlot({
         ...options,
         containingElement: element,
-        setup,
-      });
+      }));
     }
 
     return (): void => {
@@ -55,4 +45,30 @@ export function useAdheseSlot(elementRef: RefObject<HTMLElement> | string, optio
   }, [adhese, ...Object.values(options), slotSignature]);
 
   return slot;
+}
+
+/**
+ * Hook that will observe a value on a reactive object and convert to React state
+ */
+export function useWatch<
+  Input,
+  Output = Input extends () => unknown ? ReturnType<Input> | undefined : Input | undefined,
+>(value?: Input, options?: Omit<WatchOptions, 'immediate'>): Output {
+  const [state, setState] = useState<Output>(typeof value === 'function' ? value() : value);
+
+  useEffect(() => {
+    let handle: WatchHandle | undefined;
+
+    if (value) {
+      handle = watch(value, (newValue) => {
+        setState(newValue as Output);
+      }, { immediate: true, ...options });
+    }
+
+    return (): void => {
+      handle?.stop();
+    };
+  }, [value]);
+
+  return state;
 }
