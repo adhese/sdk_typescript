@@ -1,5 +1,11 @@
 # @adhese/sdk-shared
 
+## 1.3.0
+
+### Minor Changes
+
+- 59e397c: Expose extra helpful types from the @vue/runtime-core package
+
 ## 1.2.0
 
 ### Minor Changes
