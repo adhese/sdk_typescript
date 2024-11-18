@@ -1,5 +1,20 @@
 # @adhese/sdk-react
 
+## 1.4.0
+
+### Minor Changes
+
+- 59e397c: Add useWatch hook that will allow you to observer if a value of reactive object changes within an Adhese slot. The value that is watched is converted into a proper React state that will trigger a re-render when it changes.
+- 59e397c: Add reexport to the core @adhese/sdk package
+
+### Patch Changes
+
+- 59e397c: Make sure that the slot state is not updated every time a internal value changes
+- Updated dependencies [59e397c]
+- Updated dependencies [236883d]
+  - @adhese/sdk-shared@1.3.0
+  - @adhese/sdk@1.4.0
+
 ## 1.3.2
 
 ### Patch Changes

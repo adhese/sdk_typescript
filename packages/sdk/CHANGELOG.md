@@ -1,5 +1,13 @@
 # @adhese/sdk
 
+## 1.4.0
+
+### Patch Changes
+
+- 236883d: Make sure that the clean element function does not work when renderMode is none
+- Updated dependencies [59e397c]
+  - @adhese/sdk-shared@1.3.0
+
 ## 1.3.2
 
 ### Patch Changes
