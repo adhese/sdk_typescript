@@ -1,5 +1,17 @@
 # @adhese/sdk-react
 
+## 1.4.1
+
+### Patch Changes
+
+- 52d0f0c: Optimise React rendering by using `useLayoutEffect` to prevent layout jumping during slot creation
+- 52d0f0c: Memoize render output to prevent unneeded triggers
+- Updated dependencies [52d0f0c]
+- Updated dependencies [52d0f0c]
+- Updated dependencies [52d0f0c]
+  - @adhese/sdk@1.4.1
+  - @adhese/sdk-shared@1.3.1
+
 ## 1.4.0
 
 ### Minor Changes

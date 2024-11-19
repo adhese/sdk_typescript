@@ -1,5 +1,11 @@
 # @adhese/sdk-shared
 
+## 1.3.1
+
+### Patch Changes
+
+- 52d0f0c: Async hooks that do not have an argument should settle promises concurrently
+
 ## 1.3.0
 
 ### Minor Changes
