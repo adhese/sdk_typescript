@@ -1,5 +1,14 @@
 # @adhese/sdk
 
+## 1.4.1
+
+### Patch Changes
+
+- 52d0f0c: Make sure slots cannot trigger a render when the status is `empty` or `error`
+- 52d0f0c: Make sure that the onRequest hook is fired when the data is already present as initial data
+- Updated dependencies [52d0f0c]
+  - @adhese/sdk-shared@1.3.1
+
 ## 1.4.0
 
 ### Patch Changes
