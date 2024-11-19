@@ -64,9 +64,18 @@ export function createSlotManager({
     const slot = createSlot({
       ...options as AdheseSlotOptions,
       context,
-      initialData: current?.data,
+      initialData: current?.data ?? current?.options.initialData,
       setup(slotContext, slotHooks) {
         options.setup?.(slotContext, slotHooks);
+
+        slotHooks.onInit(() => {
+          if (!slotContext.value)
+            return;
+
+          if (current?.status === 'empty' || current?.status === 'error') {
+            slotContext.value.status = current?.status;
+          }
+        });
 
         slotHooks.onDispose(() => {
           context.slots.delete(slot.id);

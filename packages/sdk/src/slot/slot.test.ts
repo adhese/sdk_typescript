@@ -57,6 +57,8 @@ describe('slot', () => {
       context,
     });
 
+    await awaitTimeout(0);
+
     await slot.render({
       tag: '<div>foo</div>',
       // eslint-disable-next-line ts/naming-convention
@@ -86,6 +88,8 @@ describe('slot', () => {
       slot: 'bar',
       context,
     });
+
+    await awaitTimeout(0);
 
     await slot.render({
       tag: '<div>foo</div>',
@@ -186,6 +190,8 @@ describe('slot', () => {
       containingElement: 'leaderboard',
       context,
     });
+
+    await awaitTimeout(0);
 
     await slot.render({
       tag: '<div>foo</div>',

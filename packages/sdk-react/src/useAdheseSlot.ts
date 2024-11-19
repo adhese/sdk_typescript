@@ -2,7 +2,7 @@ import type { AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
 import { generateSlotSignature, watch, type WatchHandle, type WatchOptions } from '@adhese/sdk-shared';
 import {
   type RefObject,
-  useEffect,
+  useLayoutEffect,
   useMemo,
   useState,
 } from 'react';
@@ -29,7 +29,7 @@ export function useAdheseSlot(elementRef: RefObject<HTMLElement> | string, optio
 
   const [slot, setSlot] = useState<AdheseSlot | null>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const element = typeof elementRef === 'string' ? elementRef : elementRef.current;
 
     if (adhese && element) {
@@ -56,7 +56,7 @@ export function useWatch<
 >(value?: Input, options?: Omit<WatchOptions, 'immediate'>): Output {
   const [state, setState] = useState<Output>(typeof value === 'function' ? value() : value);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     let handle: WatchHandle | undefined;
 
     if (value) {

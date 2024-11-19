@@ -92,7 +92,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
     const format = computed(() => typeof options.format === 'string' ? options.format : device.value);
 
-    const data = ref<AdheseAd | null>(initialData) as Ref<AdheseAd | null>;
+    const data = ref<AdheseAd | null>(null) as Ref<AdheseAd | null>;
     const originalData = ref(data.value) as Ref<AdheseAd | null>;
     const name = computed(() => generateName(options.context.location, format.value, options.slot));
 
@@ -248,6 +248,10 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     }
 
     async function render(adToRender?: AdheseAd): Promise<HTMLElement | null> {
+      if (status.value === 'empty' || status.value === 'error' || status.value === 'initializing') {
+        return null;
+      }
+
       try {
         if (options.lazyLoading && !isInViewport.value)
           return null;
@@ -267,6 +271,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         }
 
         if (!renderAd) {
+          // eslint-disable-next-line require-atomic-updates
           status.value = 'empty';
           logger.debug(`No ad to render for slot ${name.value}`);
 
@@ -301,6 +306,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
           containingElement,
         });
 
+        // eslint-disable-next-line require-atomic-updates
         status.value = 'rendered';
 
         runOnRender(renderAd);
@@ -308,6 +314,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         return element.value;
       }
       catch (error) {
+        // eslint-disable-next-line require-atomic-updates
         status.value = 'error';
 
         logger.error(`${error}`, options);
@@ -376,14 +383,22 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     });
 
     context.hooks.onInit(async () => {
-      status.value = 'initialized';
+      await runOnInit();
 
-      runOnInit();
+      if (status.value === 'empty' || status.value === 'error') {
+        return;
+      }
 
       if (initialData) {
         status.value = 'loaded';
+
+        data.value = initialData;
+        data.value = await runOnRequest(initialData);
+
         return;
       }
+
+      status.value = 'initialized';
 
       if (options.lazyLoading) {
         return;

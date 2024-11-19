@@ -2,7 +2,7 @@
 
 import type { AdheseSlotOptions, AdheseSlot as Slot } from '@adhese/sdk';
 import { watch } from '@adhese/sdk-shared';
-import { type HTMLAttributes, type ReactNode, useCallback, useId } from 'react';
+import { type HTMLAttributes, type ReactNode, useCallback, useId, useMemo } from 'react';
 import { useAdheseSlot, useWatch } from './useAdheseSlot';
 
 export type AdheseSlotProps = {
@@ -73,6 +73,9 @@ export function AdheseSlot({
   const status = useWatch(slotState ? (): Slot['status'] => slotState.status : undefined);
   const slotFormat = useWatch(slotState ? (): Slot['format'] => slotState.format : undefined);
   const name = useWatch(slotState ? (): Slot['name'] => slotState.name : undefined);
+  const data = useWatch(slotState ? (): Slot['data'] => slotState.data : undefined, { deep: true });
+
+  const renderOutput = useMemo(() => slotState && data ? render?.(slotState) : placeholder, [slotState, render, placeholder, data]);
 
   if (['error', 'empty'].includes(status ?? '')) {
     return null;
@@ -92,7 +95,7 @@ export function AdheseSlot({
       }}
       {...props}
     >
-      {slotState?.data ? render?.(slotState) : placeholder}
+      {renderOutput}
     </div>
   );
 }

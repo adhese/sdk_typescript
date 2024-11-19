@@ -12,24 +12,16 @@ export function App(): ReactElement {
       location: 'ah_website_nl',
       // @ts-expect-error plugin is on cdn
       plugins: [devtoolsPlugin, adhesePlugin],
-      initialSlots: [
+      initialSlots: Array.from({ length: 5 }, (_, index) => ([
         {
           format: 'flex',
-          slot: '_home_1_1',
+          slot: `_home_${index + 1}_1`,
         },
         {
           format: 'flex',
-          slot: '_home_1_2',
+          slot: `_home_${index + 1}_2`,
         },
-        {
-          format: 'flex',
-          slot: '_home_2_1',
-        },
-        {
-          format: 'flex',
-          slot: '_home_2_2',
-        },
-      ],
+      ])).flat(),
       consent: true,
       parameters: {
         ab: 'a',
