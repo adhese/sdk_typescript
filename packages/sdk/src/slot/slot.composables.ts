@@ -148,7 +148,7 @@ export function useSlotHooks({ setup }: AdheseSlotOptions, slotContext: Ref<Adhe
   runOnRender: ReturnType<typeof createPassiveHook<AdheseAd>>[0];
   runOnBeforeRequest: ReturnType<typeof createAsyncHook<AdheseAd | null>>[0];
   runOnRequest: ReturnType<typeof createAsyncHook<AdheseAd>>[0];
-  runOnInit: ReturnType<typeof createPassiveHook<void>>[0];
+  runOnInit: ReturnType<typeof createAsyncHook<void>>[0];
   runOnDispose: ReturnType<typeof createPassiveHook<void>>[0];
   runOnEmpty: ReturnType<typeof createPassiveHook<void>>[0];
   runOnError: ReturnType<typeof createPassiveHook<Error>>[0];
@@ -157,7 +157,7 @@ export function useSlotHooks({ setup }: AdheseSlotOptions, slotContext: Ref<Adhe
   const [runOnRender, onRender, disposeOnRender] = createPassiveHook<AdheseAd>();
   const [runOnBeforeRequest, onBeforeRequest, disposeOnBeforeRequest] = createAsyncHook<AdheseAd | null>();
   const [runOnRequest, onRequest, disposeOnRequest] = createAsyncHook<AdheseAd>();
-  const [runOnInit, onInit, disposeOnInit] = createPassiveHook();
+  const [runOnInit, onInit, disposeOnInit] = createAsyncHook();
   const [runOnDispose, onDispose, disposeOnDispose] = createPassiveHook();
   const [runOnEmpty, onEmpty, disposeOnEmpty] = createPassiveHook();
   const [runOnError, onError, disposeOnError] = createPassiveHook<Error>();

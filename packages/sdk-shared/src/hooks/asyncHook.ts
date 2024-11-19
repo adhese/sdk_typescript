@@ -19,15 +19,24 @@ export function createAsyncHook<
   const callbacks = new Set<U>();
 
   async function run(arg: T): Promise<T> {
-    let latestResult: T = arg;
+    if (arg) {
+      let latestResult: T = arg;
 
-    for (const callback of callbacks)
-      // eslint-disable-next-line no-await-in-loop
-      latestResult = (await callback(latestResult)) ?? latestResult;
+      for (const callback of callbacks)
+        // eslint-disable-next-line no-await-in-loop
+        latestResult = (await callback(latestResult)) ?? latestResult;
+
+      onRun?.(callbacks);
+
+      return latestResult;
+    }
+
+    // eslint-disable-next-line no-console
+    Promise.allSettled(Array.from(callbacks).map(async callback => callback(arg))).catch(console.trace);
 
     onRun?.(callbacks);
 
-    return latestResult;
+    return arg;
   }
 
   function dispose(): void {

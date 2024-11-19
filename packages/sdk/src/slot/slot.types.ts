@@ -22,7 +22,7 @@ export type AdheseSlotHooks = {
   /**
    * Hook that is called when the slot is initialized.
    */
-  onInit: ReturnType<typeof createPassiveHook>[1];
+  onInit: ReturnType<typeof createAsyncHook<void>>[1];
   /**
    * Hook that is called when the slot is disposed.
    */

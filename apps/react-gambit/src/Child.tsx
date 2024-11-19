@@ -1,6 +1,6 @@
 import type { AdheseAd, AdheseSlot as AdheseSlotInstance } from '@adhese/sdk-react/core';
 import { AdheseSlot } from '@adhese/sdk-react';
-import { Fragment, type ReactElement } from 'react';
+import { Fragment, type ReactElement, useState } from 'react';
 
 export type Data = {
   type: string;
@@ -48,9 +48,11 @@ export type Visual = {
 
 // eslint-disable-next-line ts/naming-convention
 export function Child(): ReactElement {
+  const [open, setOpen] = useState(false);
   return (
     <>
-      {Array.from({ length: 2 }).map((_, index) => (
+      <button onClick={() => { setOpen(c => !c); }}>Toggle</button>
+      {open && Array.from({ length: 5 }).map((_, index) => (
         <Fragment key={index}>
           <AdheseSlot
             format="flex"
@@ -66,7 +68,6 @@ export function Child(): ReactElement {
             placeholder={<Loading />}
             render={slot => <FlexAdvar {...slot} />}
           />
-          <div style={{ height: '150dvh', backgroundColor: 'red' }} />
         </Fragment>
       ))}
     </>
