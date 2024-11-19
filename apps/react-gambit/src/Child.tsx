@@ -48,7 +48,7 @@ export type Visual = {
 
 // eslint-disable-next-line ts/naming-convention
 export function Child(): ReactElement {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   return (
     <>
       <button onClick={() => { setOpen(c => !c); }}>Toggle</button>
