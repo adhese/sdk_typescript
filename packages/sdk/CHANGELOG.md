@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.4.2
+
+### Patch Changes
+
+- b178b64: Fix eager rendering not doing anything
+
 ## 1.4.1
 
 ### Patch Changes
