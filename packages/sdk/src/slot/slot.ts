@@ -191,15 +191,22 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
     const impressionTrackingPixelElement = ref<HTMLImageElement | null>(null);
     const isImpressionTracked = ref(false);
-    hooks.onDispose(() => {
-      if (impressionTrackingPixelElement.value)
-        impressionTrackingPixelElement.value.remove();
-    });
+    watch([status, isInViewport, data], ([newStatus, newIsInViewport, newData]) => {
+      if (newStatus === 'rendered' && newIsInViewport && newData?.impressionCounter && !impressionTrackingPixelElement.value) {
+        impressionTrackingPixelElement.value = addTrackingPixel(newData.impressionCounter);
+
+        isImpressionTracked.value = true;
+      }
+    }, { immediate: true });
     watch(status, async (newStatus, oldStatus) => {
       if (newStatus === 'loaded' && oldStatus === 'rendered') {
         impressionTrackingPixelElement.value?.remove();
         impressionTrackingPixelElement.value = null;
       }
+    });
+    hooks.onDispose(() => {
+      if (impressionTrackingPixelElement.value)
+        impressionTrackingPixelElement.value.remove();
     });
 
     async function request(): Promise<AdheseAd | null> {
@@ -233,6 +240,9 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
         if (!response)
           cleanElement();
+
+        if (response && context.options.eagerRendering && element.value)
+          await render(response);
 
         return response;
       }
@@ -293,11 +303,6 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
             ...pick(options, ['width', 'height']),
           } as RenderOptions, element.value);
         }
-
-        if (renderAd.impressionCounter && !impressionTrackingPixelElement.value)
-          impressionTrackingPixelElement.value = addTrackingPixel(renderAd.impressionCounter);
-
-        isImpressionTracked.value = true;
 
         logger.debug(`Slot rendered ${name.value}`, {
           renderedElement: element,
