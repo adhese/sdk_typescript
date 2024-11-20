@@ -30,7 +30,6 @@
     "clean": "turbo clean",
     "preinstall": "npx only-allow npm",
     "typecheck": "turbo typecheck --cache-dir=.turbo",
-    "prepare": "husky",
     "changeset": "changeset",
     "changeset:version": "changeset version && npm i",
     "prepareRelease": "turbo prepareRelease --cache-dir=.turbo",
@@ -46,9 +45,7 @@
     "commander": "^12.1.0",
     "eslint": "^9.13.0",
     "glob": "^10.4.5",
-    "husky": "^9.1.6",
     "jsdom": "^24.1.3",
-    "lint-staged": "^15.2.10",
     "octokit": "^4.0.2",
     "postcss": "^8.4.47",
     "remeda": "^2.16.0",
@@ -62,10 +59,5 @@
     "vite-plugin-css-injected-by-js": "^3.5.2",
     "vitest": "^1.2.2",
     "vitest-matchmedia-mock": "^1.0.6"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
   }
 }
