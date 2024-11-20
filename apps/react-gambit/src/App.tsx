@@ -23,6 +23,7 @@ export function App(): ReactElement {
         },
       ])).flat(),
       consent: true,
+      eagerRendering: true,
       parameters: {
         ab: 'a',
         om: '0',
