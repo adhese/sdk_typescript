@@ -9,6 +9,6 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "msw": "^2.5.1"
+    "msw": "^2.6.5"
   }
 }
