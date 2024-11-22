@@ -71,7 +71,7 @@ export function useViewabilityObserver(
     duration,
     rootMargin,
   } = {
-    threshold: 0.2,
+    threshold: 0.5,
     duration: 1000,
     rootMargin: '0px',
     ...context.options.viewabilityTrackingOptions,
