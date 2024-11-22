@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.4.3
+
+### Patch Changes
+
+- 6ca2c26: Fix default `viewabilityTrackingOptions.threshold` to be `0.5` instead of `0.2`
+
 ## 1.4.2
 
 ### Patch Changes
