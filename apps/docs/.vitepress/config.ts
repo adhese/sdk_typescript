@@ -23,7 +23,6 @@ export default async (data: {
         { text: 'Getting Started', link: '/index' },
         { text: 'Slots', link: '/slots' },
         { text: 'Events', link: '/events' },
-        { text: 'Gambit config', link: '/gambit' },
         { text: 'Consent', link: '/consent' },
         { text: 'Lite', link: '/lite' },
         { text: 'React SDK', link: '/react-sdk' },
