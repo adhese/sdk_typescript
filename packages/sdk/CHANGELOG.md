@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.5.0
+
+### Patch Changes
+
+- 86ad92f: Make sure previews are properly matched to a format instead of a creativeId
+
 ## 1.4.3
 
 ### Patch Changes

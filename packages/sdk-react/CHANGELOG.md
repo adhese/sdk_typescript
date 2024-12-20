@@ -1,5 +1,16 @@
 # @adhese/sdk-react
 
+## 1.5.0
+
+### Minor Changes
+
+- 86ad92f: Add data-preview to a AdheseSlot when a preview is rendered
+
+### Patch Changes
+
+- Updated dependencies [86ad92f]
+  - @adhese/sdk@1.5.0
+
 ## 1.4.3
 
 ### Patch Changes

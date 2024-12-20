@@ -1,5 +1,11 @@
 # @adhese/sdk-stack-slots
 
+## 1.1.1
+
+### Patch Changes
+
+- 86ad92f: Make sure a stack slots also returns a `adFormat` prop to be alligned with the new ad schema requirements
+
 ## 1.1.0
 
 ### Minor Changes
