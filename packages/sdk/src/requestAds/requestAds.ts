@@ -110,8 +110,6 @@ export async function requestAds(requestOptions: AdMultiRequestOptions): Promise
       });
     });
 
-    logger.debug('Matched previews', matchedPreviews);
-
     if (matchedPreviews.length > 0)
       context.events?.previewReceived.dispatch(matchedPreviews);
 
