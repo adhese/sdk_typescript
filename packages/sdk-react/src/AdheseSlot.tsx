@@ -87,6 +87,7 @@ export function AdheseSlot({
       data-status={status}
       data-format={slotFormat}
       data-slot={slot}
+      data-preview={data?.preview}
       id={componentId}
       style={{
         width,

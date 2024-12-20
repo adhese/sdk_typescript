@@ -8,7 +8,7 @@ import { logger } from '../logger/logger';
 export async function requestPreviews(account: string): Promise<ReadonlyArray<AdheseAd>> {
   const previewObjects = getPreviewObjects();
 
-  const [list, adSchema] = await Promise.all([
+  const [list, parseResponse] = await Promise.all([
     Promise.allSettled(previewObjects
       .filter(previewObject => 'adhesePreviewCreativeId' in previewObject)
       .map(async (previewObject) => {
@@ -30,10 +30,10 @@ export async function requestPreviews(account: string): Promise<ReadonlyArray<Ad
 
         return await response.json() as unknown;
       })),
-    import('./requestAds.schema').then(module => module.adSchema),
+    import('./requestAds.schema').then(module => module.parseResponse),
   ]);
 
-  return adSchema.array().parse(list
+  return parseResponse(list
     .filter((response): response is PromiseFulfilledResult<ReadonlyArray<Record<string, unknown>>> => {
       if (response.status === 'rejected') {
         logger.error(response.reason as string);
