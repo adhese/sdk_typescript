@@ -81,6 +81,7 @@ export const stackSlotsPlugin: AdhesePlugin<{
             stackAds.value = data;
 
             return {
+              adFormat: slotContext.value.format,
               tag: data.ads,
               id,
               adType: slotContext.value.format,

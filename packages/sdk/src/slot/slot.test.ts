@@ -60,6 +60,7 @@ describe('slot', () => {
     await awaitTimeout(0);
 
     await slot.render({
+      adFormat: 'foo',
       tag: '<div>foo</div>',
       // eslint-disable-next-line ts/naming-convention
       slotID: 'bar',
@@ -92,6 +93,7 @@ describe('slot', () => {
     await awaitTimeout(0);
 
     await slot.render({
+      adFormat: 'foo',
       tag: '<div>foo</div>',
       // eslint-disable-next-line ts/naming-convention
       slotID: 'bar',
@@ -145,6 +147,7 @@ describe('slot', () => {
       });
 
       await slot.render({
+        adFormat: 'foo',
         tag: '<div>foo</div>',
         // eslint-disable-next-line ts/naming-convention
         slotID: 'bar',
@@ -194,6 +197,7 @@ describe('slot', () => {
     await awaitTimeout(0);
 
     await slot.render({
+      adFormat: 'foo',
       tag: '<div>foo</div>',
       // eslint-disable-next-line ts/naming-convention
       slotID: 'bar',
@@ -236,6 +240,7 @@ describe('slot', () => {
     });
 
     await slot.render({
+      adFormat: 'foo',
       tag: '<div>foo</div>',
       // eslint-disable-next-line ts/naming-convention
       slotID: 'bar',
@@ -287,6 +292,7 @@ describe('slot', () => {
     });
 
     slot.data = {
+      adFormat: 'foo',
       tag: '<div>foo</div>',
       // eslint-disable-next-line ts/naming-convention
       slotID: 'bar',

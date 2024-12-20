@@ -13,6 +13,7 @@ export const adRequestHandlers = [
     };
 
     return new HttpResponse(JSON.stringify(requestBody.slots.map(slot => ({
+      adFormat: 'foo',
       adType: 'foo',
       // eslint-disable-next-line ts/naming-convention
       slotID: slot.slotname,
@@ -34,6 +35,7 @@ export const adRequestHandlers = [
     const slotNames = urlParts.slice(urlParts.indexOf('json') + 1);
 
     return new HttpResponse(JSON.stringify(slotNames.map(slotName => ({
+      adFormat: 'foo',
       adType: 'foo',
       // eslint-disable-next-line ts/naming-convention
       slotID: slotName,
@@ -56,6 +58,7 @@ export const adRequestHandlers = [
     };
 
     return new HttpResponse(JSON.stringify(requestBody.slots.map(slot => ({
+      adFormat: 'foo',
       adType: 'foo',
       // eslint-disable-next-line ts/naming-convention
       slotID: slot.slotname,

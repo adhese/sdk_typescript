@@ -124,8 +124,6 @@ describe('requestAds', () => {
       context,
     });
 
-    expect(ads.length).toBe(2);
-
     for (const ad of ads) {
       expect(ad.origin).toBe('DALE');
       expect(ad.tag).toBeDefined();
@@ -161,6 +159,7 @@ describe('requestAd', () => {
 describe('schema', () => {
   it('should be able to validate a valid response', () => {
     const response = {
+      adFormat: 'foo',
       adType: 'foo',
       // eslint-disable-next-line ts/naming-convention
       slotID: 'bar',
@@ -197,6 +196,7 @@ describe('schema', () => {
 
   it('should be able to handle a recursively nested response', () => {
     const response = {
+      adFormat: 'foo',
       adType: 'foo',
       // eslint-disable-next-line ts/naming-convention
       slotID: 'bar',
@@ -205,6 +205,7 @@ describe('schema', () => {
       id: 'baz',
       origin: 'JERLICIA',
       additionalCreatives: [{
+        adFormat: 'foo',
         id: 'baz',
         adType: 'foo',
         // eslint-disable-next-line ts/naming-convention
@@ -326,17 +327,21 @@ describe('requestPreviews', () => {
     const ads = await requestAds({
       slots: [
         createSlot({
-          format: 'bar',
+          format: 'foo',
           context,
         }),
         createSlot({
-          format: 'baz',
+          format: 'foo',
           context,
         }),
       ],
       context,
     });
 
-    expect(ads.length).toBe(3);
+    expect(ads.length).toBe(2);
+
+    for (const ad of ads) {
+      expect(ad.preview).toBe(true);
+    }
   });
 });

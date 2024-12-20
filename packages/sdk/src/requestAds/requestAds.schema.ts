@@ -18,7 +18,7 @@ import {
 
 const baseSchema = object({
   adDuration: numberLike.optional(),
-  adFormat: string().optional(),
+  adFormat: string(),
   adType: string(),
   additionalCreativeTracker: urlLike.optional(),
   additionalViewableTracker: string().optional(),
