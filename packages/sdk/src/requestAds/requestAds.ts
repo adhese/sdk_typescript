@@ -115,10 +115,7 @@ export async function requestAds(requestOptions: AdMultiRequestOptions): Promise
     if (matchedPreviews.length > 0)
       context.events?.previewReceived.dispatch(matchedPreviews);
 
-    const mergedResult = await context.hooks.runOnResponse([
-      ...result.filter(ad => !previews.some(preview => preview.adFormat === ad.adFormat)),
-      ...matchedPreviews,
-    ]);
+    const mergedResult = await context.hooks.runOnResponse(matchedPreviews);
 
     context.events?.responseReceived.dispatch(mergedResult);
 
