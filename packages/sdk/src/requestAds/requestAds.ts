@@ -105,7 +105,7 @@ export async function requestAds(requestOptions: AdMultiRequestOptions): Promise
       const partnerAd = previews.find(preview => ad.adFormat === preview.adFormat);
 
       return ({
-        ...(partnerAd ? partnerAd : ad),
+        ...(partnerAd ?? ad),
         slotName,
       });
     });
