@@ -1,5 +1,13 @@
 # @adhese/sdk
 
+## 1.5.1
+
+### Patch Changes
+
+- f1a07cf: Allow general strings instead of the very limited UrlString in host
+- Updated dependencies [f1a07cf]
+  - @adhese/sdk-shared@1.4.0
+
 ## 1.5.0
 
 ### Patch Changes
