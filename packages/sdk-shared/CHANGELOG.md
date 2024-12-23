@@ -1,5 +1,11 @@
 # @adhese/sdk-shared
 
+## 1.4.0
+
+### Minor Changes
+
+- f1a07cf: Deprecate very limited UrlString
+
 ## 1.3.1
 
 ### Patch Changes
