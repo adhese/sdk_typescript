@@ -1,5 +1,5 @@
 /* v8 ignore start */
-import type { EventManager, Merge, UrlString } from '@adhese/sdk-shared';
+import type { EventManager, Merge } from '@adhese/sdk-shared';
 import type { createGlobalHooks } from './hooks';
 import type { logger } from './logger/logger';
 import type { AdMultiRequestOptions } from './requestAds/requestAds';
@@ -27,14 +27,14 @@ type BaseOptions = {
    *
    * @default 'https://ads-{{account}}.adhese.com'
    */
-  host?: UrlString;
+  host?: string;
   /**
    * The url that is used to connect to the Adhese pool server. Pass a custom URL if you want to use your own domain for
    * the connection.
    *
    * @default 'https://pool-{{account}}.adhese.com'
    */
-  poolHost?: UrlString;
+  poolHost?: string;
   /**
    * The page location. This is used to determine the current page location identifier.
    */

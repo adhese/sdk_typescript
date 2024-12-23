@@ -1,5 +1,4 @@
 import type { AdheseContext } from '@adhese/sdk';
-import type { UrlString } from '@adhese/sdk-shared';
 import { dateLike, numberLike, urlLike } from '@adhese/sdk-shared/validators';
 import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import { logger } from '../logger/logger';
@@ -78,7 +77,7 @@ describe('requestAds', () => {
       ...context,
       options: {
         ...context.options,
-        host: 'https://ads-fail.adhese.com' as UrlString,
+        host: 'https://ads-fail.adhese.com',
       },
     };
 
@@ -106,7 +105,7 @@ describe('requestAds', () => {
       ...context,
       options: {
         ...context.options,
-        host: 'https://ads-dale.adhese.com' as UrlString,
+        host: 'https://ads-dale.adhese.com',
       },
     };
 
