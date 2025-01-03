@@ -1,9 +1,10 @@
-name: On push
+name: On push or pull request
 
 on:
   push:
     branches-ignore:
       - main # Ignore the main branch which is handled by the release workflow
+  pull_request:
   workflow_dispatch:
 
 jobs:
