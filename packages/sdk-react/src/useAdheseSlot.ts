@@ -2,14 +2,14 @@ import type { AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
 import { generateSlotSignature, watch, type WatchHandle, type WatchOptions } from '@adhese/sdk-shared';
 import {
   type RefObject,
+  useEffect,
   useLayoutEffect,
   useMemo,
   useState,
-  useEffect,
 } from 'react';
 import { useAdhese } from './adheseContext';
 
-const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 
 /**
  * Hook to create an Adhese slot. The slot will be disposed when the component is unmounted. The slot will be created
