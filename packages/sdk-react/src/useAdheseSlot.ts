@@ -5,8 +5,11 @@ import {
   useLayoutEffect,
   useMemo,
   useState,
+  useEffect,
 } from 'react';
 import { useAdhese } from './adheseContext';
+
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 /**
  * Hook to create an Adhese slot. The slot will be disposed when the component is unmounted. The slot will be created
@@ -29,7 +32,7 @@ export function useAdheseSlot(elementRef: RefObject<HTMLElement> | string, optio
 
   const [slot, setSlot] = useState<AdheseSlot | null>(null);
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const element = typeof elementRef === 'string' ? elementRef : elementRef.current;
 
     if (adhese && element) {
@@ -56,7 +59,7 @@ export function useWatch<
 >(value?: Input, options?: Omit<WatchOptions, 'immediate'>): Output {
   const [state, setState] = useState<Output>(typeof value === 'function' ? value() : value);
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     let handle: WatchHandle | undefined;
 
     if (value) {
