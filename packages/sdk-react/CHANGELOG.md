@@ -1,5 +1,11 @@
 # @adhese/sdk-react
 
+## 1.5.2
+
+### Patch Changes
+
+- 0d36501: Fix SSR useLayoutEffect
+
 ## 1.5.1
 
 ### Patch Changes
