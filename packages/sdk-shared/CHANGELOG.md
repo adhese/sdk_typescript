@@ -1,5 +1,11 @@
 # @adhese/sdk-shared
 
+## 1.4.1
+
+### Patch Changes
+
+- aad85d5: Fixed a bug where single quotes in the creative would be replaced by double quotes.
+
 ## 1.4.0
 
 ### Minor Changes
