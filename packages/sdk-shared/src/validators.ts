@@ -33,7 +33,7 @@ export const cssValueLike
   });
 export const isJson = string().transform((value, { addIssue }) => {
   try {
-    return JSON.parse(value.replaceAll('\'', '"')) as Record<string, unknown> | ReadonlyArray<unknown>;
+    return JSON.parse(value.replaceAll('\\\'', '&#39;').replaceAll('\'', '"').replaceAll('&#39;', '\'')) as Record<string, unknown> | ReadonlyArray<unknown>;
   }
   catch (error) {
     addIssue({
