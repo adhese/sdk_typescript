@@ -1,6 +1,6 @@
 import { coerce, literal, NEVER, number, string, union, ZodIssueCode } from 'zod';
 
-export const numberLike = union([coerce.string().regex(/^\d+$/), literal('')]).transform(value => value === '' ? undefined : Number(value));
+export const numberLike = union([coerce.string().regex(/^\d+$/), literal(''), coerce.number()]).transform(value => value === '' ? undefined : Number(value));
 export const booleanLike = union([coerce.boolean(), literal('')]);
 export const urlLike = union([coerce.string(), literal('')]).transform((value) => {
   try {
@@ -10,7 +10,7 @@ export const urlLike = union([coerce.string(), literal('')]).transform((value) =
     return undefined;
   }
 });
-export const dateLike = union([coerce.string(), literal('')]).transform((value) => {
+export const dateLike = union([coerce.string(), literal(''), coerce.date()]).transform((value) => {
   if (value === '')
     return undefined;
 
