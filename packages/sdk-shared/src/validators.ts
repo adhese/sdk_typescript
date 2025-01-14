@@ -14,12 +14,12 @@ export const dateLike = union([coerce.string(), literal(''), coerce.date()]).tra
   if (value === '')
     return undefined;
 
-  const parsedDate = new Date(numberLike.safeParse(value).success ? Number(value) : value);
+  const date = new Date(numberLike.safeParse(value).success ? Number(value) : value);
 
-  if (Number.isNaN(parsedDate.getTime()))
+  if (Number.isNaN(date.getTime()))
     return undefined;
 
-  return parsedDate;
+  return date;
 });
 export const cssValueLike
   = union([coerce.string(), literal(''), number()]).transform<string | undefined>((value) => {
