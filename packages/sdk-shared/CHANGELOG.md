@@ -1,5 +1,12 @@
 # @adhese/sdk-shared
 
+## 1.4.2
+
+### Patch Changes
+
+- 19b91db: Allow `numberLike` validator to accept `number` as an input
+- 19b91db: Allow `dateLike` to allow `Date` objects as an input
+
 ## 1.4.1
 
 ### Patch Changes
