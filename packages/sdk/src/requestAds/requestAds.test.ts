@@ -222,6 +222,8 @@ describe('schema', () => {
 
   it('should be able to validate a number like string', () => {
     expect(numberLike.parse('123')).toBe(123);
+    expect(numberLike.parse('0.0')).toBe(0);
+    expect(numberLike.parse('0')).toBe(0);
     expect(numberLike.parse('')).toBeUndefined();
   });
 
