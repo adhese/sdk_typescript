@@ -61,5 +61,5 @@ export function parseParameters<T extends string | ReadonlyArray<string>>(parame
 function filterSpecialChars(value: string): string {
   const specialRegex = /[^\p{L}\p{N}_]/gu;
 
-  return value.replaceAll(specialRegex, '_');
+  return value.replaceAll(specialRegex, '_').toLowerCase();
 }
