@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.6.0
+
+### Minor Changes
+
+- 62cee5f: Making all parameters have lower case by default
+
 ## 1.5.4
 
 ### Patch Changes
