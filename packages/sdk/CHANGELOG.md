@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.6.1
+
+### Patch Changes
+
+- b88acb8: Made the adformat optional to fix issues with DALE ads.
+
 ## 1.6.0
 
 ### Minor Changes
