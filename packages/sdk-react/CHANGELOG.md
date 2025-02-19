@@ -1,5 +1,12 @@
 # @adhese/sdk-react
 
+## 1.6.1
+
+### Patch Changes
+
+- Updated dependencies [b88acb8]
+  - @adhese/sdk@1.6.1
+
 ## 1.6.0
 
 ### Patch Changes
