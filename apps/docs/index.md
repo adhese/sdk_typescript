@@ -61,7 +61,7 @@ Example DOM slots:
 ### Fetching slots before DOM is ready
 If you want to fetch slots before the DOM is ready, you can pass the `initialSlots` option to the `createAdhese`
 function. This is particularly useful if you want to start the fetching process as soon as possible. Downside is that
-you need to know which slots are going to be on the page on beforehand.
+you need to know which slots are going to be on the page beforehand.
 
 ```js
 const adhese = createAdhese({
