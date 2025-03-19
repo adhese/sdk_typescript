@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.6.2
+
+### Patch Changes
+
+- 38e8362: Fixed a bug where tracking was not sent if the content was loading for more than 5 seconds
+
 ## 1.6.1
 
 ### Patch Changes
