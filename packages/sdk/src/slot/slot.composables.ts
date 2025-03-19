@@ -118,7 +118,7 @@ export function useViewabilityObserver(
     };
   }
 
-  watch(() => slotContext.value?.element, (element) => {
+  watch(() => slotContext.value?.status === 'rendered' && slotContext.value?.element, (element) => {
     if (element)
       observe(element);
   }, { immediate: true });
