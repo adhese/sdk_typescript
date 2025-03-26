@@ -6,8 +6,11 @@ export type RenderOptions = {
 
 export function renderIframe(ad: RenderOptions, element: HTMLElement): void {
   const iframe = document.createElement('iframe');
-
-  iframe.srcdoc = `
+  
+  if (/^<!DOCTYPE\s+/i.test(ad.tag)) {
+    iframe.srcdoc = ad.tag.replaceAll(/\s+/g, ' ').trim();
+  } else {
+    iframe.srcdoc = `
       <!DOCTYPE html>
       <html>
         <head>
@@ -23,6 +26,7 @@ export function renderIframe(ad: RenderOptions, element: HTMLElement): void {
           ${String(ad.tag)}
         </body>
       `.replaceAll(/\s+/g, ' ').trim();
+  }
 
   iframe.style.border = 'none';
   iframe.style.width = typeof ad.width === 'number' ? `${ad.width}px` : (ad.width ?? 'auto');
