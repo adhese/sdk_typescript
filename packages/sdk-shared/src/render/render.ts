@@ -6,10 +6,11 @@ export type RenderOptions = {
 
 export function renderIframe(ad: RenderOptions, element: HTMLElement): void {
   const iframe = document.createElement('iframe');
-  
+
   if (/^<!DOCTYPE\s+/i.test(ad.tag)) {
     iframe.srcdoc = ad.tag.replaceAll(/\s+/g, ' ').trim();
-  } else {
+  }
+  else {
     iframe.srcdoc = `
       <!DOCTYPE html>
       <html>
