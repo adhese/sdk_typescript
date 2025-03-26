@@ -1,5 +1,12 @@
 # @adhese/sdk-stack-slots
 
+## 1.1.2
+
+### Patch Changes
+
+- Updated dependencies [f7f8a6e]
+  - @adhese/sdk-shared@2.0.0
+
 ## 1.1.1
 
 ### Patch Changes

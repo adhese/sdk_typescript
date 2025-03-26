@@ -1,7 +1,7 @@
 {
   "name": "@adhese/sdk-user-sync",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Adhese SDK",
   "repository": {
     "type": "git",
@@ -28,6 +28,6 @@
     "@adhese/sdk": ">=1.0.0"
   },
   "dependencies": {
-    "@adhese/sdk-shared": "^1.1.0"
+    "@adhese/sdk-shared": "^2.0.0"
   }
 }
