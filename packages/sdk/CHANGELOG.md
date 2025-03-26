@@ -1,5 +1,12 @@
 # @adhese/sdk
 
+## 1.6.3
+
+### Patch Changes
+
+- Updated dependencies [f7f8a6e]
+  - @adhese/sdk-shared@1.5.0
+
 ## 1.6.2
 
 ### Patch Changes

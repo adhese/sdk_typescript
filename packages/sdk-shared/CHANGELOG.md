@@ -1,5 +1,11 @@
 # @adhese/sdk-shared
 
+## 1.5.0
+
+### Minor Changes
+
+- f7f8a6e: We now check if the returned ad is a full HTML page, if it is, we don't add base html tags to the iframe.
+
 ## 1.4.2
 
 ### Patch Changes
