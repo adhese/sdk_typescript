@@ -24,9 +24,6 @@ export function useDevtoolsUi(context: AdheseContext, { onInit, onDispose }: Par
     watch(() => [context.debug, context.isDisposed], async ([debug, isDisposed]) => {
       if (debug && !isDisposed) {
         await initDevtools();
-
-        if (context.isDisposed)
-          dispose();
       }
       else {
         dispose();
