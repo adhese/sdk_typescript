@@ -193,7 +193,7 @@ export function useSlotBadge(
           );
 
         const template = renderToStaticMarkup(
-          <div className="absolute top-0 flex gap-1 flex-col pointer-events-none">
+          <div className="absolute top-0 flex gap-1 flex-col pointer-events-none adhese-devtools">
             <Badge
               className={cn('w-fit', slotIndexBadgeClasses[slotIndex % slotIndexBadgeClasses.length])}
             >
