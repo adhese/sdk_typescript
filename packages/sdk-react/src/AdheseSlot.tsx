@@ -89,7 +89,6 @@ export function AdheseSlot({
       data-slot={slot}
       data-preview={data?.preview}
       id={componentId}
-      className="adhese-devtools"
       style={{
         width,
         height,
