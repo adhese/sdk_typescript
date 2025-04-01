@@ -11,6 +11,7 @@ export default {
     '../../packages/sdk-devtools/src/**/*.{ts,tsx}',
   ],
   prefix: '',
+  important: '.adhese-devtools',
   theme: {
     container: {
       center: true,

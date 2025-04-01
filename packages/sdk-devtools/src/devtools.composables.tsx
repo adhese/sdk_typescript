@@ -24,9 +24,6 @@ export function useDevtoolsUi(context: AdheseContext, { onInit, onDispose }: Par
     watch(() => [context.debug, context.isDisposed], async ([debug, isDisposed]) => {
       if (debug && !isDisposed) {
         await initDevtools();
-
-        if (context.isDisposed)
-          dispose();
       }
       else {
         dispose();
@@ -196,14 +193,18 @@ export function useSlotBadge(
           );
 
         const template = renderToStaticMarkup(
-          <div className="absolute top-0 flex gap-1 flex-col pointer-events-none">
-            <Badge
-              className={cn('w-fit', slotIndexBadgeClasses[slotIndex % slotIndexBadgeClasses.length])}
-            >
-              {slotContext.value?.name}
-            </Badge>
+          <>
+            <div className="adhese-devtools">
+              <div className="absolute top-0 flex gap-1 flex-col pointer-events-none">
+                <Badge
+                  className={cn('w-fit', slotIndexBadgeClasses[slotIndex % slotIndexBadgeClasses.length])}
+                >
+                  {slotContext.value?.name}
+                </Badge>
+              </div>
+            </div>
             {modifiedSlots.value?.slots.has((slotContext.value.pluginOptions?.devtools as DevtoolsSlotPluginOptions)?.hijackedSlot ?? '') && <Badge className="bg-red-500 w-fit">EDITED IN DEVTOOLS</Badge>}
-          </div>,
+          </>,
         );
 
         element.value?.remove();
