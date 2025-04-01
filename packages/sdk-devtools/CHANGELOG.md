@@ -1,5 +1,11 @@
 # @adhese/sdk-devtools
 
+## 1.0.2
+
+### Patch Changes
+
+- 1c358ee: Fixed a bug where Tailwind styling leaked into the main page
+
 ## 1.0.1
 
 ### Patch Changes
