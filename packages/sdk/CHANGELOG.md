@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.6.4
+
+### Patch Changes
+
+- d422216: fix module declaration
+
 ## 1.6.3
 
 ### Patch Changes
