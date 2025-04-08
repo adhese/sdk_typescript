@@ -209,7 +209,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
             `Viewability tracking pixel fired for ${slotContext.value?.name}`,
           );
         }
-      }
+      },
     });
 
     const impressionTrackingPixelElement = ref<HTMLImageElement | null>(null);
