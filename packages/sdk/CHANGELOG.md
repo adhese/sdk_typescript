@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.6.5
+
+### Patch Changes
+
+- d1e70dd: When a DALE responses is returned we will now also meassure viewability properly by fetching the viewability tracker from the right place inside the adresponse
+
 ## 1.6.4
 
 ### Patch Changes
