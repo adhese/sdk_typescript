@@ -49,6 +49,29 @@ const baseSchema = object({
   orderProperty: string().optional(),
   origin: union([literal('JERLICIA'), literal('DALE')]),
   originData: unknown().optional(),
+  /* originData: object({
+    seatbid: array(object({
+      bid: array(object({
+            crid: string().optional(),
+            dealid: string().optional(),
+            ext: object({
+              adhese: object({
+                id: string().optional(),
+                libId: string().optional(),
+                orderId: string().optional(),
+                adspaceId: string().optional(),
+                priority: string().optional(),
+                adType: string().optional(),
+                adFormat: string().optional(),
+                viewableImpressionCounter: urlLike().optional(),
+                orderProperty: string().optional()
+              }).optional()
+            }).optional()
+          }).optional()
+        ).optional()
+      }).optional()
+    ).optional()
+  }).optional(), */
   originInstance: string().optional(),
   poolPath: urlLike.optional(),
   preview: booleanLike.optional(),
