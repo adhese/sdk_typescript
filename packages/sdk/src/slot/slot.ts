@@ -182,27 +182,34 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       hooks,
       onTracked(trackingPixel) {
         let viewabilityPixel;
+        if (slotContext.value?.data?.origin === undefined) {
+          context.logger.warn(
+            `Origin not found for ${slotContext.value?.name}`,
+          );
+          return;
+        }
         switch (slotContext.value?.data?.origin) {
           case 'DALE': {
             // @ts-expect-error - Data structure is not typed and very messy to type
             const seatbid = slotContext.value?.data?.originData?.seatbid;
             const bid = seatbid ? seatbid[0]?.bid[0] : undefined;
-            viewabilityPixel = bid ? bid.ext?.adhese?.viewableImpressionCounter : undefined;
+            viewabilityPixel = bid
+              ? bid.ext?.adhese?.viewableImpressionCounter
+              : undefined;
             break;
           }
           case 'JERLICIA':
-            viewabilityPixel = slotContext.value?.data?.viewableImpressionCounter;
-            break;
-          case undefined: { throw new Error('Not implemented yet: undefined case'); }
-          default:
-            viewabilityPixel = undefined;
+            viewabilityPixel
+              = slotContext.value?.data?.viewableImpressionCounter;
             break;
         }
         if (viewabilityPixel) {
           trackingPixel.value = addTrackingPixel(viewabilityPixel);
-          context.logger.debug(`Viewability tracking pixel fired for ${slotContext.value?.name}`);
+          context.logger.debug(
+            `Viewability tracking pixel fired for ${slotContext.value?.name}`,
+          );
         }
-      },
+      }
     });
 
     const impressionTrackingPixelElement = ref<HTMLImageElement | null>(null);
