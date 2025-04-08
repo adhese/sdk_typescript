@@ -181,10 +181,33 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       slotContext,
       hooks,
       onTracked(trackingPixel) {
-        if (slotContext.value?.data?.viewableImpressionCounter) {
-          trackingPixel.value = addTrackingPixel(slotContext.value?.data?.viewableImpressionCounter);
-
-          context.logger.debug(`Viewability tracking pixel fired for ${slotContext.value?.name}`);
+        let viewabilityPixel;
+        if (slotContext.value?.data?.origin === undefined) {
+          context.logger.warn(
+            `Origin not found for ${slotContext.value?.name}`,
+          );
+          return;
+        }
+        switch (slotContext.value?.data?.origin) {
+          case 'DALE': {
+            // @ts-expect-error - Data structure is not typed and very messy to type
+            const seatbid = slotContext.value?.data?.originData?.seatbid;
+            const bid = seatbid ? seatbid[0]?.bid[0] : undefined;
+            viewabilityPixel = bid
+              ? bid.ext?.adhese?.viewableImpressionCounter
+              : undefined;
+            break;
+          }
+          case 'JERLICIA':
+            viewabilityPixel
+              = slotContext.value?.data?.viewableImpressionCounter;
+            break;
+        }
+        if (viewabilityPixel) {
+          trackingPixel.value = addTrackingPixel(viewabilityPixel);
+          context.logger.debug(
+            `Viewability tracking pixel fired for ${slotContext.value?.name}`,
+          );
         }
       },
     });
