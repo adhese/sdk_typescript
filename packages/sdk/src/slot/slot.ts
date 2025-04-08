@@ -193,14 +193,13 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
           case 'JERLICIA':
             viewabilityPixel = slotContext.value?.data?.viewableImpressionCounter;
             break;
-          case undefined: { throw new Error('Not implemented yet: undefined case') }
+          case undefined: { throw new Error('Not implemented yet: undefined case'); }
           default:
             viewabilityPixel = undefined;
             break;
         }
         if (viewabilityPixel) {
           trackingPixel.value = addTrackingPixel(viewabilityPixel);
-    
           context.logger.debug(`Viewability tracking pixel fired for ${slotContext.value?.name}`);
         }
       },
