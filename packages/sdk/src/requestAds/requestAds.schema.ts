@@ -43,6 +43,7 @@ const baseSchema = object({
   height: numberLike.optional(),
   id: string().optional(),
   impressionCounter: urlLike.optional(),
+  additonalTracker: urlLike.optional(),
   libId: string().optional(),
   orderId: string().optional(),
   orderName: string().optional(),

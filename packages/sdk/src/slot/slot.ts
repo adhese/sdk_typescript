@@ -55,7 +55,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     const slotContext = ref<AdheseSlotContext | null>(null);
     const options = slotOptions.context.hooks.runOnSlotCreate({
       ...defaultOptions,
-      ...(Object.fromEntries(Object.entries(slotOptions).filter(([,value]) => value !== undefined)) as AdheseSlotOptions),
+      ...(Object.fromEntries(Object.entries(slotOptions).filter(([, value]) => value !== undefined)) as AdheseSlotOptions),
     });
 
     const {
@@ -213,23 +213,34 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     });
 
     const impressionTrackingPixelElement = ref<HTMLImageElement | null>(null);
+    const additionalTrackingPixelElement = ref<HTMLImageElement | null>(null);
     const isImpressionTracked = ref(false);
+    const isAdditionalTracked = ref(false);
     watch([status, isInViewport, data], ([newStatus, newIsInViewport, newData]) => {
-      if (newStatus === 'rendered' && newIsInViewport && newData?.impressionCounter && !impressionTrackingPixelElement.value) {
-        impressionTrackingPixelElement.value = addTrackingPixel(newData.impressionCounter);
-
-        isImpressionTracked.value = true;
+      if (newStatus === 'rendered' && newIsInViewport) {
+        if (newData?.impressionCounter && !impressionTrackingPixelElement.value) {
+          impressionTrackingPixelElement.value = addTrackingPixel(newData.impressionCounter);
+          isImpressionTracked.value = true;
+        }
+        if (newData?.additonalTracker && !additionalTrackingPixelElement.value) {
+          additionalTrackingPixelElement.value = addTrackingPixel(newData.additonalTracker);
+          isAdditionalTracked.value = true;
+        }
       }
     }, { immediate: true });
     watch(status, async (newStatus, oldStatus) => {
       if (newStatus === 'loaded' && oldStatus === 'rendered') {
         impressionTrackingPixelElement.value?.remove();
         impressionTrackingPixelElement.value = null;
+        additionalTrackingPixelElement.value?.remove();
+        additionalTrackingPixelElement.value = null;
       }
     });
     hooks.onDispose(() => {
       if (impressionTrackingPixelElement.value)
         impressionTrackingPixelElement.value.remove();
+      if (additionalTrackingPixelElement.value)
+        additionalTrackingPixelElement.value.remove();
     });
 
     async function request(): Promise<AdheseAd | null> {
