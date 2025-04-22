@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.7.0
+
+### Minor Changes
+
+- 737d1e7: Added an additional tracker on AdheseAd that will be fired together with the impressions tracker.
+
 ## 1.6.5
 
 ### Patch Changes
