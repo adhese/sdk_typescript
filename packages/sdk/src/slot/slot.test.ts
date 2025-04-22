@@ -211,6 +211,39 @@ describe('slot', () => {
     expect(slot.element).not.toBe(null);
   });
 
+  it('should be able to render a slot with an additional tracker', async () => {
+    const element = document.createElement('div');
+
+    element.classList.add('adunit');
+    element.dataset.format = 'leaderboard';
+    element.id = 'leaderboard';
+
+    document.body.appendChild(element);
+
+    const slot = createSlot({
+      format: 'leaderboard',
+      containingElement: 'leaderboard',
+      context,
+    });
+
+    await awaitTimeout(0);
+
+    await slot.render({
+      adFormat: 'foo',
+      tag: '<div>foo</div>',
+      // eslint-disable-next-line ts/naming-convention
+      slotID: 'bar',
+      slotName: 'baz',
+      adType: 'foo',
+      impressionCounter: new URL('https://foo.bar'),
+      additionalTracker: new URL('https://foo2.bar'),
+      id: 'baz',
+      origin: 'JERLICIA',
+    });
+
+    expect(slot.element).not.toBe(null);
+  });
+
   it('should be able generate a slot name', async () => {
     expect((createSlot({
       format: 'bar',
