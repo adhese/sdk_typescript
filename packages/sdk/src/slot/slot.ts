@@ -222,8 +222,8 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
           impressionTrackingPixelElement.value = addTrackingPixel(newData.impressionCounter);
           isImpressionTracked.value = true;
         }
-        if (newData?.additonalTracker && !additionalTrackingPixelElement.value) {
-          additionalTrackingPixelElement.value = addTrackingPixel(newData.additonalTracker);
+        if (newData?.additionalTracker && !additionalTrackingPixelElement.value) {
+          additionalTrackingPixelElement.value = addTrackingPixel(newData.additionalTracker);
           isAdditionalTracked.value = true;
         }
       }

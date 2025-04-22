@@ -236,7 +236,7 @@ describe('slot', () => {
       slotName: 'baz',
       adType: 'foo',
       impressionCounter: new URL('https://foo.bar'),
-      additonalTracker: new URL('https://foo2.bar'),
+      additionalTracker: new URL('https://foo2.bar'),
       id: 'baz',
       origin: 'JERLICIA',
     });
