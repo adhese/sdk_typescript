@@ -29,3 +29,7 @@ The slot will be created alongside the script tag in which the function is calle
   </div>
 </body>
 ```
+
+### JS file
+
+You can also include the SDK in your project by including the following script tag in your HTML. <a href="./files/adheseLite.js" download>Download the latest version</a>.
