@@ -1,7 +1,11 @@
 import path from 'node:path';
 import { defineConfig } from 'vite';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  define: {
+    // eslint-disable-next-line ts/naming-convention
+    'process.env.NODE_ENV': mode,
+  },
   build: {
     outDir: 'lib',
     emptyOutDir: true,
@@ -9,14 +13,13 @@ export default defineConfig({
     terserOptions: {
       compress: {
         passes: 3,
-
       },
     },
     lib: {
       entry: `src/main.ts`,
       name: 'Adhese',
       formats: ['iife'],
-      fileName: () => `adhese.js`,
+      fileName: (): string => `adhese.js`,
     },
   },
   resolve: {
@@ -29,4 +32,4 @@ export default defineConfig({
       /* eslint-enable ts/naming-convention */
     },
   },
-});
+}));
