@@ -87,13 +87,12 @@ Example HTML:
 
 ### Adding target data
 To add target data to the ad requests, you can make use of the `parameters` option in the `createAdhese`
-function. This config receives an object containing the different (2 letter) target 'prefixes' with their corresponding target values. 
+function. This config receives an object containing the different (2 letter) target 'prefixes' with their corresponding target values.
 
-> [!WARNING]   
+> [!WARNING]
 > Each prefix has to match a prefix configured on the Adhese adserver. Contact support if you are not sure which prefix to use or if a new target needs to be set up. This is important because some prefixes are reserved and have a specific function.
 
-
-Some targets will receive maximum one value at a time. That value can be passed along as a **string**. Other targets that can receive more than one value, will have to be passed along as an **array**. 
+Some targets will receive maximum one value at a time. That value can be passed along as a **string**. Other targets that can receive more than one value, will have to be passed along as an **array**.
 
 Example:
 
@@ -106,8 +105,6 @@ const adhese = createAdhese({
   }
 });
 ```
-
-
 
 ## Options
 The `createAdhese` function accepts the following options:
