@@ -86,7 +86,7 @@ export async function requestAds(requestOptions: AdMultiRequestOptions): Promise
       context.options.requestType?.toUpperCase() === 'POST'
         ? requestWithPost(options)
         : requestWithGet(options),
-      requestPreviews(context.options.account),
+      requestPreviews(options),
       import('./requestAds.schema').then(module => module.parseResponse),
     ]);
 

@@ -35,6 +35,13 @@ type BaseOptions = {
    * @default 'https://pool-{{account}}.adhese.com'
    */
   poolHost?: string;
+    /**
+   * The url that is used to connect to the Adhese preview server. Pass a custom URL if you want to use your own domain for
+   * the connection.
+   *
+   * @default 'https://{{account}}-preview.adhese.org'
+   */
+ previewHost?: string;
   /**
    * The page location. This is used to determine the current page location identifier.
    */

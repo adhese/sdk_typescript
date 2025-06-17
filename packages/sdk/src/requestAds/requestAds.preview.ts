@@ -1,18 +1,18 @@
 import type { AdheseAd } from './requestAds.schema';
 import { logger } from '../logger/logger';
+import { AdMultiRequestOptions } from './requestAds';
 
 /**
  * Request preview ads for the given account. This function will only return items when there are preview objects in the
  * URL detected.
  */
-export async function requestPreviews(account: string): Promise<ReadonlyArray<AdheseAd>> {
+export async function requestPreviews({context}: Omit<AdMultiRequestOptions, 'method'>) {
   const previewObjects = getPreviewObjects();
-
   const [list, parseResponse] = await Promise.all([
     Promise.allSettled(previewObjects
       .filter(previewObject => 'adhesePreviewCreativeId' in previewObject)
       .map(async (previewObject) => {
-        const endpoint = new URL(`https://${account}-preview.adhese.org/creatives/preview/json/tag.do`);
+        const endpoint = new URL(`${context.options.previewHost}/creatives/preview/json/tag.do`);
         endpoint.searchParams.set(
           'id',
           previewObject.adhesePreviewCreativeId,
@@ -32,7 +32,7 @@ export async function requestPreviews(account: string): Promise<ReadonlyArray<Ad
       })),
     import('./requestAds.schema').then(module => module.parseResponse),
   ]);
-
+  
   return parseResponse(list
     .filter((response): response is PromiseFulfilledResult<ReadonlyArray<Record<string, unknown>>> => {
       if (response.status === 'rejected') {
