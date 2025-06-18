@@ -1,4 +1,3 @@
-import type { AdMultiRequestOptions } from './requestAds';
 import type { AdheseAd } from './requestAds.schema';
 import { logger } from '../logger/logger';
 
@@ -6,7 +5,7 @@ import { logger } from '../logger/logger';
  * Request preview ads for the given account. This function will only return items when there are preview objects in the
  * URL detected.
  */
-export async function requestPreviews(previewHost:string): Promise<ReadonlyArray<AdheseAd>> {
+export async function requestPreviews(previewHost: string): Promise<ReadonlyArray<AdheseAd>> {
   const previewObjects = getPreviewObjects();
   const [list, parseResponse] = await Promise.all([
     Promise.allSettled(previewObjects
