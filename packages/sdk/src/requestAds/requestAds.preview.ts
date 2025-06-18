@@ -1,12 +1,12 @@
+import type { AdMultiRequestOptions } from './requestAds';
 import type { AdheseAd } from './requestAds.schema';
 import { logger } from '../logger/logger';
-import { AdMultiRequestOptions } from './requestAds';
 
 /**
  * Request preview ads for the given account. This function will only return items when there are preview objects in the
  * URL detected.
  */
-export async function requestPreviews({context}: Omit<AdMultiRequestOptions, 'method'>) {
+export async function requestPreviews({ context }: AdMultiRequestOptions): Promise<ReadonlyArray<AdheseAd>> {
   const previewObjects = getPreviewObjects();
   const [list, parseResponse] = await Promise.all([
     Promise.allSettled(previewObjects
@@ -32,7 +32,7 @@ export async function requestPreviews({context}: Omit<AdMultiRequestOptions, 'me
       })),
     import('./requestAds.schema').then(module => module.parseResponse),
   ]);
-  
+
   return parseResponse(list
     .filter((response): response is PromiseFulfilledResult<ReadonlyArray<Record<string, unknown>>> => {
       if (response.status === 'rejected') {
