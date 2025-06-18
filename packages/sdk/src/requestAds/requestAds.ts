@@ -86,7 +86,7 @@ export async function requestAds(requestOptions: AdMultiRequestOptions): Promise
       context.options.requestType?.toUpperCase() === 'POST'
         ? requestWithPost(options)
         : requestWithGet(options),
-      requestPreviews(options.context.options.previewHost),
+      requestPreviews(options?.context?.options?.previewHost ?? ''),
       import('./requestAds.schema').then(module => module.parseResponse),
     ]);
 
@@ -103,7 +103,6 @@ export async function requestAds(requestOptions: AdMultiRequestOptions): Promise
 
     const matchedPreviews: Array<AdheseAd> = [];
     for (const [, value] of context.slots.entries()) {
-      logger.info('the key is:', value);
       const ad = result.find(({ slotName }) => slotName === value.name);
       const partnerAd = previews.find(preview => preview.adType === value.format);
       if (ad || partnerAd) {
