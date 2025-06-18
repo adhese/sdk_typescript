@@ -6,12 +6,23 @@ import type {
   MergedOptions,
 } from './main.types';
 import type { AdheseSlot, AdheseSlotOptions } from './slot/slot.types';
-import { awaitTimeout, createEventManager, effectScope, omit, reactive, watch } from '@adhese/sdk-shared';
+import {
+  awaitTimeout,
+  createEventManager,
+  effectScope,
+  omit,
+  reactive,
+  watch,
+} from '@adhese/sdk-shared';
 import { version } from '../package.json';
 import { useConsent } from './consent/consent';
 import { createGlobalHooks } from './hooks';
 import { logger } from './logger/logger';
-import { useMainDebugMode, useMainParameters, useMainQueryDetector } from './main.composables';
+import {
+  useMainDebugMode,
+  useMainParameters,
+  useMainQueryDetector,
+} from './main.composables';
 import { fetchAllUnrenderedSlots } from './main.utils';
 
 import { createSlotManager } from './slotManager/slotManager';
@@ -23,7 +34,9 @@ import { createSlotManager } from './slotManager/slotManager';
  *
  * @return Adhese The Adhese instance.
  */
-export function createAdhese<T extends ReadonlyArray<AdhesePlugin>>(options: AdheseOptions<T>): Adhese<T> {
+export function createAdhese<T extends ReadonlyArray<AdhesePlugin>>(
+  options: AdheseOptions<T>,
+): Adhese<T> {
   const scope = effectScope();
 
   return scope.run(() => {
@@ -75,12 +88,17 @@ export function createAdhese<T extends ReadonlyArray<AdhesePlugin>>(options: Adh
       });
 
       const name = data.name as keyof typeof context.plugins;
-      context.plugins[name] = omit(data, ['name']) as typeof context.plugins[typeof name];
+      context.plugins[name] = omit(data, [
+        'name',
+      ]) as (typeof context.plugins)[typeof name];
     }
 
-    watch(() => context.location, (newLocation) => {
-      context.events?.locationChange.dispatch(newLocation);
-    });
+    watch(
+      () => context.location,
+      (newLocation) => {
+        context.events?.locationChange.dispatch(newLocation);
+      },
+    );
 
     useMainParameters(context, mergedOptions);
 
@@ -105,7 +123,9 @@ export function createAdhese<T extends ReadonlyArray<AdhesePlugin>>(options: Adh
     context.addSlot = addSlot;
 
     async function findDomSlots(): Promise<ReadonlyArray<AdheseSlot>> {
-      const domSlots = (await slotManager.findDomSlots() ?? []).filter(slot => !slot.lazyLoading);
+      const domSlots = ((await slotManager.findDomSlots()) ?? []).filter(
+        slot => !slot.lazyLoading,
+      );
 
       if (domSlots.length <= 0)
         return [];
@@ -138,9 +158,6 @@ export function createAdhese<T extends ReadonlyArray<AdhesePlugin>>(options: Adh
 
     hooks.onInit(async () => {
       await awaitTimeout(0);
-
-      if ((slotManager.getAll().length ?? 0) > 0)
-        await fetchAllUnrenderedSlots(context.getAll()).catch(logger.error);
 
       if (mergedOptions.findDomSlotsOnLoad)
         await context?.findDomSlots();
