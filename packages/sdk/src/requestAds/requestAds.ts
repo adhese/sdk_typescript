@@ -101,14 +101,19 @@ export async function requestAds(requestOptions: AdMultiRequestOptions): Promise
     if (previews.length > 0)
       logger.info(`Found ${previews.length} ${previews.length === 1 ? 'preview' : 'previews'}. Replacing ads in response with preview items`, previews);
 
-    const matchedPreviews = result.map(({ slotName, ...ad }) => {
-      const partnerAd = previews.find(preview => ad.adFormat === preview.adFormat);
-
-      return ({
-        ...(partnerAd ?? ad),
-        slotName,
-      });
-    });
+    const matchedPreviews: AdheseAd[] = [];
+    for (const [key, value] of context.slots.entries()) {
+      logger.info("the key is:", value);
+      const ad = result.find(({ slotName }) => slotName === value.name);
+      const partnerAd = previews.find(preview => preview.adType === value.format);
+      if (ad || partnerAd) {
+        const baseAd = partnerAd ?? ad;
+        matchedPreviews.push({
+          ...baseAd,
+          slotName: value.name
+        } as AdheseAd);
+      }
+    }
 
     if (matchedPreviews.length > 0)
       context.events?.previewReceived.dispatch(matchedPreviews);
