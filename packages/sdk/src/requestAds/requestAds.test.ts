@@ -334,7 +334,7 @@ describe('requestPreviews', () => {
   });
 
   it('should be able to request previews', async () => {
-    const previews = await requestPreviews(context.options.previewHost);
+    const previews = await requestPreviews(context?.options?.previewHost ?? `https://${context.options.account}-preview.adhese.org`);
     expect(previews.length).toBeGreaterThan(0);
     for (const preview of previews) {
       expect(preview.preview).toBe(true);
