@@ -44,6 +44,8 @@ export const adRequestHandlers = [
       libId: slotName,
       id: slotName,
       origin: 'JERLICIA',
+      impressionCounter: '/impression',
+      viewableImpressionCounter: '/viewable-impression',
     }))));
   }),
   http.post('https://ads-dale.adhese.com/json', async ({

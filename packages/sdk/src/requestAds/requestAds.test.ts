@@ -5,6 +5,7 @@ import { logger } from '../logger/logger';
 import { createSlot } from '../slot/slot';
 import { testContext } from '../testUtils';
 import { requestAd, requestAds } from './requestAds';
+import { requestPreviews } from './requestAds.preview';
 import { type AdResponse, adSchema } from './requestAds.schema';
 import { parseParameters } from './requestAds.utils';
 
@@ -13,6 +14,16 @@ describe('requestAds', () => {
 
   beforeEach(() => {
     context = testContext;
+    context.slots.set("format=foo,location=foo,slot=baz", createSlot({
+      format: 'foo',
+      slot: 'baz',
+      context,
+    }));
+    context.slots.set("format=foo,location=foo,slot=baz2", createSlot({
+      format: 'foo',
+      slot: 'baz2',
+      context,
+    }));
   });
 
   afterEach(() => {
@@ -30,7 +41,7 @@ describe('requestAds', () => {
             context,
           }),
           createSlot({
-            format: 'foo2',
+            format: 'foo',
             slot: 'baz2',
             context,
           }),
@@ -50,7 +61,6 @@ describe('requestAds', () => {
         requestType: 'GET',
       },
     };
-
     const ads = await requestAds(
       {
         slots: [
@@ -60,7 +70,7 @@ describe('requestAds', () => {
             context,
           }),
           createSlot({
-            format: 'foo2',
+            format: 'foo',
             slot: 'baz2',
             context,
           }),
@@ -325,24 +335,11 @@ describe('requestPreviews', () => {
   });
 
   it('should be able to request previews', async () => {
-    const ads = await requestAds({
-      slots: [
-        createSlot({
-          format: 'foo',
-          context,
-        }),
-        createSlot({
-          format: 'foo',
-          context,
-        }),
-      ],
-      context,
-    });
-
-    expect(ads.length).toBe(2);
-
-    for (const ad of ads) {
-      expect(ad.preview).toBe(true);
+    const previews = await requestPreviews(context.options.previewHost);
+    expect(previews.length).toBeGreaterThan(0);
+    for (const preview of previews) {
+      expect(preview.preview).toBe(true);
     }
   });
 });
+
