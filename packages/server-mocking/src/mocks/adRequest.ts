@@ -39,7 +39,7 @@ export const adRequestHandlers = [
       adType: 'foo',
       // eslint-disable-next-line ts/naming-convention
       slotID: slotName,
-      slotName,
+      slotName: slotName.replace('sl', ''),
       tag: '<a>foo</a>',
       libId: slotName,
       id: slotName,

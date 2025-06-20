@@ -14,12 +14,12 @@ describe('requestAds', () => {
 
   beforeEach(() => {
     context = testContext;
-    context.slots.set("format=foo,location=foo,slot=baz", createSlot({
+    context.slots.set('format=foo,location=foo,slot=baz', createSlot({
       format: 'foo',
       slot: 'baz',
       context,
     }));
-    context.slots.set("format=foo,location=foo,slot=baz2", createSlot({
+    context.slots.set('format=foo,location=foo,slot=baz2', createSlot({
       format: 'foo',
       slot: 'baz2',
       context,
@@ -78,7 +78,6 @@ describe('requestAds', () => {
         context,
       },
     );
-
     expect(ads.length).toBe(2);
   });
 
@@ -342,4 +341,3 @@ describe('requestPreviews', () => {
     }
   });
 });
-
