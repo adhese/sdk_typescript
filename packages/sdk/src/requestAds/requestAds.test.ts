@@ -1,6 +1,14 @@
 import type { AdheseContext } from '@adhese/sdk';
 import { dateLike, numberLike, urlLike } from '@adhese/sdk-shared/validators';
-import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  type MockInstance,
+  vi,
+} from 'vitest';
 import { logger } from '../logger/logger';
 import { createSlot } from '../slot/slot';
 import { testContext } from '../testUtils';
@@ -14,16 +22,22 @@ describe('requestAds', () => {
 
   beforeEach(() => {
     context = testContext;
-    context.slots.set('format=foo,location=foo,slot=baz', createSlot({
-      format: 'foo',
-      slot: 'baz',
-      context,
-    }));
-    context.slots.set('format=foo,location=foo,slot=baz2', createSlot({
-      format: 'foo',
-      slot: 'baz2',
-      context,
-    }));
+    context.slots.set(
+      'format=foo,location=foo,slot=baz',
+      createSlot({
+        format: 'foo',
+        slot: 'baz',
+        context,
+      }),
+    );
+    context.slots.set(
+      'format=foo,location=foo,slot=baz2',
+      createSlot({
+        format: 'foo',
+        slot: 'baz2',
+        context,
+      }),
+    );
   });
 
   afterEach(() => {
@@ -32,23 +46,21 @@ describe('requestAds', () => {
   });
 
   it('should be able to request multiple ads', async () => {
-    const ads = await requestAds(
-      {
-        slots: [
-          createSlot({
-            format: 'foo',
-            slot: 'baz',
-            context,
-          }),
-          createSlot({
-            format: 'foo',
-            slot: 'baz2',
-            context,
-          }),
-        ],
-        context,
-      },
-    );
+    const ads = await requestAds({
+      slots: [
+        createSlot({
+          format: 'foo',
+          slot: 'baz',
+          context,
+        }),
+        createSlot({
+          format: 'foo',
+          slot: 'baz2',
+          context,
+        }),
+      ],
+      context,
+    });
 
     expect(ads.length).toBe(2);
   });
@@ -61,23 +73,21 @@ describe('requestAds', () => {
         requestType: 'GET',
       },
     };
-    const ads = await requestAds(
-      {
-        slots: [
-          createSlot({
-            format: 'foo',
-            slot: 'baz',
-            context,
-          }),
-          createSlot({
-            format: 'foo',
-            slot: 'baz2',
-            context,
-          }),
-        ],
-        context,
-      },
-    );
+    const ads = await requestAds({
+      slots: [
+        createSlot({
+          format: 'foo',
+          slot: 'baz',
+          context,
+        }),
+        createSlot({
+          format: 'foo',
+          slot: 'baz2',
+          context,
+        }),
+      ],
+      context,
+    });
     expect(ads.length).toBe(2);
   });
 
@@ -91,18 +101,16 @@ describe('requestAds', () => {
     };
 
     try {
-      await requestAds(
-        {
-          slots: [
-            createSlot({
-              format: 'foo',
-              slot: 'baz',
-              context,
-            }),
-          ],
-          context,
-        },
-      );
+      await requestAds({
+        slots: [
+          createSlot({
+            format: 'foo',
+            slot: 'baz',
+            context,
+          }),
+        ],
+        context,
+      });
     }
     catch (error) {
       expect(error).toBeInstanceOf(Error);
@@ -212,16 +220,18 @@ describe('schema', () => {
       tag: '<a>foo</a>',
       id: 'baz',
       origin: 'JERLICIA',
-      additionalCreatives: [{
-        adFormat: 'foo',
-        id: 'baz',
-        adType: 'foo',
-        // eslint-disable-next-line ts/naming-convention
-        slotID: 'bar',
-        slotName: 'baz',
-        tag: '<a>foo</a>',
-        origin: 'JERLICIA',
-      }],
+      additionalCreatives: [
+        {
+          adFormat: 'foo',
+          id: 'baz',
+          adType: 'foo',
+          // eslint-disable-next-line ts/naming-convention
+          slotID: 'bar',
+          slotName: 'baz',
+          tag: '<a>foo</a>',
+          origin: 'JERLICIA',
+        },
+      ],
     } satisfies AdResponse;
 
     const result = adSchema.parse(response);
@@ -269,10 +279,12 @@ describe('parseParameters', () => {
   });
 
   it('should be able to parse parameters', () => {
-    const parsedParameters = parseParameters(new Map<string, string | ReadonlyArray<string>>([
-      ['fo', ['bar']],
-      ['ba', 'qux'],
-    ]));
+    const parsedParameters = parseParameters(
+      new Map<string, string | ReadonlyArray<string>>([
+        ['fo', ['bar']],
+        ['ba', 'qux'],
+      ]),
+    );
 
     expect(parsedParameters).toEqual({
       fo: ['bar'],
@@ -281,12 +293,16 @@ describe('parseParameters', () => {
   });
 
   it('should be able to parse and filter parameters with invalid keys', () => {
-    const parsedParameters = parseParameters(new Map<string, string | ReadonlyArray<string>>([
-      ['fo', ['bar']],
-      ['bar', 'qux'],
-    ]));
+    const parsedParameters = parseParameters(
+      new Map<string, string | ReadonlyArray<string>>([
+        ['fo', ['bar']],
+        ['bar', 'qux'],
+      ]),
+    );
 
-    expect(warnLoggerSpy).toHaveBeenCalledWith('Invalid parameter key: bar. Key should be exactly 2 characters long. Key will be ignored.');
+    expect(warnLoggerSpy).toHaveBeenCalledWith(
+      'Invalid parameter key: bar. Key should be exactly 2 characters long. Key will be ignored.',
+    );
 
     expect(parsedParameters).toEqual({
       fo: ['bar'],
@@ -294,14 +310,16 @@ describe('parseParameters', () => {
   });
 
   it('should be able to parse and filter parameters with invalid values', () => {
-    const parsedParameters = parseParameters(new Map<string, string | ReadonlyArray<string>>([
-      ['aa', ['bar']],
-      ['bb', 'foo*bar'],
-      ['cc', ['foo*bar']],
-      ['dd', 'α&β'],
-      ['ee', ['α&β']],
-      ['ff', 'զվար)ճանք'],
-    ]));
+    const parsedParameters = parseParameters(
+      new Map<string, string | ReadonlyArray<string>>([
+        ['aa', ['bar']],
+        ['bb', 'foo*bar'],
+        ['cc', ['foo*bar']],
+        ['dd', 'α&β'],
+        ['ee', ['α&β']],
+        ['ff', 'զվար)ճանք'],
+      ]),
+    );
 
     expect(parsedParameters).toEqual({
       aa: ['bar'],
@@ -324,7 +342,9 @@ describe('requestPreviews', () => {
   beforeEach(() => {
     Object.defineProperty(window, 'location', {
       writable: true,
-      value: new URL('https://foo.com?adhesePreviewCreativeId=foo-bar&adheseCreativeTemplateId=foo-bar&adhesePreviewCreativeId=bar&adhesePreviewCreativeId=fail'),
+      value: new URL(
+        'https://foo.com?adhesePreviewCreativeId=foo-bar&adheseCreativeTemplateId=foo-bar&adhesePreviewCreativeId=bar&adhesePreviewCreativeId=fail',
+      ),
     });
   });
 
@@ -334,7 +354,7 @@ describe('requestPreviews', () => {
   });
 
   it('should be able to request previews', async () => {
-    const previews = await requestPreviews(context?.options?.previewHost ?? `https://${context.options.account}-preview.adhese.org`);
+    const previews = await requestPreviews(context?.options?.previewHost);
     expect(previews.length).toBeGreaterThan(0);
     for (const preview of previews) {
       expect(preview.preview).toBe(true);

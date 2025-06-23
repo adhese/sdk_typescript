@@ -14,7 +14,11 @@ export type AdhesePluginInformation = {
   hooks: ReturnType<typeof createGlobalHooks>;
 };
 
-export type AdhesePlugin<T extends { name: string } & Record<string, unknown> = { name: string } & Record<string, unknown>> = (context: AdheseContext, plugin: AdhesePluginInformation) => T;
+export type AdhesePlugin<
+  T extends { name: string } & Record<string, unknown> = {
+    name: string;
+  } & Record<string, unknown>,
+> = (context: AdheseContext, plugin: AdhesePluginInformation) => T;
 
 type BaseOptions = {
   /**
@@ -100,57 +104,71 @@ type BaseOptions = {
    * The query detector options for the Adhese instance.
    */
   queries?: Record<string, string>;
-} & ({
-  viewabilityTracking?: true;
-  /**
-   * Options for the viewability tracking of the ads. If `true` or `undefined`, the default viewability tracking options will be used.
-   *
-   * @default true
-   */
-  viewabilityTrackingOptions?: {
+} & (
+  | {
+    viewabilityTracking?: true;
     /**
-     * Fraction of the ad that needs to be in the viewport for the ad to be considered viewable.
+     * Options for the viewability tracking of the ads. If `true` or `undefined`, the default viewability tracking options will be used.
      *
-     * @default 0.2
+     * @default true
      */
-    threshold?: number;
+    viewabilityTrackingOptions?: {
+      /**
+       * Fraction of the ad that needs to be in the viewport for the ad to be considered viewable.
+       *
+       * @default 0.2
+       */
+      threshold?: number;
+      /**
+       * The duration the ad needs to be in the viewport for the ad to be considered viewable in milliseconds.
+       *
+       * @default 1000
+       */
+      duration?: number;
+      /**
+       * The margin around the viewport where the ad is considered viewable.
+       *
+       * @default '0px'
+       */
+      rootMargin?: string;
+    };
+  }
+  | {
+    viewabilityTracking?: false;
+    viewabilityTrackingOptions?: never;
+  }
+) &
+Pick<SlotManagerOptions, 'initialSlots'>;
+
+export type AdheseOptions<T extends ReadonlyArray<AdhesePlugin> = []> =
+  BaseOptions & {
     /**
-     * The duration the ad needs to be in the viewport for the ad to be considered viewable in milliseconds.
-     *
-     * @default 1000
+     * The plugins that are used for the Adhese instance.
      */
-    duration?: number;
-    /**
-     * The margin around the viewport where the ad is considered viewable.
-     *
-     * @default '0px'
-     */
-    rootMargin?: string;
+    plugins?: T['length'] extends 0 ? ReadonlyArray<AdhesePlugin> : T;
   };
-} | {
-  viewabilityTracking?: false;
-  viewabilityTrackingOptions?: never;
-}) & Pick<SlotManagerOptions, 'initialSlots'>;
 
-export type AdheseOptions<T extends ReadonlyArray<AdhesePlugin> = []> = BaseOptions & {
-  /**
-   * The plugins that are used for the Adhese instance.
-   */
-  plugins?: T['length'] extends 0 ? ReadonlyArray<AdhesePlugin> : T;
-};
-
-export type MergedOptions = Merge<BaseOptions, Required<Pick<BaseOptions, 'host' |
-  'poolHost' |
-  'location' |
-  'requestType' |
-  'debug' |
-  'initialSlots' |
-  'findDomSlotsOnLoad' |
-  'consent' |
-  'logUrl' |
-  'logReferrer' |
-  'eagerRendering' |
-  'viewabilityTracking'>>>;
+export type MergedOptions = Merge<
+  BaseOptions,
+  Required<
+    Pick<
+      BaseOptions,
+      | 'host'
+      | 'poolHost'
+      | 'previewHost'
+      | 'location'
+      | 'requestType'
+      | 'debug'
+      | 'initialSlots'
+      | 'findDomSlotsOnLoad'
+      | 'consent'
+      | 'logUrl'
+      | 'logReferrer'
+      | 'eagerRendering'
+      | 'viewabilityTracking'
+    >
+  >
+>;
 
 type AdheseEvents = {
   locationChange: string;
@@ -225,7 +243,9 @@ type BaseAdhese = {
   /**
    * Adds a new slot to the Adhese instance and renders it.
    */
-  addSlot(slot: Omit<AdheseSlotOptions, 'location' | 'context'>): Readonly<AdheseSlot>;
+  addSlot(
+    slot: Omit<AdheseSlotOptions, 'location' | 'context'>
+  ): Readonly<AdheseSlot>;
   /**
    * Finds all slots in the DOM and adds them to the Adhese instance.
    */
@@ -238,13 +258,37 @@ type BaseAdhese = {
   dispose(): void;
 };
 
-type ExtractFromTupleWithNameKey<T extends string, U extends Record<string, unknown>> = U extends { name: T } ? U : never;
-type Plugins<T extends ReadonlyArray<AdhesePlugin> = [], U extends { name: string } = ReturnType<Required<AdheseOptions<T>>['plugins'][number]>> = {
+type ExtractFromTupleWithNameKey<
+  T extends string,
+  U extends Record<string, unknown>,
+> = U extends { name: T } ? U : never;
+type Plugins<
+  T extends ReadonlyArray<AdhesePlugin> = [],
+  U extends { name: string } = ReturnType<
+    Required<AdheseOptions<T>>['plugins'][number]
+  >,
+> = {
   [K in U['name']]: Omit<ExtractFromTupleWithNameKey<K, U>, 'name'>;
 };
 
-type ReadonlyProps = 'options' | 'isDisposed' | 'logger' | 'events' | 'get' | 'getAll' | 'addSlot' | 'findDomSlots' | 'dispose' | 'slots' | 'device' | 'consentString';
-export type Adhese<T extends ReadonlyArray<AdhesePlugin> = []> = Omit<BaseAdhese, ReadonlyProps> & Readonly<Pick<BaseAdhese, ReadonlyProps>> & {
+type ReadonlyProps =
+  | 'options'
+  | 'isDisposed'
+  | 'logger'
+  | 'events'
+  | 'get'
+  | 'getAll'
+  | 'addSlot'
+  | 'findDomSlots'
+  | 'dispose'
+  | 'slots'
+  | 'device'
+  | 'consentString';
+export type Adhese<T extends ReadonlyArray<AdhesePlugin> = []> = Omit<
+  BaseAdhese,
+  ReadonlyProps
+> &
+Readonly<Pick<BaseAdhese, ReadonlyProps>> & {
   plugins: Plugins<T>;
 };
 
@@ -252,12 +296,27 @@ export type AdheseContextState = Omit<BaseAdhese, 'options'> & {
   readonly options: MergedOptions;
   hooks: ReturnType<typeof createGlobalHooks>;
 };
-export type AdheseContextStateWithPlugins<T extends ReadonlyArray<AdhesePlugin> = []> = AdheseContextState & {
+export type AdheseContextStateWithPlugins<
+  T extends ReadonlyArray<AdhesePlugin> = [],
+> = AdheseContextState & {
   plugins: Partial<Plugins<T>>;
 };
 
-type NonPartialProps = 'options' | 'logger' | 'events' | 'isDisposed' | 'location' | 'consent' | 'debug' | 'parameters' | 'slots' | 'hooks';
-export type AdheseContext = Omit<Partial<AdheseContextState>, NonPartialProps> & Pick<AdheseContextState, NonPartialProps>;
-export type AdheseContextWithPlugins<T extends ReadonlyArray<AdhesePlugin> = []> = AdheseContext & {
+type NonPartialProps =
+  | 'options'
+  | 'logger'
+  | 'events'
+  | 'isDisposed'
+  | 'location'
+  | 'consent'
+  | 'debug'
+  | 'parameters'
+  | 'slots'
+  | 'hooks';
+export type AdheseContext = Omit<Partial<AdheseContextState>, NonPartialProps> &
+  Pick<AdheseContextState, NonPartialProps>;
+export type AdheseContextWithPlugins<
+  T extends ReadonlyArray<AdhesePlugin> = [],
+> = AdheseContext & {
   plugins?: Plugins<T>;
 };
