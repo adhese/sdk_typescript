@@ -12,7 +12,7 @@ export const adPreviewRequestHandlers = [
 
     return new HttpResponse(JSON.stringify([{
       adFormat: 'foo',
-      adType: 'bar',
+      adType: 'foo',
       // eslint-disable-next-line ts/naming-convention
       slotID: 'foo',
       slotName: 'foo-bar',
