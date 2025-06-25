@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.7.1
+
+### Patch Changes
+
+- 59b530a: Added functionality of passing a previewHost, needed for staging environements. Changed the way previewed ads are matched to known slots, Using the known slot information instead of returned ads information.
+
 ## 1.7.0
 
 ### Minor Changes

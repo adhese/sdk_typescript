@@ -12,7 +12,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@adhese/sdk": "^1.7.0",
+    "@adhese/sdk": "^1.7.1",
     "@adhese/sdk-devtools": "^1.0.2",
     "@adhese/sdk-safe-frame": "^1.0.0"
   }
