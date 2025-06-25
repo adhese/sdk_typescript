@@ -4,7 +4,7 @@ import { defineConfig } from 'vite';
 export default defineConfig(({ mode }) => ({
   define: {
     // eslint-disable-next-line ts/naming-convention
-    'process.env.NODE_ENV': mode,
+    'process.env.NODE_ENV': JSON.stringify(mode),
   },
   build: {
     outDir: 'lib',
