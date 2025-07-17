@@ -50,7 +50,7 @@ const runRequestAdsBatch = debounce(async (context: AdheseContext) => {
 
   return ads;
 }, {
-  waitMs: 20,
+  waitMs: 200,
   timing: 'trailing',
 });
 
