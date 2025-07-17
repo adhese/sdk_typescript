@@ -20,34 +20,36 @@ export type AdMultiRequestOptions = Omit<AdRequestOptions, 'slot'> & {
   slots: ReadonlyArray<AdRequestOptions['slot']>;
 };
 
-const batch = new Map<string, {
-  options: AdRequestOptions;
-  resolve(ad: AdheseAd | null): void;
-}>();
+const batch = new Map<
+  string,
+  {
+    options: AdRequestOptions;
+    resolve(ad: AdheseAd | null): void;
+  }
+>();
 
 /**
  * Debounced function to request ads in batches. This function is debounced to prevent multiple requests for the same ad.
  */
-const runRequestAdsBatch = debounce(async (context: AdheseContext) => {
-  if (batch.size === 0)
-    return [];
+const runRequestAdsBatch = debounce(
+  async (context: AdheseContext) => {
+    if (batch.size === 0)
+      return [];
 
-  const ads = await requestAds({
-    slots: Array.from(batch.values()).map(({ options }) => options.slot),
-    context,
-  });
+    const ads = await requestAds({
+      slots: Array.from(batch.values()).map(({ options }) => options.slot),
+      context,
+    });
 
-  for (const { options, resolve } of batch.values()) {
-    const ad = ads.find(({ slotName }) => slotName === options.slot.name);
+    for (const { options, resolve } of batch.values()) {
+      const ad = ads.find(({ slotName }) => slotName === options.slot.name);
 
-    if (ad)
-      resolve(ad);
-    else
-      resolve(null);
-  }
+      if (ad)
+        resolve(ad);
+      else resolve(null);
+    }
 
-  batch.clear();
-
+    batch.clear();
   return ads;
 }, {
   waitMs: 200,
@@ -57,11 +59,12 @@ const runRequestAdsBatch = debounce(async (context: AdheseContext) => {
 /**
  * Request a single ad from the API. If you need to fetch multiple ads at once use the `requestAds` function.
  */
-export async function requestAd(options: AdRequestOptions): Promise<AdheseAd | null> {
+export async function requestAd(
+  options: AdRequestOptions,
+): Promise<AdheseAd | null> {
   const promise = new Promise<AdheseAd | null>((resolve) => {
     batch.set(options.slot.name, { options, resolve });
-  },
-  );
+  });
 
   await runRequestAdsBatch.call(options.context);
 
@@ -71,8 +74,12 @@ export async function requestAd(options: AdRequestOptions): Promise<AdheseAd | n
 /**
  * Request multiple ads from the API. If you need to fetch a single ad use the `requestAd` function.
  */
-export async function requestAds(requestOptions: AdMultiRequestOptions): Promise<ReadonlyArray<AdheseAd>> {
-  const options = await requestOptions.context.hooks.runOnRequest(requestOptions);
+export async function requestAds(
+  requestOptions: AdMultiRequestOptions,
+): Promise<ReadonlyArray<AdheseAd>> {
+  const options = await requestOptions.context.hooks.runOnRequest(
+    requestOptions,
+  );
 
   const { context } = options;
 
@@ -86,29 +93,44 @@ export async function requestAds(requestOptions: AdMultiRequestOptions): Promise
       context.options.requestType?.toUpperCase() === 'POST'
         ? requestWithPost(options)
         : requestWithGet(options),
-      requestPreviews(context.options.account),
+      requestPreviews(options?.context?.options.previewHost),
       import('./requestAds.schema').then(module => module.parseResponse),
     ]);
 
     logger.debug('Received response', response);
 
-    if (!response.ok)
-      throw new Error(`Failed to request ad: ${response.status} ${response.statusText}`);
+    if (!response.ok) {
+      throw new Error(
+        `Failed to request ad: ${response.status} ${response.statusText}`,
+      );
+    }
 
-    const result = parseResponse((await response.json() as unknown));
+    const result = parseResponse((await response.json()) as unknown);
     logger.debug('Parsed ad', result);
 
-    if (previews.length > 0)
-      logger.info(`Found ${previews.length} ${previews.length === 1 ? 'preview' : 'previews'}. Replacing ads in response with preview items`, previews);
+    if (previews.length > 0) {
+      logger.info(
+        `Found ${previews.length} ${
+          previews.length === 1 ? 'preview' : 'previews'
+        }. Replacing ads in response with preview items`,
+        previews,
+      );
+    }
 
-    const matchedPreviews = result.map(({ slotName, ...ad }) => {
-      const partnerAd = previews.find(preview => ad.adFormat === preview.adFormat);
-
-      return ({
-        ...(partnerAd ?? ad),
-        slotName,
-      });
-    });
+    const matchedPreviews: Array<AdheseAd> = [];
+    for (const [, value] of context.slots.entries()) {
+      const ad = result.find(({ slotName }) => slotName === value.name);
+      const partnerAd = previews.find(
+        preview => preview.adType === value.format,
+      );
+      if (ad || partnerAd) {
+        const baseAd = partnerAd ?? ad;
+        matchedPreviews.push({
+          ...baseAd,
+          slotName: value.name,
+        } as AdheseAd);
+      }
+    }
 
     if (matchedPreviews.length > 0)
       context.events?.previewReceived.dispatch(matchedPreviews);
