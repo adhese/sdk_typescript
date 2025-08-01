@@ -52,10 +52,12 @@ const adhese = createAdhese({
 Slots are found by looking for elements with the `adunit` class. The element is required to have a
 `data-format="YOUR_FORMAT"` attribute set on the element to know which format needs to be fetched.
 
+An optional attribute `data-slot="SLOT_CODE"` can be added and allows you to set up extra positions for the same format.
+
 Example DOM slots:
 ```html
 <div class="adunit" data-format="billboard"></div>
-
+<div class="adunit" data-format="billboard" data-slot="_2"></div>
 ```
 
 ### Fetching slots before DOM is ready
