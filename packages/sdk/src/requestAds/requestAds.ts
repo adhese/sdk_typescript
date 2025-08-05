@@ -55,7 +55,8 @@ const runRequestAdsBatch = debounce(
   {
     waitMs: 200,
     timing: 'trailing',
-});
+  },
+);
 
 /**
  * Request a single ad from the API. If you need to fetch multiple ads at once use the `requestAds` function.
