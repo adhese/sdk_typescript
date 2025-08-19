@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.7.2
+
+### Patch Changes
+
+- 3e82746: prevent excessive ad requests
+
 ## 1.7.1
 
 ### Patch Changes
