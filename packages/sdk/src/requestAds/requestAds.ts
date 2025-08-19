@@ -50,11 +50,10 @@ const runRequestAdsBatch = debounce(
     }
 
     batch.clear();
-
     return ads;
   },
   {
-    waitMs: 20,
+    waitMs: 200,
     timing: 'trailing',
   },
 );
