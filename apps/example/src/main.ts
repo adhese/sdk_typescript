@@ -64,64 +64,19 @@ const adhese = createAdhese({
   consent: true,
   initialSlots: [
     {
-      format: 'skyscraper',
+      format: 'halfpage',
       containingElement: 'skyscraper',
-    },
-    {
-      format: 'halfwidthsmallresponsive',
-      containingElement: 'halfwidthsmallresponsive',
-      renderMode: 'inline',
-      setup(_, { onBeforeRender }): void {
-        onBeforeRender((data) => {
-          const ad = data as AdheseAd<CustomAdTag>;
-
-          if (typeof ad.tag === 'string')
-            return ad as AdheseAd<string>;
-
-          return {
-            ...ad,
-            tag: renderHalfwidth(ad.tag),
-          };
-        });
-      },
-    },
+    }
   ],
-  location: '_sdk_example_',
+  location: 'demo.com_kitchen',
+  refreshOnResize: false,
   plugins: [devtoolsPlugin, stackSlotsPlugin],
 });
 
 window.adhese = adhese;
 
-adhese.plugins.stackSlots.addSlot({
-  format: 'newstack',
-  containingElement: 'newstack',
-  maxAds: 3,
-  setup(_, hooks) {
-    hooks.onBeforeRender((data) => {
-      const ad = data as AdheseAd<ReadonlyArray<CustomAdTag>>;
-
-      if (typeof ad.tag === 'string')
-        return ad as AdheseAd<string>;
-
-      return {
-        ...ad,
-        tag: ad.tag.map(renderHalfwidth).join(''),
-      };
-    });
-  },
-});
-
 adhese.addSlot({
-  format: 'leaderboard',
+  format: 'billboard',
   containingElement: 'leaderboard',
   renderMode: 'inline',
-});
-
-adhese.addSlot({
-  format: 'imu',
-  containingElement: 'imu',
-  lazyLoading: true,
-  lazyLoadingOptions: {
-    rootMargin: '0px',
-  },
 });
