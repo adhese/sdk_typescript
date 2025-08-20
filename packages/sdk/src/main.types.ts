@@ -101,6 +101,12 @@ type BaseOptions = {
    */
   eagerRendering?: boolean;
   /**
+   * If `true`, ads will be refreshed when a new device Type is detected when resizing your window
+   *
+   * @default true
+   */
+  refreshOnResize?: boolean;
+  /**
    * The query detector options for the Adhese instance.
    */
   queries?: Record<string, string>;
