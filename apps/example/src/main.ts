@@ -1,6 +1,5 @@
 import { createAdhese } from '@adhese/sdk';
 import { devtoolsPlugin } from '@adhese/sdk-devtools';
-import { stackSlotsPlugin } from '@adhese/sdk-stack-slots';
 
 const adhese = createAdhese({
   account: 'demo',
@@ -14,7 +13,7 @@ const adhese = createAdhese({
   ],
   location: 'demo.com_kitchen',
   refreshOnResize: false,
-  plugins: [devtoolsPlugin, stackSlotsPlugin],
+  plugins: [devtoolsPlugin],
 });
 
 window.adhese = adhese;
