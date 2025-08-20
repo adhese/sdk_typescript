@@ -9,7 +9,7 @@ const adhese = createAdhese({
     {
       format: 'halfpage',
       containingElement: 'skyscraper',
-    }
+    },
   ],
   location: 'demo.com_kitchen',
   refreshOnResize: false,
