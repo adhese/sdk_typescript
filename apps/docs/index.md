@@ -24,7 +24,7 @@ bun add @adhese/sdk
 :::
 
 ### JS file
-You can also include the SDK in your project by including the following script tag in your HTML. <a href="./public/files/adhese.js" download>Download the latest version</a>.
+You can also include the SDK in your project by including the following script tag in your HTML. <a href="./files/adhese.js" download>Download the latest version</a>.
 
 ```html
 <script src="./files/adhese.js"></script>
