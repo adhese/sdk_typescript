@@ -1,4 +1,4 @@
-## Installation
+## Installationonononono
 
 ### NPM
 You can install the SDK into your project using NPM:
