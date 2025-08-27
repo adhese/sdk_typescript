@@ -54,6 +54,7 @@ export function createAdhese<T extends ReadonlyArray<AdhesePlugin>>(
       logUrl: true,
       eagerRendering: false,
       viewabilityTracking: true,
+      refreshOnResize: true,
       ...options,
     };
 
@@ -138,8 +139,8 @@ export function createAdhese<T extends ReadonlyArray<AdhesePlugin>>(
     context.findDomSlots = findDomSlots;
 
     useMainDebugMode(context);
-
-    useMainQueryDetector(mergedOptions, context);
+    if (mergedOptions.refreshOnResize)
+      useMainQueryDetector(mergedOptions, context);
 
     useConsent(context);
 
