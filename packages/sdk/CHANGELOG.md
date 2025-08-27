@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.8.0
+
+### Minor Changes
+
+- de124e0: We added the option to control wheter or not the SDK will refresh the ads when the window is resized and passed the breakpoints for a new device.
+
 ## 1.7.2
 
 ### Patch Changes
