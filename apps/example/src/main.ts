@@ -12,7 +12,7 @@ const adhese = createAdhese({
       setup(context, hooks): void {
         hooks.onEmpty(() => {
           /* eslint-disable no-console */
-          console.log("triggering empty");
+          console.log('triggering empty', context);
         });
       },
     },
@@ -30,8 +30,7 @@ adhese.addSlot({
   renderMode: 'inline',
   setup(context, hooks): void {
     hooks.onEmpty(() => {
-      /* eslint-disable no-console */
-      console.log("triggering empty");
+      console.log('triggering empty', context);
     });
   },
 });
