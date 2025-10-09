@@ -315,13 +315,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         }
 
         if (!renderAd) {
-          // eslint-disable-next-line require-atomic-updates
-          status.value = 'empty';
-          logger.debug(`No ad to render for slot ${name.value}`);
-
-          runOnEmpty();
-
-          return null;
+             return null;
         }
 
         if (typeof renderAd?.tag !== 'string' && renderMode !== 'none') {
@@ -362,6 +356,13 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
         return null;
       }
+    }
+
+    function processOnEmpty(): void {
+      // eslint-disable-next-line require-atomic-updates
+      status.value = 'empty';
+      logger.debug(`No ad to render for slot ${name.value}`);
+      runOnEmpty();
     }
 
     function cleanElement(): void {
@@ -409,6 +410,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       render,
       request,
       dispose,
+      processOnEmpty,
       cleanElement,
       options: omit(options, ['context']),
       ...hooks,

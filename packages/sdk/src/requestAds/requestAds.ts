@@ -132,6 +132,9 @@ export async function requestAds(
           slotName: value.name,
         } as AdheseAd);
       }
+      else{
+        value.processOnEmpty();
+      }
     }
 
     if (matchedPreviews.length > 0)
