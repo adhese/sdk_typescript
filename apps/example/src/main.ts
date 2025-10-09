@@ -9,6 +9,11 @@ const adhese = createAdhese({
     {
       format: 'halfpage',
       containingElement: 'skyscraper',
+      setup(context, hooks) {
+        hooks.onEmpty(() => {
+          console.log("triggering empty");
+        })
+      },
     },
   ],
   location: 'demo.com_kitchen',
@@ -21,5 +26,10 @@ window.adhese = adhese;
 adhese.addSlot({
   format: 'billboard',
   containingElement: 'leaderboard',
-  renderMode: 'inline',
+  renderMode: 'inline',      
+  setup(context, hooks) {
+    hooks.onEmpty(() => {
+      console.log("triggering empty");
+    })
+  },
 });
