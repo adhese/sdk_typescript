@@ -208,10 +208,10 @@ type BaseAdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' | 'o
    * Removes the slot from the DOM and cleans up the slot instance.
    */
   dispose(): void;
-    /**
+  /**
    * Process the onEmpty hook when a slot is not filled with an Ad.
    */
-  processOnEmpty():void;
+  processOnEmpty(): void;
 }>;
 
 export type AdheseSlotContext = BaseAdheseSlot;

@@ -132,7 +132,7 @@ export async function requestAds(
           slotName: value.name,
         } as AdheseAd);
       }
-      else{
+      else {
         value.processOnEmpty();
       }
     }

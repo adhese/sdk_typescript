@@ -315,7 +315,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         }
 
         if (!renderAd) {
-             return null;
+          return null;
         }
 
         if (typeof renderAd?.tag !== 'string' && renderMode !== 'none') {
@@ -359,7 +359,6 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     }
 
     function processOnEmpty(): void {
-      // eslint-disable-next-line require-atomic-updates
       status.value = 'empty';
       logger.debug(`No ad to render for slot ${name.value}`);
       runOnEmpty();
