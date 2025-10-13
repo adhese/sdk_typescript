@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.8.1
+
+### Patch Changes
+
+- 32d5dc9: Added functionality that triggers onEmpty hooks even if the destination div of a slot isn't present on the page.
+
 ## 1.8.0
 
 ### Minor Changes
