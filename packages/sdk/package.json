@@ -1,7 +1,7 @@
 {
   "name": "@adhese/sdk",
   "type": "module",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "Adhese SDK",
   "license": "GPL-3.0",
   "repository": {
