@@ -1,5 +1,10 @@
 import type { AdheseAd } from '@adhese/sdk';
-import type { AdheseSlot, AdheseSlotContext, AdheseSlotOptions, RenderMode } from './slot.types';
+import type {
+  AdheseSlot,
+  AdheseSlotContext,
+  AdheseSlotOptions,
+  RenderMode,
+} from './slot.types';
 import {
   addTrackingPixel,
   computed,
@@ -30,7 +35,10 @@ import {
   useViewabilityObserver,
 } from './slot.composables';
 
-const renderFunctions: Record<RenderMode, (ad: RenderOptions, element: HTMLElement) => void> = {
+const renderFunctions: Record<
+  RenderMode,
+  (ad: RenderOptions, element: HTMLElement) => void
+> = {
   iframe: renderIframe,
   inline: renderInline,
   none: doNothing,
@@ -55,7 +63,9 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     const slotContext = ref<AdheseSlotContext | null>(null);
     const options = slotOptions.context.hooks.runOnSlotCreate({
       ...defaultOptions,
-      ...(Object.fromEntries(Object.entries(slotOptions).filter(([, value]) => value !== undefined)) as AdheseSlotOptions),
+      ...(Object.fromEntries(
+        Object.entries(slotOptions).filter(([, value]) => value !== undefined),
+      ) as AdheseSlotOptions),
     });
 
     const {
@@ -66,7 +76,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       initialData = null,
       type = 'normal',
     } = options;
-    
+
     let { renderMode = 'iframe' } = options;
 
     const id = uniqueId();
@@ -83,19 +93,30 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     } = useSlotHooks(options, slotContext);
 
     const isDisposed = ref(false);
-    const parameters = reactive(new Map(Object.entries(options.parameters ?? {})));
+    const parameters = reactive(
+      new Map(Object.entries(options.parameters ?? {})),
+    );
 
-    const [device, disposeQueryDetector] = useQueryDetector(context, typeof options.format === 'string'
-      ? {
-          [options.format]: '(min-width: 0px)',
-        }
-      : Object.fromEntries(options.format.map(item => [item.format, item.query])));
+    const [device, disposeQueryDetector] = useQueryDetector(
+      context,
+      typeof options.format === 'string'
+        ? {
+            [options.format]: '(min-width: 0px)',
+          }
+        : Object.fromEntries(
+          options.format.map(item => [item.format, item.query]),
+        ),
+    );
 
-    const format = computed(() => typeof options.format === 'string' ? options.format : device.value);
+    const format = computed(() =>
+      typeof options.format === 'string' ? options.format : device.value,
+    );
 
     const data = ref<AdheseAd | null>(null) as Ref<AdheseAd | null>;
     const originalData = ref(data.value) as Ref<AdheseAd | null>;
-    const name = computed(() => generateName(options.context.location, format.value, options.slot));
+    const name = computed(() =>
+      generateName(options.context.location, format.value, options.slot),
+    );
 
     const status = ref<UnwrapRef<AdheseSlot>['status']>('initializing');
 
@@ -119,17 +140,29 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     const element = shallowRef<HTMLElement | null>(null);
 
     function getElement(): HTMLElement | null {
-      if (!(typeof options.containingElement === 'string' || !options.containingElement))
+      if (
+        !(
+          typeof options.containingElement === 'string'
+          || !options.containingElement
+        )
+      ) {
         return options.containingElement;
+      }
 
       if (!isDomLoaded.value)
         return null;
 
-      return document.querySelector<HTMLElement>(`#${options.containingElement}`);
+      return document.querySelector<HTMLElement>(
+        `#${options.containingElement}`,
+      );
     }
 
     watch(element, async (newElement, oldElement) => {
-      if (status.value === 'empty' || status.value === 'error' || status.value === 'loading') {
+      if (
+        status.value === 'empty'
+        || status.value === 'error'
+        || status.value === 'loading'
+      ) {
         return;
       }
 
@@ -139,8 +172,12 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         return;
       }
 
-      if (newElement === oldElement || (oldElement === null && newElement === null))
+      if (
+        newElement === oldElement
+        || (oldElement === null && newElement === null)
+      ) {
         return;
+      }
 
       await render();
     });
@@ -168,10 +205,14 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       hooks,
     });
 
-    watch(isInViewport, async (newIsInViewport) => {
-      if (newIsInViewport && status.value !== 'rendered')
-        await slotContext.value?.render();
-    }, { immediate: true });
+    watch(
+      isInViewport,
+      async (newIsInViewport) => {
+        if (newIsInViewport && status.value !== 'rendered')
+          await slotContext.value?.render();
+      },
+      { immediate: true },
+    );
 
     hooks.onDispose(() => {
       disposeQueryDetector();
@@ -217,18 +258,32 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     const additionalTrackingPixelElement = ref<HTMLImageElement | null>(null);
     const isImpressionTracked = ref(false);
     const isAdditionalTracked = ref(false);
-    watch([status, isInViewport, data], ([newStatus, newIsInViewport, newData]) => {
-      if (newStatus === 'rendered' && newIsInViewport) {
-        if (newData?.impressionCounter && !impressionTrackingPixelElement.value) {
-          impressionTrackingPixelElement.value = addTrackingPixel(newData.impressionCounter);
-          isImpressionTracked.value = true;
+    watch(
+      [status, isInViewport, data],
+      ([newStatus, newIsInViewport, newData]) => {
+        if (newStatus === 'rendered' && newIsInViewport) {
+          if (
+            newData?.impressionCounter
+            && !impressionTrackingPixelElement.value
+          ) {
+            impressionTrackingPixelElement.value = addTrackingPixel(
+              newData.impressionCounter,
+            );
+            isImpressionTracked.value = true;
+          }
+          if (
+            newData?.additionalTracker
+            && !additionalTrackingPixelElement.value
+          ) {
+            additionalTrackingPixelElement.value = addTrackingPixel(
+              newData.additionalTracker,
+            );
+            isAdditionalTracked.value = true;
+          }
         }
-        if (newData?.additionalTracker && !additionalTrackingPixelElement.value) {
-          additionalTrackingPixelElement.value = addTrackingPixel(newData.additionalTracker);
-          isAdditionalTracked.value = true;
-        }
-      }
-    }, { immediate: true });
+      },
+      { immediate: true },
+    );
     watch(status, async (newStatus, oldStatus) => {
       if (newStatus === 'loaded' && oldStatus === 'rendered') {
         impressionTrackingPixelElement.value?.remove();
@@ -286,14 +341,22 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
         logger.error(`Error requesting ad for slot ${name.value}`, error);
 
-        runOnError(new Error(`Error requesting ad for slot ${name.value}`, { cause: error }));
+        runOnError(
+          new Error(`Error requesting ad for slot ${name.value}`, {
+            cause: error,
+          }),
+        );
 
         return null;
       }
     }
 
     async function render(adToRender?: AdheseAd): Promise<HTMLElement | null> {
-      if (status.value === 'empty' || status.value === 'error' || status.value === 'initializing') {
+      if (
+        status.value === 'empty'
+        || status.value === 'error'
+        || status.value === 'initializing'
+      ) {
         return null;
       }
 
@@ -305,14 +368,18 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         await waitForDomLoad();
         element.value = getElement();
 
-        let renderAd = adToRender ?? data.value ?? originalData.value ?? await request();
+        let renderAd
+          = adToRender ?? data.value ?? originalData.value ?? (await request());
 
-        renderAd = renderAd && await runOnBeforeRender(renderAd);
+        renderAd = renderAd && (await runOnBeforeRender(renderAd));
 
         renderMode = renderAd?.renderMode ?? renderMode;
 
         if (!element.value && renderMode !== 'none') {
-          logger.debug(`Could not render slot for format ${format.value}. No element found.`, slotContext.value);
+          logger.debug(
+            `Could not render slot for format ${format.value}. No element found.`,
+            slotContext.value,
+          );
 
           return null;
         }
@@ -329,10 +396,13 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         }
 
         if (renderMode !== 'none' && element.value) {
-          renderFunctions[renderMode]({
-            ...renderAd,
-            ...pick(options, ['width', 'height']),
-          } as RenderOptions, element.value);
+          renderFunctions[renderMode](
+            {
+              ...renderAd,
+              ...pick(options, ['width', 'height']),
+            } as RenderOptions,
+            element.value,
+          );
         }
 
         logger.debug(`Slot rendered ${name.value}`, {
@@ -418,12 +488,16 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       ...hooks,
     });
 
-    watch(state, (newState) => {
-      slotContext.value = newState;
-    }, {
-      deep: true,
-      immediate: true,
-    });
+    watch(
+      state,
+      (newState) => {
+        slotContext.value = newState;
+      },
+      {
+        deep: true,
+        immediate: true,
+      },
+    );
 
     context.hooks.onInit(async () => {
       await runOnInit();
@@ -447,7 +521,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         return;
       }
 
-      data.value = await slotContext.value?.request() ?? null;
+      data.value = (await slotContext.value?.request()) ?? null;
     });
 
     return state;
