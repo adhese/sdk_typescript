@@ -64,9 +64,10 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       context,
       pluginOptions,
       initialData = null,
-      renderMode = 'iframe',
       type = 'normal',
     } = options;
+    
+    let { renderMode = 'iframe' } = options;
 
     const id = uniqueId();
     const {
@@ -307,6 +308,8 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         let renderAd = adToRender ?? data.value ?? originalData.value ?? await request();
 
         renderAd = renderAd && await runOnBeforeRender(renderAd);
+
+        renderMode = renderAd?.renderMode ?? renderMode;
 
         if (!element.value && renderMode !== 'none') {
           logger.debug(`Could not render slot for format ${format.value}. No element found.`, slotContext.value);
