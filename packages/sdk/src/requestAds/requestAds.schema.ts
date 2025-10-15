@@ -54,6 +54,7 @@ const baseSchema = object({
   poolPath: urlLike.optional(),
   preview: booleanLike.optional(),
   priority: numberLike.optional(),
+  renderMode: union([literal('inline'), literal('iframe')]).optional(),
   sfSrc: urlLike.optional(),
   share: string().optional(),
   // eslint-disable-next-line ts/naming-convention
