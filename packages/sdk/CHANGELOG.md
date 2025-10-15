@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.8.2
+
+### Patch Changes
+
+- cf3f4ec: Make renderMode configurable per slot from within the onBeforeRender hook
+
 ## 1.8.1
 
 ### Patch Changes
