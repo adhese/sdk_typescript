@@ -1,5 +1,11 @@
 # @adhese/sdk-shared
 
+## 1.5.1
+
+### Patch Changes
+
+- 4367dd1: Added functionality to render Banners properly inline, allowing Javascript and Styles to be rendered and excecuted properly
+
 ## 1.5.0
 
 ### Minor Changes
