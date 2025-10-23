@@ -152,6 +152,8 @@ export function useSlotHooks({ setup }: AdheseSlotOptions, slotContext: Ref<Adhe
   runOnDispose: ReturnType<typeof createPassiveHook<void>>[0];
   runOnEmpty: ReturnType<typeof createPassiveHook<void>>[0];
   runOnError: ReturnType<typeof createPassiveHook<Error>>[0];
+  runOnImpressionTracked: ReturnType<typeof createAsyncHook<AdheseAd>>[0];
+  runOnViewableTracked: ReturnType<typeof createAsyncHook<AdheseAd>>[0];
 } & AdheseSlotHooks {
   const [runOnBeforeRender, onBeforeRender, disposeOnBeforeRender] = createAsyncHook<AdheseAd>();
   const [runOnRender, onRender, disposeOnRender] = createPassiveHook<AdheseAd>();
@@ -161,6 +163,8 @@ export function useSlotHooks({ setup }: AdheseSlotOptions, slotContext: Ref<Adhe
   const [runOnDispose, onDispose, disposeOnDispose] = createPassiveHook();
   const [runOnEmpty, onEmpty, disposeOnEmpty] = createPassiveHook();
   const [runOnError, onError, disposeOnError] = createPassiveHook<Error>();
+  const [runOnImpressionTracked, onImpressionTracked, disposeOnImpressionTracked] = createAsyncHook<AdheseAd>();
+  const [runOnViewableTracked, onViewableTracked, disposeOnViewableTracked] = createAsyncHook<AdheseAd>();
 
   setup?.(slotContext, {
     onBeforeRender,
@@ -171,6 +175,8 @@ export function useSlotHooks({ setup }: AdheseSlotOptions, slotContext: Ref<Adhe
     onInit,
     onEmpty,
     onError,
+    onImpressionTracked,
+    onViewableTracked,
   });
 
   onDispose(() => {
@@ -182,7 +188,9 @@ export function useSlotHooks({ setup }: AdheseSlotOptions, slotContext: Ref<Adhe
     disposeOnDispose();
     disposeOnEmpty();
     disposeOnError();
+    disposeOnImpressionTracked();
+    disposeOnViewableTracked();
   });
 
-  return { runOnBeforeRender, runOnRender, runOnBeforeRequest, runOnRequest, runOnDispose, onDispose, onBeforeRequest, onRequest, onBeforeRender, onRender, onInit, runOnInit, runOnEmpty, onEmpty, runOnError, onError };
+  return { runOnBeforeRender, runOnRender, runOnBeforeRequest, runOnRequest, runOnDispose, onDispose, onBeforeRequest, onRequest, onBeforeRender, onRender, onInit, runOnInit, runOnEmpty, onEmpty, runOnError, onError, runOnImpressionTracked, onImpressionTracked, runOnViewableTracked, onViewableTracked };
 }

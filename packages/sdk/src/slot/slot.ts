@@ -89,6 +89,8 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       runOnDispose,
       runOnEmpty,
       runOnError,
+      runOnImpressionTracked,
+      runOnViewableTracked,
       ...hooks
     } = useSlotHooks(options, slotContext);
 
@@ -250,6 +252,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
           context.logger.debug(
             `Viewability tracking pixel fired for ${slotContext.value?.name}`,
           );
+          runOnViewableTracked(slotContext.value?.data);
         }
       },
     });
@@ -269,7 +272,11 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
             impressionTrackingPixelElement.value = addTrackingPixel(
               newData.impressionCounter,
             );
+            runOnImpressionTracked(newData);
             isImpressionTracked.value = true;
+            context.logger.debug(
+              `Impression tracking pixel fired for ${slotContext.value?.name}`,
+            );
           }
           if (
             newData?.additionalTracker
@@ -279,6 +286,9 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
               newData.additionalTracker,
             );
             isAdditionalTracked.value = true;
+            context.logger.debug(
+              `Additional Impression tracking pixel fired for ${slotContext.value?.name}`,
+            );
           }
         }
       },
