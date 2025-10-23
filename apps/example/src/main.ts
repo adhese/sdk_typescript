@@ -7,17 +7,29 @@ const adhese = createAdhese({
   consent: true,
   initialSlots: [
     {
-      format: 'halfpage',
+      format: 'imu',
       containingElement: 'skyscraper',
+      lazyLoadingOptions:{
+          rootMargin: "0px"
+      },
       setup(context, hooks): void {
+        hooks.onBeforeRender((ad) => {
+          return {
+              ...ad, 
+              tag: {type: "hello"}
+          }
+        });
         hooks.onEmpty(() => {
           /* eslint-disable no-console */
           console.log('triggering empty', context);
         });
+        hooks.onError((error)=> {
+          console.log("triggering an", error);
+        });
       },
     },
   ],
-  location: 'demo.com_kitchen',
+  location: 'demo.com_electronics',
   refreshOnResize: false,
   plugins: [devtoolsPlugin],
 });
@@ -31,6 +43,9 @@ adhese.addSlot({
   setup(context, hooks): void {
     hooks.onEmpty(() => {
       console.log('triggering empty', context);
+    });
+    hooks.onError(()=> {
+      console.log("triggering an Error");
     });
   },
 });

@@ -212,6 +212,10 @@ type BaseAdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' | 'o
    * Process the onEmpty hook when a slot is not filled with an Ad.
    */
   processOnEmpty(): void;
+  /**
+   * Process the onError hook whenever an error is triggered.
+   */
+  processOnError: (error: string) => void;
 }>;
 
 export type AdheseSlotContext = BaseAdheseSlot;
