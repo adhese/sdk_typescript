@@ -176,7 +176,7 @@ export function useSlotHooks({ setup }: AdheseSlotOptions, slotContext: Ref<Adhe
     onEmpty,
     onError,
     onImpressionTracked,
-    onViewableTracked
+    onViewableTracked,
   });
 
   onDispose(() => {
