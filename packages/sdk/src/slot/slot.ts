@@ -272,6 +272,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
             impressionTrackingPixelElement.value = addTrackingPixel(
               newData.impressionCounter,
             );
+            runOnImpressionTracked(newData);
             isImpressionTracked.value = true;
             context.logger.debug(
               `Impression tracking pixel fired for ${slotContext.value?.name}`,
@@ -289,7 +290,6 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
               `Additional Impression tracking pixel fired for ${slotContext.value?.name}`,
             );
           }
-          runOnImpressionTracked(newData);
         }
       },
       { immediate: true },
