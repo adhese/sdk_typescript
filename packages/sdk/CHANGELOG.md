@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.9.0
+
+### Minor Changes
+
+- 33ff3bd: Added 2 new slot hooks: onImpressionTracked and onViewableTracked. Triggering when an impression and viewability tracker is being fired off.
+
 ## 1.8.3
 
 ### Patch Changes
