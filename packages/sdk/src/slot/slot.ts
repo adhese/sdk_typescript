@@ -337,7 +337,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         return response;
       }
       catch (error) {
-        processOnError(error as string, `Error requesting ad for slot ${name.value}`);
+        processOnError(error as string);
         return null;
       }
     }
@@ -422,11 +422,13 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     }
 
     function processOnError(error: string): void {
+      if(status.value !== "error"){
       status.value = 'error';
       logger.error(error);
       runOnError(new Error(error, {
           cause: error,
         }));
+      }
     }
 
     function cleanElement(): void {

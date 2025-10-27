@@ -24,6 +24,7 @@ const adhese = createAdhese({
           console.log('triggering empty', context);
         });
         hooks.onError((error)=> {
+          console.log("Error for the IMU slot");
           console.log("triggering an", error);
         });
       },
@@ -45,6 +46,7 @@ adhese.addSlot({
       console.log('triggering empty', context);
     });
     hooks.onError(()=> {
+      console.log("Error for the Billboard slot");
       console.log("triggering an Error");
     });
   },
