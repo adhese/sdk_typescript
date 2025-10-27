@@ -204,11 +204,13 @@ adhese.addSlot({
 ### Slot hooks
 In a setup function the following hooks are available:
 
-- `onBeforeRender` Hook that is called when the format of the slot changes.
-- `onRender` Hook that is called when the slot is rendered.
+- `onInit` Hook that is called when the slot is initialized.
 - `onBeforeRequest` Hook that is called before the slot is requested from the server. Can be used to hijack the request entirely by returning a `AdheseAd` yourself. If you pass an ad yourself the request to the server is ignored and your ad is used.
 - `onRequest` Hook that is called when the slot is requested from the server.
-- `onInit` Hook that is called when the slot is initialized.
-- `onDispose` Hook that is called when the slot is disposed.
 - `onEmpty` Hook that is called when the slot is empty.
+- `onBeforeRender` Hook that is called when the format of the slot changes.
+- `onRender` Hook that is called when the slot is rendered.
+- `onImpressionTracked` Hook that is called when the slots impressions is tracked.
+- `onViewableTracked` Hook that is called when the slots viewable impressions is tracked.
+- `onDispose` Hook that is called when the slot is disposed.
 - `onError` Hook that is called when the slot encounters an error.

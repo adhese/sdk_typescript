@@ -2,7 +2,7 @@ import { createAdhese } from '@adhese/sdk';
 import { devtoolsPlugin } from '@adhese/sdk-devtools';
 
 const adhese = createAdhese({
-  account: 'demo',
+  account: 'adusatest',
   debug: true,
   consent: true,
   initialSlots: [
@@ -28,6 +28,8 @@ const adhese = createAdhese({
           console.log("triggering an", error);
         });
       },
+      width: '970px',
+      height: '250px',
     },
   ],
   location: 'demo.com_electronics',
@@ -38,8 +40,9 @@ const adhese = createAdhese({
 window.adhese = adhese;
 
 adhese.addSlot({
-  format: 'billboard',
+  format: 'flex',
   containingElement: 'leaderboard',
+  slot: '_2',
   renderMode: 'inline',
   setup(context, hooks): void {
     hooks.onEmpty(() => {
@@ -50,4 +53,6 @@ adhese.addSlot({
       console.log("triggering an Error");
     });
   },
+  width: '970px',
+  height: '250px',
 });

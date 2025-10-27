@@ -35,6 +35,14 @@ export type AdheseSlotHooks = {
    * Hook that is called when the slot encounters an error.
    */
   onError: ReturnType<typeof createPassiveHook<Error>>[1];
+  /**
+   * Hook that is called when the slots impressions tracker is fired.
+   */
+  onImpressionTracked: ReturnType<typeof createAsyncHook<AdheseAd>>[1];
+  /**
+   * Hook that is called when the slots impressions tracker is fired.
+   */
+  onViewableTracked: ReturnType<typeof createAsyncHook<AdheseAd>>[1];
 };
 export type AdheseSlotOptions = {
   /**
