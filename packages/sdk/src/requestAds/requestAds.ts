@@ -147,7 +147,6 @@ export async function requestAds(
     return mergedResult;
   }
   catch (error) {
-    //proccesonError(error as string);
     logger.error(String(error));
     context?.events?.requestError.dispatch(error as Error);
 

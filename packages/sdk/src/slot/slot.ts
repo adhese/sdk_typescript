@@ -389,7 +389,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
           return null;
         }
 
-         if (typeof renderAd?.tag !== 'string' && renderMode !== 'none') {
+        if (typeof renderAd?.tag !== 'string' && renderMode !== 'none') {
           const error = `Could not render slot for slot ${name.value}. A valid tag doesn't exist or is not HTML string.`;
           throw new Error(error);
         }
@@ -419,7 +419,6 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         return element.value;
       }
       catch (error) {
-        // eslint-disable-next-line require-atomic-updates
         processOnError(error as string);
         return null;
       }
@@ -432,10 +431,10 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     }
 
     function processOnError(error: string): void {
-      if(status.value !== "error"){
-      status.value = 'error';
-      logger.error(error);
-      runOnError(new Error(error, {
+      if (status.value !== 'error') {
+        status.value = 'error';
+        logger.error(error);
+        runOnError(new Error(error, {
           cause: error,
         }));
       }

@@ -223,7 +223,7 @@ type BaseAdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' | 'o
   /**
    * Process the onError hook whenever an error is triggered.
    */
-  processOnError: (error: string) => void;
+  processOnError(error: string): void;
 }>;
 
 export type AdheseSlotContext = BaseAdheseSlot;

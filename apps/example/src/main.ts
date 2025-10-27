@@ -9,23 +9,21 @@ const adhese = createAdhese({
     {
       format: 'imu',
       containingElement: 'skyscraper',
-      lazyLoadingOptions:{
-          rootMargin: "0px"
+      lazyLoadingOptions: {
+        rootMargin: '0px',
       },
       setup(context, hooks): void {
-        hooks.onBeforeRender((ad) => {
-          return {
-              ...ad, 
-              tag: {type: "hello"}
-          }
-        });
+        hooks.onBeforeRender(ad => ({
+          ...ad,
+          tag: { type: 'hello' },
+        }));
         hooks.onEmpty(() => {
           /* eslint-disable no-console */
           console.log('triggering empty', context);
         });
-        hooks.onError((error)=> {
-          console.log("Error for the IMU slot");
-          console.log("triggering an", error);
+        hooks.onError((error) => {
+          console.log('Error for the IMU slot');
+          console.log('triggering an', error);
         });
       },
       width: '970px',
@@ -48,9 +46,9 @@ adhese.addSlot({
     hooks.onEmpty(() => {
       console.log('triggering empty', context);
     });
-    hooks.onError(()=> {
-      console.log("Error for the Billboard slot");
-      console.log("triggering an Error");
+    hooks.onError(() => {
+      console.log('Error for the Billboard slot');
+      console.log('triggering an Error');
     });
   },
   width: '970px',
