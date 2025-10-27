@@ -7,26 +7,30 @@ const adhese = createAdhese({
   consent: true,
   initialSlots: [
     {
-      format: 'flex',
-      slot: '_1',
+      format: 'imu',
       containingElement: 'skyscraper',
+      lazyLoadingOptions: {
+        rootMargin: '0px',
+      },
       setup(context, hooks): void {
+        hooks.onBeforeRender(ad => ({
+          ...ad,
+          tag: { type: 'hello' },
+        }));
         hooks.onEmpty(() => {
           /* eslint-disable no-console */
           console.log('triggering empty', context);
         });
-        hooks.onImpressionTracked((ad) => {
-          console.log('Impression Tracked fire for:', ad);
-        });
-        hooks.onViewableTracked((ad) => {
-          console.log('Viewable Impression tracked fire for:', ad);
+        hooks.onError((error) => {
+          console.log('Error for the IMU slot');
+          console.log('triggering an', error);
         });
       },
       width: '970px',
       height: '250px',
     },
   ],
-  location: 'stopandshop.com_website_home',
+  location: 'demo.com_electronics',
   refreshOnResize: false,
   plugins: [devtoolsPlugin],
 });
@@ -42,11 +46,9 @@ adhese.addSlot({
     hooks.onEmpty(() => {
       console.log('triggering empty', context);
     });
-    hooks.onImpressionTracked((ad) => {
-      console.log('Impression Tracked fire for:', ad);
-    });
-    hooks.onViewableTracked((ad) => {
-      console.log('Viewable Impression tracked fire for:', ad);
+    hooks.onError(() => {
+      console.log('Error for the Billboard slot');
+      console.log('triggering an Error');
     });
   },
   width: '970px',
