@@ -1,5 +1,12 @@
 # @adhese/sdk-react
 
+## 1.9.1
+
+### Patch Changes
+
+- Updated dependencies [73d76a4]
+  - @adhese/sdk@1.9.1
+
 ## 1.9.0
 
 ### Patch Changes
