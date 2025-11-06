@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.9.1
+
+### Patch Changes
+
+- 73d76a4: Have the Error hook trigger properly.
+
 ## 1.9.0
 
 ### Minor Changes
