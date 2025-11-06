@@ -347,16 +347,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         return response;
       }
       catch (error) {
-        status.value = 'error';
-
-        logger.error(`Error requesting ad for slot ${name.value}`, error);
-
-        runOnError(
-          new Error(`Error requesting ad for slot ${name.value}`, {
-            cause: error,
-          }),
-        );
-
+        processOnError(error as string);
         return null;
       }
     }
@@ -400,8 +391,6 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
         if (typeof renderAd?.tag !== 'string' && renderMode !== 'none') {
           const error = `Could not render slot for slot ${name.value}. A valid tag doesn't exist or is not HTML string.`;
-          logger.error(error, options);
-
           throw new Error(error);
         }
 
@@ -430,13 +419,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         return element.value;
       }
       catch (error) {
-        // eslint-disable-next-line require-atomic-updates
-        status.value = 'error';
-
-        logger.error(`${error}`, options);
-
-        runOnError(new Error(error as string));
-
+        processOnError(error as string);
         return null;
       }
     }
@@ -445,6 +428,16 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       status.value = 'empty';
       logger.debug(`No ad to render for slot ${name.value}`);
       runOnEmpty();
+    }
+
+    function processOnError(error: string): void {
+      if (status.value !== 'error') {
+        status.value = 'error';
+        logger.error(error);
+        runOnError(new Error(error, {
+          cause: error,
+        }));
+      }
     }
 
     function cleanElement(): void {
@@ -493,6 +486,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       request,
       dispose,
       processOnEmpty,
+      processOnError,
       cleanElement,
       options: omit(options, ['context']),
       ...hooks,
