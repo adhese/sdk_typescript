@@ -133,7 +133,8 @@ export async function requestAds(
         } as AdheseAd);
       }
       else {
-        value.processOnEmpty();
+        if (value.status === "loading")
+          value.processOnEmpty();
       }
     }
 
