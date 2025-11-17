@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.9.2
+
+### Patch Changes
+
+- c0c7fe1: Fixed a bug where slot's would trigger as empty after adding an additional slot after the initial load.
+
 ## 1.9.1
 
 ### Patch Changes
