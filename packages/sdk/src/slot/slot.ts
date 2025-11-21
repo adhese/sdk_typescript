@@ -203,21 +203,22 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       { immediate: true, deep: true },
     );
 
-    const isInViewport = useRenderIntersectionObserver({
-      options,
-      element,
-      hooks,
-    });
+    if (!context.options.eagerRendering){
+      const isInViewport = useRenderIntersectionObserver({
+        options,
+        element,
+        hooks,
+      });
 
-    watch(
-      isInViewport,
-      async (newIsInViewport) => {
-        if (newIsInViewport && status.value !== 'rendered')
-          await slotContext.value?.render();
-      },
-      { immediate: true },
-    );
-
+      watch(
+        isInViewport,
+        async (newIsInViewport) => {
+          if (newIsInViewport && status.value !== 'rendered')
+            await slotContext.value?.render();
+        },
+        { immediate: true },
+      );
+    }
     hooks.onDispose(() => {
       disposeQueryDetector();
     });

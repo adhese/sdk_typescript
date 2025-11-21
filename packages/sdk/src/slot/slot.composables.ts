@@ -152,8 +152,8 @@ export function useSlotHooks({ setup }: AdheseSlotOptions, slotContext: Ref<Adhe
   runOnDispose: ReturnType<typeof createPassiveHook<void>>[0];
   runOnEmpty: ReturnType<typeof createPassiveHook<void>>[0];
   runOnError: ReturnType<typeof createPassiveHook<Error>>[0];
-  runOnImpressionTracked: ReturnType<typeof createAsyncHook<AdheseAd>>[0];
-  runOnViewableTracked: ReturnType<typeof createAsyncHook<AdheseAd>>[0];
+  runOnImpressionTracked: ReturnType<typeof createPassiveHook<AdheseAd>>[0];
+  runOnViewableTracked: ReturnType<typeof createPassiveHook<AdheseAd>>[0];
 } & AdheseSlotHooks {
   const [runOnBeforeRender, onBeforeRender, disposeOnBeforeRender] = createAsyncHook<AdheseAd>();
   const [runOnRender, onRender, disposeOnRender] = createPassiveHook<AdheseAd>();
@@ -163,8 +163,8 @@ export function useSlotHooks({ setup }: AdheseSlotOptions, slotContext: Ref<Adhe
   const [runOnDispose, onDispose, disposeOnDispose] = createPassiveHook();
   const [runOnEmpty, onEmpty, disposeOnEmpty] = createPassiveHook();
   const [runOnError, onError, disposeOnError] = createPassiveHook<Error>();
-  const [runOnImpressionTracked, onImpressionTracked, disposeOnImpressionTracked] = createAsyncHook<AdheseAd>();
-  const [runOnViewableTracked, onViewableTracked, disposeOnViewableTracked] = createAsyncHook<AdheseAd>();
+  const [runOnImpressionTracked, onImpressionTracked, disposeOnImpressionTracked] = createPassiveHook<AdheseAd>();
+  const [runOnViewableTracked, onViewableTracked, disposeOnViewableTracked] = createPassiveHook<AdheseAd>();
 
   setup?.(slotContext, {
     onBeforeRender,
