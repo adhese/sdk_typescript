@@ -11,7 +11,14 @@ export function useMainQueryDetector(mergedOptions: MergedOptions, context: Adhe
     context.parameters?.set('dt', newDevice);
     context.parameters?.set('br', newDevice);
 
-    await Promise.allSettled(context.getAll().map(async slot => slot.request()));
+    await Promise.allSettled(
+      context.getAll().map(async (slot) => {
+        const ad = await slot.request();
+        if (ad && slot.isVisible) {
+          await slot.render();
+        }
+      }),
+    );
   }, { immediate: true });
 }
 
