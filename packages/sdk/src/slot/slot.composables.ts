@@ -134,13 +134,13 @@ export function useViewabilityObserver(
   });
 
   watch(() => slotContext.value?.status, async (newStatus, oldStatus) => {
-    if ((newStatus === 'loaded' && oldStatus === 'rendered') || (newStatus === 'loading' && oldStatus === 'rendered')){
+    if ((newStatus === 'loaded' && oldStatus === 'rendered') || (newStatus === 'loading' && oldStatus === 'rendered')) {
       trackingPixel.value?.remove();
       trackingPixel.value = null;
 
       // Re-observe to force the IntersectionObserver callback to run again
       const element = slotContext.value?.element;
-      if (element && context.options.viewabilityTracking){
+      if (element && context.options.viewabilityTracking) {
         viewabilityObserver.unobserve(element);
         viewabilityObserver.observe(element);
       }
