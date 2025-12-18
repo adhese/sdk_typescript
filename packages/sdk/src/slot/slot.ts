@@ -180,7 +180,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       ) {
         return;
       }
-      if (!context.options.eagerRendering && !oldElement) {
+      if (!context.options.eagerRendering) {
         return;
       }
       await render();
