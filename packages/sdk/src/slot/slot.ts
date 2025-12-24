@@ -297,7 +297,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       { immediate: true },
     );
     watch(status, async (newStatus, oldStatus) => {
-      if (newStatus === 'loaded' && oldStatus === 'rendered') {
+      if ((newStatus === 'loaded' && oldStatus === 'rendered') || (newStatus === 'loading' && (oldStatus === 'rendered'))) {
         impressionTrackingPixelElement.value?.remove();
         impressionTrackingPixelElement.value = null;
         additionalTrackingPixelElement.value?.remove();
