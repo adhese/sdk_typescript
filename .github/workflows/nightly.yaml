@@ -8,7 +8,6 @@ on:
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  NPM_TOKEN: ${{ secrets.NPMJS_PUBLISH_TOKEN }}
 
 jobs:
   nightly:
@@ -47,16 +46,8 @@ jobs:
           createGithubReleases: false
         env:
           GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ env.NPM_TOKEN }}
-
-      - name: Create .npmrc
-        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-        env:
-          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ env.NPM_TOKEN }}
 
       - name: Deprecate nightly
         run: npx tsx ./scripts/nightlyGithubAction.ts --packages '${{steps.publish.outputs.publishedPackages}}' --pull-request ${{github.event.number}}
         env:
           GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ env.NPM_TOKEN }}
