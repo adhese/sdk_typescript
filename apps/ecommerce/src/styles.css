@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+/* Swiper Carousel Styles */
+.product-carousel {
+  padding-bottom: 50px;
+  overflow: hidden;
+}
+
+.product-carousel .swiper-wrapper {
+  align-items: stretch;
+}
+
+.product-carousel .swiper-slide {
+  height: auto;
+  display: flex;
+}
+
+.product-carousel .swiper-slide > * {
+  width: 100%;
+}
+
+.carousel-prev,
+.carousel-next {
+  position: absolute;
+  top: calc(50% - 40px);
+  transform: translateY(-50%);
+  z-index: 10;
+  color: #1a1a1a;
+  background: white;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-prev {
+  left: -26px;
+}
+
+.carousel-next {
+  right: -26px;
+}
+
+.carousel-prev:hover,
+.carousel-next:hover {
+  background: #1a1a1a;
+  color: white;
+  transform: translateY(-50%) scale(1.05);
+}
+
+@media (max-width: 1024px) {
+  .carousel-prev {
+    left: 10px;
+  }
+  .carousel-next {
+    right: 10px;
+  }
+}
+
+.carousel-prev:disabled,
+.carousel-next:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.carousel-prev svg,
+.carousel-next svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2;
+}
+
+.product-carousel .swiper-pagination-bullet {
+  background: #1a1a1a;
+  opacity: 0.3;
+  width: 8px;
+  height: 8px;
+}
+
+.product-carousel .swiper-pagination-bullet-active {
+  opacity: 1;
+}

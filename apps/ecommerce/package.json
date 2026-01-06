@@ -1,0 +1,31 @@
+{
+  "name": "ecommerce",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite --port 3001",
+    "build": "vite build",
+    "lint": "eslint . --ignore-pattern public",
+    "lint:fix": "eslint --fix . --ignore-pattern public",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@adhese/sdk": "^1.9.3",
+    "@adhese/sdk-react": "^1.9.3",
+    "msw": "^2.7.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "swiper": "^12.0.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.13",
+    "@types/node": "^22",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.1",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.7"
+  }
+}
