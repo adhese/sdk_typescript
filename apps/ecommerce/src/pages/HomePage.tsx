@@ -64,6 +64,7 @@ const products = [
   },
 ];
 
+// eslint-disable-next-line ts/explicit-function-return-type, ts/explicit-module-boundary-types, ts/naming-convention
 export function HomePage() {
   return (
     <div>
@@ -100,24 +101,6 @@ export function HomePage() {
         <div className="max-w-[1400px] mx-auto px-6 py-8">
           <div className="flex justify-center">
             <div id="slot-leaderboard" />
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Collection */}
-      <section className="py-20">
-        <div className="max-w-[1400px] mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-light mb-3">Featured Products</h2>
-            <p className="text-gray-600">
-              Curated selection of our best sellers
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
-            {products.slice(0, 4).map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
           </div>
         </div>
       </section>
@@ -440,7 +423,9 @@ function ProductCard({ product }: { product: (typeof products)[0] }) {
         />
         <button
           className="absolute bottom-4 left-4 right-4 bg-white py-3 text-sm opacity-0 group-hover:opacity-100 transition-opacity"
-          onClick={(e) => e.preventDefault()}
+          onClick={(e) => {
+            e.preventDefault();
+          }}
         >
           Quick Add
         </button>
@@ -451,6 +436,7 @@ function ProductCard({ product }: { product: (typeof products)[0] }) {
   );
 }
 
+// eslint-disable-next-line ts/explicit-function-return-type, ts/naming-convention
 function CarouselProductCard({ product }: { product: (typeof products)[0] }) {
   return (
     <a href="#" className="block bg-white group h-full">
@@ -471,6 +457,7 @@ function CarouselProductCard({ product }: { product: (typeof products)[0] }) {
 
 // Native Ad with Custom Rendering (renderMode: 'none')
 // This demonstrates how to render ad data yourself instead of using iframe/inline
+// eslint-disable-next-line ts/explicit-function-return-type, ts/naming-convention
 function NativeAd() {
   const adhese = useAdhese();
 
