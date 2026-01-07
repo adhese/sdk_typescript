@@ -64,7 +64,6 @@ const products = [
   },
 ];
 
-// eslint-disable-next-line ts/explicit-function-return-type, ts/explicit-module-boundary-types, ts/naming-convention
 export function HomePage() {
   return (
     <div>
@@ -190,35 +189,6 @@ export function HomePage() {
                 </SwiperSlide>
               ))}
             </Swiper>
-          </div>
-        </div>
-      </section>
-
-      {/* Split Banner */}
-      <section className="grid md:grid-cols-2">
-        <div className="relative h-[500px] bg-[#e8e4df]">
-          <img
-            src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&h=800&fit=crop"
-            alt="Collection"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        </div>
-        <div className="h-[500px] bg-[#f5f5f0] flex items-center justify-center p-12">
-          <div className="max-w-md text-center">
-            <p className="text-sm uppercase tracking-wider text-gray-500 mb-4">
-              The Edit
-            </p>
-            <h2 className="text-3xl font-light mb-4">Home Office Collection</h2>
-            <p className="text-gray-600 mb-8">
-              Elevate your workspace with pieces designed for productivity and
-              comfort.
-            </p>
-            <a
-              href="#"
-              className="inline-block border border-black px-8 py-3 text-sm tracking-wide hover:bg-black hover:text-white transition-colors"
-            >
-              Explore
-            </a>
           </div>
         </div>
       </section>
@@ -436,7 +406,6 @@ function ProductCard({ product }: { product: (typeof products)[0] }) {
   );
 }
 
-// eslint-disable-next-line ts/explicit-function-return-type, ts/naming-convention
 function CarouselProductCard({ product }: { product: (typeof products)[0] }) {
   return (
     <a href="#" className="block bg-white group h-full">
@@ -457,7 +426,6 @@ function CarouselProductCard({ product }: { product: (typeof products)[0] }) {
 
 // Native Ad with Custom Rendering (renderMode: 'none')
 // This demonstrates how to render ad data yourself instead of using iframe/inline
-// eslint-disable-next-line ts/explicit-function-return-type, ts/naming-convention
 function NativeAd() {
   const adhese = useAdhese();
 
