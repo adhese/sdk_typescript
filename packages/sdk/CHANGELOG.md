@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.9.5
+
+### Patch Changes
+
+- c1dba83: Added a check that will render the ad after the element was changed, but only when the ad was already rendered once before.
+
 ## 1.9.4
 
 ### Patch Changes
