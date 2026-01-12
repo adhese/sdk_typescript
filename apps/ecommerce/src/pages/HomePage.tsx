@@ -1,66 +1,66 @@
-import { useAdhese } from "@adhese/sdk-react";
-import { Autoplay, Navigation, Pagination } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
+import { useAdhese } from '@adhese/sdk-react';
+import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 const products = [
   {
     id: 1,
-    name: "The Minimalist Watch",
+    name: 'The Minimalist Watch',
     price: 195,
     image:
-      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&h=600&fit=crop",
+      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&h=600&fit=crop',
   },
   {
     id: 2,
-    name: "Leather Weekender Bag",
+    name: 'Leather Weekender Bag',
     price: 285,
     image:
-      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&h=600&fit=crop",
+      'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&h=600&fit=crop',
   },
   {
     id: 3,
-    name: "Wireless Earbuds Pro",
+    name: 'Wireless Earbuds Pro',
     price: 149,
     image:
-      "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=600&h=600&fit=crop",
+      'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=600&h=600&fit=crop',
   },
   {
     id: 4,
-    name: "Ceramic Pour Over Set",
+    name: 'Ceramic Pour Over Set',
     price: 68,
     image:
-      "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&h=600&fit=crop",
+      'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&h=600&fit=crop',
   },
   {
     id: 5,
-    name: "Merino Wool Sweater",
+    name: 'Merino Wool Sweater',
     price: 165,
     image:
-      "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=600&fit=crop",
+      'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=600&fit=crop',
   },
   {
     id: 6,
-    name: "Desk Organizer",
+    name: 'Desk Organizer',
     price: 89,
     image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=600&fit=crop",
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=600&fit=crop',
   },
   {
     id: 7,
-    name: "Cotton Canvas Tote",
+    name: 'Cotton Canvas Tote',
     price: 45,
     image:
-      "https://images.unsplash.com/photo-1544816155-12df9643f363?w=600&h=600&fit=crop",
+      'https://images.unsplash.com/photo-1544816155-12df9643f363?w=600&h=600&fit=crop',
   },
   {
     id: 8,
-    name: "Portable Speaker",
+    name: 'Portable Speaker',
     price: 129,
     image:
-      "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=600&h=600&fit=crop",
+      'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=600&h=600&fit=crop',
   },
 ];
 
@@ -148,12 +148,14 @@ export function HomePage() {
               spaceBetween={24}
               slidesPerView={1}
               navigation={{
-                prevEl: ".carousel-prev",
-                nextEl: ".carousel-next",
+                prevEl: '.carousel-prev',
+                nextEl: '.carousel-next',
               }}
               pagination={{ clickable: true }}
               breakpoints={{
+                // eslint-disable-next-line ts/naming-convention
                 640: { slidesPerView: 2 },
+                // eslint-disable-next-line ts/naming-convention
                 1024: { slidesPerView: 4 },
               }}
               className="product-carousel"
@@ -430,20 +432,20 @@ function NativeAd() {
   const adhese = useAdhese();
 
   // Find the native slot from the slots Map
-  const slot = adhese?.getAll().find((s) => s.name?.includes("native"));
+  const slot = adhese?.getAll().find((s) => s.name?.includes('native'));
   const ad = slot?.data;
 
   // Parse native ad data from the response
   // In real scenarios, native ads return structured JSON data
   // ext is a JSON string that needs to be parsed
   let nativeData = {
-    title: "Premium Wireless Headphones",
+    title: 'Premium Wireless Headphones',
     description:
-      "Experience crystal-clear sound with our latest noise-cancelling technology. Perfect for work and travel.",
-    cta: "Shop Now",
+      'Experience crystal-clear sound with our latest noise-cancelling technology. Perfect for work and travel.',
+    cta: 'Shop Now',
     image:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&h=400&fit=crop",
-    brand: "AudioTech Pro",
+      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&h=400&fit=crop',
+    brand: 'AudioTech Pro',
     rating: 4.8,
   };
 

@@ -85,9 +85,11 @@ const defaultAd = `
 // Native ad data for custom rendering
 const nativeAdData = {
   title: 'Premium Wireless Headphones',
-  description: 'Experience crystal-clear sound with our latest noise-cancelling technology. Perfect for work and travel.',
+  description:
+    'Experience crystal-clear sound with our latest noise-cancelling technology. Perfect for work and travel.',
   cta: 'Shop Now',
-  image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&h=400&fit=crop',
+  image:
+    'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&h=400&fit=crop',
   brand: 'AudioTech Pro',
   rating: 4.8,
 };
@@ -98,7 +100,7 @@ const daleFormats = ['skyscraper', 'billboard'];
 export const handlers = [
   // Handle POST requests to Adhese API
   http.post('https://ads-demo.adhese.com/json', async ({ request }) => {
-    const body = await request.json() as {
+    const body = (await request.json()) as {
       slots: Array<{
         slotname: string;
       }>;
@@ -108,7 +110,8 @@ export const handlers = [
       // Extract format from slotname (e.g., "_sdk_ecommerce_-leaderboard" -> "leaderboard")
       // Handle formats with hyphens like "mobile-banner" by splitting on location prefix
       const parts = slot.slotname.split('_sdk_ecommerce_-');
-      const format = parts.length > 1 ? parts[1] : slot.slotname.split('-').pop() || '';
+      const format =
+        parts.length > 1 ? parts[1] : slot.slotname.split('-').pop() || '';
       const tag = mockAds[format] || defaultAd;
       const isDale = daleFormats.includes(format);
 
@@ -121,8 +124,24 @@ export const handlers = [
         tag,
         libId: `mock-${slot.slotname}`,
         id: `mock-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-        width: format === 'leaderboard' || format === 'mobile-banner' ? '728' : format === 'billboard' ? '970' : format === 'skyscraper' ? '160' : '300',
-        height: format === 'leaderboard' ? '90' : format === 'mobile-banner' ? '50' : format === 'billboard' ? '250' : format === 'skyscraper' ? '600' : '250',
+        width:
+          format === 'leaderboard' || format === 'mobile-banner'
+            ? '728'
+            : format === 'billboard'
+              ? '970'
+              : format === 'skyscraper'
+                ? '160'
+                : '300',
+        height:
+          format === 'leaderboard'
+            ? '90'
+            : format === 'mobile-banner'
+              ? '50'
+              : format === 'billboard'
+                ? '250'
+                : format === 'skyscraper'
+                  ? '600'
+                  : '250',
         impressionCounter: 'https://example.com/impression',
         viewableImpressionCounter: 'https://example.com/viewable',
       };
@@ -136,20 +155,25 @@ export const handlers = [
           origin: 'DALE',
           body: tag, // DALE uses 'body' field, SDK transforms to 'tag'
           originData: {
-            seatbid: [{
-              bid: [{
-                id: `bid-${Date.now()}`,
-                impid: slot.slotname,
-                price: 2.50,
-                adm: tag,
-                ext: {
-                  adhese: {
-                    viewableImpressionCounter: 'https://example.com/dale-viewable',
+            seatbid: [
+              {
+                bid: [
+                  {
+                    id: `bid-${Date.now()}`,
+                    impid: slot.slotname,
+                    price: 2.5,
+                    adm: tag,
+                    ext: {
+                      adhese: {
+                        viewableImpressionCounter:
+                          'https://example.com/dale-viewable',
+                      },
+                    },
                   },
-                },
-              }],
-              seat: 'mock-dsp',
-            }],
+                ],
+                seat: 'mock-dsp',
+              },
+            ],
           },
         };
       }
@@ -205,7 +229,8 @@ export const handlers = [
   }),
 
   // Mock impression tracking (just acknowledge)
-  http.get('https://example.com/*', () => {
-    return new HttpResponse(null, { status: 200 });
-  }),
+  http.get(
+    'https://example.com/*',
+    () => new HttpResponse(null, { status: 200 }),
+  ),
 ];
