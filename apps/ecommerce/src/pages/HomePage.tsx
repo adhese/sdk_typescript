@@ -70,7 +70,7 @@ export function HomePage() {
       {/* Hero Section */}
       <section className="relative h-[85vh] bg-[#f5f5f0]">
         <img
-          src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1920&h=1080&fit=crop"
+          src="bghero.png?fit=crop"
           alt="Hero"
           className="absolute inset-0 w-full h-full object-cover"
         />
@@ -86,7 +86,7 @@ export function HomePage() {
               </p>
               <a
                 href="#"
-                className="inline-block bg-white text-black px-8 py-4 text-sm tracking-wide hover:bg-gray-100 transition-colors"
+                className="inline-block bg-[#208468] text-white px-8 py-4 text-sm tracking-wide hover:bg-[#208468e6] transition-colors"
               >
                 Shop Collection
               </a>
@@ -105,7 +105,7 @@ export function HomePage() {
       </section>
 
       {/* Product Carousel with Sponsored Slide */}
-      <section className="py-20 bg-[#f5f5f0]">
+      <section className="py-20 bg-[#FAF3ED]">
         <div className="max-w-[1400px] mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-light mb-3">Trending Now</h2>
@@ -282,31 +282,12 @@ export function HomePage() {
       </section>
 
       {/* Full Width Banner */}
-      <section className="relative h-[60vh] bg-[#2d2d2d]">
-        <img
-          src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&h=800&fit=crop"
-          alt="Banner"
-          className="absolute inset-0 w-full h-full object-cover opacity-60"
-        />
+      <section className="relative h-[60vh] bg-[#FAF3ED]">
         <div className="relative h-full flex items-center justify-center text-center">
           <div className="max-w-2xl px-6">
-            <h2 className="text-4xl md:text-5xl font-light text-white mb-6">
-              Subscribe & Save
+            <h2 className="text-4xl md:text-5xl font-light text-black mb-6">
+              Full width devider block (subscribe, info, etc.)
             </h2>
-            <p className="text-white/80 mb-8">
-              Join our newsletter for exclusive offers and 15% off your first
-              order.
-            </p>
-            <div className="flex max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-5 py-4 text-sm focus:outline-none bg-white text-black placeholder:text-gray-400"
-              />
-              <button className="bg-black text-white px-8 py-4 text-sm hover:bg-gray-800 transition-colors">
-                Subscribe
-              </button>
-            </div>
           </div>
         </div>
       </section>
@@ -485,7 +466,7 @@ function NativeAd() {
         <p className="text-gray-600 mb-6 leading-relaxed">
           {nativeData.description}
         </p>
-        <button className="bg-black text-white px-8 py-3 text-sm tracking-wide hover:bg-gray-800 transition-colors">
+        <button className="bg-[#208468] text-white px-8 py-3 text-sm tracking-wide hover:bg-[#208468e6] transition-colors">
           {nativeData.cta}
         </button>
       </div>
