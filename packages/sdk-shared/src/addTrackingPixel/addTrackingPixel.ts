@@ -14,6 +14,8 @@ export function addTrackingPixel(url: URL | string): HTMLImageElement {
   img.style.border = '0';
   img.style.position = 'absolute';
   img.style.top = '0';
+  img.alt = "";
+  img.role = "presentation";
 
   return document.body.appendChild(img);
 }
