@@ -1,5 +1,11 @@
 # @adhese/sdk-shared
 
+## 1.5.2
+
+### Patch Changes
+
+- 932e147: Added a alt text and role = presentation to each tracker placed on a website to comply to the EU WAI standards
+
 ## 1.5.1
 
 ### Patch Changes

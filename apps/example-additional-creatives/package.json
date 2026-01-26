@@ -12,8 +12,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@adhese/sdk": "^1.9.5",
+    "@adhese/sdk": "^1.9.6",
     "@adhese/sdk-devtools": "^1.0.2",
-    "@adhese/sdk-shared": "^1.5.1"
+    "@adhese/sdk-shared": "^1.5.2"
   }
 }
