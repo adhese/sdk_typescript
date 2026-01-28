@@ -7,7 +7,7 @@ export default defineConfig({
   ...viteBaseConfig({
     dependencies,
     name,
-    entries: 'src/adheseSdk.ts',
+    entries: ['src/adheseSdk.ts', 'src/server.ts'],
   }),
   resolve: {
     alias: {
