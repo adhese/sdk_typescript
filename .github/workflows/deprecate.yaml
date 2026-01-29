@@ -37,4 +37,8 @@ jobs:
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
 
       - name: Deprecate
-        run: npm deprecate ${{ github.event.inputs.package }}@${{ github.event.inputs.version_range }} "${{ github.event.inputs.message }}"
+        run: npm deprecate ${PACKAGE}@${VERSION_RANGE} "${MESSAGE}"
+        env:
+          PACKAGE: ${{ github.event.inputs.package }}
+          VERSION_RANGE: ${{ github.event.inputs.version_range }}
+          MESSAGE: ${{ github.event.inputs.message }}
