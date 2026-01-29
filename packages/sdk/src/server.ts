@@ -95,7 +95,7 @@ async function fetchWithGet(
     method: 'GET',
     headers: {
       // eslint-disable-next-line ts/naming-convention
-      'Content-Type': 'application/json',
+      'content-type': 'application/json',
     },
     signal,
   });
