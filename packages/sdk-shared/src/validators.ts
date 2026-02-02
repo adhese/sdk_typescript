@@ -45,6 +45,11 @@ export const isJson = string().transform((value, { addIssue }) => {
   }
 });
 export const isHtmlString = string().transform((value, { addIssue }) => {
+  // DOMParser is not available in Node.js, skip validation on server
+  if (typeof DOMParser === 'undefined') {
+    return value;
+  }
+
   const htmlParser = new DOMParser();
 
   try {
