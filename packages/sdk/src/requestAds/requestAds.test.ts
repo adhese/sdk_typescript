@@ -14,7 +14,7 @@ import { createSlot } from '../slot/slot';
 import { testContext } from '../testUtils';
 import { requestAd, requestAds } from './requestAds';
 import { requestPreviews } from './requestAds.preview';
-import { type AdResponse, adSchema } from './requestAds.schema';
+import { type AdResponse, adSchema, parseResponse } from './requestAds.schema';
 import { parseParameters } from './requestAds.utils';
 
 describe('requestAds', () => {
@@ -114,6 +114,32 @@ describe('requestAds', () => {
     }
     catch (error) {
       expect(error).toBeInstanceOf(Error);
+    }
+  });
+
+  it('should be able to parse ads from a gateway market origin', async () => {
+    context = {
+      ...context,
+      options: {
+        ...context.options,
+        host: 'https://ads-gateway.adhese.com',
+      },
+    };
+
+    const ads = await requestAds({
+      slots: [
+        createSlot({
+          format: 'bar',
+          context: testContext,
+        }),
+      ],
+      context,
+    });
+
+    for (const ad of ads) {
+      expect(ad.origin).toBe('ADFORM');
+      expect(ad.tag).toBeDefined();
+      expect(typeof ad.tag).toBe('string');
     }
   });
 
@@ -237,6 +263,35 @@ describe('schema', () => {
     const result = adSchema.parse(response);
 
     expect(result).toBeDefined();
+  });
+
+  it('should be able to parse a gateway market response with body', () => {
+    const response = [
+      {
+        origin: 'ADFORM',
+        originInstance: '',
+        ext: 'js',
+        // eslint-disable-next-line ts/naming-convention
+        slotID: '108',
+        slotName: 'salling_poc-image',
+        adType: 'image',
+        originData: {
+          seatbid: [{ bid: [{ dealid: 'DID-3295-233118', crid: '87294141', ext: { prebid: { type: 'banner' } } }], seat: '9412' }],
+        },
+        width: '656',
+        height: '164',
+        body: '<script src="https://track.adform.net/adfscript/?bn=87294141"></script><div style="position:absolute;left:0;top:0;visibility:hidden"><img src="https://ads-demo.adhese.com/rtb_gateway/handlers/client/track?id=test" width="1" height="1" alt="" style="display:none"></div>',
+        extension: { mediaType: 'banner', prebid: { cpm: { amount: '0.3198538325072811054', currency: 'USD' } } },
+      },
+    ];
+
+    const result = parseResponse(response);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].origin).toBe('ADFORM');
+    expect(result[0].tag).toBe('<script src="https://track.adform.net/adfscript/?bn=87294141"></script><div style="position:absolute;left:0;top:0;visibility:hidden"><img src="https://ads-demo.adhese.com/rtb_gateway/handlers/client/track?id=test" width="1" height="1" alt="" style="display:none"></div>');
+    expect(result[0].width).toBe(656);
+    expect(result[0].height).toBe(164);
   });
 
   it('should be able to validate a number like string', () => {
