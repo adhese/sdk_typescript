@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.9.7
+
+### Patch Changes
+
+- 33c0503: When refreshOnResize is set to false, we are now adding the deviceType to requests by default again.
+
 ## 1.9.6
 
 ### Patch Changes
