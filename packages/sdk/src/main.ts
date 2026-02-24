@@ -26,6 +26,7 @@ import {
 import { fetchAllUnrenderedSlots } from './main.utils';
 
 import { createSlotManager } from './slotManager/slotManager';
+import { useQueryDetector } from './queryDetector/queryDetector';
 
 /**
  * Creates an Adhese instance. This instance is your main entry point to the Adhese API.
@@ -139,8 +140,14 @@ export function createAdhese<T extends ReadonlyArray<AdhesePlugin>>(
     context.findDomSlots = findDomSlots;
 
     useMainDebugMode(context);
-    if (mergedOptions.refreshOnResize)
+    if (mergedOptions.refreshOnResize){
       useMainQueryDetector(mergedOptions, context);
+    }else {
+      const [device] = useQueryDetector(context, mergedOptions.queries);
+      context.device = device.value;
+      context.parameters?.set('dt', device.value);
+      context.parameters?.set('br', device.value);
+    }
 
     useConsent(context);
 
