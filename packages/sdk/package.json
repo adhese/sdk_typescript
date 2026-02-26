@@ -14,6 +14,11 @@
       "import": "./dist/adheseSdk.js",
       "require": "./dist/cjs/adheseSdk.cjs",
       "types@<5.1": "./dist/legacy.d.ts"
+    },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.js",
+      "require": "./dist/cjs/server.cjs"
     }
   },
   "main": "./dist/cjs/adheseSdk.cjs",
@@ -23,6 +28,11 @@
     "<5.1": {
       "*": [
         "./dist/legacy.d.ts"
+      ]
+    },
+    "*": {
+      "server": [
+        "./dist/server.d.ts"
       ]
     }
   },
