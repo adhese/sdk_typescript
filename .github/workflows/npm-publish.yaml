@@ -21,7 +21,6 @@ on:
         default: ''
     outputs:
       published:
-        description: 'Whether packages were published (release mode)'
         value: ${{ jobs.publish.outputs.published }}
 
 permissions: write-all
