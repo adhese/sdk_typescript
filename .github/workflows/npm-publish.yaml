@@ -61,7 +61,7 @@ jobs:
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         if: inputs.mode == 'release'
-        uses: changesets/action@v1
+        uses: changesets/action@6a0a831ff30acef54f2c6aa1cbbc1096b066edaf # v1
         with:
           title: Bump version packages
           publish: npm run release
@@ -83,7 +83,7 @@ jobs:
 
       - name: Publish to Github packages
         if: inputs.mode == 'release' && steps.changesets.outputs.published == 'true'
-        uses: changesets/action@v1
+        uses: changesets/action@6a0a831ff30acef54f2c6aa1cbbc1096b066edaf # v1
         with:
           publish: npm run release -- --no-git-tags
           createGithubReleases: false
@@ -98,7 +98,7 @@ jobs:
       - name: Publish nightly
         id: publish-nightly
         if: inputs.mode == 'nightly'
-        uses: changesets/action@v1
+        uses: changesets/action@6a0a831ff30acef54f2c6aa1cbbc1096b066edaf # v1
         with:
           publish: npm run changeset publish -- --snapshot --tag nightly
           createGithubReleases: false
