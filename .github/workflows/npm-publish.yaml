@@ -1,0 +1,119 @@
+name: NPM Publish
+
+on:
+  workflow_call:
+    inputs:
+      mode:
+        description: 'Operation: release | nightly | deprecate'
+        type: string
+        required: true
+      package:
+        type: string
+        required: false
+        default: ''
+      version_range:
+        type: string
+        required: false
+        default: ''
+      message:
+        type: string
+        required: false
+        default: ''
+    outputs:
+      published:
+        value: ${{ jobs.publish.outputs.published }}
+
+permissions: write-all
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    outputs:
+      published: ${{ steps.changesets.outputs.published }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cache Turbo artifacts
+        if: inputs.mode != 'deprecate'
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-release-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-release-
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install dependencies
+        if: inputs.mode != 'deprecate'
+        run: npm ci
+
+      - name: Build
+        if: inputs.mode == 'nightly'
+        run: npm run prepareRelease -- --affected
+
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        if: inputs.mode == 'release'
+        uses: changesets/action@6a0a831ff30acef54f2c6aa1cbbc1096b066edaf # v1
+        with:
+          title: Bump version packages
+          publish: npm run release
+          version: npm run changeset:version
+          commit: Bump version packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push git tag after publish
+        if: inputs.mode == 'release' && steps.changesets.outputs.published == 'true'
+        run: git push --follow-tags
+
+      - name: Setup Node.js with Github packages registry
+        if: inputs.mode == 'release' && steps.changesets.outputs.published == 'true'
+        uses: actions/setup-node@v4
+        with:
+          registry-url: 'https://npm.pkg.github.com'
+          node-version: lts/*
+
+      - name: Publish to Github packages
+        if: inputs.mode == 'release' && steps.changesets.outputs.published == 'true'
+        uses: changesets/action@6a0a831ff30acef54f2c6aa1cbbc1096b066edaf # v1
+        with:
+          publish: npm run release -- --no-git-tags
+          createGithubReleases: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate changelog
+        if: inputs.mode == 'nightly'
+        run: npm run changeset version -- --snapshot nightly
+
+      - name: Publish nightly
+        id: publish-nightly
+        if: inputs.mode == 'nightly'
+        uses: changesets/action@6a0a831ff30acef54f2c6aa1cbbc1096b066edaf # v1
+        with:
+          publish: npm run changeset publish -- --snapshot --tag nightly
+          createGithubReleases: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deprecate nightly
+        if: inputs.mode == 'nightly'
+        run: npx tsx ./scripts/nightlyGithubAction.ts --packages '${{ steps.publish-nightly.outputs.publishedPackages }}' --pull-request ${{ github.event.number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deprecate package
+        if: inputs.mode == 'deprecate'
+        run: npm deprecate "${PACKAGE}@${VERSION_RANGE}" "${MESSAGE}"
+        env:
+          PACKAGE: ${{ inputs.package }}
+          VERSION_RANGE: ${{ inputs.version_range }}
+          MESSAGE: ${{ inputs.message }}

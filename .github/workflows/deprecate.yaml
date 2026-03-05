@@ -13,32 +13,14 @@ on:
         description: The deprecation message
         required: true
 
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  NPM_TOKEN: ${{ secrets.NPMJS_PUBLISH_TOKEN }}
-
 permissions: write-all
 
 jobs:
   deprecate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-
-      - name: Create .npmrc
-        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-        env:
-          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ env.NPM_TOKEN }}
-
-      - name: Deprecate
-        run: npm deprecate ${PACKAGE}@${VERSION_RANGE} "${MESSAGE}"
-        env:
-          PACKAGE: ${{ github.event.inputs.package }}
-          VERSION_RANGE: ${{ github.event.inputs.version_range }}
-          MESSAGE: ${{ github.event.inputs.message }}
+    uses: ./.github/workflows/npm-publish.yaml
+    with:
+      mode: deprecate
+      package: ${{ github.event.inputs.package }}
+      version_range: ${{ github.event.inputs.version_range }}
+      message: ${{ github.event.inputs.message }}
+    secrets: inherit
