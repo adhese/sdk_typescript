@@ -1,5 +1,11 @@
 # @adhese/sdk-react
 
+## 1.9.8
+
+### Patch Changes
+
+- d6f11ea: Updated README
+
 ## 1.9.7
 
 ### Patch Changes
