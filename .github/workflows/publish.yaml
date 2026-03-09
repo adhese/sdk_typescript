@@ -20,7 +20,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Cache Turbo artifacts
         uses: actions/cache@v4
         with:
@@ -32,7 +32,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: 24
       - name: Install dependencies
         run: npm ci
       - name: Lint
@@ -41,7 +41,7 @@ jobs:
   typecheck:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Cache Turbo artifacts
         uses: actions/cache@v4
         with:
@@ -53,7 +53,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: 24
       - name: Install dependencies
         run: npm ci
       - name: Typecheck
@@ -62,7 +62,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Cache Turbo artifacts
         uses: actions/cache@v4
         with:
@@ -74,7 +74,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: 24
       - name: Install dependencies
         run: npm ci
       - name: Test
@@ -83,7 +83,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Cache Turbo artifacts
         uses: actions/cache@v4
         with:
@@ -95,7 +95,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: 24
       - name: Install dependencies
         run: npm ci
       - name: Build
@@ -111,7 +111,7 @@ jobs:
       contents: write
       id-token: write # Required for OIDC
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
 
@@ -126,10 +126,18 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: 24
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Debug npm/node versions and OIDC setup
+        run: |
+          echo "Node version: $(node --version)"
+          echo "npm version: $(npm --version)"
+          echo "pnpm version: $(pnpm --version)"
+          echo "ACTIONS_ID_TOKEN_REQUEST_URL: $ACTIONS_ID_TOKEN_REQUEST_URL"
+          echo "ACTIONS_ID_TOKEN_REQUEST_TOKEN is set: ${{ env.ACTIONS_ID_TOKEN_REQUEST_TOKEN != '' }}"
 
       - name: Build
         if: github.event_name == 'pull_request'
@@ -157,7 +165,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           registry-url: 'https://npm.pkg.github.com'
-          node-version: lts/*
+          node-version: 24
 
       - name: Publish to Github packages
         if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.changesets.outputs.published == 'true'
@@ -183,6 +191,11 @@ jobs:
           createGithubReleases: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_CONFIG_LOGLEVEL: silly
+
+      - name: Show npm debug log
+        if: failure()
+        run: find ~/.npm/_logs -name "*.log" | sort | tail -1 | xargs cat
 
       - name: Comment on PR with nightly build info
         if: github.event_name == 'pull_request'
@@ -197,7 +210,7 @@ jobs:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.publish.outputs.published == 'true' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Cache Turbo artifacts
         uses: actions/cache@v4
@@ -210,7 +223,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: 24
 
       - name: Install dependencies
         run: npm ci
