@@ -11,12 +11,12 @@ const ocktokit = new Octokit({
 });
 
 program
-  .name('deprecate-nightly')
-  .description('Deprecate a nightly package');
+  .name('nightly-comment')
+  .description('Comment on PR with nightly build info');
 
 program
-  .option('-P, --packages <package>', 'Package to deprecate')
-  .option('-I, --pull-request <pull-request>', 'Pull request to deprecate')
+  .option('-P, --packages <package>', 'Published packages')
+  .option('-I, --pull-request <pull-request>', 'Pull request number')
   .action(async (options: {
     packages: string;
     pullRequest: number;
@@ -26,10 +26,16 @@ program
       version: string(),
     })).parse(JSON.parse(options.packages));
 
+    // Skip deprecation - nightly tag is sufficient to indicate development builds
+    // Optionally clean up git tags created by changesets
     for (const pkg of packages) {
-      execSync(`npm deprecate ${pkg.name}@${pkg.version} "This package is a nightly build and is deprecated by default. Please use the latest stable version unless you know what you are doing."`);
-      execSync(`git tag -d ${pkg.name}@${pkg.version}`);
-      execSync(`git push origin :refs/tags/${pkg.name}@${pkg.version}`);
+      try {
+        execSync(`git tag -d ${pkg.name}@${pkg.version}`, { stdio: 'ignore' });
+        execSync(`git push origin :refs/tags/${pkg.name}@${pkg.version}`, { stdio: 'ignore' });
+      }
+      catch {
+        // Ignore errors if tags don't exist
+      }
     }
 
     if (packages.length > 0) {
