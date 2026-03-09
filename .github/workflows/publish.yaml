@@ -1,14 +1,20 @@
 # This workflow will release the packages with Changesets
 
-name: Release
+name: Publish
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions: write-all
+
+# make sure there are no other workflows running concurrently
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   lint:
@@ -95,19 +101,100 @@ jobs:
       - name: Build
         run: npm run build -- --affected
 
-  release:
-    name: Release
+  publish:
+    runs-on: ubuntu-latest
     needs: [lint, typecheck, test, build]
-    uses: ./.github/workflows/npm-publish.yaml
-    with:
-      mode: release
-    secrets: inherit
+    outputs:
+      published: ${{ steps.changesets.outputs.published }}
+    permissions:
+      pull-requests: write
+      contents: write
+      id-token: write # Required for OIDC
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cache Turbo artifacts
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-release-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-release-
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        if: github.event_name == 'pull_request'
+        run: npm run prepareRelease -- --affected
+
+      # Release mode: push to main
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: changesets/action@6a0a831ff30acef54f2c6aa1cbbc1096b066edaf # v1.7.0
+        with:
+          title: Bump version packages
+          publish: npm run release
+          version: npm run changeset:version
+          commit: Bump version packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push git tag after publish
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.changesets.outputs.published == 'true'
+        run: git push --follow-tags
+
+      - name: Setup Node.js with Github packages registry
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.changesets.outputs.published == 'true'
+        uses: actions/setup-node@v4
+        with:
+          registry-url: 'https://npm.pkg.github.com'
+          node-version: lts/*
+
+      - name: Publish to Github packages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.changesets.outputs.published == 'true'
+        uses: changesets/action@6a0a831ff30acef54f2c6aa1cbbc1096b066edaf # v1.7.0
+        with:
+          publish: npm run release -- --no-git-tags
+          createGithubReleases: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Nightly mode: pull request to main
+      - name: Generate changelog
+        if: github.event_name == 'pull_request'
+        run: npm run changeset version -- --snapshot nightly
+
+      - name: Publish nightly
+        id: publish-nightly
+        if: github.event_name == 'pull_request'
+        uses: changesets/action@6a0a831ff30acef54f2c6aa1cbbc1096b066edaf # v1.7.0
+        with:
+          publish: npm run changeset publish -- --snapshot --tag nightly
+          createGithubReleases: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Comment on PR with nightly build info
+        if: github.event_name == 'pull_request'
+        run: npx tsx ./scripts/nightlyGithubAction.ts --packages '${{ steps.publish-nightly.outputs.publishedPackages }}' --pull-request ${{ github.event.number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   deploy_docs:
     name: Deploy docs
-    needs: [release]
+    needs: [publish]
     runs-on: ubuntu-latest
-    if: ${{ needs.release.outputs.published == 'true' }}
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.publish.outputs.published == 'true' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

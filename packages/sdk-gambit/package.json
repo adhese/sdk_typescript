@@ -6,7 +6,8 @@
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adhese/sdk_typescript.git"
+    "url": "git+https://github.com/adhese/sdk_typescript.git",
+    "directory": "packages/sdk-gambit"
   },
   "sideEffects": false,
   "main": "./dist/cjs/gambit.cjs",

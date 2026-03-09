@@ -6,7 +6,8 @@
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adhese/sdk_typescript.git"
+    "url": "git+https://github.com/adhese/sdk_typescript.git",
+    "directory": "packages/sdk-devtools"
   },
   "main": "./dist/cjs/sdkDevtools.cjs",
   "module": "./dist/sdkDevtools.js",

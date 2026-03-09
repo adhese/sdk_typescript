@@ -5,7 +5,8 @@
   "description": "Adhese SDK",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adhese/sdk_typescript.git"
+    "url": "git+https://github.com/adhese/sdk_typescript.git",
+    "directory": "packages/sdk-user-sync"
   },
   "main": "./dist/cjs/userSync.cjs",
   "module": "./dist/userSync.js",
