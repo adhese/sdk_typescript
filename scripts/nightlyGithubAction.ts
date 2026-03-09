@@ -32,7 +32,8 @@ program
       try {
         execSync(`git tag -d ${pkg.name}@${pkg.version}`, { stdio: 'ignore' });
         execSync(`git push origin :refs/tags/${pkg.name}@${pkg.version}`, { stdio: 'ignore' });
-      } catch {
+      }
+      catch {
         // Ignore errors if tags don't exist
       }
     }
