@@ -34,7 +34,8 @@ function Devtools() {
 ```
 
 ## `useAdhese`
-The `useAdhese` hook returns the Adhese instance that is created by the `AdheseProvider`. It can be used to access the Adhese instance in any child component.
+The `useAdhese` hook returns the Adhese instance that is created by the `AdheseProvider`. It can be used to access the
+Adhese instance in any child component.
 
 ```jsx
 import { useAdhese } from '@adhese/sdk-react';
