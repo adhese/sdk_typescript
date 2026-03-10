@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.10.0
+
+### Minor Changes
+
+- 333e931: Includes a new function to fetch ads from the server decoupled from rendering.
+
 ## 1.9.9
 
 ### Patch Changes
