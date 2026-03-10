@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.10.1
+
+### Patch Changes
+
+- 1bf415d: replace process.env.NODE_ENV with mode, fix the links to the bundle and update the bundle contents.
+
 ## 1.10.0
 
 ### Minor Changes
