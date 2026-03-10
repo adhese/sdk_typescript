@@ -1,5 +1,11 @@
 # @adhese/sdk-shared
 
+## 1.5.3
+
+### Patch Changes
+
+- 0626b90: Added README to shared library
+
 ## 1.5.2
 
 ### Patch Changes
