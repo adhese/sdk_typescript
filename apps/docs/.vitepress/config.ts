@@ -26,6 +26,7 @@ export default async (data: {
         { text: 'Consent', link: '/consent' },
         { text: 'Lite', link: '/lite' },
         { text: 'React SDK', link: '/react-sdk' },
+        { text: 'Server', link: '/server' },
         {
           text: 'Plugins',
           items: [
