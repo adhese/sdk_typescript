@@ -3,7 +3,6 @@ import {
   cssValueLike,
   dateLike,
   isJsonOrHtmlOptionalString,
-  isJsonOrHtmlString,
   lazy,
   literal,
   numberLike,
@@ -48,7 +47,7 @@ const baseSchema = object({
   orderId: string().optional(),
   orderName: string().optional(),
   orderProperty: string().optional(),
-  origin: union([literal('JERLICIA'), literal('DALE')]),
+  origin: string(),
   originData: unknown().optional(),
   originInstance: string().optional(),
   poolPath: urlLike.optional(),
@@ -72,19 +71,6 @@ const baseSchema = object({
   width: numberLike.optional(),
   widthLarge: cssValueLike.optional(),
 });
-
-export const jerliciaSchema = object({
-  origin: literal('JERLICIA'),
-  tag: isJsonOrHtmlString,
-}).passthrough();
-
-export const daleSchema = object({
-  origin: literal('DALE'),
-  body: isJsonOrHtmlString,
-}).passthrough().transform(({ body, ...data }) => ({
-  ...data,
-  tag: body,
-}));
 
 export type AdResponse = (TypeOf<typeof baseSchema> & {
   additionalCreatives?: ReadonlyArray<AdResponse> | string;
@@ -121,21 +107,11 @@ export const adSchema: ZodType<PreParsedAd> = adResponseSchema.transform(({
 });
 
 export function parseResponse(response: unknown): ReadonlyArray<AdheseAd> {
-  const schemaMap = {
-    /* eslint-disable ts/naming-convention */
-    JERLICIA: jerliciaSchema,
-    DALE: daleSchema,
-    /* eslint-enable ts/naming-convention */
-  };
+  const rawArray = response as ReadonlyArray<Record<string, unknown>>;
 
-  const preParsed = adResponseSchema.array().parse(response);
-
-  return preParsed.map((item) => {
-    const schema = schemaMap[item.origin];
-
-    if (!schema)
-      return adSchema.parse(item);
-
-    return schema.parse(item);
+  return rawArray.map((item) => {
+    if (item.body && !item.tag)
+      return adSchema.parse({ ...item, tag: item.body });
+    return adSchema.parse(item);
   }) as ReadonlyArray<AdheseAd>;
 }
