@@ -371,8 +371,15 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         await waitForDomLoad();
         element.value = getElement();
 
-        let renderAd
-          = adToRender ?? data.value ?? originalData.value ?? (await request());
+        let renderAd = adToRender ?? data.value ?? originalData.value ?? null;
+        if (!renderAd) {
+          renderAd = await request();
+          // Cast needed: TS narrows status.value to 'rendering' from the assignment above,
+          // but eagerRendering may have triggered a nested render() that set it to 'rendered'.
+          if ((status.value as UnwrapRef<AdheseSlot>['status']) === 'rendered') {
+            return element.value;
+          }
+        }
 
         renderAd = renderAd && (await runOnBeforeRender(renderAd));
 
@@ -396,6 +403,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
           throw new Error(error);
         }
 
+        logger.debug(`Slot Status before rendering: ${status.value}`);
         if (renderMode !== 'none' && element.value) {
           renderFunctions[renderMode](
             {
