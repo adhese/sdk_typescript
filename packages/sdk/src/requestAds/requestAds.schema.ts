@@ -69,7 +69,7 @@ const baseSchema = object({
   url: urlLike.optional(),
   viewableImpressionCounter: urlLike.optional(),
   width: numberLike.optional(),
-  widthLarge: cssValueLike.optional(),
+  widthLarge: numberLike.optional(),
 });
 
 export type AdResponse = (TypeOf<typeof baseSchema> & {
