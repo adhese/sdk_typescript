@@ -1,9 +1,7 @@
 import type { AdheseContext } from '../main.types';
 import type { AdheseSlot, AdheseSlotOptions } from '../slot/slot.types';
 import { generateSlotSignature } from '@adhese/sdk-shared';
-import { findDomSlots as extFindDomSlots } from '../findDomSlots/findDomSlots';
 import { logger } from '../logger/logger';
-import { createSlot } from '../slot/slot';
 
 export type AdheseSlotManager = {
   /**
@@ -34,6 +32,14 @@ export type SlotManagerOptions = {
    */
   initialSlots?: ReadonlyArray<Omit<AdheseSlotOptions, 'context' | 'lazy'>>;
   context: AdheseContext;
+  /**
+   * Platform-specific slot creation function.
+   */
+  createSlot: (options: AdheseSlotOptions) => AdheseSlot;
+  /**
+   * Platform-specific DOM slot discovery function. Only relevant for web.
+   */
+  findDomSlots?: (context: AdheseContext) => Promise<ReadonlyArray<AdheseSlot>>;
 };
 
 /**
@@ -43,6 +49,8 @@ export type SlotManagerOptions = {
 export function createSlotManager({
   initialSlots = [],
   context,
+  createSlot,
+  findDomSlots: extFindDomSlots,
 }: SlotManagerOptions): AdheseSlotManager {
   context.slots = new Map<string, AdheseSlot>();
 
@@ -102,6 +110,9 @@ export function createSlotManager({
   }
 
   async function findDomSlots(): Promise<ReadonlyArray<AdheseSlot>> {
+    if (!extFindDomSlots)
+      return [];
+
     const domSlots = await extFindDomSlots(
       context,
     );

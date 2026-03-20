@@ -1,5 +1,7 @@
 import type { AdheseContext, AdheseSlot, AdheseSlotOptions } from '@adhese/sdk';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { findDomSlots } from '../findDomSlots/findDomSlots';
+import { createSlot } from '../slot/slot';
 import { testContext } from '../testUtils';
 import { createSlotManager } from './slotManager';
 
@@ -19,6 +21,8 @@ describe('slotManager', () => {
     slotManager = createSlotManager({
       initialSlots: [],
       context,
+      createSlot,
+      findDomSlots,
     });
 
     expect(slotManager).toEqual({
@@ -36,6 +40,8 @@ describe('slotManager', () => {
         format: 'leaderboard',
       }],
       context,
+      createSlot,
+      findDomSlots,
     });
     expect(slotManager.getAll().length).toBe(1);
   });
@@ -44,6 +50,8 @@ describe('slotManager', () => {
     slotManager = createSlotManager({
       initialSlots: [],
       context,
+      createSlot,
+      findDomSlots,
     });
     slotManager.add({
       format: 'leaderboard',
@@ -60,6 +68,8 @@ describe('slotManager', () => {
     slotManager = createSlotManager({
       initialSlots: [],
       context,
+      createSlot,
+      findDomSlots,
     });
     const slots = await slotManager.findDomSlots();
     expect(slots.length).toBe(2);
@@ -73,6 +83,8 @@ describe('slotManager', () => {
         containingElement: 'leaderboard',
       }],
       context,
+      createSlot,
+      findDomSlots,
     });
     const slot = slotManager.get('foo-leaderboard');
     expect(slot).toBeDefined();
@@ -85,6 +97,8 @@ describe('slotManager', () => {
         containingElement: 'leaderboard',
       }],
       context,
+      createSlot,
+      findDomSlots,
     });
     slotManager.dispose();
     expect(slotManager.getAll().length).toBe(0);

@@ -19,6 +19,11 @@
       "types": "./dist/validators.d.ts",
       "import": "./dist/validators.js",
       "require": "./dist/cjs/validators.cjs"
+    },
+    "./core": {
+      "types": "./dist/core.d.ts",
+      "import": "./dist/core.js",
+      "require": "./dist/cjs/core.cjs"
     }
   },
   "main": "./dist/cjs/index.cjs",

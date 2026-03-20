@@ -5,5 +5,5 @@ export default viteBaseConfig({
   name,
   dependencies,
   peerDependencies,
-  entries: ['src/index.ts', 'src/validators.ts', 'src/core.ts'],
+  entries: ['src/sdkReactNative.ts', 'src/core.ts'],
 });

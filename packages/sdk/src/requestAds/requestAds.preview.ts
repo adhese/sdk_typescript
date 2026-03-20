@@ -47,6 +47,9 @@ export async function requestPreviews(previewHost: string): Promise<ReadonlyArra
 }
 
 function getPreviewObjects(): ReadonlyArray<Record<string, string>> {
+  if (typeof window === 'undefined' || !window.location)
+    return [];
+
   const currentUrl = new URL(window.location.href);
 
   const previewObjects: Array<Record<string, string>> = [];

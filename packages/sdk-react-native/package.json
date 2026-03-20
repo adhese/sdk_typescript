@@ -1,0 +1,50 @@
+{
+  "name": "@adhese/sdk-react-native",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Adhese SDK for React Native",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adhese/sdk_typescript.git",
+    "directory": "packages/sdk-react-native"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/sdkReactNative.d.ts",
+      "import": "./dist/sdkReactNative.js",
+      "require": "./dist/cjs/sdkReactNative.cjs"
+    },
+    "./core": {
+      "types": "./dist/core.d.ts",
+      "import": "./dist/core.js",
+      "require": "./dist/cjs/core.cjs"
+    }
+  },
+  "main": "./dist/cjs/sdkReactNative.cjs",
+  "module": "./dist/sdkReactNative.js",
+  "types": "./dist/sdkReactNative.d.ts",
+  "files": [
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md",
+    "dist"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "lint": "eslint . --ignore-pattern **/*.md/**/*",
+    "lint:fix": "eslint --fix . --ignore-pattern **/*.md/**/*",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "prepareRelease": "npm run build"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-native": ">=0.70.0",
+    "react-native-webview": ">=11.0.0"
+  },
+  "dependencies": {
+    "@adhese/sdk": "1.10.1",
+    "@adhese/sdk-shared": "1.5.3"
+  }
+}

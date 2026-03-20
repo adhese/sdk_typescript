@@ -45,6 +45,20 @@ export const isJson = string().transform((value, { addIssue }) => {
   }
 });
 export const isHtmlString = string().transform((value, { addIssue }) => {
+  // DOMParser is not available in React Native (Hermes).
+  // Fall back to a basic heuristic check when it's missing.
+  if (typeof globalThis.DOMParser === 'undefined') {
+    if (/<[a-z][\s\S]*>/i.test(value))
+      return value;
+
+    addIssue({
+      code: ZodIssueCode.custom,
+      message: 'Invalid HTML',
+    });
+
+    return NEVER;
+  }
+
   const htmlParser = new DOMParser();
 
   try {

@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "Adhese SDK React Native Example",
+    "slug": "adhese-sdk-react-native-example",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "adhese-rn-example",
+    "platforms": ["ios", "android"],
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}
