@@ -1,6 +1,5 @@
 import {
   booleanLike,
-  cssValueLike,
   dateLike,
   isJsonOrHtmlOptionalString,
   lazy,
