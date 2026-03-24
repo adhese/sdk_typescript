@@ -4,24 +4,24 @@
 import { describe, expect, it } from 'vitest';
 import { isHtmlString, isJson, isJsonOrHtmlString } from './validators';
 
-const SCRIPT_TAG = "<script type='text/javascript' data-adhese='elektronik;tv__foto_og_lyd;tv;49_50_' data-api='ZeitEngine.js' data-clicktracker='' charset='UTF-8' data-analyticsid='v3mi_hstd' src='https://cdn.zeitcloud.io/prod/wdxo/htzp/oo1n/v3mi/main.js'></script>";
+const scriptTag = '<script type="text/javascript" data-adhese="elektronik;tv__foto_og_lyd;tv;49_50_" data-api="ZeitEngine.js" data-clicktracker="" charset="UTF-8" data-analyticsid="v3mi_hstd" src="https://cdn.zeitcloud.io/prod/wdxo/htzp/oo1n/v3mi/main.js"></script>';
 
 describe('validators with script tag', () => {
   it('isJson should fail for script tag', () => {
-    const result = isJson.safeParse(SCRIPT_TAG);
+    const result = isJson.safeParse(scriptTag);
     expect(result.success).toBe(false);
   });
 
   it('isHtmlString should pass for script tag', () => {
-    const result = isHtmlString.safeParse(SCRIPT_TAG);
+    const result = isHtmlString.safeParse(scriptTag);
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data).toBe(SCRIPT_TAG);
+      expect(result.data).toBe(scriptTag);
     }
   });
 
   it('isJsonOrHtmlString should pass for script tag', () => {
-    const result = isJsonOrHtmlString.safeParse(SCRIPT_TAG);
+    const result = isJsonOrHtmlString.safeParse(scriptTag);
     expect(result.success).toBe(true);
   });
 
