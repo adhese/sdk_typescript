@@ -1,5 +1,11 @@
 # @adhese/sdk-shared
 
+## 1.5.4
+
+### Patch Changes
+
+- f307605: Fixed DOMParser validation to support third-party ad tags.
+
 ## 1.5.3
 
 ### Patch Changes
