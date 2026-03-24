@@ -371,8 +371,13 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         await waitForDomLoad();
         element.value = getElement();
 
-        let renderAd
-          = adToRender ?? data.value ?? originalData.value ?? (await request());
+        let renderAd = adToRender ?? data.value ?? originalData.value ?? null;
+        if (!renderAd) {
+          renderAd = await request();
+          if ((status.value as UnwrapRef<AdheseSlot>['status']) === 'rendered') {
+            return element.value;
+          }
+        }
 
         renderAd = renderAd && (await runOnBeforeRender(renderAd));
 
