@@ -50,7 +50,7 @@ export const isHtmlString = string().transform((value, { addIssue }) => {
   try {
     const html = htmlParser.parseFromString(value, 'text/html');
 
-    if (html.body?.children.length === 0)
+    if (html.body?.children.length === 0 && !/<[a-z][\s\S]*>/i.test(value))
       throw new Error('Invalid HTML');
 
     return value;
