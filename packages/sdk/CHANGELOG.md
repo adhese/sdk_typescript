@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.11.0
+
+### Minor Changes
+
+- b55ec8c: Added functionallity that allows the use of Programmatic SSP connections to be handled.
+
 ## 1.10.1
 
 ### Patch Changes
