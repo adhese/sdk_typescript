@@ -65,7 +65,7 @@ export const isHtmlString = string().transform((value, { addIssue }) => {
   }
 });
 export const isJsonOrHtmlString = union([isJson, isHtmlString]);
-export const isJsonOrHtmlOptionalString = union([coerce.string(), isJsonOrHtmlString]).transform((value) => {
+export const isJsonOrHtmlOptionalString = union([isJsonOrHtmlString, coerce.string()]).transform((value) => {
   if (value === '')
     return undefined;
 

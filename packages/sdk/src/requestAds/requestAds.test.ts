@@ -294,6 +294,99 @@ describe('schema', () => {
     expect(result[0].height).toBe(164);
   });
 
+  it('should use body as tag when body is set and tag is absent', () => {
+    const response = [
+      {
+        origin: 'JERLICIA',
+        // eslint-disable-next-line ts/naming-convention
+        slotID: '1',
+        slotName: 'test-slot',
+        adType: 'html',
+        body: '<div>ad content</div>',
+      },
+    ];
+
+    const result = parseResponse(response);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].tag).toBe('<div>ad content</div>');
+  });
+
+  it('should parse stringified JSON body into object when body is set and tag is absent', () => {
+    const jsonBody = JSON.stringify({ type: 'vast', url: 'https://example.com/vast' });
+    const response = [
+      {
+        origin: 'JERLICIA',
+        // eslint-disable-next-line ts/naming-convention
+        slotID: '1',
+        slotName: 'test-slot',
+        adType: 'vast',
+        body: jsonBody,
+      },
+    ];
+
+    const result = parseResponse(response);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].tag).toEqual({ type: 'vast', url: 'https://example.com/vast' });
+  });
+
+  it('should parse stringified JSON tag into object when tag is present', () => {
+    const jsonTag = JSON.stringify({ type: 'vast', url: 'https://example.com/vast' });
+    const response = [
+      {
+        origin: 'JERLICIA',
+        // eslint-disable-next-line ts/naming-convention
+        slotID: '1',
+        slotName: 'test-slot',
+        adType: 'vast',
+        tag: jsonTag,
+      },
+    ];
+
+    const result = parseResponse(response);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].tag).toEqual({ type: 'vast', url: 'https://example.com/vast' });
+  });
+
+  it('should keep HTML tag as string when tag is present', () => {
+    const response = [
+      {
+        origin: 'JERLICIA',
+        // eslint-disable-next-line ts/naming-convention
+        slotID: '1',
+        slotName: 'test-slot',
+        adType: 'html',
+        tag: '<div>ad content</div>',
+      },
+    ];
+
+    const result = parseResponse(response);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].tag).toBe('<div>ad content</div>');
+  });
+
+  it('should use tag and not body when both are present', () => {
+    const response = [
+      {
+        origin: 'JERLICIA',
+        // eslint-disable-next-line ts/naming-convention
+        slotID: '1',
+        slotName: 'test-slot',
+        adType: 'html',
+        body: '<div>body content</div>',
+        tag: '<div>tag content</div>',
+      },
+    ];
+
+    const result = parseResponse(response);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].tag).toBe('<div>tag content</div>');
+  });
+
   it('should be able to validate a number like string', () => {
     expect(numberLike.parse('123')).toBe(123);
     expect(numberLike.parse('0.0')).toBe(0);

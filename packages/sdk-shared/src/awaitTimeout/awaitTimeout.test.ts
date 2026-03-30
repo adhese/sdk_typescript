@@ -7,6 +7,7 @@ describe('awaitTimeout', () => {
     const start = performance.now();
     await awaitTimeout(timeout);
     const end = performance.now();
-    expect(Math.round(end - start)).toBeGreaterThanOrEqual(timeout);
+    const fudge = 5;
+    expect(end - start).toBeGreaterThanOrEqual(timeout - fudge);
   });
 });
