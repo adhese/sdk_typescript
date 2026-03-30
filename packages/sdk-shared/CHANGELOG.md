@@ -1,5 +1,11 @@
 # @adhese/sdk-shared
 
+## 1.5.5
+
+### Patch Changes
+
+- 6751edd: JSON ads will now be correctly translated into an Object again on the Slot instance.
+
 ## 1.5.4
 
 ### Patch Changes
