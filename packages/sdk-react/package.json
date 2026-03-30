@@ -1,7 +1,7 @@
 {
   "name": "@adhese/sdk-react",
   "type": "module",
-  "version": "1.11.1",
+  "version": "1.11.2",
   "description": "Adhese SDK",
   "license": "GPL-3.0",
   "repository": {
@@ -52,7 +52,7 @@
     "react-dom": ">=16.13"
   },
   "dependencies": {
-    "@adhese/sdk": "1.11.1",
-    "@adhese/sdk-shared": "1.5.4"
+    "@adhese/sdk": "1.11.2",
+    "@adhese/sdk-shared": "1.5.5"
   }
 }
