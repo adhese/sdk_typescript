@@ -61,7 +61,7 @@ function insertHtmlWithScripts(
   const styleTags = doc.querySelectorAll('style');
   styleTags.forEach((styleTag) => {
     const style = document.createElement('style');
-    style.id = styleTag?.id && '';
+    style.id = styleTag?.id ?? '';
     style.textContent = styleTag.textContent;
     document.head.appendChild(style);
   });
@@ -70,7 +70,7 @@ function insertHtmlWithScripts(
   while (doc.body.firstChild !== null) {
     const node = doc.body.firstChild as HTMLScriptElement;
     if (node.tagName === 'STYLE') {
-      // Remove the script node from the parsed content
+      // Remove the style node from the parsed content
       doc.body.removeChild(node);
       // Skip the rest of this logic - styles already added
       continue;
@@ -101,9 +101,10 @@ function insertHtmlWithScripts(
       // Append to document
       document.body.appendChild(script);
 
-      // Clean up after appending to avoid memory leaks
-      document.body.removeChild(script);
-
+      // Clean up after appending to avoid memory leaks - but only if the script isn't excecuting anymore.
+      if (script.parentNode === document.body){
+        document.body.removeChild(script);
+      }
       // Remove the script node from the parsed content
       doc.body.removeChild(node);
     }
