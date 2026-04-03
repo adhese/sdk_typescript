@@ -102,7 +102,7 @@ function insertHtmlWithScripts(
       document.body.appendChild(script);
 
       // Clean up after appending to avoid memory leaks - but only if the script isn't excecuting anymore.
-      if (script.parentNode === document.body){
+      if (script.parentNode === document.body) {
         document.body.removeChild(script);
       }
       // Remove the script node from the parsed content
