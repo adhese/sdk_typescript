@@ -183,6 +183,9 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       if (!context.options.eagerRendering && !oldElement) {
         return;
       }
+      if (status.value === 'rendering' || status.value === 'rendered') {
+        return;
+      }
       await render();
     });
 
@@ -212,7 +215,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     watch(
       isInViewport,
       async (newIsInViewport) => {
-        if (newIsInViewport && status.value !== 'rendered')
+        if (newIsInViewport && status.value !== 'rendered' && status.value !== 'rendering')
           await slotContext.value?.render();
       },
       { immediate: true },
