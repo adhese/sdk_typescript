@@ -1,5 +1,11 @@
 # @adhese/sdk-shared
 
+## 1.5.6
+
+### Patch Changes
+
+- 233b11d: Making sure the rendering doesn't happen multiple times when you are already rendering in preview
+
 ## 1.5.5
 
 ### Patch Changes
