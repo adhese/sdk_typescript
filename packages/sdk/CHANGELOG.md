@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.11.4
+
+### Patch Changes
+
+- 4d276d9: Make the re-requesting of slots with the same options possible without deleting already requested banners
+
 ## 1.11.3
 
 ### Patch Changes
