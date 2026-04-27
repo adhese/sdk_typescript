@@ -56,29 +56,24 @@ export function createSlotManager({
       format: options.format,
       slot: options.slot,
       parameters: options.parameters,
-    },
-    );
+    });
 
-    const current = context.slots.get(signature);
+    let uniqueKey = signature;
+    let counter = 1;
+    while (context.slots.has(uniqueKey)) {
+      uniqueKey = `${signature}_${counter}`;
+      counter++;
+    }
 
     const slot = createSlot({
       ...options as AdheseSlotOptions,
       context,
-      initialData: current?.data ?? current?.options.initialData,
+      initialData: options.initialData,
       setup(slotContext, slotHooks) {
         options.setup?.(slotContext, slotHooks);
 
-        slotHooks.onInit(() => {
-          if (!slotContext.value)
-            return;
-
-          if (current?.status === 'empty' || current?.status === 'error') {
-            slotContext.value.status = current?.status;
-          }
-        });
-
         slotHooks.onDispose(() => {
-          context.slots.delete(slot.id);
+          context.slots.delete(uniqueKey);
           logger.debug('Slot removed', {
             slot,
           });
@@ -87,9 +82,7 @@ export function createSlotManager({
       },
     });
 
-    current?.dispose();
-
-    context.slots.set(signature, slot);
+    context.slots.set(uniqueKey, slot);
 
     logger.debug('Slot added', {
       slot,
