@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.11.5
+
+### Patch Changes
+
+- 3cabe58: Bugfixed a type issue with the renderMode not accepting a none value
+
 ## 1.11.4
 
 ### Patch Changes
