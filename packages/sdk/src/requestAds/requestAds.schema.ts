@@ -12,7 +12,7 @@ import {
   unknown,
   urlLike,
   type ZodType,
-} from "@adhese/sdk-shared/validators";
+} from '@adhese/sdk-shared/validators';
 
 const baseSchema = object({
   adDuration: numberLike.optional(),
@@ -53,9 +53,9 @@ const baseSchema = object({
   preview: booleanLike.optional(),
   priority: numberLike.optional(),
   renderMode: union([
-    literal("inline"),
-    literal("iframe"),
-    literal("none"),
+    literal('inline'),
+    literal('iframe'),
+    literal('none'),
   ]).optional(),
   sfSrc: urlLike.optional(),
   share: string().optional(),
@@ -81,7 +81,7 @@ export type AdResponse = TypeOf<typeof baseSchema> & {
 
 const adResponseSchema: ZodType<AdResponse> = baseSchema.extend({
   additionalCreatives: lazy(() =>
-    union([adResponseSchema.array(), string()]).optional()
+    union([adResponseSchema.array(), string()]).optional(),
   ),
 }) as ZodType<AdResponse>;
 
@@ -90,8 +90,8 @@ export type PreParsedAd = TypeOf<typeof adResponseSchema> & {
 };
 
 export type AdheseAd<
-  T = string | Record<string, unknown> | ReadonlyArray<unknown>
-> = Omit<PreParsedAd, "tag"> & {
+  T = string | Record<string, unknown> | ReadonlyArray<unknown>,
+> = Omit<PreParsedAd, 'tag'> & {
   tag: T | string;
 };
 
@@ -100,20 +100,20 @@ export const adSchema: ZodType<PreParsedAd> = adResponseSchema.transform(
     const filteredValue = Object.fromEntries(
       Object.entries(data).filter(
         ([, value]) =>
-          value !== undefined &&
-          value !== null &&
-          JSON.stringify(value) !== "{}" &&
-          JSON.stringify(value) !== "[]"
+          value !== undefined
+          && value !== null
+          && JSON.stringify(value) !== '{}'
+          && JSON.stringify(value) !== '[]',
       )
     ) as typeof data;
 
     return {
       ...filteredValue,
       additionalCreatives: Array.isArray(additionalCreatives)
-        ? additionalCreatives.map((creative) => adSchema.parse(creative))
+        ? additionalCreatives.map(creative => adSchema.parse(creative))
         : additionalCreatives,
     };
-  }
+  },
 );
 
 export function parseResponse(response: unknown): ReadonlyArray<AdheseAd> {
