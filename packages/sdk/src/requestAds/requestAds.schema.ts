@@ -104,7 +104,7 @@ export const adSchema: ZodType<PreParsedAd> = adResponseSchema.transform(
           && value !== null
           && JSON.stringify(value) !== '{}'
           && JSON.stringify(value) !== '[]',
-      )
+      ),
     ) as typeof data;
 
     return {
