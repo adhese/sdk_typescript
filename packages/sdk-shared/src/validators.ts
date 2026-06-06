@@ -1,5 +1,9 @@
 import { coerce, literal, NEVER, number, string, union, ZodIssueCode } from 'zod';
 
+function hasHtmlLikeMarkup(value: string): boolean {
+  return /<[a-z][\s\S]*>/i.test(value);
+}
+
 export const numberLike = union([coerce.string().regex(/^\d+$/), literal(''), coerce.number()]).transform(value => value === '' ? undefined : Number(value));
 export const booleanLike = union([coerce.boolean(), literal('')]);
 export const urlLike = union([coerce.string(), literal('')]).transform((value) => {
@@ -45,12 +49,18 @@ export const isJson = string().transform((value, { addIssue }) => {
   }
 });
 export const isHtmlString = string().transform((value, { addIssue }) => {
-  const htmlParser = new DOMParser();
-
   try {
-    const html = htmlParser.parseFromString(value, 'text/html');
+    // DOMParser is not available in server runtimes (e.g. Next.js RSC / Node.js).
+    if (typeof DOMParser === 'undefined') {
+      if (!hasHtmlLikeMarkup(value))
+        throw new Error('Invalid HTML');
 
-    if (html.body?.children.length === 0 && !/<[a-z][\s\S]*>/i.test(value))
+      return value;
+    }
+
+    const html = new DOMParser().parseFromString(value, 'text/html');
+
+    if (html.body?.children.length === 0 && !hasHtmlLikeMarkup(value))
       throw new Error('Invalid HTML');
 
     return value;
