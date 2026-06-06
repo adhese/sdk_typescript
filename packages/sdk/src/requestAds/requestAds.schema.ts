@@ -1,85 +1,90 @@
 import {
+  array,
   booleanLike,
   dateLike,
+  extend,
   isJsonOrHtmlOptionalString,
   lazy,
   literal,
   numberLike,
   object,
+  optional,
+  type output,
+  pipe,
   string,
-  type TypeOf,
+  transform,
   union,
   unknown,
   urlLike,
-  type ZodType,
+  type ZodMiniType,
 } from '@adhese/sdk-shared/validators';
 
 const baseSchema = object({
-  adDuration: numberLike.optional(),
-  adFormat: string().optional(),
+  adDuration: optional(numberLike),
+  adFormat: optional(string()),
   adType: string(),
-  additionalCreativeTracker: urlLike.optional(),
-  additionalViewableTracker: string().optional(),
-  adspaceEnd: dateLike.optional(),
-  adspaceId: string().optional(),
-  adspaceKey: string().optional(),
-  adspaceStart: dateLike.optional(),
-  advertiserId: string().optional(),
-  altText: string().optional(),
-  auctionable: booleanLike.optional(),
+  additionalCreativeTracker: optional(urlLike),
+  additionalViewableTracker: optional(string()),
+  adspaceEnd: optional(dateLike),
+  adspaceId: optional(string()),
+  adspaceKey: optional(string()),
+  adspaceStart: optional(dateLike),
+  advertiserId: optional(string()),
+  altText: optional(string()),
+  auctionable: optional(booleanLike),
   body: isJsonOrHtmlOptionalString,
-  clickTag: urlLike.optional(),
-  comment: string().optional(),
-  creativeName: string().optional(),
-  deliveryGroupId: string().optional(),
-  deliveryMultiples: string().optional(),
-  ext: string().optional(),
-  extension: object({
+  clickTag: optional(urlLike),
+  comment: optional(string()),
+  creativeName: optional(string()),
+  deliveryGroupId: optional(string()),
+  deliveryMultiples: optional(string()),
+  ext: optional(string()),
+  extension: optional(object({
     mediaType: string(),
-    prebid: unknown().optional(),
-  }).optional(),
-  height: numberLike.optional(),
-  id: string().optional(),
-  impressionCounter: urlLike.optional(),
-  additionalTracker: urlLike.optional(),
-  libId: string().optional(),
-  orderId: string().optional(),
-  orderName: string().optional(),
-  orderProperty: string().optional(),
+    prebid: optional(unknown()),
+  })),
+  height: optional(numberLike),
+  id: optional(string()),
+  impressionCounter: optional(urlLike),
+  additionalTracker: optional(urlLike),
+  libId: optional(string()),
+  orderId: optional(string()),
+  orderName: optional(string()),
+  orderProperty: optional(string()),
   origin: string(),
-  originData: unknown().optional(),
-  originInstance: string().optional(),
-  poolPath: urlLike.optional(),
-  preview: booleanLike.optional(),
-  priority: numberLike.optional(),
-  renderMode: union([literal('inline'), literal('iframe'), literal('none')]).optional(),
-  sfSrc: urlLike.optional(),
-  share: string().optional(),
+  originData: optional(unknown()),
+  originInstance: optional(string()),
+  poolPath: optional(urlLike),
+  preview: optional(booleanLike),
+  priority: optional(numberLike),
+  renderMode: optional(union([literal('inline'), literal('iframe'), literal('none')])),
+  sfSrc: optional(urlLike),
+  share: optional(string()),
   // eslint-disable-next-line ts/naming-convention
   slotID: string(),
   slotName: string(),
-  swfSrc: urlLike.optional(),
+  swfSrc: optional(urlLike),
   tag: isJsonOrHtmlOptionalString,
-  tagUrl: urlLike.optional(),
-  timeStamp: dateLike.optional(),
-  trackedImpressionCounter: urlLike.optional(),
-  tracker: urlLike.optional(),
-  trackingUrl: urlLike.optional(),
-  url: urlLike.optional(),
-  viewableImpressionCounter: urlLike.optional(),
-  width: numberLike.optional(),
-  widthLarge: numberLike.optional(),
+  tagUrl: optional(urlLike),
+  timeStamp: optional(dateLike),
+  trackedImpressionCounter: optional(urlLike),
+  tracker: optional(urlLike),
+  trackingUrl: optional(urlLike),
+  url: optional(urlLike),
+  viewableImpressionCounter: optional(urlLike),
+  width: optional(numberLike),
+  widthLarge: optional(numberLike),
 });
 
-export type AdResponse = (TypeOf<typeof baseSchema> & {
+export type AdResponse = (output<typeof baseSchema> & {
   additionalCreatives?: ReadonlyArray<AdResponse> | string;
 });
 
-const adResponseSchema: ZodType<AdResponse> = baseSchema.extend({
-  additionalCreatives: lazy(() => union([adResponseSchema.array(), string()]).optional()),
-}) as ZodType<AdResponse>;
+const adResponseSchema: ZodMiniType<AdResponse> = extend(baseSchema, {
+  additionalCreatives: lazy(() => optional(union([array(adResponseSchema), string()]))),
+}) as ZodMiniType<AdResponse>;
 
-export type PreParsedAd = TypeOf<typeof adResponseSchema> & {
+export type PreParsedAd = output<typeof adResponseSchema> & {
   additionalCreatives?: ReadonlyArray<PreParsedAd> | string;
 };
 
@@ -87,23 +92,26 @@ export type AdheseAd<T = string | Record<string, unknown> | ReadonlyArray<unknow
   tag: T | string;
 };
 
-export const adSchema: ZodType<PreParsedAd> = adResponseSchema.transform(({
-  additionalCreatives,
-  ...data
-}) => {
-  const filteredValue = Object.fromEntries(
-    Object.entries(data)
-      .filter(([, value]) =>
-        Boolean(value)
-        && JSON.stringify(value) !== '{}'
-        && JSON.stringify(value) !== '[]'),
-  ) as typeof data;
+export const adSchema: ZodMiniType<PreParsedAd> = pipe(
+  adResponseSchema,
+  transform(({
+    additionalCreatives,
+    ...data
+  }) => {
+    const filteredValue = Object.fromEntries(
+      Object.entries(data)
+        .filter(([, value]) =>
+          Boolean(value)
+          && JSON.stringify(value) !== '{}'
+          && JSON.stringify(value) !== '[]'),
+    ) as typeof data;
 
-  return ({
-    ...filteredValue,
-    additionalCreatives: Array.isArray(additionalCreatives) ? additionalCreatives.map(creative => adSchema.parse(creative)) : additionalCreatives,
-  });
-});
+    return ({
+      ...filteredValue,
+      additionalCreatives: Array.isArray(additionalCreatives) ? additionalCreatives.map(creative => adSchema.parse(creative)) : additionalCreatives,
+    });
+  }),
+) as ZodMiniType<PreParsedAd>;
 
 export function parseResponse(response: unknown): ReadonlyArray<AdheseAd> {
   const rawArray = response as ReadonlyArray<Record<string, unknown>>;
