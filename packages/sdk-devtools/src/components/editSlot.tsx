@@ -1,6 +1,6 @@
 import type { AdheseSlot } from '@adhese/sdk';
 import { pick, watch } from '@adhese/sdk-shared';
-import { object, string, type TypeOf } from '@adhese/sdk-shared/validators';
+import { minLength, object, optional, type output, string } from '@adhese/sdk-shared/validators';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Pencil1Icon } from '@radix-ui/react-icons';
 import { type PropsWithChildren, type ReactElement, useEffect, useMemo, useState } from 'react';
@@ -13,11 +13,11 @@ import { Input } from './input';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from './sheet';
 
 const slotSchema = object({
-  format: string().min(1),
-  slot: string().optional(),
+  format: string().check(minLength(1)),
+  slot: optional(string()),
 });
 
-type SlotSchema = TypeOf<typeof slotSchema>;
+type SlotSchema = output<typeof slotSchema>;
 
 // eslint-disable-next-line ts/naming-convention
 export function EditSlot({
