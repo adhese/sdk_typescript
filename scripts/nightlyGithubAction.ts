@@ -2,7 +2,7 @@ import { execSync } from 'node:child_process';
 import { env } from 'node:process';
 import { Command } from 'commander';
 import { Octokit } from 'octokit';
-import { array, object, string } from 'zod';
+import { array, object, string } from 'zod/mini';
 
 const program = new Command();
 
