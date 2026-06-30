@@ -11,23 +11,21 @@ describe('fetchAds in node runtime', () => {
   });
 
   it('parses HTML ads without DOMParser in server runtimes', async () => {
-    const fetchMock = vi.fn(async () => {
-      return new Response(
-        JSON.stringify([
-          {
-            origin: 'JERLICIA',
-            // eslint-disable-next-line ts/naming-convention
-            slotID: '1',
-            slotName: 'homepage_leaderboard',
-            adType: 'html',
-            tag: '<script src="https://cdn.example.com/ad.js"></script>',
-          },
-        ]),
+    const fetchMock = vi.fn(async () => new Response(
+      JSON.stringify([
         {
-          status: 200,
+          origin: 'JERLICIA',
+          // eslint-disable-next-line ts/naming-convention
+          slotID: '1',
+          slotName: 'homepage_leaderboard',
+          adType: 'html',
+          tag: '<script src="https://cdn.example.com/ad.js"></script>',
         },
-      );
-    });
+      ]),
+      {
+        status: 200,
+      },
+    ));
 
     vi.stubGlobal('fetch', fetchMock);
 
@@ -45,13 +43,11 @@ describe('fetchAds in node runtime', () => {
   it('returns an empty array when the request times out', async () => {
     vi.stubGlobal(
       'fetch',
-      vi.fn((_input: RequestInfo | URL, init?: RequestInit) => {
-        return new Promise<Response>((_resolve, reject) => {
-          init?.signal?.addEventListener('abort', () => {
-            reject(new DOMException('The operation was aborted.', 'AbortError'));
-          });
+      vi.fn((_input: RequestInfo | URL, init?: RequestInit) => new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener('abort', () => {
+          reject(new DOMException('The operation was aborted.', 'AbortError'));
         });
-      }),
+      })),
     );
 
     const ads = await fetchAds({
