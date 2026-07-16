@@ -158,7 +158,6 @@ export async function requestAds(
   catch (error) {
     logger.error(String(error));
     context?.events?.requestError.dispatch(error as Error);
-    
     throw error;
   }
 }
