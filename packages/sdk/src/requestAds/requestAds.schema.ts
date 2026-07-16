@@ -52,7 +52,11 @@ const baseSchema = object({
   poolPath: urlLike.optional(),
   preview: booleanLike.optional(),
   priority: numberLike.optional(),
-  renderMode: union([literal('inline'), literal('iframe'), literal('none')]).optional(),
+  renderMode: union([
+    literal('inline'),
+    literal('iframe'),
+    literal('none'),
+  ]).optional(),
   sfSrc: urlLike.optional(),
   share: string().optional(),
   // eslint-disable-next-line ts/naming-convention
@@ -71,39 +75,46 @@ const baseSchema = object({
   widthLarge: numberLike.optional(),
 });
 
-export type AdResponse = (TypeOf<typeof baseSchema> & {
+export type AdResponse = TypeOf<typeof baseSchema> & {
   additionalCreatives?: ReadonlyArray<AdResponse> | string;
-});
+};
 
 const adResponseSchema: ZodType<AdResponse> = baseSchema.extend({
-  additionalCreatives: lazy(() => union([adResponseSchema.array(), string()]).optional()),
+  additionalCreatives: lazy(() =>
+    union([adResponseSchema.array(), string()]).optional(),
+  ),
 }) as ZodType<AdResponse>;
 
 export type PreParsedAd = TypeOf<typeof adResponseSchema> & {
   additionalCreatives?: ReadonlyArray<PreParsedAd> | string;
 };
 
-export type AdheseAd<T = string | Record<string, unknown> | ReadonlyArray<unknown>> = Omit<PreParsedAd, 'tag'> & {
+export type AdheseAd<
+  T = string | Record<string, unknown> | ReadonlyArray<unknown>,
+> = Omit<PreParsedAd, 'tag'> & {
   tag: T | string;
 };
 
-export const adSchema: ZodType<PreParsedAd> = adResponseSchema.transform(({
-  additionalCreatives,
-  ...data
-}) => {
-  const filteredValue = Object.fromEntries(
-    Object.entries(data)
-      .filter(([, value]) =>
-        Boolean(value)
-        && JSON.stringify(value) !== '{}'
-        && JSON.stringify(value) !== '[]'),
-  ) as typeof data;
+export const adSchema: ZodType<PreParsedAd> = adResponseSchema.transform(
+  ({ additionalCreatives, ...data }) => {
+    const filteredValue = Object.fromEntries(
+      Object.entries(data).filter(
+        ([, value]) =>
+          value !== undefined
+          && value !== null
+          && JSON.stringify(value) !== '{}'
+          && JSON.stringify(value) !== '[]',
+      ),
+    ) as typeof data;
 
-  return ({
-    ...filteredValue,
-    additionalCreatives: Array.isArray(additionalCreatives) ? additionalCreatives.map(creative => adSchema.parse(creative)) : additionalCreatives,
-  });
-});
+    return {
+      ...filteredValue,
+      additionalCreatives: Array.isArray(additionalCreatives)
+        ? additionalCreatives.map(creative => adSchema.parse(creative))
+        : additionalCreatives,
+    };
+  },
+);
 
 export function parseResponse(response: unknown): ReadonlyArray<AdheseAd> {
   const rawArray = response as ReadonlyArray<Record<string, unknown>>;
