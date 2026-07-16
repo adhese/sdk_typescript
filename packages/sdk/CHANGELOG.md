@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.11.6
+
+### Patch Changes
+
+- ded6714: Making sure the priority is also present on the AdSlot object when it's set to 0
+
 ## 1.11.5
 
 ### Patch Changes
