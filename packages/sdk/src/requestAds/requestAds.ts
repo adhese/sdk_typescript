@@ -66,7 +66,6 @@ const runRequestAdsBatch = debounce(
   },
 );
 
-
 /**
  * Request a single ad from the API. If you need to fetch multiple ads at once use the `requestAds` function.
  */
