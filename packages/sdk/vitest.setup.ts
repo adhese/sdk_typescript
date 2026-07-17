@@ -3,6 +3,8 @@ import { afterAll, afterEach, beforeAll, beforeEach, vi } from 'vitest';
 // eslint-disable-next-line ts/naming-convention
 import MatchMediaMock from 'vitest-matchmedia-mock';
 
+const hasWindow = typeof window !== 'undefined';
+
 beforeAll(() => {
   mockServer.listen();
 });
@@ -32,16 +34,18 @@ afterAll(() => {
   mockServer.close();
 });
 
-const mediaQueryMock = new MatchMediaMock();
+if (hasWindow) {
+  const mediaQueryMock = new MatchMediaMock();
 
-beforeEach(() => {
-  mediaQueryMock.useMediaQuery('(max-width: 1025px)');
-});
+  beforeEach(() => {
+    mediaQueryMock.useMediaQuery('(max-width: 1025px)');
+  });
 
-afterEach(() => {
-  mediaQueryMock.clear();
-});
+  afterEach(() => {
+    mediaQueryMock.clear();
+  });
 
-afterAll(() => {
-  mediaQueryMock.destroy();
-});
+  afterAll(() => {
+    mediaQueryMock.destroy();
+  });
+}
