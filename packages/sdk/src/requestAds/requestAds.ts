@@ -25,6 +25,7 @@ const batch = new Map<
   {
     options: AdRequestOptions;
     resolve(ad: AdheseAd | null): void;
+    reject(error: unknown): void;
   }
 >();
 
@@ -36,21 +37,28 @@ const runRequestAdsBatch = debounce(
     if (batch.size === 0)
       return [];
 
-    const ads = await requestAds({
-      slots: Array.from(batch.values()).map(({ options }) => options.slot),
-      context,
-    });
-
-    for (const { options, resolve } of batch.values()) {
-      const ad = ads.find(({ slotName }) => slotName === options.slot.name);
-
-      if (ad)
-        resolve(ad);
-      else resolve(null);
-    }
-
+    const entries = Array.from(batch.values());
     batch.clear();
-    return ads;
+
+    try {
+      const ads = await requestAds({
+        slots: entries.map(({ options }) => options.slot),
+        context,
+      });
+
+      for (const { options, resolve } of entries) {
+        const ad = ads.find(({ slotName }) => slotName === options.slot.name);
+        resolve(ad ?? null);
+      }
+
+      return ads;
+    }
+    catch (error) {
+      for (const { reject } of entries)
+        reject(error);
+
+      return [];
+    }
   },
   {
     waitMs: 200,
@@ -64,8 +72,8 @@ const runRequestAdsBatch = debounce(
 export async function requestAd(
   options: AdRequestOptions,
 ): Promise<AdheseAd | null> {
-  const promise = new Promise<AdheseAd | null>((resolve) => {
-    batch.set(options.slot.name, { options, resolve });
+  const promise = new Promise<AdheseAd | null>((resolve, reject) => {
+    batch.set(options.slot.name, { options, resolve, reject });
   });
 
   await runRequestAdsBatch.call(options.context);
@@ -150,7 +158,6 @@ export async function requestAds(
   catch (error) {
     logger.error(String(error));
     context?.events?.requestError.dispatch(error as Error);
-
     throw error;
   }
 }
