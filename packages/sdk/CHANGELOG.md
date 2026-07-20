@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.11.7
+
+### Patch Changes
+
+- cae85c4: Fixed an issue were the onError hook doesn't trigger for slot's when a request fails
+
 ## 1.11.6
 
 ### Patch Changes
