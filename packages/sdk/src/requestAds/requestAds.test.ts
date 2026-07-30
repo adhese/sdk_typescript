@@ -489,7 +489,6 @@ describe('requestPreviews', () => {
 
   beforeEach(() => {
     Object.defineProperty(window, 'location', {
-      writable: true,
       value: new URL(
         'https://foo.com?adhesePreviewCreativeId=foo-bar&adheseCreativeTemplateId=foo-bar&adhesePreviewCreativeId=bar&adhesePreviewCreativeId=fail',
       ),
