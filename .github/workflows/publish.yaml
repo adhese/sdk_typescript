@@ -171,13 +171,25 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Nightly mode: pull request to main
+      # Skipped on the Changesets release PR: its changesets are already consumed, so
+      # `changeset version --snapshot` is a no-op there and the following publish would
+      # push the real release version under the nightly tag, making the release run on
+      # main a no-op (no git tags, no GitHub release, no `latest` tag on npm).
       - name: Generate changelog
-        if: github.event_name == 'pull_request'
-        run: npm run changeset version -- --snapshot nightly
+        id: nightly-version
+        if: github.event_name == 'pull_request' && github.head_ref != 'changeset-release/main'
+        run: |
+          npm run changeset version -- --snapshot nightly
+          if git diff --name-only -- ':(glob)**/package.json' | grep -q .; then
+            echo 'hasSnapshot=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'No changesets in this PR, skipping nightly publish' >> "$GITHUB_STEP_SUMMARY"
+            echo 'hasSnapshot=false' >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Publish nightly
         id: publish-nightly
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.nightly-version.outputs.hasSnapshot == 'true'
         uses: changesets/action@6a0a831ff30acef54f2c6aa1cbbc1096b066edaf # v1.7.0
         with:
           publish: npm run changeset publish -- --snapshot --tag nightly
@@ -186,7 +198,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Comment on PR with nightly build info
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.nightly-version.outputs.hasSnapshot == 'true'
         run: npx tsx ./scripts/nightlyGithubAction.ts --packages '${{ steps.publish-nightly.outputs.publishedPackages }}' --pull-request ${{ github.event.number }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
