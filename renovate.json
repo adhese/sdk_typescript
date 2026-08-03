@@ -1,6 +1,39 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended"
+  "extends": ["config:recommended"],
+  "timezone": "Europe/Brussels",
+  "schedule": ["* 0-23 1 * *"],
+  "pruneBranchAfterAutomerge": true,
+  "rebaseWhen": "auto",
+  "labels": ["dependencies"],
+  "reviewers": ["team:hobbits"],
+  "patch": {
+    "minimumReleaseAge": "1 week"
+  },
+  "minor": {
+    "minimumReleaseAge": "1 month"
+  },
+  "major": {
+    "enabled": false
+  },
+  "packageRules": [
+    {
+      "matchDepTypes": ["devDependencies"],
+      "groupName": "devDependencies"
+    },
+    {
+      "matchPackageNames": ["/postcss/", "/tailwindcss/"],
+      "groupName": "tailwind"
+    },
+    {
+      "matchPackageNames": ["/launchdarkly/"],
+      "groupName": "launchdarkly"
+    },
+    {
+      "matchPackageNames": ["/^@types/node$", "/^node$/"],
+      "matchDatasources": ["npm", "docker"],
+      "groupName": "node",
+      "minimumReleaseAge": "1 week"
+    }
   ]
 }
