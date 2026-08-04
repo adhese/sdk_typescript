@@ -1,9 +1,9 @@
 import type { Theme } from 'vitepress';
-// https://vitepress.dev/guide/custom-theme
-import { type Component, h } from 'vue';
-
 // eslint-disable-next-line ts/naming-convention
 import DefaultTheme from 'vitepress/theme';
+
+// https://vitepress.dev/guide/custom-theme
+import { type Component, h } from 'vue';
 import './style.css';
 
 export default {
