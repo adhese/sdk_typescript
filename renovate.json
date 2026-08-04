@@ -1,39 +1,109 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
+  "extends": [
+    "config:recommended"
+  ],
   "timezone": "Europe/Brussels",
-  "schedule": ["* 0-23 1 * *"],
+  "schedule": [
+    "* 0-23 1 * *"
+  ],
   "pruneBranchAfterAutomerge": true,
   "rebaseWhen": "auto",
-  "labels": ["dependencies"],
-  "reviewers": ["team:hobbits"],
-  "patch": {
-    "minimumReleaseAge": "1 week"
-  },
-  "minor": {
-    "minimumReleaseAge": "1 month"
-  },
-  "major": {
-    "enabled": false
-  },
+  "labels": [
+    "dependencies"
+  ],
+  "reviewers": [
+    "team:hobbits"
+  ],
   "packageRules": [
     {
-      "matchDepTypes": ["devDependencies"],
+      "description": "No npm majors (was global — also blocked action bumps)",
+      "matchManagers": [
+        "npm"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "enabled": false
+    },
+    {
+      "matchManagers": [
+        "npm"
+      ],
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "minimumReleaseAge": "1 week"
+    },
+    {
+      "matchManagers": [
+        "npm"
+      ],
+      "matchUpdateTypes": [
+        "minor"
+      ],
+      "minimumReleaseAge": "1 month"
+    },
+    {
+      "matchDepTypes": [
+        "devDependencies"
+      ],
       "groupName": "devDependencies"
     },
     {
-      "matchPackageNames": ["/postcss/", "/tailwindcss/"],
+      "matchPackageNames": [
+        "/postcss/",
+        "/tailwindcss/"
+      ],
       "groupName": "tailwind"
     },
     {
-      "matchPackageNames": ["/launchdarkly/"],
+      "matchPackageNames": [
+        "/launchdarkly/"
+      ],
       "groupName": "launchdarkly"
     },
     {
-      "matchPackageNames": ["/^@types/node$", "/^node$/"],
-      "matchDatasources": ["npm", "docker"],
+      "matchPackageNames": [
+        "/^@types/node$",
+        "/^node$/"
+      ],
+      "matchDatasources": [
+        "npm",
+        "docker"
+      ],
       "groupName": "node",
       "minimumReleaseAge": "1 week"
+    },
+    {
+      "description": "GitHub Actions: one grouped PR for non-majors, weekly",
+      "matchManagers": [
+        "github-actions"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest",
+        "pinDigest"
+      ],
+      "groupName": "github-actions",
+      "minimumReleaseAge": "1 week",
+      "schedule": [
+        "* 0-6 * * 1"
+      ]
+    },
+    {
+      "description": "GitHub Actions majors: own PR so breaking changes don't block the group",
+      "matchManagers": [
+        "github-actions"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "minimumReleaseAge": "1 week",
+      "schedule": [
+        "* 0-6 * * 1"
+      ]
     }
   ]
 }
