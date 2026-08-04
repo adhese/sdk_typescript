@@ -76,11 +76,30 @@
       "minimumReleaseAge": "1 week"
     },
     {
-      "description": "GitHub Actions: one grouped PR, majors allowed, weekly",
+      "description": "GitHub Actions: one grouped PR for non-majors, weekly",
       "matchManagers": [
         "github-actions"
       ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest",
+        "pinDigest"
+      ],
       "groupName": "github-actions",
+      "minimumReleaseAge": "1 week",
+      "schedule": [
+        "* 0-6 * * 1"
+      ]
+    },
+    {
+      "description": "GitHub Actions majors: own PR so breaking changes don't block the group",
+      "matchManagers": [
+        "github-actions"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
       "minimumReleaseAge": "1 week",
       "schedule": [
         "* 0-6 * * 1"
