@@ -2,7 +2,7 @@
   "name": "adhese-sdk",
   "type": "module",
   "private": true,
-  "packageManager": "npm@10.7.0",
+  "packageManager": "npm@10.9.8",
   "license": "GPL-3.0",
   "homepage": "https://github.com/adhese/sdk_typescript#readme",
   "repository": {
