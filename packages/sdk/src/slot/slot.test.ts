@@ -1,5 +1,6 @@
-import type { AdheseContext } from '@adhese/sdk';
-import { awaitTimeout } from '@adhese/sdk-shared';
+import type { AdheseAd, AdheseContext } from '@adhese/sdk';
+import type * as sdkShared from '@adhese/sdk-shared';
+import { addTrackingPixel, awaitTimeout } from '@adhese/sdk-shared';
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // eslint-disable-next-line ts/naming-convention
 import MatchMediaMock from 'vitest-matchmedia-mock';
@@ -12,6 +13,15 @@ vi.mock('../logger/logger', () => ({
     debug: vi.fn(),
   },
 }));
+
+vi.mock('@adhese/sdk-shared', async (importOriginal) => {
+  const actual = await importOriginal<typeof sdkShared>();
+
+  return {
+    ...actual,
+    addTrackingPixel: vi.fn(actual.addTrackingPixel),
+  };
+});
 
 describe('slot', () => {
   const mediaQueryMock = new MatchMediaMock();
@@ -412,6 +422,136 @@ describe('slot', () => {
     await awaitTimeout(70);
 
     expect(slot.format).toBe('leaderboard');
+  });
+
+  describe('tracking', () => {
+    function stubIntersectingObserver(): void {
+      const intersectionObserverMock = vi.fn(
+        (callback: IntersectionObserverCallback) => {
+          const observer = {
+            observe: vi.fn((target: Element) => {
+              callback(
+                [
+                  {
+                    boundingClientRect: new DOMRect(),
+                    intersectionRatio: 1,
+                    intersectionRect: new DOMRect(),
+                    isIntersecting: true,
+                    rootBounds: new DOMRect(),
+                    target,
+                    time: 0,
+                  },
+                ],
+                observer as unknown as IntersectionObserver,
+              );
+            }),
+            unobserve: vi.fn(),
+            disconnect: vi.fn(),
+            takeRecords: vi.fn(),
+            thresholds: [0],
+            root: document,
+            rootMargin: '',
+          };
+
+          return observer;
+        },
+      );
+
+      vi.stubGlobal('IntersectionObserver', intersectionObserverMock);
+    }
+
+    function createContainingElement(): HTMLElement {
+      const element = document.createElement('div');
+
+      element.classList.add('adunit');
+      element.dataset.format = 'leaderboard';
+      element.id = 'leaderboard';
+
+      document.body.appendChild(element);
+
+      return element;
+    }
+
+    function createAd(suffix: string): AdheseAd {
+      return {
+        adFormat: 'foo',
+        tag: '<div>foo</div>',
+        // eslint-disable-next-line ts/naming-convention
+        slotID: 'bar',
+        slotName: 'foo-leaderboard',
+        adType: 'foo',
+        id: 'baz',
+        origin: 'JERLICIA',
+        impressionCounter: new URL(`https://foo.bar/impression${suffix}`),
+        additionalTracker: new URL(`https://foo.bar/additional${suffix}`),
+        viewableImpressionCounter: new URL(`https://foo.bar/viewable${suffix}`),
+      };
+    }
+
+    function countFiredPixels(url: string): number {
+      const { calls } = vi.mocked(addTrackingPixel).mock;
+
+      return calls.filter(([firedUrl]) => firedUrl.toString() === url).length;
+    }
+
+    beforeEach(() => {
+      vi.mocked(addTrackingPixel).mockClear();
+      stubIntersectingObserver();
+    });
+
+    it('should not fire the tracking pixels again when the same ad is re-rendered', async () => {
+      const containingElement = createContainingElement();
+
+      const slot = createSlot({
+        format: 'leaderboard',
+        containingElement: 'leaderboard',
+        context,
+        initialData: createAd(''),
+      });
+
+      await awaitTimeout(100);
+
+      expect(slot.status).toBe('rendered');
+      expect(countFiredPixels('https://foo.bar/impression')).toBe(1);
+      expect(countFiredPixels('https://foo.bar/additional')).toBe(1);
+      expect(countFiredPixels('https://foo.bar/viewable')).toBe(1);
+
+      containingElement.remove();
+
+      await awaitTimeout(100);
+
+      createContainingElement();
+
+      await awaitTimeout(100);
+
+      expect(slot.status).toBe('rendered');
+      expect(countFiredPixels('https://foo.bar/impression')).toBe(1);
+      expect(countFiredPixels('https://foo.bar/additional')).toBe(1);
+      expect(countFiredPixels('https://foo.bar/viewable')).toBe(1);
+    });
+
+    it('should fire the tracking pixels again when a new ad is set', async () => {
+      createContainingElement();
+
+      const slot = createSlot({
+        format: 'leaderboard',
+        containingElement: 'leaderboard',
+        context,
+        initialData: createAd(''),
+      });
+
+      await awaitTimeout(100);
+
+      expect(countFiredPixels('https://foo.bar/impression')).toBe(1);
+
+      slot.data = createAd('-refresh');
+
+      await awaitTimeout(100);
+
+      expect(countFiredPixels('https://foo.bar/impression-refresh')).toBe(1);
+      expect(countFiredPixels('https://foo.bar/additional-refresh')).toBe(1);
+      expect(countFiredPixels('https://foo.bar/viewable-refresh')).toBe(1);
+    });
   });
 
   it('should be able to render a slot with the render mode set to inline', async () => {

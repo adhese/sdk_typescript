@@ -266,47 +266,48 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     const additionalTrackingPixelElement = ref<HTMLImageElement | null>(null);
     const isImpressionTracked = ref(false);
     const isAdditionalTracked = ref(false);
+
+    const impressionTrackedAd = ref<AdheseAd | null>(null);
+    const additionalTrackedAd = ref<AdheseAd | null>(null);
+
     watch(
       [status, isInViewport, data],
       ([newStatus, newIsInViewport, newData]) => {
-        if (newStatus === 'rendered' && newIsInViewport) {
-          if (
-            newData?.impressionCounter
-            && !impressionTrackingPixelElement.value
-          ) {
-            impressionTrackingPixelElement.value = addTrackingPixel(
-              newData.impressionCounter,
-            );
-            runOnImpressionTracked(newData);
-            isImpressionTracked.value = true;
-            context.logger.debug(
-              `Impression tracking pixel fired for ${slotContext.value?.name}`,
-            );
-          }
-          if (
-            newData?.additionalTracker
-            && !additionalTrackingPixelElement.value
-          ) {
-            additionalTrackingPixelElement.value = addTrackingPixel(
-              newData.additionalTracker,
-            );
-            isAdditionalTracked.value = true;
-            context.logger.debug(
-              `Additional Impression tracking pixel fired for ${slotContext.value?.name}`,
-            );
-          }
+        if (newStatus !== 'rendered' || !newIsInViewport)
+          return;
+
+        if (
+          newData?.impressionCounter
+          && impressionTrackedAd.value !== newData
+        ) {
+          impressionTrackingPixelElement.value?.remove();
+          impressionTrackingPixelElement.value = addTrackingPixel(
+            newData.impressionCounter,
+          );
+          impressionTrackedAd.value = newData;
+          runOnImpressionTracked(newData);
+          isImpressionTracked.value = true;
+          context.logger.debug(
+            `Impression tracking pixel fired for ${slotContext.value?.name}`,
+          );
+        }
+        if (
+          newData?.additionalTracker
+          && additionalTrackedAd.value !== newData
+        ) {
+          additionalTrackingPixelElement.value?.remove();
+          additionalTrackingPixelElement.value = addTrackingPixel(
+            newData.additionalTracker,
+          );
+          additionalTrackedAd.value = newData;
+          isAdditionalTracked.value = true;
+          context.logger.debug(
+            `Additional Impression tracking pixel fired for ${slotContext.value?.name}`,
+          );
         }
       },
       { immediate: true },
     );
-    watch(status, async (newStatus, oldStatus) => {
-      if ((newStatus === 'loaded' && oldStatus === 'rendered') || (newStatus === 'loading' && (oldStatus === 'rendered'))) {
-        impressionTrackingPixelElement.value?.remove();
-        impressionTrackingPixelElement.value = null;
-        additionalTrackingPixelElement.value?.remove();
-        additionalTrackingPixelElement.value = null;
-      }
-    });
     hooks.onDispose(() => {
       if (impressionTrackingPixelElement.value)
         impressionTrackingPixelElement.value.remove();
