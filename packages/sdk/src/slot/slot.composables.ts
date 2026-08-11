@@ -133,17 +133,18 @@ export function useViewabilityObserver(
     viewabilityObserver.disconnect();
   });
 
-  watch(() => slotContext.value?.status, async (newStatus, oldStatus) => {
-    if ((newStatus === 'loaded' && oldStatus === 'rendered') || (newStatus === 'loading' && oldStatus === 'rendered')) {
-      trackingPixel.value?.remove();
-      trackingPixel.value = null;
+  watch(() => slotContext.value?.data, (newData, oldData) => {
+    if (!newData || newData === oldData)
+      return;
 
-      // Re-observe to force the IntersectionObserver callback to run again
-      const element = slotContext.value?.element;
-      if (element && context.options.viewabilityTracking) {
-        viewabilityObserver.unobserve(element);
-        viewabilityObserver.observe(element);
-      }
+    trackingPixel.value?.remove();
+    trackingPixel.value = null;
+
+    // Re-observe to force the IntersectionObserver callback to run again
+    const element = slotContext.value?.element;
+    if (element && context.options.viewabilityTracking) {
+      viewabilityObserver.unobserve(element);
+      viewabilityObserver.observe(element);
     }
   });
 

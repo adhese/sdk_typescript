@@ -16,7 +16,7 @@ export function useTracking({
   const trackingPixels = ref<ReadonlyArray<HTMLImageElement>>([]);
   watchEffect(() => {
     if (isTracked.value && stackAds.value && trackingPixels.value.length <= 0)
-      trackingPixels.value = stackAds.value.ads.map(ad => typeof ad.native[trackingUrlKey] ? addTrackingPixel(ad.native[trackingUrlKey] as URL) : null).filter(Boolean) as ReadonlyArray<HTMLImageElement>;
+      trackingPixels.value = stackAds.value.ads.map(ad => ad.native[trackingUrlKey] ? addTrackingPixel(ad.native[trackingUrlKey] as URL) : null).filter(Boolean) as ReadonlyArray<HTMLImageElement>;
   });
 
   onDispose(() => {
