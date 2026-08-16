@@ -243,6 +243,6 @@ jobs:
           path: apps/docs/.vitepress/dist
 
       - name: Deploy docs to GitHub pages
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
