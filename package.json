@@ -17,8 +17,8 @@
     "url": "https://github.com/adhese/sdk_typescript/issues"
   },
   "engines": {
-    "node": ">=20.0.0",
-    "npm": ">=10.0.0"
+    "node": "^22.11 || ^24 || >=26",
+    "npm": ">=10.9.0"
   },
   "scripts": {
     "dev": "turbo dev --concurrency 18",
@@ -36,7 +36,7 @@
     "release": "npm run prepareRelease && changeset publish"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.27.9",
+    "@changesets/cli": "^3.0.1",
     "@types/node": "^20.17.6",
     "@vitejs/plugin-react": "^4.3.3",
     "@vitest/coverage-v8": "^1.6.0",
