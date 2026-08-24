@@ -140,18 +140,12 @@ jobs:
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: changesets/action@198f833dd7d863100ea6e28967bc9a9fdefadb0a # v2.1.0
+        uses: changesets/action@8488615a623b1b9c987934bb89eae8af6a946ac1 # v2.1.1
         with:
-          title: Bump version packages
-          publish: npm run release
-          version: npm run changeset:version
-          commit: Bump version packages
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Push git tag after publish
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.changesets.outputs.published == 'true'
-        run: git push --follow-tags
+          pr-title: Bump version packages
+          publish-script: npm run release
+          version-script: npm run changeset:version
+          commit-message: Bump version packages
 
       - name: Setup Node.js with Github packages registry
         if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.changesets.outputs.published == 'true'
@@ -162,12 +156,12 @@ jobs:
 
       - name: Publish to Github packages
         if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.changesets.outputs.published == 'true'
-        uses: changesets/action@198f833dd7d863100ea6e28967bc9a9fdefadb0a # v2.1.0
+        uses: changesets/action@8488615a623b1b9c987934bb89eae8af6a946ac1 # v2.1.1
         with:
-          publish: npm run release -- --no-git-tag
-          createGithubReleases: false
+          publish-script: npm run release -- --no-git-tag
+          create-github-releases: false
+          push-git-tags: false
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Nightly mode: pull request to main
@@ -179,7 +173,7 @@ jobs:
         id: nightly-version
         if: github.event_name == 'pull_request' && github.head_ref != 'changeset-release/main'
         run: |
-          npm run changeset version -- --snapshot nightly
+          npm run changeset version -- --snapshot nightly || true
           if git diff --name-only -- ':(glob)**/package.json' | grep -q .; then
             echo 'hasSnapshot=true' >> "$GITHUB_OUTPUT"
           else
@@ -190,16 +184,15 @@ jobs:
       - name: Publish nightly
         id: publish-nightly
         if: github.event_name == 'pull_request' && steps.nightly-version.outputs.hasSnapshot == 'true'
-        uses: changesets/action@198f833dd7d863100ea6e28967bc9a9fdefadb0a # v2.1.0
+        uses: changesets/action@8488615a623b1b9c987934bb89eae8af6a946ac1 # v2.1.1
         with:
-          publish: npm run changeset publish -- --tag nightly
-          createGithubReleases: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          publish-script: npm run changeset publish -- --tag nightly --no-git-tag
+          create-github-releases: false
+          push-git-tags: false
 
       - name: Comment on PR with nightly build info
         if: github.event_name == 'pull_request' && steps.nightly-version.outputs.hasSnapshot == 'true'
-        run: npx tsx ./scripts/nightlyGithubAction.ts --packages '${{ steps.publish-nightly.outputs.publishedPackages }}' --pull-request ${{ github.event.number }}
+        run: npx tsx ./scripts/nightlyGithubAction.ts --packages '${{ steps.publish-nightly.outputs['published-packages'] }}' --pull-request ${{ github.event.number }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
