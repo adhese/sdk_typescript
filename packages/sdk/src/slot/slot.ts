@@ -419,9 +419,9 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         if (!renderAd) {
           if (hadAdBeforeBeforeRenderHook) {
             // The ad was identified as empty by the `onBeforeRender` hook itself. The position is still
-            // tracked as rendered, but no creative is written to the element.
+            // tracked as rendered, but no creative is written to the element. Whatever the app already put
+            // in the element (e.g. a fallback rendered from `onEmpty`) is left untouched.
             markEmpty();
-            cleanElement();
             // eslint-disable-next-line require-atomic-updates
             status.value = 'rendered';
             logger.debug(`Slot ${name.value} identified as empty by the onBeforeRender hook`, slotContext.value);
@@ -435,7 +435,8 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         if (isEmpty.value) {
           // The ad was already identified as empty earlier, typically via `processOnEmpty(ad)` from the
           // `onRequest` hook. The position is tracked as rendered, but no creative is written to the element.
-          cleanElement();
+          // Whatever the app already put in the element (e.g. a fallback rendered from `onEmpty`) is left
+          // untouched.
           // eslint-disable-next-line require-atomic-updates
           status.value = 'rendered';
 

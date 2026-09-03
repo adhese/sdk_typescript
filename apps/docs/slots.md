@@ -242,6 +242,32 @@ adhese.addSlot({
 > decision depends on something only known at render time), return a falsy value from `onBeforeRender` instead —
 > it has the same tracked-but-not-rendered effect, just fired later, once the slot actually renders.
 
+When an ad is identified as empty, the SDK never writes to or clears the slot's element itself — it only skips
+writing its own creative. If you want to show a fallback (a house banner, a "no ad" placeholder, etc.), render it
+yourself into `context.value.element`. Do this from `onBeforeRender` rather than `onEmpty`: `onEmpty` can fire
+before the slot's `element` is resolved (e.g. on the very first request), while `onBeforeRender` is only ever
+called once `element` is guaranteed to exist, right before the slot would otherwise render.
+
+```js
+setup(context, { onRequest, onBeforeRender }) {
+  onRequest((ad) => {
+    if (isEmpty(ad)) {
+      context.value?.processOnEmpty(ad);
+    }
+
+    return ad;
+  });
+
+  onBeforeRender((ad) => {
+    if (context.value?.isEmpty && context.value.element) {
+      context.value.element.innerHTML = '<div class="fallback">No ad available</div>';
+    }
+
+    return ad;
+  });
+}
+```
+
 ### Slot state
 Besides options, a slot exposes a few read-only properties reflecting its current lifecycle state:
 

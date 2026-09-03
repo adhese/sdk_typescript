@@ -460,12 +460,12 @@ describe('slot', () => {
       vi.stubGlobal('IntersectionObserver', intersectionObserverMock);
     }
 
-    function createContainingElement(): HTMLElement {
+    function createContainingElement(id = 'leaderboard'): HTMLElement {
       const element = document.createElement('div');
 
       element.classList.add('adunit');
       element.dataset.format = 'leaderboard';
-      element.id = 'leaderboard';
+      element.id = id;
 
       document.body.appendChild(element);
 
@@ -570,7 +570,7 @@ describe('slot', () => {
     });
 
     it('should fire onEmpty immediately from onRequest and still track the position once rendered, without rendering a creative', async () => {
-      createContainingElement();
+      createContainingElement('leaderboard-empty-onrequest');
 
       const onEmpty = vi.fn();
       const onRender = vi.fn();
@@ -586,7 +586,7 @@ describe('slot', () => {
 
       const slot = createSlot({
         format: 'leaderboard',
-        containingElement: 'leaderboard',
+        containingElement: 'leaderboard-empty-onrequest',
         context,
         initialData: emptyAd,
         setup(slotContext, hooks) {
@@ -627,7 +627,7 @@ describe('slot', () => {
     });
 
     it('should track the position but not render a creative when onBeforeRender identifies the ad as empty', async () => {
-      createContainingElement();
+      createContainingElement('leaderboard-empty-onbeforerender');
 
       const onEmpty = vi.fn();
       const onRender = vi.fn();
@@ -639,7 +639,7 @@ describe('slot', () => {
 
       const slot = createSlot({
         format: 'leaderboard',
-        containingElement: 'leaderboard',
+        containingElement: 'leaderboard-empty-onbeforerender',
         context,
         initialData: emptyAd,
         setup(_slotContext, hooks) {
@@ -666,15 +666,63 @@ describe('slot', () => {
       }
     });
 
+    it('should not overwrite a fallback the app rendered itself when the ad is empty', async () => {
+      createContainingElement('leaderboard-empty-fallback');
+
+      const emptyAd: AdheseAd = {
+        ...createAd('-empty-fallback'),
+        tag: '<title>Empty</title>',
+      };
+
+      const slot = createSlot({
+        format: 'leaderboard',
+        containingElement: 'leaderboard-empty-fallback',
+        context,
+        initialData: emptyAd,
+        setup(slotContext, hooks) {
+          hooks.onRequest((ad) => {
+            if (getAdTitle(ad) === 'Empty') {
+              // Fires `onEmpty` as soon as the ad is known to be empty. The slot's `element` isn't
+              // necessarily resolved yet at this point (e.g. on the very first request), so a fallback
+              // that needs the DOM element is rendered from `onBeforeRender` below instead, which is
+              // guaranteed to run with `element` resolved, right before the slot would otherwise render.
+              slotContext.value?.processOnEmpty(ad);
+            }
+
+            return ad;
+          });
+          hooks.onBeforeRender((ad) => {
+            if (slotContext.value?.isEmpty && slotContext.value.element) {
+              slotContext.value.element.innerHTML = '<div class="fallback">No ad available</div>';
+            }
+
+            return ad;
+          });
+        },
+      });
+
+      try {
+        await vi.waitFor(() => {
+          expect(slot.status).toBe('rendered');
+        }, { timeout: 2000, interval: 20 });
+
+        expect(slot.isEmpty).toBe(true);
+        expect(slot.element?.innerHTML).toContain('No ad available');
+      }
+      finally {
+        slot.dispose();
+      }
+    });
+
     it('should fire onEmpty and reach the empty status without tracking anything when no ad is returned at all', async () => {
-      createContainingElement();
+      createContainingElement('leaderboard-empty-no-ad');
 
       const onEmpty = vi.fn();
       const onRender = vi.fn();
 
       const slot = createSlot({
         format: 'leaderboard',
-        containingElement: 'leaderboard',
+        containingElement: 'leaderboard-empty-no-ad',
         context,
         setup(slotContext, hooks) {
           hooks.onInit(() => {

@@ -14,3 +14,5 @@ This also fixes a no-fill creative that was fetched while a slot was out of the 
 The devtools slots table now shows a "No-fill" badge for slots that reached `rendered` with `isEmpty` set.
 
 Also fixes a pending viewability tracking pixel outliving a disposed slot: its dwell-time timer is now cancelled on `dispose()` instead of firing later regardless.
+
+When an ad is marked empty, `render()` no longer clears the slot's element. Previously it called `cleanElement()` right before setting `status` to `rendered`, which wiped out any fallback content the app had rendered itself (e.g. from `onEmpty` or `onBeforeRender`) — defeating the purpose of firing `onEmpty` early. The SDK now only skips writing its own creative and leaves the element exactly as the app's hooks left it.
