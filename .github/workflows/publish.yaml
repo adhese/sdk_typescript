@@ -186,7 +186,7 @@ jobs:
         if: github.event_name == 'pull_request' && steps.nightly-version.outputs.hasSnapshot == 'true'
         uses: changesets/action@8488615a623b1b9c987934bb89eae8af6a946ac1 # v2.1.1
         with:
-          publish-script: npm run changeset publish -- --tag nightly --no-git-tag
+          publish-script: npm run changeset publish -- --tag nightly
           create-github-releases: false
           push-git-tags: false
 
