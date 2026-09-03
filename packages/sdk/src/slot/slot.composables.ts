@@ -129,6 +129,11 @@ export function useViewabilityObserver(
   }, { once: true });
 
   hooks.onDispose(() => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+
     trackingPixel.value?.remove();
     viewabilityObserver.disconnect();
   });

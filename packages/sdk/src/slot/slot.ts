@@ -116,6 +116,10 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
     const data = ref<AdheseAd | null>(null) as Ref<AdheseAd | null>;
     const originalData = ref(data.value) as Ref<AdheseAd | null>;
+    const isEmpty = ref(false);
+    // Ad stashed by `processOnEmpty(ad)` when `onRequest` identifies an ad's creative as empty. `request()`
+    // rescues it into `data`/`originalData` so tracking pixels are still available once the slot renders.
+    let emptyAdForTracking: AdheseAd | null = null;
     const name = computed(() =>
       generateName(options.context.location, format.value, options.slot),
     );
@@ -321,6 +325,8 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
           return null;
 
         status.value = 'loading';
+        isEmpty.value = false;
+        emptyAdForTracking = null;
 
         let response = await runOnBeforeRequest(null);
 
@@ -336,6 +342,12 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
         if (response)
           response = await runOnRequest(response);
+
+        if (!response && emptyAdForTracking) {
+          // `onRequest` identified the ad as empty via `processOnEmpty(ad)`. Keep the original ad around so
+          // it still reaches `render()`, where the position is tracked even though no creative is shown.
+          response = emptyAdForTracking;
+        }
 
         data.value = response;
 
@@ -375,6 +387,12 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         await waitForDomLoad();
         element.value = getElement();
 
+        if (adToRender) {
+          // An explicit ad was passed in, overriding whatever the slot previously fetched. Don't carry over an
+          // `isEmpty` flag from an earlier, unrelated ad.
+          isEmpty.value = false;
+        }
+
         let renderAd = adToRender ?? data.value ?? originalData.value ?? null;
         if (!renderAd) {
           renderAd = await request();
@@ -382,6 +400,8 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
             return element.value;
           }
         }
+
+        const hadAdBeforeBeforeRenderHook = Boolean(renderAd);
 
         renderAd = renderAd && (await runOnBeforeRender(renderAd));
 
@@ -397,7 +417,30 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         }
 
         if (!renderAd) {
+          if (hadAdBeforeBeforeRenderHook) {
+            // The ad was identified as empty by the `onBeforeRender` hook itself. The position is still
+            // tracked as rendered, but no creative is written to the element. Whatever the app already put
+            // in the element (e.g. a fallback rendered from `onEmpty`) is left untouched.
+            markEmpty();
+            // eslint-disable-next-line require-atomic-updates
+            status.value = 'rendered';
+            logger.debug(`Slot ${name.value} identified as empty by the onBeforeRender hook`, slotContext.value);
+
+            return element.value;
+          }
+
           return null;
+        }
+
+        if (isEmpty.value) {
+          // The ad was already identified as empty earlier, typically via `processOnEmpty(ad)` from the
+          // `onRequest` hook. The position is tracked as rendered, but no creative is written to the element.
+          // Whatever the app already put in the element (e.g. a fallback rendered from `onEmpty`) is left
+          // untouched.
+          // eslint-disable-next-line require-atomic-updates
+          status.value = 'rendered';
+
+          return element.value;
         }
 
         if (typeof renderAd?.tag !== 'string' && renderMode !== 'none') {
@@ -435,10 +478,27 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       }
     }
 
-    function processOnEmpty(): void {
+    function markEmpty(): void {
+      if (isEmpty.value)
+        return;
+
+      isEmpty.value = true;
+      runOnEmpty();
+    }
+
+    function processOnEmpty(ad?: AdheseAd): void {
+      markEmpty();
+
+      if (ad) {
+        // An ad was returned, but its creative was identified as empty (e.g. a no-fill/house banner). Stash
+        // it so `request()` can keep it alive for tracking once the slot renders, instead of treating this
+        // as "no ad returned at all".
+        emptyAdForTracking = ad;
+        return;
+      }
+
       status.value = 'empty';
       logger.debug(`No ad to render for slot ${name.value}`);
-      runOnEmpty();
     }
 
     function processOnError(error: string): void {
@@ -487,6 +547,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
       data,
       isViewabilityTracked,
       isImpressionTracked,
+      isEmpty,
       status,
       element,
       isDisposed,
@@ -523,9 +584,22 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
       if (initialData) {
         status.value = 'loaded';
+        isEmpty.value = false;
+        emptyAdForTracking = null;
 
         data.value = initialData;
-        data.value = await runOnRequest(initialData);
+
+        let response = await runOnRequest(initialData);
+
+        if (!response && emptyAdForTracking) {
+          // `onRequest` identified the ad as empty via `processOnEmpty(ad)`. Keep the original ad around so
+          // it still reaches `render()`, where the position is tracked even though no creative is shown.
+          response = emptyAdForTracking;
+        }
+
+        data.value = response;
+        // eslint-disable-next-line require-atomic-updates
+        status.value = response ? 'loaded' : 'empty';
 
         return;
       }

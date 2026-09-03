@@ -141,6 +141,7 @@ export function SlotsTable(): ReactElement {
                 format,
                 location,
                 status,
+                isEmpty,
                 isViewabilityTracked,
                 isImpressionTracked,
                 element,
@@ -192,6 +193,9 @@ export function SlotsTable(): ReactElement {
                       <Badge variant="outline" className={cn(status === 'error' ? 'bg-red-500 text-red-50' : '')}>
                         {renderStatusMap[status]}
                       </Badge>
+                      {status === 'rendered' && isEmpty && (
+                        <Badge variant="secondary" className="ml-1">No-fill</Badge>
+                      )}
                     </TableCell>
                     <TableCell>
                       {data?.orderId && data?.orderId !== '0'
