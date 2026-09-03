@@ -4,7 +4,13 @@ import type { createAsyncHook, createPassiveHook, Merge, Ref } from '@adhese/sdk
 export type RenderMode = 'iframe' | 'inline' | 'none';
 export type AdheseSlotHooks = {
   /**
-   * Hook that is called when the format of the slot changes.
+   * Hook that is called right before the slot is rendered, once the slot's element is known to be in the viewport.
+   *
+   * Returning a falsy value here marks the ad as empty: the creative is not rendered, but the slot is still
+   * considered `rendered` for tracking purposes (impression and viewability pixels can still fire) and `onEmpty`
+   * is fired. This is a fallback for detecting no-fill/house creatives right before they would be written to the
+   * DOM; prefer calling `context.value.processOnEmpty(ad)` from `onRequest` instead, so `onEmpty` fires as soon
+   * as the ad is known to be empty rather than only once the slot actually renders.
    */
   onBeforeRender: ReturnType<typeof createAsyncHook<AdheseAd>>[1];
   /**
@@ -17,6 +23,12 @@ export type AdheseSlotHooks = {
   onBeforeRequest: ReturnType<typeof createAsyncHook<AdheseAd | null>>[1];
   /**
    * Hook that is called when the slot is requested from the server.
+   *
+   * To detect a no-fill/house creative (an ad response whose content indicates there's nothing real to show, e.g.
+   * a recognisable `ad.tag`), call `context.value.processOnEmpty(ad)` with the received ad and return the ad
+   * unchanged. This fires `onEmpty` immediately, while still letting the ad reach `render()` later so the slot's
+   * position is tracked (impression/viewability pixels still fire) once it actually renders — no creative is
+   * written to the element. See `isEmpty` on the slot context.
    */
   onRequest: ReturnType<typeof createAsyncHook<AdheseAd>>[1];
   /**
@@ -28,7 +40,10 @@ export type AdheseSlotHooks = {
    */
   onDispose: ReturnType<typeof createPassiveHook>[1];
   /**
-   * Hook that is called when the slot is empty.
+   * Hook that is called when the slot is empty, either because the server didn't return an ad for it at all
+   * (`context.value.processOnEmpty()`, no tracking), or because an ad was identified as an empty/no-fill
+   * creative via `context.value.processOnEmpty(ad)` from `onRequest`, or a falsy return from `onBeforeRender`
+   * (both keep the slot's position tracked as rendered — see `isEmpty` on the slot context).
    */
   onEmpty: ReturnType<typeof createPassiveHook>[1];
   /**
@@ -172,10 +187,20 @@ type BaseAdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' | 'o
    * - `loaded`: The slot has loaded data from the API and is ready to render
    * - `empty`: The slot has loaded data from the API but the response was empty
    * - `rendering`: The slot is rendering the ad
-   * - `rendered`: The slot has rendered the ad
+   * - `rendered`: The slot has rendered the ad, or identified it as an empty/no-fill creative (see `isEmpty`)
    * - `error`: The slot has encountered an error
    */
   status: 'initializing' | 'initialized' | 'loading' | 'loaded' | 'empty' | 'rendering' | 'rendered' | 'error';
+  /**
+   * Whether the ad was identified as empty (a no-fill/house creative), via `processOnEmpty(ad)` from `onRequest`
+   * or a falsy return from `onBeforeRender`. Once the slot reaches `rendered` status, `isEmpty` tells you whether
+   * a creative was actually written to `element` (`false`) or the slot's position was tracked without one
+   * (`true`).
+   *
+   * This is distinct from `status === 'empty'`, which means the server returned no ad for the slot at all and
+   * nothing is tracked.
+   */
+  readonly isEmpty: boolean;
   /**
    * Is the slot disposed.
    */
@@ -217,9 +242,14 @@ type BaseAdheseSlot = Merge<Omit<AdheseSlotOptions, 'onDispose' | 'context' | 'o
    */
   dispose(): void;
   /**
-   * Process the onEmpty hook when a slot is not filled with an Ad.
+   * Marks the slot as empty and fires the `onEmpty` hook.
+   *
+   * Call it with no argument when there's no ad at all for the slot: `status` becomes `empty` and nothing is
+   * tracked. Call it with the received `ad` from the `onRequest` hook when the server did return an ad but its
+   * creative should be treated as empty (a no-fill/house banner): the ad is kept alive so the slot's position is
+   * still tracked as rendered once it actually renders, without writing a creative to the element.
    */
-  processOnEmpty(): void;
+  processOnEmpty(ad?: AdheseAd): void;
   /**
    * Process the onError hook whenever an error is triggered.
    */

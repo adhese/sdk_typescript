@@ -494,6 +494,12 @@ describe('slot', () => {
       return calls.filter(([firedUrl]) => firedUrl.toString() === url).length;
     }
 
+    function getAdTitle(ad: AdheseAd): string | undefined {
+      return typeof ad.tag === 'string'
+        ? /<title>(?<title>[\s\S]*?)<\/title>/i.exec(ad.tag)?.groups?.title
+        : undefined;
+    }
+
     beforeEach(() => {
       vi.mocked(addTrackingPixel).mockClear();
       stubIntersectingObserver();
@@ -551,6 +557,126 @@ describe('slot', () => {
       expect(countFiredPixels('https://foo.bar/impression-refresh')).toBe(1);
       expect(countFiredPixels('https://foo.bar/additional-refresh')).toBe(1);
       expect(countFiredPixels('https://foo.bar/viewable-refresh')).toBe(1);
+    });
+
+    it('should fire onEmpty immediately from onRequest and still track the position once rendered, without rendering a creative', async () => {
+      createContainingElement();
+
+      const onEmpty = vi.fn();
+      const onRender = vi.fn();
+
+      const emptyAd: AdheseAd = {
+        ...createAd('-empty-onrequest'),
+        tag: '<title>Empty</title>',
+      };
+
+      let onEmptyCallOrder = -1;
+      let requestHookCallOrder = -1;
+      let callOrder = 0;
+
+      const slot = createSlot({
+        format: 'leaderboard',
+        containingElement: 'leaderboard',
+        context,
+        initialData: emptyAd,
+        setup(slotContext, hooks) {
+          hooks.onRequest((ad) => {
+            requestHookCallOrder = callOrder++;
+
+            if (getAdTitle(ad) === 'Empty') {
+              slotContext.value?.processOnEmpty(ad);
+            }
+
+            return ad;
+          });
+          hooks.onEmpty(() => {
+            onEmptyCallOrder = callOrder++;
+            onEmpty();
+          });
+          hooks.onRender(onRender);
+        },
+      });
+
+      await awaitTimeout(100);
+
+      // onEmpty fires synchronously from within the onRequest hook, not deferred until the slot renders.
+      expect(onEmptyCallOrder).toBe(requestHookCallOrder + 1);
+      expect(slot.status).toBe('rendered');
+      expect(slot.isEmpty).toBe(true);
+      expect(slot.element?.innerHTML).toBe('');
+      expect(onEmpty).toHaveBeenCalledTimes(1);
+      expect(onRender).not.toHaveBeenCalled();
+      expect(countFiredPixels('https://foo.bar/impression-empty-onrequest')).toBe(1);
+      expect(countFiredPixels('https://foo.bar/viewable-empty-onrequest')).toBe(1);
+
+      slot.dispose();
+    });
+
+    it('should track the position but not render a creative when onBeforeRender identifies the ad as empty', async () => {
+      createContainingElement();
+
+      const onEmpty = vi.fn();
+      const onRender = vi.fn();
+
+      const emptyAd: AdheseAd = {
+        ...createAd('-empty-onbeforerender'),
+        tag: '<title>Empty</title>',
+      };
+
+      const slot = createSlot({
+        format: 'leaderboard',
+        containingElement: 'leaderboard',
+        context,
+        initialData: emptyAd,
+        setup(_slotContext, hooks) {
+          hooks.onBeforeRender(ad => (getAdTitle(ad) === 'Empty' ? false as unknown as AdheseAd : ad));
+          hooks.onEmpty(onEmpty);
+          hooks.onRender(onRender);
+        },
+      });
+
+      await awaitTimeout(100);
+
+      expect(slot.status).toBe('rendered');
+      expect(slot.isEmpty).toBe(true);
+      expect(slot.element?.innerHTML).toBe('');
+      expect(onEmpty).toHaveBeenCalledTimes(1);
+      expect(onRender).not.toHaveBeenCalled();
+      expect(countFiredPixels('https://foo.bar/impression-empty-onbeforerender')).toBe(1);
+      expect(countFiredPixels('https://foo.bar/viewable-empty-onbeforerender')).toBe(1);
+
+      slot.dispose();
+    });
+
+    it('should fire onEmpty and reach the empty status without tracking anything when no ad is returned at all', async () => {
+      createContainingElement();
+
+      const onEmpty = vi.fn();
+      const onRender = vi.fn();
+
+      const slot = createSlot({
+        format: 'leaderboard',
+        containingElement: 'leaderboard',
+        context,
+        setup(slotContext, hooks) {
+          hooks.onInit(() => {
+            // Simulates the SDK's own "no ad returned by the server for this slot" detection.
+            slotContext.value?.processOnEmpty();
+          });
+          hooks.onEmpty(onEmpty);
+          hooks.onRender(onRender);
+        },
+      });
+
+      await awaitTimeout(100);
+
+      expect(slot.status).toBe('empty');
+      expect(slot.isEmpty).toBe(true);
+      expect(onEmpty).toHaveBeenCalledTimes(1);
+      expect(onRender).not.toHaveBeenCalled();
+      expect(vi.mocked(addTrackingPixel)).not.toHaveBeenCalled();
+
+      slot.dispose();
     });
   });
 
