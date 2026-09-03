@@ -500,6 +500,16 @@ describe('slot', () => {
         : undefined;
     }
 
+    async function waitForFiredPixels(url: string, times: number): Promise<void> {
+      // The viewability pixel fires after a real setTimeout (the configured dwell duration), so poll for it
+      // instead of a fixed sleep — a fixed wait is flaky under CI load and, worse, leaves a slot's assertions
+      // failing before it reaches `slot.dispose()`, letting its pending timer fire later and contaminate a
+      // later test.
+      await vi.waitFor(() => {
+        expect(countFiredPixels(url)).toBe(times);
+      }, { timeout: 2000, interval: 20 });
+    }
+
     beforeEach(() => {
       vi.mocked(addTrackingPixel).mockClear();
       stubIntersectingObserver();
@@ -597,19 +607,23 @@ describe('slot', () => {
         },
       });
 
-      await awaitTimeout(100);
+      try {
+        await vi.waitFor(() => {
+          expect(slot.status).toBe('rendered');
+        }, { timeout: 2000, interval: 20 });
 
-      // onEmpty fires synchronously from within the onRequest hook, not deferred until the slot renders.
-      expect(onEmptyCallOrder).toBe(requestHookCallOrder + 1);
-      expect(slot.status).toBe('rendered');
-      expect(slot.isEmpty).toBe(true);
-      expect(slot.element?.innerHTML).toBe('');
-      expect(onEmpty).toHaveBeenCalledTimes(1);
-      expect(onRender).not.toHaveBeenCalled();
-      expect(countFiredPixels('https://foo.bar/impression-empty-onrequest')).toBe(1);
-      expect(countFiredPixels('https://foo.bar/viewable-empty-onrequest')).toBe(1);
-
-      slot.dispose();
+        // onEmpty fires synchronously from within the onRequest hook, not deferred until the slot renders.
+        expect(onEmptyCallOrder).toBe(requestHookCallOrder + 1);
+        expect(slot.isEmpty).toBe(true);
+        expect(slot.element?.innerHTML).toBe('');
+        expect(onEmpty).toHaveBeenCalledTimes(1);
+        expect(onRender).not.toHaveBeenCalled();
+        await waitForFiredPixels('https://foo.bar/impression-empty-onrequest', 1);
+        await waitForFiredPixels('https://foo.bar/viewable-empty-onrequest', 1);
+      }
+      finally {
+        slot.dispose();
+      }
     });
 
     it('should track the position but not render a creative when onBeforeRender identifies the ad as empty', async () => {
@@ -635,17 +649,21 @@ describe('slot', () => {
         },
       });
 
-      await awaitTimeout(100);
+      try {
+        await vi.waitFor(() => {
+          expect(slot.status).toBe('rendered');
+        }, { timeout: 2000, interval: 20 });
 
-      expect(slot.status).toBe('rendered');
-      expect(slot.isEmpty).toBe(true);
-      expect(slot.element?.innerHTML).toBe('');
-      expect(onEmpty).toHaveBeenCalledTimes(1);
-      expect(onRender).not.toHaveBeenCalled();
-      expect(countFiredPixels('https://foo.bar/impression-empty-onbeforerender')).toBe(1);
-      expect(countFiredPixels('https://foo.bar/viewable-empty-onbeforerender')).toBe(1);
-
-      slot.dispose();
+        expect(slot.isEmpty).toBe(true);
+        expect(slot.element?.innerHTML).toBe('');
+        expect(onEmpty).toHaveBeenCalledTimes(1);
+        expect(onRender).not.toHaveBeenCalled();
+        await waitForFiredPixels('https://foo.bar/impression-empty-onbeforerender', 1);
+        await waitForFiredPixels('https://foo.bar/viewable-empty-onbeforerender', 1);
+      }
+      finally {
+        slot.dispose();
+      }
     });
 
     it('should fire onEmpty and reach the empty status without tracking anything when no ad is returned at all', async () => {
@@ -668,15 +686,19 @@ describe('slot', () => {
         },
       });
 
-      await awaitTimeout(100);
+      try {
+        await vi.waitFor(() => {
+          expect(slot.status).toBe('empty');
+        }, { timeout: 2000, interval: 20 });
 
-      expect(slot.status).toBe('empty');
-      expect(slot.isEmpty).toBe(true);
-      expect(onEmpty).toHaveBeenCalledTimes(1);
-      expect(onRender).not.toHaveBeenCalled();
-      expect(vi.mocked(addTrackingPixel)).not.toHaveBeenCalled();
-
-      slot.dispose();
+        expect(slot.isEmpty).toBe(true);
+        expect(onEmpty).toHaveBeenCalledTimes(1);
+        expect(onRender).not.toHaveBeenCalled();
+        expect(vi.mocked(addTrackingPixel)).not.toHaveBeenCalled();
+      }
+      finally {
+        slot.dispose();
+      }
     });
   });
 

@@ -12,3 +12,5 @@ Returning a falsy value from the `onBeforeRender` hook now has the same tracked-
 This also fixes a no-fill creative that was fetched while a slot was out of the viewport still being rendered once the slot scrolled into view: the position-tracked decision is now re-checked at the actual render step (whenever it happens), instead of only at request time.
 
 The devtools slots table now shows a "No-fill" badge for slots that reached `rendered` with `isEmpty` set.
+
+Also fixes a pending viewability tracking pixel outliving a disposed slot: its dwell-time timer is now cancelled on `dispose()` instead of firing later regardless.
