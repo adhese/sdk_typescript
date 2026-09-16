@@ -106,8 +106,8 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
             [options.format]: '(min-width: 0px)',
           }
         : Object.fromEntries(
-          options.format.map(item => [item.format, item.query]),
-        ),
+            options.format.map(item => [item.format, item.query]),
+          ),
     );
 
     const format = computed(() =>
