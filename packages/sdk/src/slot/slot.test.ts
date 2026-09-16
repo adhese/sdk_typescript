@@ -1,9 +1,13 @@
 import type { AdheseAd, AdheseContext } from '@adhese/sdk';
 import type * as sdkShared from '@adhese/sdk-shared';
+import type * as requestAdsModule from '../requestAds/requestAds';
 import { addTrackingPixel, awaitTimeout } from '@adhese/sdk-shared';
+import { http, HttpResponse } from 'msw';
+import { mockServer } from 'server-mocking';
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // eslint-disable-next-line ts/naming-convention
 import MatchMediaMock from 'vitest-matchmedia-mock';
+import { requestAd } from '../requestAds/requestAds';
 import { testContext } from '../testUtils';
 import { createSlot } from './slot';
 
@@ -11,6 +15,7 @@ vi.mock('../logger/logger', () => ({
   logger: {
     error: vi.fn(),
     debug: vi.fn(),
+    warn: vi.fn(),
   },
 }));
 
@@ -20,6 +25,15 @@ vi.mock('@adhese/sdk-shared', async (importOriginal) => {
   return {
     ...actual,
     addTrackingPixel: vi.fn(actual.addTrackingPixel),
+  };
+});
+
+vi.mock('../requestAds/requestAds', async (importOriginal) => {
+  const actual = await importOriginal<typeof requestAdsModule>();
+
+  return {
+    ...actual,
+    requestAd: vi.fn(actual.requestAd),
   };
 });
 
@@ -372,6 +386,240 @@ describe('slot', () => {
     }
 
     expect(slot.lazyLoading).toBe(true);
+  });
+
+  it('should not issue a duplicate ad request when the slot becomes visible while the initial request is still in flight', async () => {
+    const element = document.createElement('div');
+
+    element.classList.add('adunit');
+    element.dataset.format = 'leaderboard';
+    element.id = 'leaderboard-inflight-race';
+
+    document.body.appendChild(element);
+
+    const intersectionCallbacks: Array<IntersectionObserverCallback> = [];
+
+    vi.stubGlobal('IntersectionObserver', vi.fn((callback: IntersectionObserverCallback) => {
+      intersectionCallbacks.push(callback);
+
+      return {
+        observe: vi.fn(),
+        unobserve: vi.fn(),
+        disconnect: vi.fn(),
+        takeRecords: vi.fn(),
+        thresholds: [0],
+        root: document,
+        rootMargin: '',
+      } as unknown as IntersectionObserver;
+    }));
+
+    let requestCount = 0;
+    let resolveRequest: ((ad: AdheseAd | null) => void) | undefined;
+
+    const ad: AdheseAd = {
+      adFormat: 'foo',
+      tag: '<div>foo</div>',
+      // eslint-disable-next-line ts/naming-convention
+      slotID: 'bar',
+      slotName: 'baz',
+      adType: 'foo',
+      id: 'baz',
+      origin: 'JERLICIA',
+    };
+
+    // Stands in for the network round trip: it resolves only once the test calls `resolveRequest`, giving
+    // the test full control over how long the request stays in flight.
+    vi.mocked(requestAd).mockImplementation(() => new Promise((resolve) => {
+      requestCount++;
+      resolveRequest = resolve;
+    }));
+
+    const slot = createSlot({
+      format: 'leaderboard',
+      containingElement: 'leaderboard-inflight-race',
+      context: {
+        ...context,
+        options: {
+          ...context.options,
+          // Rendering only happens once the slot is visible, so the viewport watcher below is what drives
+          // `render()` — this is the code path the race condition runs through.
+          eagerRendering: false,
+        },
+      },
+    });
+
+    await vi.waitFor(() => {
+      expect(slot.status).toBe('loading');
+    }, { timeout: 2000, interval: 10 });
+
+    expect(requestCount).toBe(1);
+
+    // The slot scrolls into view while the first request is still unresolved.
+    for (const callback of intersectionCallbacks) {
+      callback([{
+        boundingClientRect: new DOMRect(),
+        intersectionRatio: 1,
+        intersectionRect: new DOMRect(),
+        isIntersecting: true,
+        rootBounds: new DOMRect(),
+        target: element,
+        time: 0,
+      }], {} as IntersectionObserver);
+    }
+
+    await awaitTimeout(20);
+
+    // Becoming visible makes the slot want to render, which asks for an ad again. That must join the
+    // request that's already in flight instead of firing a second one at the ad server.
+    expect(requestCount).toBe(1);
+    expect(slot.status).not.toBe('rendered');
+
+    resolveRequest?.(ad);
+
+    await vi.waitFor(() => {
+      expect(slot.status).toBe('rendered');
+    }, { timeout: 2000, interval: 10 });
+
+    expect(requestCount).toBe(1);
+    expect(slot.element?.innerHTML).toContain(ad.tag as string);
+  });
+
+  it('should issue a new request once the previous one has settled', async () => {
+    const element = document.createElement('div');
+
+    document.body.appendChild(element);
+
+    let requestCount = 0;
+
+    vi.mocked(requestAd).mockImplementation(async () => {
+      requestCount++;
+
+      return {
+        adFormat: 'foo',
+        tag: '<div>foo</div>',
+        // eslint-disable-next-line ts/naming-convention
+        slotID: 'bar',
+        slotName: 'baz',
+        adType: 'foo',
+        id: 'baz',
+        origin: 'JERLICIA',
+      } satisfies AdheseAd;
+    });
+
+    const slot = createSlot({
+      format: 'leaderboard',
+      containingElement: element,
+      context,
+    });
+
+    await vi.waitFor(() => {
+      expect(requestCount).toBe(1);
+    }, { timeout: 2000, interval: 10 });
+
+    await slot.request();
+
+    // Sharing an in-flight request must not outlive that request — otherwise a slot could never refetch.
+    expect(requestCount).toBe(2);
+  });
+
+  it('should still batch the requests of separate slots into a single call to the ad server', async () => {
+    const batchedSlotNames: Array<Array<string>> = [];
+
+    mockServer.use(
+      http.post('https://ads-test.adhese.com/json', async ({ request }) => {
+        const body = await request.json() as { slots: ReadonlyArray<{ slotname: string }> };
+
+        batchedSlotNames.push(body.slots.map(({ slotname }) => slotname));
+
+        return HttpResponse.json([]);
+      }),
+    );
+
+    const slots = ['batch-a', 'batch-b', 'batch-c'].map((id) => {
+      const element = document.createElement('div');
+
+      element.id = id;
+      document.body.appendChild(element);
+
+      return createSlot({
+        format: 'leaderboard',
+        slot: id,
+        containingElement: id,
+        context,
+      });
+    });
+
+    const names = slots.map(({ name }) => name);
+
+    try {
+      await vi.waitFor(() => {
+        expect(
+          batchedSlotNames.some(batch => names.every(name => batch.includes(name))),
+        ).toBe(true);
+      }, { timeout: 2000, interval: 20 });
+
+      // Asserting the absence of a follow-up request means actually waiting out the batch debounce
+      // window, so this one genuinely needs a fixed wait rather than a `vi.waitFor`.
+      await awaitTimeout(400);
+
+      // Slots left behind by earlier tests can ride along in the same batch, so this asserts the
+      // property that matters rather than an exact batch size: each of these slots was requested
+      // exactly once, and all of them travelled in the same request.
+      for (const name of names)
+        expect(batchedSlotNames.filter(batch => batch.includes(name))).toHaveLength(1);
+
+      expect(
+        batchedSlotNames.filter(batch => names.every(name => batch.includes(name))),
+      ).toHaveLength(1);
+    }
+    finally {
+      for (const slot of slots)
+        slot.dispose();
+    }
+  });
+
+  it('should issue a separate request when the slot name changes while a request is still in flight', async () => {
+    const element = document.createElement('div');
+
+    document.body.appendChild(element);
+
+    mediaQueryMock.useMediaQuery('(max-width: 767px)');
+
+    const requestedNames: Array<string> = [];
+
+    vi.mocked(requestAd).mockImplementation(async ({ slot: requestedSlot }) => {
+      requestedNames.push(requestedSlot.name);
+
+      // Never settles, so the request for the previous name is still in flight when the name changes.
+      return new Promise(() => {});
+    });
+
+    createSlot({
+      format: [
+        {
+          format: 'skyscraper',
+          query: '(max-width: 767px)',
+        },
+        {
+          format: 'leaderboard',
+          query: '(min-width: 768px)',
+        },
+      ],
+      containingElement: element,
+      context,
+    });
+
+    await vi.waitFor(() => {
+      expect(requestedNames).toEqual(['foo-skyscraper']);
+    }, { timeout: 2000, interval: 10 });
+
+    mediaQueryMock.clear();
+    mediaQueryMock.useMediaQuery('(min-width: 768px)');
+
+    // The in-flight request was for the old name, so it must not be reused for the new one.
+    await vi.waitFor(() => {
+      expect(requestedNames).toEqual(['foo-skyscraper', 'foo-leaderboard']);
+    }, { timeout: 2000, interval: 10 });
   });
 
   it('should be able to render a slot without an ad set', async () => {
