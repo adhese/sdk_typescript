@@ -448,40 +448,45 @@ describe('slot', () => {
       },
     });
 
-    await vi.waitFor(() => {
-      expect(slot.status).toBe('loading');
-    }, { timeout: 2000, interval: 10 });
+    try {
+      await vi.waitFor(() => {
+        expect(slot.status).toBe('loading');
+      }, { timeout: 2000, interval: 10 });
 
-    expect(requestCount).toBe(1);
+      expect(requestCount).toBe(1);
 
-    // The slot scrolls into view while the first request is still unresolved.
-    for (const callback of intersectionCallbacks) {
-      callback([{
-        boundingClientRect: new DOMRect(),
-        intersectionRatio: 1,
-        intersectionRect: new DOMRect(),
-        isIntersecting: true,
-        rootBounds: new DOMRect(),
-        target: element,
-        time: 0,
-      }], {} as IntersectionObserver);
+      // The slot scrolls into view while the first request is still unresolved.
+      for (const callback of intersectionCallbacks) {
+        callback([{
+          boundingClientRect: new DOMRect(),
+          intersectionRatio: 1,
+          intersectionRect: new DOMRect(),
+          isIntersecting: true,
+          rootBounds: new DOMRect(),
+          target: element,
+          time: 0,
+        }], {} as IntersectionObserver);
+      }
+
+      await awaitTimeout(20);
+
+      // Becoming visible makes the slot want to render, which asks for an ad again. That must join the
+      // request that's already in flight instead of firing a second one at the ad server.
+      expect(requestCount).toBe(1);
+      expect(slot.status).not.toBe('rendered');
+
+      resolveRequest?.(ad);
+
+      await vi.waitFor(() => {
+        expect(slot.status).toBe('rendered');
+      }, { timeout: 2000, interval: 10 });
+
+      expect(requestCount).toBe(1);
+      expect(slot.element?.innerHTML).toContain(ad.tag as string);
     }
-
-    await awaitTimeout(20);
-
-    // Becoming visible makes the slot want to render, which asks for an ad again. That must join the
-    // request that's already in flight instead of firing a second one at the ad server.
-    expect(requestCount).toBe(1);
-    expect(slot.status).not.toBe('rendered');
-
-    resolveRequest?.(ad);
-
-    await vi.waitFor(() => {
-      expect(slot.status).toBe('rendered');
-    }, { timeout: 2000, interval: 10 });
-
-    expect(requestCount).toBe(1);
-    expect(slot.element?.innerHTML).toContain(ad.tag as string);
+    finally {
+      slot.dispose();
+    }
   });
 
   it('should issue a new request once the previous one has settled', async () => {
@@ -512,14 +517,19 @@ describe('slot', () => {
       context,
     });
 
-    await vi.waitFor(() => {
-      expect(requestCount).toBe(1);
-    }, { timeout: 2000, interval: 10 });
+    try {
+      await vi.waitFor(() => {
+        expect(requestCount).toBe(1);
+      }, { timeout: 2000, interval: 10 });
 
-    await slot.request();
+      await slot.request();
 
-    // Sharing an in-flight request must not outlive that request — otherwise a slot could never refetch.
-    expect(requestCount).toBe(2);
+      // Sharing an in-flight request must not outlive that request — otherwise a slot could never refetch.
+      expect(requestCount).toBe(2);
+    }
+    finally {
+      slot.dispose();
+    }
   });
 
   it('should still batch the requests of separate slots into a single call to the ad server', async () => {
@@ -594,7 +604,7 @@ describe('slot', () => {
       return new Promise(() => {});
     });
 
-    createSlot({
+    const slot = createSlot({
       format: [
         {
           format: 'skyscraper',
@@ -609,17 +619,22 @@ describe('slot', () => {
       context,
     });
 
-    await vi.waitFor(() => {
-      expect(requestedNames).toEqual(['foo-skyscraper']);
-    }, { timeout: 2000, interval: 10 });
+    try {
+      await vi.waitFor(() => {
+        expect(requestedNames).toEqual(['foo-skyscraper']);
+      }, { timeout: 2000, interval: 10 });
 
-    mediaQueryMock.clear();
-    mediaQueryMock.useMediaQuery('(min-width: 768px)');
+      mediaQueryMock.clear();
+      mediaQueryMock.useMediaQuery('(min-width: 768px)');
 
-    // The in-flight request was for the old name, so it must not be reused for the new one.
-    await vi.waitFor(() => {
-      expect(requestedNames).toEqual(['foo-skyscraper', 'foo-leaderboard']);
-    }, { timeout: 2000, interval: 10 });
+      // The in-flight request was for the old name, so it must not be reused for the new one.
+      await vi.waitFor(() => {
+        expect(requestedNames).toEqual(['foo-skyscraper', 'foo-leaderboard']);
+      }, { timeout: 2000, interval: 10 });
+    }
+    finally {
+      slot.dispose();
+    }
   });
 
   it('should be able to render a slot without an ad set', async () => {
@@ -773,25 +788,32 @@ describe('slot', () => {
         initialData: createAd(''),
       });
 
-      await awaitTimeout(100);
+      try {
+        await vi.waitFor(() => {
+          expect(slot.status).toBe('rendered');
+        }, { timeout: 2000, interval: 20 });
 
-      expect(slot.status).toBe('rendered');
-      expect(countFiredPixels('https://foo.bar/impression')).toBe(1);
-      expect(countFiredPixels('https://foo.bar/additional')).toBe(1);
-      expect(countFiredPixels('https://foo.bar/viewable')).toBe(1);
+        await waitForFiredPixels('https://foo.bar/impression', 1);
+        await waitForFiredPixels('https://foo.bar/additional', 1);
+        await waitForFiredPixels('https://foo.bar/viewable', 1);
 
-      containingElement.remove();
+        containingElement.remove();
 
-      await awaitTimeout(100);
+        await awaitTimeout(100);
 
-      createContainingElement();
+        createContainingElement();
 
-      await awaitTimeout(100);
+        await awaitTimeout(100);
 
-      expect(slot.status).toBe('rendered');
-      expect(countFiredPixels('https://foo.bar/impression')).toBe(1);
-      expect(countFiredPixels('https://foo.bar/additional')).toBe(1);
-      expect(countFiredPixels('https://foo.bar/viewable')).toBe(1);
+        // Asserting the pixels did *not* fire a second time, so these stay fixed waits.
+        expect(slot.status).toBe('rendered');
+        expect(countFiredPixels('https://foo.bar/impression')).toBe(1);
+        expect(countFiredPixels('https://foo.bar/additional')).toBe(1);
+        expect(countFiredPixels('https://foo.bar/viewable')).toBe(1);
+      }
+      finally {
+        slot.dispose();
+      }
     });
 
     it('should fire the tracking pixels again when a new ad is set', async () => {
