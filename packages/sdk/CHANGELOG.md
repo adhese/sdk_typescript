@@ -1,5 +1,11 @@
 # @adhese/sdk
 
+## 1.12.1
+
+### Patch Changes
+
+- 39b37d0: Fix that will no longer allow for a duplicate request being send
+
 ## 1.12.0
 
 ### Minor Changes
