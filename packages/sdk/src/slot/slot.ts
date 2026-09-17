@@ -319,7 +319,30 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         additionalTrackingPixelElement.value.remove();
     });
 
+    // The request currently in flight, if any. Several things can ask a slot for its ad at roughly the
+    // same moment - the viewport and element watchers, `onInit`, or an app calling `render()` while the
+    // initial request is still running - and `render()` starts a request of its own whenever it finds no
+    // ad yet. Without this they each fire their own call to the ad server for the same slot. Keyed by
+    // name so that a format (and therefore name) change still results in a genuinely new request.
+    let inFlightRequest: { name: string; promise: Promise<AdheseAd | null> } | null = null;
+
     async function request(): Promise<AdheseAd | null> {
+      if (inFlightRequest?.name === name.value)
+        return inFlightRequest.promise;
+
+      const promise = fetchAd();
+      inFlightRequest = { name: name.value, promise };
+
+      try {
+        return await promise;
+      }
+      finally {
+        if (inFlightRequest?.promise === promise)
+          inFlightRequest = null;
+      }
+    }
+
+    async function fetchAd(): Promise<AdheseAd | null> {
       try {
         if (options.lazyLoading && !isInViewport.value)
           return null;
