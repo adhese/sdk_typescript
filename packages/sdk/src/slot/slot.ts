@@ -20,6 +20,7 @@ import {
   renderInline,
   type RenderOptions,
   shallowRef,
+  toRaw,
   uniqueId,
   type UnwrapRef,
   waitForDomLoad,
@@ -326,6 +327,11 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     // name so that a format (and therefore name) change still results in a genuinely new request.
     let inFlightRequest: { name: string; promise: Promise<AdheseAd | null> } | null = null;
 
+    // What was last written to the DOM, so that a repeat render for an unchanged ad can be skipped.
+    // Cleared whenever the element's contents are dropped, so the creative is written again after that.
+    let renderedAd: AdheseAd | null = null;
+    let renderedElement: HTMLElement | null = null;
+
     async function request(): Promise<AdheseAd | null> {
       if (inFlightRequest?.name === name.value)
         return inFlightRequest.promise;
@@ -425,6 +431,9 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
         }
 
         const hadAdBeforeBeforeRenderHook = Boolean(renderAd);
+        // Kept before `onBeforeRender` runs, since that hook is free to return a freshly built ad object
+        // every time it's called, which would make the "already rendered" check above never match.
+        const sourceAd = renderAd;
 
         renderAd = renderAd && (await runOnBeforeRender(renderAd));
 
@@ -466,6 +475,17 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
           return element.value;
         }
 
+        if (sourceAd && toRaw(sourceAd) === renderedAd && element.value === renderedElement) {
+          // This exact ad is already written into this exact element. Several things can ask a slot to
+          // render at roughly the same moment, and writing the creative again is not harmless:
+          // `renderInline` appends, so the creative stacks up, and the creative's own scripts and the
+          // `onRender` hook run again. A new ad, or a new element, still re-renders below.
+          // eslint-disable-next-line require-atomic-updates
+          status.value = 'rendered';
+
+          return element.value;
+        }
+
         if (typeof renderAd?.tag !== 'string' && renderMode !== 'none') {
           const error = `Could not render slot for slot ${name.value}. A valid tag doesn't exist or is not HTML string.`;
           throw new Error(error);
@@ -480,6 +500,11 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
             element.value,
           );
         }
+
+        // Stored raw: the same ad reaches `render()` either as the plain object `request()` resolved with
+        // or as the reactive proxy `data` wrapped it in, and those are not identical by reference.
+        renderedAd = sourceAd && toRaw(sourceAd);
+        renderedElement = element.value;
 
         logger.debug(`Slot rendered ${name.value}`, {
           renderedElement: element,
@@ -540,6 +565,9 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
       element.value.innerHTML = '';
       element.value.style.position = '';
+
+      renderedAd = null;
+      renderedElement = null;
     }
 
     function dispose(): void {

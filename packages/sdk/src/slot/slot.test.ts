@@ -588,6 +588,103 @@ describe('slot', () => {
     }
   });
 
+  it('should not write the creative again when the same ad is rendered into the same element twice', async () => {
+    const element = document.createElement('div');
+
+    element.id = 'leaderboard-repeat-render';
+    document.body.appendChild(element);
+
+    const onRender = vi.fn();
+
+    const ad: AdheseAd = {
+      adFormat: 'foo',
+      tag: '<div class="creative">foo</div>',
+      // eslint-disable-next-line ts/naming-convention
+      slotID: 'bar',
+      slotName: 'baz',
+      adType: 'foo',
+      id: 'baz',
+      origin: 'JERLICIA',
+    };
+
+    const slot = createSlot({
+      format: 'leaderboard',
+      containingElement: 'leaderboard-repeat-render',
+      renderMode: 'inline',
+      context,
+      initialData: ad,
+      setup(_slotContext, hooks) {
+        hooks.onRender(onRender);
+      },
+    });
+
+    try {
+      await vi.waitFor(() => {
+        expect(slot.status).toBe('rendered');
+      }, { timeout: 2000, interval: 20 });
+
+      expect(element.querySelectorAll('.creative')).toHaveLength(1);
+
+      await slot.render();
+
+      // `renderInline` appends rather than replacing, so writing the same creative a second time stacks
+      // another copy in the element, re-runs the creative's scripts and fires `onRender` again.
+      expect(element.querySelectorAll('.creative')).toHaveLength(1);
+      expect(onRender).toHaveBeenCalledTimes(1);
+    }
+    finally {
+      slot.dispose();
+    }
+  });
+
+  it('should still render when a different ad is passed for an already rendered slot', async () => {
+    const element = document.createElement('div');
+
+    element.id = 'leaderboard-new-ad-render';
+    document.body.appendChild(element);
+
+    const onRender = vi.fn();
+
+    const ad: AdheseAd = {
+      adFormat: 'foo',
+      tag: '<div class="creative">foo</div>',
+      // eslint-disable-next-line ts/naming-convention
+      slotID: 'bar',
+      slotName: 'baz',
+      adType: 'foo',
+      id: 'baz',
+      origin: 'JERLICIA',
+    };
+
+    const slot = createSlot({
+      format: 'leaderboard',
+      containingElement: 'leaderboard-new-ad-render',
+      renderMode: 'inline',
+      context,
+      initialData: ad,
+      setup(_slotContext, hooks) {
+        hooks.onRender(onRender);
+      },
+    });
+
+    try {
+      await vi.waitFor(() => {
+        expect(slot.status).toBe('rendered');
+      }, { timeout: 2000, interval: 20 });
+
+      expect(onRender).toHaveBeenCalledTimes(1);
+
+      await slot.render({ ...ad, id: 'other', tag: '<div class="other-creative">bar</div>' });
+
+      // Skipping a repeated render must only apply to the ad that is already rendered.
+      expect(onRender).toHaveBeenCalledTimes(2);
+      expect(element.querySelectorAll('.other-creative')).toHaveLength(1);
+    }
+    finally {
+      slot.dispose();
+    }
+  });
+
   it('should issue a separate request when the slot name changes while a request is still in flight', async () => {
     const element = document.createElement('div');
 
