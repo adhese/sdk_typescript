@@ -5,11 +5,22 @@ import { useQueryDetector } from './queryDetector/queryDetector';
 
 export function useMainQueryDetector(mergedOptions: MergedOptions, context: AdheseContextState): void {
   const [device] = useQueryDetector(context, mergedOptions.queries);
+  let isFirstRun = true;
+
   watch(device, async (newDevice) => {
     context.device = newDevice;
 
     context.parameters?.set('dt', newDevice);
     context.parameters?.set('br', newDevice);
+
+    if (isFirstRun) {
+      // This watcher runs once immediately to publish the initial device, which is not a device change.
+      // Slots request and render themselves when they are created, so refreshing them here as well only
+      // renders everything a second time.
+      isFirstRun = false;
+
+      return;
+    }
 
     await Promise.allSettled(
       context.getAll().map(async (slot) => {

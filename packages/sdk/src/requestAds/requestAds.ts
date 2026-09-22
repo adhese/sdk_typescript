@@ -127,6 +127,10 @@ export async function requestAds(
       );
     }
 
+    // Which slots this response is actually answering. `context.slots` holds every slot on the page,
+    // including ones this request never asked about, so a missing ad only means a no-fill for these.
+    const requestedSlotNames = new Set(options.slots.map(({ name }) => name));
+
     const matchedPreviews: Array<AdheseAd> = [];
     for (const [, value] of context.slots.entries()) {
       const ad = result.find(({ slotName }) => slotName === value.name);
@@ -140,9 +144,11 @@ export async function requestAds(
           slotName: value.name,
         } as AdheseAd);
       }
-      else {
-        if (value.status === 'loading')
-          value.processOnEmpty();
+      else if (requestedSlotNames.has(value.name)) {
+        // Previously this only fired while the slot was still on `loading`. A slot that had already
+        // begun rendering by the time its response arrived silently stayed blank instead, never telling
+        // the app it had no ad.
+        value.processOnEmpty();
       }
     }
 

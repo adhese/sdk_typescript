@@ -115,5 +115,10 @@ function insertHtmlWithScripts(
 }
 
 export function renderInline(ad: RenderOptions, element: HTMLElement): void {
+  // Rendering an ad replaces whatever the slot showed before, the same way `renderIframe` does. Without
+  // this the creative is appended, so rendering a new ad into a slot leaves the previous one sitting
+  // above it.
+  element.replaceChildren();
+
   insertHtmlWithScripts(element, String(ad.tag));
 }

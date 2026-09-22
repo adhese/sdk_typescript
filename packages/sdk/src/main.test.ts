@@ -1,5 +1,7 @@
 import type { Adhese } from './main.types';
 import { awaitTimeout, waitForDomLoad } from '@adhese/sdk-shared';
+import { http, HttpResponse } from 'msw';
+import { mockServer } from 'server-mocking';
 import { afterAll, afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 // eslint-disable-next-line ts/naming-convention
 import MatchMediaMock from 'vitest-matchmedia-mock';
@@ -220,6 +222,162 @@ describe('createAdhese', () => {
     await awaitTimeout(10);
 
     expect(adhese.parameters.get('tl')).toBe('all');
+  });
+
+  it('should render a slot only once on startup', async () => {
+    // Reports the slot as in the viewport as soon as it is observed, so the viewport watcher renders it.
+    vi.stubGlobal('IntersectionObserver', vi.fn((callback: IntersectionObserverCallback) => {
+      const observer = {
+        observe: vi.fn((target: Element) => {
+          callback([{
+            boundingClientRect: new DOMRect(),
+            intersectionRatio: 1,
+            intersectionRect: new DOMRect(),
+            isIntersecting: true,
+            rootBounds: new DOMRect(),
+            target,
+            time: 0,
+          }], observer as unknown as IntersectionObserver);
+        }),
+        unobserve: vi.fn(),
+        disconnect: vi.fn(),
+        takeRecords: vi.fn(),
+        thresholds: [0],
+        root: document,
+        rootMargin: '',
+      };
+
+      return observer;
+    }));
+
+    const element = document.createElement('div');
+    element.id = 'render-once';
+    document.body.appendChild(element);
+
+    const onRender = vi.fn();
+
+    adhese = createAdhese({
+      account: 'test',
+      location: 'foo',
+      initialSlots: [
+        {
+          format: 'leaderboard',
+          containingElement: 'render-once',
+          renderMode: 'inline',
+          setup(_slotContext, hooks): void {
+            hooks.onRender(onRender);
+          },
+        },
+      ],
+    });
+
+    await awaitTimeout(600);
+
+    // The device watcher runs once immediately to publish the initial device. Refreshing every slot on
+    // that run as well renders each of them a second time, on top of the render they do themselves.
+    expect(onRender).toHaveBeenCalledTimes(1);
+  });
+
+  it('should render a slot added later without disturbing the slots already on the page', async () => {
+    mockServer.use(
+      http.post('https://ads-test.adhese.com/json', async ({ request }) => {
+        const body = await request.json() as { slots: ReadonlyArray<{ slotname: string }> };
+
+        return HttpResponse.json(body.slots.map(({ slotname }) => ({
+          adFormat: 'flex',
+          adType: 'flex',
+          // eslint-disable-next-line ts/naming-convention
+          slotID: slotname,
+          slotName: slotname,
+          tag: `<div class="creative">${slotname}</div>`,
+          libId: slotname,
+          id: slotname,
+          origin: 'JERLICIA',
+        })));
+      }),
+    );
+
+    vi.stubGlobal('IntersectionObserver', vi.fn((callback: IntersectionObserverCallback) => {
+      const observer = {
+        observe: vi.fn((target: Element) => {
+          callback([{
+            boundingClientRect: new DOMRect(),
+            intersectionRatio: 1,
+            intersectionRect: new DOMRect(),
+            isIntersecting: true,
+            rootBounds: new DOMRect(),
+            target,
+            time: 0,
+          }], observer as unknown as IntersectionObserver);
+        }),
+        unobserve: vi.fn(),
+        disconnect: vi.fn(),
+        takeRecords: vi.fn(),
+        thresholds: [0],
+        root: document,
+        rootMargin: '',
+      };
+
+      return observer;
+    }));
+
+    for (const id of ['first_box', 'later_box']) {
+      const el = document.createElement('div');
+      el.id = id;
+      document.body.appendChild(el);
+    }
+
+    const emptied: Array<string> = [];
+
+    adhese = createAdhese({
+      account: 'test',
+      host: 'https://ads-test.adhese.com',
+      poolHost: 'https://ads-test.adhese.com',
+      location: 'foo',
+      requestType: 'POST',
+      consent: true,
+      eagerRendering: true,
+      initialSlots: [{
+        format: 'flex',
+        slot: 'first',
+        containingElement: 'first_box',
+        renderMode: 'inline',
+        setup(slotContext, hooks): void {
+          hooks.onEmpty(() => {
+            emptied.push(slotContext.value?.name ?? '?');
+          });
+        },
+      }],
+    });
+
+    await awaitTimeout(800);
+
+    const first = document.getElementById('first_box')!;
+    expect(first.querySelectorAll('.creative')).toHaveLength(1);
+
+    // A slot that shows up later, the way scroll-loaded banners do.
+    adhese.addSlot({
+      format: 'flex',
+      slot: 'later',
+      containingElement: 'later_box',
+      renderMode: 'inline',
+      parameters: { ps: ['bottom'] },
+      setup(slotContext, hooks): void {
+        hooks.onEmpty(() => {
+          emptied.push(slotContext.value?.name ?? '?');
+        });
+      },
+    });
+
+    await awaitTimeout(800);
+
+    // The new slot renders into its own container, once.
+    expect(document.getElementById('later_box')!.querySelectorAll('.creative')).toHaveLength(1);
+    // The slot that was already rendered is left exactly as it was.
+    expect(first.querySelectorAll('.creative')).toHaveLength(1);
+    // That second response carries no ad for the first slot, but it was not part of that request, so it
+    // must not be taken for a no-fill.
+    expect(emptied).toEqual([]);
   });
 
   it('should be able to handle device change', async () => {

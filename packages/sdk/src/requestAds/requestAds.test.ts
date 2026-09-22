@@ -45,6 +45,76 @@ describe('requestAds', () => {
     vi.restoreAllMocks();
   });
 
+  it('should report a requested slot as empty when no ad comes back for it, whatever its status', async () => {
+    const onEmpty = vi.fn();
+
+    const emptyContext: AdheseContext = {
+      ...context,
+      slots: new Map(),
+      options: {
+        ...context.options,
+        host: 'https://ads-empty.adhese.com',
+      },
+    };
+
+    const slot = createSlot({
+      format: 'foo',
+      slot: 'nofill',
+      context: emptyContext,
+      setup(_slotContext, hooks): void {
+        hooks.onEmpty(onEmpty);
+      },
+    });
+
+    emptyContext.slots.set('format=foo,location=foo,slot=nofill', slot);
+
+    await requestAds({
+      slots: [{ name: slot.name, parameters: new Map() }],
+      context: emptyContext,
+    });
+
+    // The slot took part in this request and the server returned nothing for it, so it is a no-fill.
+    // Tying that to the slot still sitting on `loading` meant a slot that had already started rendering
+    // never reported itself empty, and the app was never told to deal with the gap.
+    expect(onEmpty).toHaveBeenCalledTimes(1);
+    expect(slot.status).toBe('empty');
+  });
+
+  it('should leave slots that were not part of the request alone', async () => {
+    const onEmpty = vi.fn();
+
+    const emptyContext: AdheseContext = {
+      ...context,
+      slots: new Map(),
+      options: {
+        ...context.options,
+        host: 'https://ads-empty.adhese.com',
+      },
+    };
+
+    const requested = createSlot({ format: 'foo', slot: 'asked', context: emptyContext });
+    const bystander = createSlot({
+      format: 'foo',
+      slot: 'bystander',
+      context: emptyContext,
+      setup(_slotContext, hooks): void {
+        hooks.onEmpty(onEmpty);
+      },
+    });
+
+    emptyContext.slots.set('format=foo,location=foo,slot=asked', requested);
+    emptyContext.slots.set('format=foo,location=foo,slot=bystander', bystander);
+
+    await requestAds({
+      slots: [{ name: requested.name, parameters: new Map() }],
+      context: emptyContext,
+    });
+
+    // This response says nothing about the other slot, so it must not be treated as a no-fill.
+    expect(onEmpty).not.toHaveBeenCalled();
+    expect(bystander.status).not.toBe('empty');
+  });
+
   it('should be able to request multiple ads', async () => {
     const ads = await requestAds({
       slots: [
