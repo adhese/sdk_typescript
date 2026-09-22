@@ -222,6 +222,60 @@ describe('createAdhese', () => {
     expect(adhese.parameters.get('tl')).toBe('all');
   });
 
+  it('should render a slot only once on startup', async () => {
+    // Reports the slot as in the viewport as soon as it is observed, so the viewport watcher renders it.
+    vi.stubGlobal('IntersectionObserver', vi.fn((callback: IntersectionObserverCallback) => {
+      const observer = {
+        observe: vi.fn((target: Element) => {
+          callback([{
+            boundingClientRect: new DOMRect(),
+            intersectionRatio: 1,
+            intersectionRect: new DOMRect(),
+            isIntersecting: true,
+            rootBounds: new DOMRect(),
+            target,
+            time: 0,
+          }], observer as unknown as IntersectionObserver);
+        }),
+        unobserve: vi.fn(),
+        disconnect: vi.fn(),
+        takeRecords: vi.fn(),
+        thresholds: [0],
+        root: document,
+        rootMargin: '',
+      };
+
+      return observer;
+    }));
+
+    const element = document.createElement('div');
+    element.id = 'render-once';
+    document.body.appendChild(element);
+
+    const onRender = vi.fn();
+
+    adhese = createAdhese({
+      account: 'test',
+      location: 'foo',
+      initialSlots: [
+        {
+          format: 'leaderboard',
+          containingElement: 'render-once',
+          renderMode: 'inline',
+          setup(_slotContext, hooks): void {
+            hooks.onRender(onRender);
+          },
+        },
+      ],
+    });
+
+    await awaitTimeout(600);
+
+    // The device watcher runs once immediately to publish the initial device. Refreshing every slot on
+    // that run as well renders each of them a second time, on top of the render they do themselves.
+    expect(onRender).toHaveBeenCalledTimes(1);
+  });
+
   it('should be able to handle device change', async () => {
     adhese = createAdhese({
       account: 'test',

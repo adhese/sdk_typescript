@@ -588,7 +588,7 @@ describe('slot', () => {
     }
   });
 
-  it('should not write the creative again when the same ad is rendered into the same element twice', async () => {
+  it('should not stack copies of the creative when the same ad is rendered into the same element twice', async () => {
     const element = document.createElement('div');
 
     element.id = 'leaderboard-repeat-render';
@@ -627,10 +627,168 @@ describe('slot', () => {
 
       await slot.render();
 
-      // `renderInline` appends rather than replacing, so writing the same creative a second time stacks
-      // another copy in the element, re-runs the creative's scripts and fires `onRender` again.
+      // Rendering writes the creative again, which is what an explicit `render()` call asks for. What it
+      // must not do is leave two copies behind, which is what `renderInline` did when it appended.
       expect(element.querySelectorAll('.creative')).toHaveLength(1);
-      expect(onRender).toHaveBeenCalledTimes(1);
+      expect(element.children).toHaveLength(1);
+    }
+    finally {
+      slot.dispose();
+    }
+  });
+
+  it('should render the creative again when the host app has wiped the slot element', async () => {
+    const element = document.createElement('div');
+
+    element.id = 'leaderboard-wiped';
+    document.body.appendChild(element);
+
+    const ad: AdheseAd = {
+      adFormat: 'foo',
+      tag: '<div class="creative">foo</div>',
+      // eslint-disable-next-line ts/naming-convention
+      slotID: 'bar',
+      slotName: 'baz',
+      adType: 'foo',
+      id: 'baz',
+      origin: 'JERLICIA',
+    };
+
+    const slot = createSlot({
+      format: 'leaderboard',
+      containingElement: 'leaderboard-wiped',
+      renderMode: 'inline',
+      context,
+      initialData: ad,
+    });
+
+    try {
+      await vi.waitFor(() => {
+        expect(slot.status).toBe('rendered');
+      }, { timeout: 2000, interval: 20 });
+
+      expect(element.querySelectorAll('.creative')).toHaveLength(1);
+
+      // A framework re-rendering this part of the page can drop the creative while keeping the same
+      // element. Skipping the render then would leave the slot permanently blank while still counting as
+      // rendered - and its impression as tracked.
+      element.innerHTML = '';
+
+      await slot.render();
+
+      expect(element.querySelectorAll('.creative')).toHaveLength(1);
+    }
+    finally {
+      slot.dispose();
+    }
+  });
+
+  it('should render the creative when an onBeforeRender hook clears the element first', async () => {
+    const element = document.createElement('div');
+
+    element.id = 'leaderboard-cleared-by-hook';
+    document.body.appendChild(element);
+
+    const ad: AdheseAd = {
+      adFormat: 'foo',
+      tag: '<div class="creative">foo</div>',
+      // eslint-disable-next-line ts/naming-convention
+      slotID: 'bar',
+      slotName: 'baz',
+      adType: 'foo',
+      id: 'baz',
+      origin: 'JERLICIA',
+    };
+
+    const slot = createSlot({
+      format: 'leaderboard',
+      containingElement: 'leaderboard-cleared-by-hook',
+      renderMode: 'inline',
+      context,
+      initialData: ad,
+      setup(slotContext, hooks) {
+        // Apps do this to take ownership of the container before the creative is written. It runs on
+        // every render, so by the time the slot decides whether to write, its own creative is gone.
+        hooks.onBeforeRender((adToRender) => {
+          const el = slotContext.value?.element;
+          if (el)
+            el.innerHTML = '';
+
+          return adToRender;
+        });
+      },
+    });
+
+    try {
+      await vi.waitFor(() => {
+        expect(slot.status).toBe('rendered');
+      }, { timeout: 2000, interval: 20 });
+
+      expect(element.querySelectorAll('.creative')).toHaveLength(1);
+
+      // Skipping here would leave the slot blank, because the hook already emptied it.
+      await slot.render();
+
+      expect(element.querySelectorAll('.creative')).toHaveLength(1);
+    }
+    finally {
+      slot.dispose();
+    }
+  });
+
+  it('should keep firing onRender for renderMode none, where the app owns the element', async () => {
+    const element = document.createElement('div');
+
+    element.id = 'leaderboard-render-none';
+    document.body.appendChild(element);
+
+    const ad: AdheseAd = {
+      adFormat: 'foo',
+      tag: '<div class="creative">foo</div>',
+      // eslint-disable-next-line ts/naming-convention
+      slotID: 'bar',
+      slotName: 'baz',
+      adType: 'foo',
+      id: 'baz',
+      origin: 'JERLICIA',
+    };
+
+    let onRenderCount = 0;
+
+    const slot = createSlot({
+      format: 'leaderboard',
+      containingElement: 'leaderboard-render-none',
+      renderMode: 'none',
+      context,
+      initialData: ad,
+      setup(slotContext, hooks) {
+        // Mirrors the safe-frame plugin, which draws into the element from `onRender` and leaves its
+        // content in place. That content is the app's, not the slot's, so it must not be mistaken for a
+        // creative that is still rendered.
+        hooks.onRender(() => {
+          onRenderCount++;
+
+          const el = slotContext.value?.element;
+          if (el && !el.querySelector('.app-rendered')) {
+            const node = document.createElement('div');
+            node.className = 'app-rendered';
+            el.appendChild(node);
+          }
+        });
+      },
+    });
+
+    try {
+      await vi.waitFor(() => {
+        expect(onRenderCount).toBe(1);
+      }, { timeout: 2000, interval: 20 });
+
+      await slot.render();
+      await slot.render();
+
+      await vi.waitFor(() => {
+        expect(onRenderCount).toBe(3);
+      }, { timeout: 2000, interval: 20 });
     }
     finally {
       slot.dispose();
@@ -679,6 +837,10 @@ describe('slot', () => {
       // Skipping a repeated render must only apply to the ad that is already rendered.
       expect(onRender).toHaveBeenCalledTimes(2);
       expect(element.querySelectorAll('.other-creative')).toHaveLength(1);
+
+      // The new creative replaces the previous one instead of being appended below it.
+      expect(element.querySelectorAll('.creative')).toHaveLength(0);
+      expect(element.children).toHaveLength(1);
     }
     finally {
       slot.dispose();
