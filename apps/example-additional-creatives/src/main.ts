@@ -4,7 +4,7 @@ import { computed, ref, watch } from '@adhese/sdk-shared';
 import { debounce, isDeepEqual } from 'remeda';
 
 const adhese = createAdhese({
-  account: 'demo',
+  account: 'colruytgroup',
   debug: true,
   consent: true,
   initialSlots: [

@@ -106,7 +106,7 @@ export function createSlot(options: AdheseLiteSlotOptions): AdheseLiteSlot {
     parameters,
     element,
     async request(): Promise<AdheseLiteAd | null> {
-      const response = await fetch(`${options.host ?? `https://ads-${options.account}.adhese.com`}/json`, {
+      const response = await fetch(`${options.host ?? `https://${options.account}.ads.adhese.eu`}/json`, {
         method: 'POST',
         body: JSON.stringify({
           slots: [{

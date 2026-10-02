@@ -49,7 +49,7 @@ export const userSyncPlugin: AdhesePlugin<UserSyncPlugin> = (context, plugin) =>
         if (context.consentString === 'none')
           throw new Error('No consent provided');
 
-        const endpoint = new URL(`https://ads-${context.options.account}.adhese.com/usersync/handlers/${serviceHandler}/user_sync`);
+        const endpoint = new URL(`https://${context.options.account}.ads.adhese.eu/usersync/handlers/${serviceHandler}/user_sync`);
         endpoint.searchParams.set('id', events.join(','));
         endpoint.searchParams.set('u', userId);
         endpoint.searchParams.set('ttl', expiration.toString());

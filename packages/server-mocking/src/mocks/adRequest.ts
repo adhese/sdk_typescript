@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw';
 
 export const adRequestHandlers = [
-  http.post('https://ads-test.adhese.com/json', async ({
+  http.post('https://test.ads.adhese.eu/json', async ({
     request,
   }) => {
     const requestBody = await request.json() as {
@@ -26,11 +26,11 @@ export const adRequestHandlers = [
       viewableImpressionCounter: '/viewable-impression',
     }))));
   }),
-  http.post('https://ads-empty.adhese.com/json', async () => new HttpResponse(JSON.stringify([]))),
-  http.post('https://ads-fail.adhese.com/json', async () => new HttpResponse(undefined, {
+  http.post('https://empty.ads.adhese.eu/json', async () => new HttpResponse(JSON.stringify([]))),
+  http.post('https://fail.ads.adhese.eu/json', async () => new HttpResponse(undefined, {
     status: 400,
   })),
-  http.get('https://ads-test.adhese.com/json/*', async ({ request }) => {
+  http.get('https://test.ads.adhese.eu/json/*', async ({ request }) => {
     const urlParts = request.url.split('/');
     const slotNames = urlParts.slice(urlParts.indexOf('json') + 1);
 
@@ -48,7 +48,7 @@ export const adRequestHandlers = [
       viewableImpressionCounter: '/viewable-impression',
     }))));
   }),
-  http.post('https://ads-dale.adhese.com/json', async ({
+  http.post('https://dale.ads.adhese.eu/json', async ({
     request,
   }) => {
     const requestBody = await request.json() as {
@@ -71,7 +71,7 @@ export const adRequestHandlers = [
       id: slot.slotname,
     }))));
   }),
-  http.post('https://ads-gateway.adhese.com/json', async ({
+  http.post('https://gateway.ads.adhese.eu/json', async ({
     request,
   }) => {
     const requestBody = await request.json() as {
@@ -95,7 +95,7 @@ export const adRequestHandlers = [
       },
       width: '656',
       height: '164',
-      body: '<script src="https://track.adform.net/adfscript/?bn=87294141"></script><div style="position:absolute;left:0;top:0;visibility:hidden"><img src="https://ads-demo.adhese.com/rtb_gateway/handlers/client/track?id=test" width="1" height="1" alt="" style="display:none"></div>',
+      body: '<script src="https://track.adform.net/adfscript/?bn=87294141"></script><div style="position:absolute;left:0;top:0;visibility:hidden"><img src="https://demo.ads.adhese.eu/rtb_gateway/handlers/client/track?id=test" width="1" height="1" alt="" style="display:none"></div>',
       extension: {
         mediaType: 'banner',
         prebid: { cpm: { amount: '0.3198538325072811054', currency: 'USD' } },

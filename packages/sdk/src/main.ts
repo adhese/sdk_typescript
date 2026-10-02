@@ -41,9 +41,9 @@ export function createAdhese<T extends ReadonlyArray<AdhesePlugin>>(
 
   return scope.run(() => {
     const mergedOptions: MergedOptions = {
-      host: `https://ads-${options.account}.adhese.com`,
-      poolHost: `https://pool-${options.account}.adhese.com`,
-      previewHost: `https://${options.account}-preview.adhese.org`,
+      host: `https://${options.account}.ads.adhese.eu`,
+      poolHost: `https://${options.account}.pool.adhese.eu`,
+      previewHost: `https://${options.account}.preview.adhese.eu`,
       location: 'homepage',
       requestType: 'POST',
       debug: false,

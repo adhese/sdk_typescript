@@ -29,21 +29,21 @@ type BaseOptions = {
    * The url that is used to connect to the Adhese ad server. Pass a custom URL if you want to use your own domain for
    * the connection.
    *
-   * @default 'https://ads-{{account}}.adhese.com'
+   * @default 'https://{{account}}.ads.adhese.eu'
    */
   host?: string;
   /**
    * The url that is used to connect to the Adhese pool server. Pass a custom URL if you want to use your own domain for
    * the connection.
    *
-   * @default 'https://pool-{{account}}.adhese.com'
+   * @default 'https://{{account}}.pool.adhese.eu'
    */
   poolHost?: string;
   /**
    * The url that is used to connect to the Adhese preview server. Pass a custom URL if you want to use your own domain for
    * the connection.
    *
-   * @default 'https://{{account}}-preview.adhese.org'
+   * @default 'https://{{account}}.preview.adhese.eu'
    */
   previewHost?: string;
   /**

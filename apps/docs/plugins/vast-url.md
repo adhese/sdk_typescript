@@ -47,5 +47,5 @@ const url = adhese.plugins.vastUrl.createUrl({
   parameters: {
     aa: 'value'
   },
-}) // output: https://ads-demo.adhese.com/ad/sllocation-vast/aavalue
+}) // output: https://demo.ads.adhese.eu/ad/sllocation-vast/aavalue
 ```

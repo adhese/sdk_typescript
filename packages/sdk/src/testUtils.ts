@@ -13,9 +13,9 @@ export const testContext: AdheseContext = {
   hooks: createGlobalHooks(),
   options: {
     account: 'test',
-    host: 'https://ads-test.adhese.com',
-    poolHost: 'https://ads-test.adhese.com',
-    previewHost: 'https://test-preview.adhese.org',
+    host: 'https://test.ads.adhese.eu',
+    poolHost: 'https://test.ads.adhese.eu',
+    previewHost: 'https://test.preview.adhese.eu',
     location: 'foo',
     initialSlots: [],
     logUrl: false,

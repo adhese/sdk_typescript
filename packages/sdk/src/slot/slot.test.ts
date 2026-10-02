@@ -536,7 +536,7 @@ describe('slot', () => {
     const batchedSlotNames: Array<Array<string>> = [];
 
     mockServer.use(
-      http.post('https://ads-test.adhese.com/json', async ({ request }) => {
+      http.post('https://test.ads.adhese.eu/json', async ({ request }) => {
         const body = await request.json() as { slots: ReadonlyArray<{ slotname: string }> };
 
         batchedSlotNames.push(body.slots.map(({ slotname }) => slotname));
