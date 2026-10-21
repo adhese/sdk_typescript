@@ -53,7 +53,7 @@ describe('requestAds', () => {
       slots: new Map(),
       options: {
         ...context.options,
-        host: 'https://ads-empty.adhese.com',
+        host: 'https://empty.ads.adhese.eu',
       },
     };
 
@@ -88,7 +88,7 @@ describe('requestAds', () => {
       slots: new Map(),
       options: {
         ...context.options,
-        host: 'https://ads-empty.adhese.com',
+        host: 'https://empty.ads.adhese.eu',
       },
     };
 
@@ -166,7 +166,7 @@ describe('requestAds', () => {
       ...context,
       options: {
         ...context.options,
-        host: 'https://ads-fail.adhese.com',
+        host: 'https://fail.ads.adhese.eu',
       },
     };
 
@@ -192,7 +192,7 @@ describe('requestAds', () => {
       ...context,
       options: {
         ...context.options,
-        host: 'https://ads-gateway.adhese.com',
+        host: 'https://gateway.ads.adhese.eu',
       },
     };
 
@@ -218,7 +218,7 @@ describe('requestAds', () => {
       ...context,
       options: {
         ...context.options,
-        host: 'https://ads-dale.adhese.com',
+        host: 'https://dale.ads.adhese.eu',
       },
     };
 
@@ -350,7 +350,7 @@ describe('schema', () => {
         },
         width: '656',
         height: '164',
-        body: '<script src="https://track.adform.net/adfscript/?bn=87294141"></script><div style="position:absolute;left:0;top:0;visibility:hidden"><img src="https://ads-demo.adhese.com/rtb_gateway/handlers/client/track?id=test" width="1" height="1" alt="" style="display:none"></div>',
+        body: '<script src="https://track.adform.net/adfscript/?bn=87294141"></script><div style="position:absolute;left:0;top:0;visibility:hidden"><img src="https://demo.ads.adhese.eu/rtb_gateway/handlers/client/track?id=test" width="1" height="1" alt="" style="display:none"></div>',
         extension: { mediaType: 'banner', prebid: { cpm: { amount: '0.3198538325072811054', currency: 'USD' } } },
       },
     ];
@@ -359,7 +359,7 @@ describe('schema', () => {
 
     expect(result).toHaveLength(1);
     expect(result[0].origin).toBe('ADFORM');
-    expect(result[0].tag).toBe('<script src="https://track.adform.net/adfscript/?bn=87294141"></script><div style="position:absolute;left:0;top:0;visibility:hidden"><img src="https://ads-demo.adhese.com/rtb_gateway/handlers/client/track?id=test" width="1" height="1" alt="" style="display:none"></div>');
+    expect(result[0].tag).toBe('<script src="https://track.adform.net/adfscript/?bn=87294141"></script><div style="position:absolute;left:0;top:0;visibility:hidden"><img src="https://demo.ads.adhese.eu/rtb_gateway/handlers/client/track?id=test" width="1" height="1" alt="" style="display:none"></div>');
     expect(result[0].width).toBe(656);
     expect(result[0].height).toBe(164);
   });

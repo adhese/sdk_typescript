@@ -66,8 +66,8 @@ describe('createAdhese', () => {
     });
 
     expect(adhese.options.account).toBe('test');
-    expect(adhese.options.host).toBe('https://ads-test.adhese.com');
-    expect(adhese.options.poolHost).toBe('https://pool-test.adhese.com');
+    expect(adhese.options.host).toBe('https://test.ads.adhese.eu');
+    expect(adhese.options.poolHost).toBe('https://test.pool.adhese.eu');
     expect(adhese.options.requestType).toBe('POST');
   });
 
@@ -280,7 +280,7 @@ describe('createAdhese', () => {
 
   it('should render a slot added later without disturbing the slots already on the page', async () => {
     mockServer.use(
-      http.post('https://ads-test.adhese.com/json', async ({ request }) => {
+      http.post('https://test.ads.adhese.eu/json', async ({ request }) => {
         const body = await request.json() as { slots: ReadonlyArray<{ slotname: string }> };
 
         return HttpResponse.json(body.slots.map(({ slotname }) => ({
@@ -331,8 +331,8 @@ describe('createAdhese', () => {
 
     adhese = createAdhese({
       account: 'test',
-      host: 'https://ads-test.adhese.com',
-      poolHost: 'https://ads-test.adhese.com',
+      host: 'https://test.ads.adhese.eu',
+      poolHost: 'https://test.ads.adhese.eu',
       location: 'foo',
       requestType: 'POST',
       consent: true,

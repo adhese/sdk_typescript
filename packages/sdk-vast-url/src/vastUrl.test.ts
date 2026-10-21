@@ -22,7 +22,7 @@ describe('vastUrlPlugin', () => {
     });
 
     expect(url).toBeInstanceOf(URL);
-    expect(url?.href).toMatch(/https:\/\/ads-demo\.adhese\.com\/ad\/slhomepage-leaderboard\/re\/uraHR0cDovL2xvY2FsaG9zdDozMDAwLw==\/rn\d+\/dtunknown\/brunknown\/tlnone/gu);
+    expect(url?.href).toMatch(/https:\/\/demo\.ads\.adhese\.eu\/ad\/slhomepage-leaderboard\/re\/uraHR0cDovL2xvY2FsaG9zdDozMDAwLw==\/rn\d+\/dtunknown\/brunknown\/tlnone/gu);
   });
 
   it('should create a URL with parameters', () => {
@@ -34,7 +34,7 @@ describe('vastUrlPlugin', () => {
     });
 
     expect(url).toBeInstanceOf(URL);
-    expect(url?.href).toMatch(/https:\/\/ads-demo\.adhese\.com\/ad\/slhomepage-leaderboard\/re\/uraHR0cDovL2xvY2FsaG9zdDozMDAwLw==\/rn\d+\/dtunknown\/brunknown\/tlnone\/fobar/gu);
+    expect(url?.href).toMatch(/https:\/\/demo\.ads\.adhese\.eu\/ad\/slhomepage-leaderboard\/re\/uraHR0cDovL2xvY2FsaG9zdDozMDAwLw==\/rn\d+\/dtunknown\/brunknown\/tlnone\/fobar/gu);
   });
 
   it('should create a URL with a custom host', () => {

@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw';
 
 export const adPreviewRequestHandlers = [
-  http.get(`https://test-preview.adhese.org/creatives/preview/json/tag.do`, ({ request }) => {
+  http.get(`https://test.preview.adhese.eu/creatives/preview/json/tag.do`, ({ request }) => {
     const id = new URL(request.url).searchParams.get('id');
 
     if (id === 'fail') {

@@ -201,7 +201,7 @@ export function SlotsTable(): ReactElement {
                       {data?.orderId && data?.orderId !== '0'
                         ? (
                             <a
-                              href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/editCampaign/${data.orderId}`}
+                              href={`https://${adheseContext.options.account}.classic.adhese.eu/campaigns.html#campaignDetail/editCampaign/${data.orderId}`}
                               target="_blank"
                               referrerPolicy="no-referrer"
                               className={cn(buttonVariants({
@@ -218,7 +218,7 @@ export function SlotsTable(): ReactElement {
                       {data?.adspaceId && data?.adspaceId !== '0'
                         ? (
                             <a
-                              href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/bookingDetail/${data.adspaceId}/${data.orderId}`}
+                              href={`https://${adheseContext.options.account}.classic.adhese.eu/campaigns.html#campaignDetail/bookingDetail/${data.adspaceId}/${data.orderId}`}
                               target="_blank"
                               referrerPolicy="no-referrer"
                               className={cn(buttonVariants({
@@ -235,7 +235,7 @@ export function SlotsTable(): ReactElement {
                       {data?.libId && data?.orderId !== '0'
                         ? (
                             <a
-                              href={`https://${adheseContext.options.account}.adhese.org/campaigns.html#campaignDetail/creativeDetail/${data.libId}/${data.orderId}`}
+                              href={`https://${adheseContext.options.account}.classic.adhese.eu/campaigns.html#campaignDetail/creativeDetail/${data.libId}/${data.orderId}`}
                               target="_blank"
                               referrerPolicy="no-referrer"
                               className={cn(buttonVariants({

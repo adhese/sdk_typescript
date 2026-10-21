@@ -57,7 +57,7 @@ async function fetchWithPost(
   options: FetchAdsOptionsPost,
   signal?: AbortSignal,
 ): Promise<Response> {
-  const host = `https://ads-${options.account}.adhese.com`;
+  const host = `https://${options.account}.ads.adhese.eu`;
 
   const payload = {
     slots: options.slots.map(slot => ({
@@ -86,7 +86,7 @@ async function fetchWithGet(
   options: FetchAdsOptionsGet,
   signal?: AbortSignal,
 ): Promise<Response> {
-  const host = `https://ads-${options.account}.adhese.com`;
+  const host = `https://${options.account}.ads.adhese.eu`;
   const slotNames = options.slots
     .map(slot => generateName(options.location, slot.format, slot.slot))
     .join('/sl');
