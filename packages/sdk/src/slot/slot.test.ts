@@ -896,6 +896,96 @@ describe('slot', () => {
     }
   });
 
+  it('should leave default content the app placed in the element alone when no ad is returned', async () => {
+    const element = document.createElement('div');
+
+    element.id = 'leaderboard-no-ad-default';
+    element.innerHTML = '<div class="default" hidden>Default content</div>';
+    document.body.appendChild(element);
+
+    // Mirrors `requestAds`, which reports the no-fill via `processOnEmpty()` before the slot's own request
+    // resolves without an ad.
+    const created: { slot?: ReturnType<typeof createSlot> } = {};
+
+    vi.mocked(requestAd).mockImplementation(async () => {
+      created.slot?.processOnEmpty();
+
+      return null as unknown as AdheseAd;
+    });
+
+    const slot = createSlot({
+      format: 'leaderboard',
+      containingElement: 'leaderboard-no-ad-default',
+      context,
+      setup(_slotContext, hooks) {
+        hooks.onEmpty(() => {
+          element.querySelector<HTMLElement>('.default')?.removeAttribute('hidden');
+        });
+      },
+    });
+
+    created.slot = slot;
+
+    try {
+      await vi.waitFor(() => {
+        expect(slot.status).toBe('empty');
+      }, { timeout: 2000, interval: 20 });
+
+      const defaultContent = element.querySelector<HTMLElement>('.default');
+
+      expect(defaultContent).not.toBe(null);
+      expect(defaultContent?.hidden).toBe(false);
+    }
+    finally {
+      slot.dispose();
+    }
+  });
+
+  it('should remove a previously rendered creative when a later request returns no ad', async () => {
+    const element = document.createElement('div');
+
+    element.id = 'leaderboard-no-ad-after-ad';
+    document.body.appendChild(element);
+
+    const ad: AdheseAd = {
+      adFormat: 'foo',
+      tag: '<div class="creative">foo</div>',
+      // eslint-disable-next-line ts/naming-convention
+      slotID: 'bar',
+      slotName: 'baz',
+      adType: 'foo',
+      id: 'baz',
+      origin: 'JERLICIA',
+    };
+
+    vi.mocked(requestAd).mockImplementation(async () => ad);
+
+    const slot = createSlot({
+      format: 'leaderboard',
+      containingElement: 'leaderboard-no-ad-after-ad',
+      renderMode: 'inline',
+      context,
+    });
+
+    try {
+      await vi.waitFor(() => {
+        expect(slot.status).toBe('rendered');
+      }, { timeout: 2000, interval: 20 });
+
+      expect(element.querySelectorAll('.creative')).toHaveLength(1);
+
+      vi.mocked(requestAd).mockImplementation(async () => null as unknown as AdheseAd);
+
+      await slot.request();
+
+      expect(slot.status).toBe('empty');
+      expect(element.innerHTML).toBe('');
+    }
+    finally {
+      slot.dispose();
+    }
+  });
+
   it('should be able to render a slot without an ad set', async () => {
     const element = document.createElement('div');
 

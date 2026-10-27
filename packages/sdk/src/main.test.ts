@@ -278,6 +278,87 @@ describe('createAdhese', () => {
     expect(onRender).toHaveBeenCalledTimes(1);
   });
 
+  it('should keep the default content of every slot that gets no ad when several slots share one request', async () => {
+    const requests: Array<Array<string>> = [];
+
+    mockServer.use(
+      http.post('https://test.ads.adhese.eu/json', async ({ request }) => {
+        const body = await request.json() as { slots: ReadonlyArray<{ slotname: string }> };
+
+        requests.push(body.slots.map(({ slotname }) => slotname));
+
+        // Only one of the requested slots is filled, the others are no-fills in the same response.
+        return HttpResponse.json(body.slots
+          .filter(({ slotname }) => slotname.includes('filled'))
+          .map(({ slotname }) => ({
+            adFormat: 'foo',
+            adType: 'foo',
+            // eslint-disable-next-line ts/naming-convention
+            slotID: slotname,
+            slotName: slotname,
+            tag: '<div class="creative">foo</div>',
+            libId: slotname,
+            id: slotname,
+            origin: 'JERLICIA',
+          })));
+      }),
+    );
+
+    const ids = ['multi-filled', 'multi-empty-a', 'multi-empty-b'];
+
+    for (const id of ids) {
+      const element = document.createElement('div');
+
+      element.id = id;
+      element.innerHTML = '<div class="default" hidden>Default content</div>';
+      document.body.appendChild(element);
+    }
+
+    const onEmpty = vi.fn();
+
+    adhese = createAdhese({
+      account: 'test',
+      location: 'foo',
+      // Renders each slot as soon as its ad arrives, without waiting for it to scroll into view.
+      eagerRendering: true,
+      initialSlots: ids.map(id => ({
+        format: 'leaderboard',
+        slot: id,
+        containingElement: id,
+        renderMode: 'inline' as const,
+        setup(_slotContext, hooks): void {
+          hooks.onEmpty(() => {
+            onEmpty(id);
+            document.querySelector<HTMLElement>(`#${id} .default`)?.removeAttribute('hidden');
+          });
+        },
+      })),
+    });
+
+    await vi.waitFor(() => {
+      expect(onEmpty).toHaveBeenCalledTimes(2);
+      expect(document.querySelector('#multi-filled .creative')).not.toBe(null);
+    }, { timeout: 2000, interval: 20 });
+
+    await awaitTimeout(300);
+
+    // All three slots travelled in a single request.
+    expect(requests).toHaveLength(1);
+    expect(requests[0]).toHaveLength(3);
+
+    expect(onEmpty).toHaveBeenCalledWith('multi-empty-a');
+    expect(onEmpty).toHaveBeenCalledWith('multi-empty-b');
+
+    for (const id of ['multi-empty-a', 'multi-empty-b']) {
+      const defaultContent = document.querySelector<HTMLElement>(`#${id} .default`);
+
+      expect(defaultContent).not.toBe(null);
+      expect(defaultContent?.hidden).toBe(false);
+    }
+
+    expect(document.querySelectorAll('#multi-filled .creative')).toHaveLength(1);
+  });
+
   it('should render a slot added later without disturbing the slots already on the page', async () => {
     mockServer.use(
       http.post('https://test.ads.adhese.eu/json', async ({ request }) => {

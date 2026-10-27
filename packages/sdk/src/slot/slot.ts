@@ -120,6 +120,10 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
     // Ad stashed by `processOnEmpty(ad)` when `onRequest` identifies an ad's creative as empty. `request()`
     // rescues it into `data`/`originalData` so tracking pixels are still available once the slot renders.
     let emptyAdForTracking: AdheseAd | null = null;
+    // The element the SDK last wrote a creative into. A no-fill only clears the element when it still holds
+    // that creative, so content the app placed there (e.g. a hidden default it reveals from `onEmpty`)
+    // survives a slot that never received an ad.
+    let creativeElement: HTMLElement | null = null;
     const name = computed(() =>
       generateName(options.context.location, format.value, options.slot),
     );
@@ -379,7 +383,9 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
         status.value = response ? 'loaded' : 'empty';
 
-        if (!response)
+        // Only remove a creative the SDK rendered earlier (e.g. on a refresh that now comes back empty). The
+        // element is otherwise left as the app set it up, so a default it reveals from `onEmpty` is kept.
+        if (!response && element.value && element.value === creativeElement)
           cleanElement();
 
         if (response && context.options.eagerRendering && element.value)
@@ -479,6 +485,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
             } as RenderOptions,
             element.value,
           );
+          creativeElement = element.value;
         }
 
         logger.debug(`Slot rendered ${name.value}`, {
@@ -540,6 +547,7 @@ export function createSlot(slotOptions: AdheseSlotOptions): AdheseSlot {
 
       element.value.innerHTML = '';
       element.value.style.position = '';
+      creativeElement = null;
     }
 
     function dispose(): void {
