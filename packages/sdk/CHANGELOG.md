@@ -1,5 +1,13 @@
 # @adhese/sdk
 
+## 1.13.2
+
+### Patch Changes
+
+- e3cc549: Upgrade zod to v4 to resolve GHSA-mrhx-c7xc-m3w5, using `zod/mini` to reduce bundle size. `@adhese/sdk-shared/validators` now re-exports the `zod/mini` API.
+- Updated dependencies [e3cc549]
+  - @adhese/sdk-shared@1.6.0
+
 ## 1.13.1
 
 ### Patch Changes
