@@ -249,7 +249,6 @@ Each ad in the response includes tracking URLs that should be called at the appr
 | --- | --- |
 | `impressionCounter` | When the ad is rendered/displayed |
 | `viewableImpressionCounter` | When the ad becomes viewable (typically 50% visible for 1 second) |
-| `tracker` | General tracking pixel, call on render |
 
 ### Next.js Example
 
@@ -268,7 +267,6 @@ function AdSlot({ ad }: { ad: AdheseAd }) {
     if (!ref.current || tracked.current) return;
 
     if (ad.impressionCounter) addTrackingPixel(ad.impressionCounter);
-    if (ad.tracker) addTrackingPixel(ad.tracker);
 
     // IAB viewability standard: 50% visible for 1 second
     const observer = new IntersectionObserver(
