@@ -1,0 +1,36 @@
+{
+  "name": "@adhese/sdk-commerce",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Adhese commerce wrapper: insights tag for Adobe Commerce",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adhese/sdk_typescript.git",
+    "directory": "packages/sdk-commerce"
+  },
+  "sideEffects": false,
+  "exports": {
+    "./insights": "./dist/insights.min.js",
+    "./ads": "./dist/ads.min.js"
+  },
+  "files": [
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md",
+    "dist"
+  ],
+  "scripts": {
+    "build": "vite build && ENTRY=ads vite build && tsc --noEmit false --emitDeclarationOnly --declaration --outDir dist/types -p tsconfig.build.json",
+    "dev": "vitest --silent",
+    "dev:verbose": "vitest",
+    "test": "vitest --run --coverage --silent",
+    "test:verbose": "vitest --run --coverage",
+    "lint": "eslint . --ignore-pattern **/*.md/**/*",
+    "lint:fix": "eslint --fix . --ignore-pattern **/*.md/**/*",
+    "clean": "rm -rf dist",
+    "size": "node scripts/checkSize.mjs",
+    "typecheck": "tsc --noEmit",
+    "prepareRelease": "npm run build && npm run size"
+  }
+}
