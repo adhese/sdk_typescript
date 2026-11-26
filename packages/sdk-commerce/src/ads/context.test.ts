@@ -23,13 +23,13 @@ describe('applyDynamicContext', () => {
 });
 
 describe('identity values', () => {
-  it('accepts a hex hash or a numeric customer id and nothing else', () => {
-    for (const ok of [hash, '8123456789012', '1']) {
+  it('accepts a hex hash, a numeric customer id or an ECID (up to 38 digits) and nothing else', () => {
+    for (const ok of [hash, '8123456789012', '1', '14575006536349286404619648085736425115']) {
       const parameters = new Map<string, ReadonlyArray<string> | string>();
       applyDynamicContext(parameters, { mi: ok }, codes, true);
       expect(parameters.get('mi')).toBe(ok);
     }
-    for (const bad of ['jane@example.com', 'hash', 'A'.repeat(64), 'a'.repeat(63), '1'.repeat(21), '12 34', '']) {
+    for (const bad of ['jane@example.com', 'hash', 'A'.repeat(64), 'a'.repeat(63), '1'.repeat(39), '12 34', '']) {
       const parameters = new Map<string, ReadonlyArray<string> | string>();
       applyDynamicContext(parameters, { mi: bad }, codes, true);
       expect(parameters.has('mi'), bad).toBe(false);

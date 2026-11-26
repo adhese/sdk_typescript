@@ -1,11 +1,13 @@
 # @adhese/sdk-commerce
 
-The Commerce wrapper for Adobe Commerce storefronts. It ships two standalone browser bundles, built from the same
+The Commerce wrapper for Adobe Commerce storefronts, Shopify and AEM sites. It ships four standalone browser bundles, built from the same
 shared config, context and consent code:
 
 | Bundle | Mode | What it does | Size |
 | --- | --- | --- | --- |
 | `dist/insights.min.js` | Insights (free tier) | One counted request per page view, per add to cart and per checkout start, for the never-booked `pixel` format on the fixed `ac_insights` location. Optionally identified with a customer identity (`mi`). Nothing is rendered; no cookies, page URL or referrer. No dependencies. | about 3.3 KB gzipped (4 KB budget, CI-checked) |
+| `dist/aem.min.js` | Insights for AEM sites | The insights page view for a content site. The page type and category (the page's tags) come from the Adobe Client Data Layer, the identity `mi` from the Web SDK's ECID. No storefront event detectors. No dependencies. | about 2.3 KB gzipped (4 KB budget, CI-checked) |
+| `dist/aem-ads.min.js` | Ads for AEM sites | `@adhese/sdk` with the stack-slots plugin and the display and native slots, targets from the Adobe Client Data Layer, ECID as `mi`. No sponsored products. | about 32 KB gzipped (60 KB ceiling) |
 | `dist/ads.min.js` | Ads | `@adhese/sdk` with the stack-slots and SafeFrame plugins, a context plugin, and renderers for display, native and sponsored products. | about 33 KB gzipped (60 KB ceiling) |
 
 The Composer module `adhese/module-retail-media` prints the page config the bundles read and loads the right one.
@@ -179,3 +181,58 @@ After a build, copy `dist/insights.min.js` and `dist/ads.min.js` to the module's
 
 Open items: the 2-letter target codes, the native schema field list per format, and moving `shared/request.ts` into
 `@adhese/sdk-shared` so the beacon and the SDK share one URL builder.
+
+## AEM sites
+
+`dist/aem.min.js` is the insights tag for an AEM site that has the Adobe Client Data Layer (Core Components) and, for the
+identity, the Experience Platform Web SDK. Print the same config element as for Commerce, with only what the data layer
+cannot tell:
+
+```html
+<script type="application/json" id="adhese-commerce-config">
+{"account":"demo","pageTypes":{"article-page":"article","landing-page":"landing"}}
+</script>
+<script async src=".../aem.min.js"></script>
+```
+
+| Field | Meaning |
+| --- | --- |
+| `mode` | `off` switches the tag off; anything else is insights |
+| `pageType` | Fixed page type for this page. Without it, the page type comes from the template name (the last segment of `xdm:template`) through `pageTypes`, and is `other` for an unknown template. Content types: `article`, `landing`, `other` |
+| `pageTypes` | Template name to page type, for example `{"article-page":"article"}` |
+| `category` | Overrides the page's tags (`xdm:tags`, at most 10) that are sent as the category target |
+| `dataLayerName` | Name of the data layer object when it is not `adobeDataLayer` |
+| `alloyName` | Name of the Web SDK instance when it is not `alloy` (otherwise the first entry of `window.__alloyNS`) |
+| `identity`, `expectContext`, `assumeConsent`, `account`, `host`, `targetCodes` | As above |
+
+The Core Components data layer is **off by default**: enable it in the site's `DataLayerConfig`, otherwise the page type is
+`other` and no category is sent.
+
+**Identity.** After consent is granted the tag calls `alloy("getIdentity", { namespaces: ["ECID"] })` and sends the ECID as
+`mi`, so it matches the audiences exported by the Adhese destination in Adobe Experience Platform. The Web SDK is not
+asked before consent. An ECID is a numeric ID of up to 38 digits, which is now accepted as an identity by both bundles. A tag
+rule that already has the identity can call `window.adheseCommerce.update({ mi })` instead (use `expectContext` to wait for it).
+
+### Ads on AEM
+
+`dist/aem-ads.min.js` uses the same config element with `"mode":"ads"` and a location. Authors place slots with a component
+that prints plain markup; the tag finds them on load:
+
+```html
+<script type="application/json" id="adhese-commerce-config">
+{"mode":"ads","account":"demo","locations":{"article":"site_article","landing":"site_landing"},"expectContext":true,"safeFrame":true}
+</script>
+<div class="adhese-slot" data-adhese-type="display" data-format="billboard"></div>
+<div class="adhese-slot" data-adhese-type="native" data-format="native_tile"></div>
+<script async src=".../aem-ads.min.js"></script>
+```
+
+- **Location:** `location`, or `locations[pageType]`. Without one no ads are requested.
+- **Slots:** `display` and `native` as in Commerce (`data-format` or `data-formats`, `data-slot`, `data-render-mode`, `data-lazy`).
+  `sponsored` slots are ignored on AEM.
+- **Identity:** the ECID is read from the Web SDK after consent and added to every request as `mi` once it arrives. With
+  `expectContext` the first request waits up to 1 s for it (or for `window.adheseCommerce.update({ mi })`). If consent is granted
+  later on the same page, the ECID is used from the next page.
+- **Author mode:** nothing runs in the Sites editor (`/editor.html/...`) or with `wcmmode=edit`. Other author modes are not detected.
+- **Mode:** Insights need `"mode":"insights"` (the default) and the ads tag needs `"mode":"ads"`, so each
+  tag only runs for its own mode when both are loaded.

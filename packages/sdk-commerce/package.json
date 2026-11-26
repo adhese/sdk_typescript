@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.0",
   "private": true,
-  "description": "Adhese commerce wrapper: insights tag for Adobe Commerce",
+  "description": "Adhese commerce wrapper: insights tag for Adobe Commerce, Shopify and AEM",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/adhese/sdk_typescript.git",
@@ -12,7 +12,9 @@
   "sideEffects": false,
   "exports": {
     "./insights": "./dist/insights.min.js",
-    "./ads": "./dist/ads.min.js"
+    "./ads": "./dist/ads.min.js",
+    "./aem": "./dist/aem.min.js",
+    "./aem-ads": "./dist/aem-ads.min.js"
   },
   "files": [
     "CHANGELOG.md",
@@ -21,7 +23,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "vite build && ENTRY=ads vite build && tsc --noEmit false --emitDeclarationOnly --declaration --outDir dist/types -p tsconfig.build.json",
+    "build": "vite build && ENTRY=ads vite build && ENTRY=aem vite build && ENTRY=aem-ads vite build && tsc --noEmit false --emitDeclarationOnly --declaration --outDir dist/types -p tsconfig.build.json",
     "dev": "vitest --silent",
     "dev:verbose": "vitest",
     "test": "vitest --run --coverage --silent",

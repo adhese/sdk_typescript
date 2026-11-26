@@ -5,7 +5,9 @@ import { gzipSync } from 'node:zlib';
 // The insights tag has a hard budget; the ads bundle includes the SDK, so it only has a generous ceiling.
 const budgets = [
   { file: 'insights.min.js', limitBytes: 4 * 1024 },
+  { file: 'aem.min.js', limitBytes: 4 * 1024 },
   { file: 'ads.min.js', limitBytes: 60 * 1024 },
+  { file: 'aem-ads.min.js', limitBytes: 60 * 1024 },
 ];
 
 // The tags run in the browser: a leftover Node global makes the whole bundle throw at load time.

@@ -1,4 +1,7 @@
-export type PageType = 'home' | 'category' | 'search' | 'product' | 'cart' | 'cms';
+/**
+ * `article`, `landing` and `other` are for content sites (AEM); the first six are storefront pages.
+ */
+export type PageType = 'home' | 'category' | 'search' | 'product' | 'cart' | 'cms' | 'article' | 'landing' | 'other';
 
 export type TargetCodes = {
   pageType: string;
@@ -84,7 +87,7 @@ export type CommerceConfig = {
 
 export const configElementId = 'adhese-commerce-config';
 
-const pageTypes: ReadonlyArray<string> = ['home', 'category', 'search', 'product', 'cart', 'cms'];
+export const pageTypes: ReadonlyArray<PageType> = ['home', 'category', 'search', 'product', 'cart', 'cms', 'article', 'landing', 'other'];
 
 /**
  * Read and validate the JSON the module prints in `<script type="application/json" id="adhese-commerce-config">`.
@@ -113,7 +116,7 @@ export function parseConfig(value: unknown): CommerceConfig | null {
     !['off', 'insights', 'ads'].includes(config.mode as string)
     || typeof config.account !== 'string'
     || config.account === ''
-    || !pageTypes.includes(config.pageType as string)
+    || !pageTypes.includes(config.pageType as PageType)
   ) {
     return null;
   }

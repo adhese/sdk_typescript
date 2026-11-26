@@ -1,7 +1,8 @@
 /**
- * Customer identity (`mi`): a SHA-256 or HMAC hex hash, or a numeric customer ID. Nothing else is ever sent.
+ * Customer identity (`mi`): a SHA-256 or HMAC hex hash, a numeric customer ID, or an Adobe ECID (a numeric ID of up to
+ * 38 digits). Nothing else is ever sent.
  */
-const identityPattern = /^(?:[a-f0-9]{64}|\d{1,20})$/;
+const identityPattern = /^(?:[a-f0-9]{64}|\d{1,38})$/;
 
 export function isIdentity(value: unknown): value is string {
   return typeof value === 'string' && identityPattern.test(value);

@@ -1,4 +1,4 @@
-import type { CommerceConfig, TargetCodes } from './config';
+import type { CommerceConfig, PageType, TargetCodes } from './config';
 
 const defaultTargetCodes: TargetCodes = {
   pageType: 'pt',
@@ -10,6 +10,11 @@ const defaultTargetCodes: TargetCodes = {
   identity: 'mi',
   event: 'ev',
 };
+
+/**
+ * Page types that carry the category path (the tags of a content page count as its category).
+ */
+const categoryPageTypes: ReadonlyArray<PageType> = ['category', 'product', 'article', 'landing'];
 
 export function getTargetCodes(config: CommerceConfig): TargetCodes {
   return { ...defaultTargetCodes, ...config.targetCodes };
@@ -23,7 +28,7 @@ export function getTargets(config: CommerceConfig): Record<string, ReadonlyArray
   const targets: Record<string, ReadonlyArray<string> | string> = { [codes.pageType]: config.pageType };
 
   const category = config.category && (typeof config.category === 'string' ? [config.category] : config.category);
-  if (category && category.length > 0 && (config.pageType === 'category' || config.pageType === 'product'))
+  if (category && category.length > 0 && categoryPageTypes.includes(config.pageType))
     targets[codes.category] = category;
   if (config.searchTerm && config.pageType === 'search')
     targets[codes.searchTerm] = config.searchTerm;

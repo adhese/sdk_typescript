@@ -1,5 +1,6 @@
 import { readConfig } from '../shared/config';
 import { isIdentity } from '../shared/identity';
+import { whenIdle } from '../shared/idle';
 import { installMagento } from './detectors/magento';
 import { installShopify } from './detectors/shopify';
 import { createInsights, type InsightsEvent } from './events';
@@ -22,13 +23,6 @@ type Bridge = {
 function shopifyDesignMode(): boolean {
   // eslint-disable-next-line ts/naming-convention
   return (window as unknown as { Shopify?: { designMode?: boolean } }).Shopify?.designMode === true;
-}
-
-function whenIdle(callback: () => void): void {
-  if (typeof requestIdleCallback === 'function')
-    requestIdleCallback(callback);
-  else
-    setTimeout(callback, 1);
 }
 
 /**
