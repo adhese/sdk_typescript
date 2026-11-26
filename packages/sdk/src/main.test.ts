@@ -28,7 +28,7 @@ describe('createAdhese', () => {
   const mediaQueryMock = new MatchMediaMock();
 
   let adhese: Adhese | undefined;
-  let debugLoggerSpy: MockInstance<[msg: string, ...args: Array<any>], void>;
+  let debugLoggerSpy: MockInstance<(msg: string, ...args: Array<any>) => void>;
 
   beforeEach(() => {
     mediaQueryMock.useMediaQuery('(max-width: 768px)');
