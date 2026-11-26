@@ -204,22 +204,31 @@ export function addSponsoredSlot(
   });
 }
 
+/**
+ * Register one slot element by its `data-adhese-type`. Returns `false` when it was registered before.
+ */
+export function registerSlotElement(host: SlotHost, element: HTMLElement, sponsored?: Partial<SponsoredConfig>, label?: string): boolean {
+  if (element.dataset.adheseRegistered)
+    return false;
+  element.dataset.adheseRegistered = 'true';
+
+  const type = element.dataset.adheseType as SlotType;
+  if (type === 'native')
+    addNativeSlot(host, element, label);
+  else if (type === 'sponsored')
+    addSponsoredSlot(host, element, sponsored, undefined, label);
+  else
+    addDisplaySlot(host, element);
+
+  return true;
+}
+
 export function registerSlots(host: SlotHost, root: ParentNode, sponsored?: Partial<SponsoredConfig>, label?: string): number {
   let count = 0;
 
   for (const element of Array.from(root.querySelectorAll<HTMLElement>(slotSelector))) {
-    if (element.dataset.adheseRegistered)
-      continue;
-    element.dataset.adheseRegistered = 'true';
-    count++;
-
-    const type = element.dataset.adheseType as SlotType;
-    if (type === 'native')
-      addNativeSlot(host, element, label);
-    else if (type === 'sponsored')
-      addSponsoredSlot(host, element, sponsored, undefined, label);
-    else
-      addDisplaySlot(host, element);
+    if (registerSlotElement(host, element, sponsored, label))
+      count++;
   }
 
   return count;

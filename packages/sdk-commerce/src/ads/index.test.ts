@@ -43,6 +43,25 @@ describe('ads bootstrap', () => {
     expect(typeof window.adheseCommerce?.update).toBe('function');
   });
 
+  it('registers slots from the tag manager queue and from registerSlot once the SDK is up', async () => {
+    const queued = { selector: '#queued', type: 'display', format: 'billboard' };
+    vi.resetModules();
+    document.body.innerHTML = `<script type="application/json" id="${configElementId}">${JSON.stringify(config)}</script>`
+    + '<div id="queued"></div><div id="direct"></div>';
+    (window as unknown as Record<string, unknown>).adheseSlotQueue = [queued];
+    const { init } = await import('./init');
+    await init();
+    const { addSlot } = createAdhese.mock.results[0].value;
+
+    expect(addSlot).toHaveBeenCalledTimes(1);
+    expect(window.adheseCommerce?.registerSlot?.({ selector: '#direct', type: 'display', format: 'leaderboard' })).toBe(true);
+    (window as unknown as { adheseSlotQueue: Array<unknown> }).adheseSlotQueue.push({ selector: '#queued', type: 'display', format: 'x' });
+    expect(addSlot).toHaveBeenCalledTimes(2);
+    expect(addSlot.mock.calls.map(([slot]: [{ format: string }]) => slot.format)).toEqual(['billboard', 'leaderboard']);
+
+    delete (window as unknown as Record<string, unknown>).adheseSlotQueue;
+  });
+
   it('follows window.adheseConsent when there is no override', async () => {
     window.adheseConsent = true;
     await run();

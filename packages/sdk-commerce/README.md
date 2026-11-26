@@ -168,6 +168,37 @@ and nothing else; the storefront renders the product:
 5. If a sponsored product also appears organically, the organic copy is hidden (`hideOrganic`, default on), matched by product URL path.
 6. With no winner left or no grid found, the slot collapses.
 
+### Slots without markup (tag managers)
+
+A host that cannot edit the markup (a Google Tag Manager tag, for instance) turns an element that is already on the page
+into a slot. It pushes a spec onto `window.adheseSlotQueue` (an array; the bundle takes it over and from then on handles each push
+immediately, like `dataLayer`), or calls `window.adheseCommerce.registerSlot(spec)` once the bundle has started:
+
+```js
+(window.adheseSlotQueue = window.adheseSlotQueue || []).push({
+  selector: '#hero-banner',       // required; the first match is used
+  type: 'display',                // required: display, native or sponsored
+  format: 'billboard',            // required unless `formats` is given
+  slot: '_top',
+  reservedHeight: 250,            // px of min-height until it fills or collapses
+});
+```
+
+| Field | Applies to | Meaning |
+| --- | --- | --- |
+| `selector` | all | CSS selector of the element that becomes the slot (at most 500 characters). Waits up to 5 s for an element that is not there yet, then gives up quietly |
+| `type` | all | `display`, `native` or `sponsored` |
+| `format` / `formats` | all | Format code, or device-specific formats as an array or JSON `[{"format","query"}]` |
+| `slot` | all | Slot code |
+| `renderMode` | display | `iframe` (default) or `inline` |
+| `lazy` | all | `false` to request immediately |
+| `maxAds`, `grid`, `layout` | sponsored | Number of ads (1 to 20), grid selector, `carousel` or `grid` |
+| `reservedHeight` | all | Pixels (up to 2000) |
+
+The spec is written to the same `data-*` attributes the markup route reads, so rendering is identical. Specs that arrive
+before the SDK is ready are held and placed once it starts. An invalid spec or selector does nothing, and an element
+that is already a slot is not registered twice. The AEM ads bundle does not expose this.
+
 ## Customer-data bridge
 
 `window.adheseCommerce.update({ mi, cartSkus, customerGroup })` is called by the module's `bridge.js` with the private

@@ -5,6 +5,7 @@ import { readConfig } from '../shared/config';
 import { getTargetCodes, getTargets } from '../shared/context';
 import { isIdentity } from '../shared/identity';
 import { createContextPlugin, createContextStore, type DynamicContext } from './context';
+import { createSlotRegistry } from './register';
 import { registerSlots } from './slots';
 
 const contextTimeoutMs = 1000;
@@ -22,6 +23,12 @@ declare global {
        * Called by the module's customer-data bridge with identity, cart SKUs and customer group.
        */
       update(context: DynamicContext): void;
+      /**
+       * Turn an element that is already on the page into a slot (see `SlotSpec`). Held until the SDK is ready; returns
+       * `false` for an invalid spec. A tag manager pushes the same specs onto `window.adheseSlotQueue` instead. Not
+       * available in the AEM bundle.
+       */
+      registerSlot?(spec: unknown): boolean;
     };
     adheseCommerceContext?: DynamicContext;
   }
@@ -53,8 +60,11 @@ export async function init(): Promise<void> {
     ...(isIdentity(config.identity) ? { mi: config.identity } : {}),
     ...window.adheseCommerceContext,
   });
-  const bridge: NonNullable<Window['adheseCommerce']> = { update: store.update };
+  // Slot specs from a tag manager can arrive before the SDK exists: take over the queue now and hold them.
+  const slotRegistry = createSlotRegistry();
+  const bridge: NonNullable<Window['adheseCommerce']> = { update: store.update, registerSlot: slotRegistry.register };
   window.adheseCommerce = bridge;
+  slotRegistry.consume();
 
   await waitForDom();
   if (config.expectContext)
@@ -77,4 +87,5 @@ export async function init(): Promise<void> {
 
   bridge.instance = adhese;
   registerSlots(adhese as never, document, config.sponsored);
+  slotRegistry.attach(adhese as never, config.sponsored);
 }
