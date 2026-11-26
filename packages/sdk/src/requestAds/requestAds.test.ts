@@ -479,7 +479,7 @@ describe('schema', () => {
 });
 
 describe('parseParameters', () => {
-  let warnLoggerSpy: MockInstance<[msg: string, ...args: Array<any>], void>;
+  let warnLoggerSpy: MockInstance<(msg: string, ...args: Array<any>) => void>;
 
   beforeEach(() => {
     warnLoggerSpy = vi.spyOn(logger, 'warn');
