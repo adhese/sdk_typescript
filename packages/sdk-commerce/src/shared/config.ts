@@ -90,16 +90,24 @@ export const configElementId = 'adhese-commerce-config';
 export const pageTypes: ReadonlyArray<PageType> = ['home', 'category', 'search', 'product', 'cart', 'cms', 'article', 'landing', 'other'];
 
 /**
- * Read and validate the JSON the module prints in `<script type="application/json" id="adhese-commerce-config">`.
- * Returns `null` when missing or invalid, so the tag silently does nothing.
+ * Name of the window global that can carry the config instead of the element, for hosts that cannot print one (a tag
+ * manager template, for example, can set a global but cannot create DOM elements).
  */
-export function readConfig(doc: Document = document): CommerceConfig | null {
+export const configGlobalName = 'adheseCommerceConfig';
+
+/**
+ * Read and validate the config: the JSON the module prints in
+ * `<script type="application/json" id="adhese-commerce-config">`, or else the object in `window.adheseCommerceConfig`.
+ * The element wins when it has content, so a platform module is never overridden by a stray global. Returns `null` when
+ * neither is present or valid, so the tag silently does nothing.
+ */
+export function readConfig(doc: Document = document, win: Window | null = doc.defaultView): CommerceConfig | null {
   try {
     const text = doc.getElementById(configElementId)?.textContent;
-    if (!text)
-      return null;
+    if (text)
+      return parseConfig(JSON.parse(text));
 
-    return parseConfig(JSON.parse(text));
+    return parseConfig((win as unknown as Record<string, unknown> | null)?.[configGlobalName]);
   }
   catch {
     return null;

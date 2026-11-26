@@ -37,6 +37,10 @@ The Composer module `adhese/module-retail-media` prints the page config the bund
 | `assumeConsent` | both | Testing only: treat consent as granted without a consent platform |
 | `targetCodes` | both | Override the 2-letter target codes (below) |
 
+A host that cannot print the element (a tag manager template, for instance, can set a global but not create DOM) can
+set the same object as `window.adheseCommerceConfig` before loading the bundle. The element wins when it has content,
+and an invalid element does not fall back to the global. The AEM bundles read their own config and ignore the global.
+
 ## Targets
 
 All targets travel as 2-letter SDK parameters. `mi` and `ev` are agreed with Adhese; the others are **placeholders** until the
