@@ -11,13 +11,18 @@ export type Consent = {
 
 const tcfName = '__tcfapi';
 const denied: Consent = { granted: false, params: {} };
+/**
+ * A TCF consent string is base64url segments joined by dots. Anything else is not forwarded.
+ */
+const tcStringPattern = /^[\w.-]{1,2000}$/;
 
 /**
- * TCF v2 via `__tcfapi` when a CMP is present, otherwise the CMP's yes/no flag `window.adheseConsent`.
- * No measurement consent means no request, so the absence of any signal is a denial.
+ * TCF v2 via `__tcfapi` when a CMP is present, otherwise the consent string a tag manager hands over in
+ * `window.adheseTcString` (for sites whose CMP only writes the string to the data layer), otherwise the CMP's yes/no
+ * flag `window.adheseConsent`. No measurement consent means no request, so the absence of any signal is a denial.
  */
 export async function getConsent(win: Window = window): Promise<Consent> {
-  const flags = win as unknown as { [tcfName]?: TcfApi; adheseConsent?: boolean };
+  const flags = win as unknown as { [tcfName]?: TcfApi; adheseConsent?: boolean; adheseTcString?: unknown };
   const tcf = flags[tcfName];
 
   if (typeof tcf === 'function') {
@@ -33,6 +38,9 @@ export async function getConsent(win: Window = window): Promise<Consent> {
       });
     });
   }
+
+  if (typeof flags.adheseTcString === 'string' && tcStringPattern.test(flags.adheseTcString))
+    return { granted: true, params: { xt: flags.adheseTcString } };
 
   if (flags.adheseConsent === true)
     return { granted: true, params: { tl: 'all' } };
