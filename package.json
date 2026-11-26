@@ -59,10 +59,5 @@
     "vite-plugin-css-injected-by-js": "^3.5.2",
     "vitest": "^3.2.7",
     "vitest-matchmedia-mock": "^2.0.4"
-  },
-  "overrides": {
-    "vitepress": {
-      "vite": "$vite"
-    }
   }
 }
